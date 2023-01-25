@@ -1,24 +1,26 @@
-import logo from './logo.svg';
-import './App.css';
+import { Route, Switch, Redirect } from "react-router-dom";
+import KakaoLoginGetCode from "./components/login/KakakLoginGetCode";
+
+import LoginPage from "./pages/LoginPage";
+
 
 function App() {
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <Switch>
+      <Route path="/" exact>
+        <Redirect to="/login"/>
+      </Route>
+      
+      {/* Login 관련 ROUTE */}
+      <Route path="/login" exact>
+        <LoginPage/>
+      </Route>
+      <Route path="/oauth/kakao/callback">
+        <KakaoLoginGetCode/>
+      </Route>
+
+    </Switch>
   );
 }
 
