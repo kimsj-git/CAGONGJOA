@@ -1,5 +1,5 @@
 // 로그인 페이지
-import KakaoLogin from "../components/login/KakaoLogin"
+import KakaoLogin from "../../components/member/login/KakaoLogin"
 
 const LoginPage = () => {
   return (

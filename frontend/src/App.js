@@ -1,7 +1,8 @@
 import { Route, Switch, Redirect } from "react-router-dom";
-import KakaoLoginGetCode from "./components/login/KakakLoginGetCode";
+import KakaoLoginGetCode from "./components/member/login/KakakLoginGetCode";
 
-import LoginPage from "./pages/LoginPage";
+import LoginPage from "./pages/member/LoginPage";
+import SignupPage from "./pages/member/SignupPage";
 
 
 function App() {
@@ -18,6 +19,9 @@ function App() {
       </Route>
       <Route path="/oauth/kakao/callback">
         <KakaoLoginGetCode/>
+      </Route>
+      <Route path="/signup">
+        <SignupPage/>
       </Route>
 
     </Switch>

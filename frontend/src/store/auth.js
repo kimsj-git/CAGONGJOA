@@ -13,7 +13,7 @@ const authSlice = createSlice({
     },
     logout(state){
       state.username = ''
-    }
+    },
   }
 })
 
