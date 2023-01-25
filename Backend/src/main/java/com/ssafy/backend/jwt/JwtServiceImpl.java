@@ -14,6 +14,7 @@ import java.util.Map;
 public class JwtServiceImpl implements JwtService{
 
     private final JwtUtil jwtUtil;
+    private final RefreshTokenRepository refreshTokenRepository;
 
     @Override
     public Map<String, Object> createJwt(Member member) {
@@ -21,11 +22,11 @@ public class JwtServiceImpl implements JwtService{
         String accessToken = jwtUtil.getAccessToken(member);
         String refreshToken = jwtUtil.getRefreshToken(member);
 
-        // 리프레쉬 토큰을 db에 저장
-        if (userMapper.getUserRefreshToken(dbUser.getId()) != null) {
-            userMapper.deleteUserRefreshToken(dbUser.getId());
-        }
-        userMapper.saveUserRefreshToken(new UserRefreshTokenDto(dbUser.getId(), refreshToken));
+        // 리프레쉬 토큰을 redis에 저장
+        RefreshToken savedRefreshToken = refreshTokenRepository.save(new RefreshToken(refreshToken, member.getId()));
+        System.out.println("savedRefreshToken.getRefreshToken() ="+savedRefreshToken.getRefreshToken());
+        System.out.println("savedRefreshToken.getMemberId() ="+savedRefreshToken.getMemberId());
+        System.out.println("refreshTokenRepository.findById(savedRefreshToken.getRefreshToken()) ="+refreshTokenRepository.findById(savedRefreshToken.getRefreshToken()));
 
         // Access token + refresh token을 리턴
         Map<String, Object> tokens = new HashMap<>();

@@ -20,9 +20,9 @@ public class RefreshToken {
     @Embedded
     private Period period;
 
-    // 일단은 여기에 저장하지만 추후 Redis 서버를 통해 구현하기
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "member_id")
-    private Member member;
+//    // 일단은 여기에 저장하지만 추후 Redis 서버를 통해 구현하기
+//    @OneToOne(fetch = FetchType.LAZY)
+//    @JoinColumn(name = "member_id")
+//    private Member member;
 
 }

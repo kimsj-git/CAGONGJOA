@@ -25,13 +25,12 @@ public class Member {
     @Enumerated(EnumType.STRING)
     private OauthType oauthType;
 
-    @OneToOne(
-            mappedBy = "member",
-            fetch = FetchType.LAZY,
-            cascade = CascadeType.PERSIST,
-            orphanRemoval = true
-    )
-    private Member member;
+//    @OneToOne(
+//            mappedBy = "member",
+//            fetch = FetchType.LAZY,
+//            cascade = CascadeType.PERSIST,
+//            orphanRemoval = true
+//    )
 
     @Embedded
     private Period period;
