@@ -78,25 +78,17 @@ public class OAuthController {
     // 회원가입 후 DEFAULT 닉네임을 변경
     @PostMapping("/setNickname")
     public ResponseEntity<Map<String, Object>> setMemberNickname(@RequestParam OauthLoginDto oauthLoginDto) throws Exception {
-
+        Map<String, Object> resultMap = new HashMap<>();
         Optional<Member> defaultNicknameMember = memberService.getMember(oauthLoginDto.getOauthId(),
                 OauthType.valueOf(oauthLoginDto.getOauthType()));
-
-        if (defaultNicknameMember.isEmpty()) throw new Exception(); // 임시로 던지는 예외 **
-
         // 서버에서 한번 더 닉네임 중복 체크
         memberService.checkDuplicatedNickname(oauthLoginDto.getNickname());
-
         // 닉네임 변경
         memberService.changeNickname(defaultNicknameMember.get(), oauthLoginDto.getNickname());
-
         // jwt 토큰 생성
-//        Map<String, Object> tokens = jwtService.createJwt(defaultNicknameMember.get())
-
+        Map<String, Object> jwtTokens = jwtService.createJwt(defaultNicknameMember.get());
         // 리턴
-
-        return null;
-
-//        return new ResponseEntity<>(headers, HttpStatus.OK); // 닉네임 업데이트 후 JWT 토큰 발급해주기
+        resultMap.put("jwt", jwtTokens);
+        return new ResponseEntity<>(resultMap, HttpStatus.OK);
     }
 }

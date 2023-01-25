@@ -25,6 +25,14 @@ public class Member {
     @Enumerated(EnumType.STRING)
     private OauthType oauthType;
 
+    @OneToOne(
+            mappedBy = "member",
+            fetch = FetchType.LAZY,
+            cascade = CascadeType.PERSIST,
+            orphanRemoval = true
+    )
+    private Member member;
+
     @Embedded
     private Period period;
 
@@ -43,4 +51,6 @@ public class Member {
     public void setNickname(String nickname) {
         this.nickname = nickname;
     }
+
+
 }
