@@ -46,7 +46,7 @@ public class MemberController {
 //
 //    @GetMapping("/refresh")
 //    public ResponseEntity<Map<String, Object>> refresh() {
-//        return new ResponseEntity<>(userService.refresh(), HttpStatus.OK);
+//        return new ResponseEntity<>(memberService.refresh(), HttpStatus.OK);
 //    }
 //
 //    @Auth

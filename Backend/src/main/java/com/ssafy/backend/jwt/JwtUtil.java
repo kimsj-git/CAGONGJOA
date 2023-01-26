@@ -101,7 +101,7 @@ public class JwtUtil {
                 throw new JWTVerificationException("NotValidToken");
             }
         } catch (TokenExpiredException e) {
-            // 토큰 만료시
+            // 토큰 만료시 -> 401 갈기고 클라이언트에서 억세스 토큰 재발급
 //            throw new BaseException("TokenExpiredException", HttpStatus.UNAUTHORIZED);
             throw new Exception("aaa");
         } catch (JWTVerificationException e) {

@@ -1,6 +1,5 @@
 package com.ssafy.backend.member.domain.entity.embeded;
 
-import org.hibernate.annotations.ColumnDefault;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 
