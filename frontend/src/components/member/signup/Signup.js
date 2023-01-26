@@ -24,17 +24,17 @@ const Signup = (props) => {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          oAuth_Id: props.oAuthId,
-          type: props.type,
-          nickname: nickname.current.value,
+          oauthId: props.oauthId,
+          oauthType: props.oauthType,
+          nickname: nickname,
         }),
       })
       if (!response.ok) {
         throw new Error("오류")
       }
       const responseData = await response.json()
-      sessionStorage.setItem("token", responseData.token)
-      sessionStorage.setItem("nickname", responseData.nickname)
+      sessionStorage.setItem("accessToken", responseData.jwt.accessToken)
+      sessionStorage.setItem("refreshToken", responseData.jwt.refreshToken)
     } catch (error) {
       console.log(error)
     }
