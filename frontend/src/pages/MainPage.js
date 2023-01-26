@@ -1,8 +1,12 @@
 import { Fragment } from "react"
 
+import MainPageTopBar from "../components/member/mainPage/MainPageTopBar"
+import PostList from "../components/member/mainPage/PostList"
+
 const MainPage = () => {
   return <Fragment>
-    <h1>Main Page</h1>
+    <MainPageTopBar/>
+    <PostList/>
   </Fragment>
 }
 
