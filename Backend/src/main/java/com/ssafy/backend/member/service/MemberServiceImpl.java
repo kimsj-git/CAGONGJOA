@@ -44,6 +44,8 @@ public class MemberServiceImpl implements MemberService{
     @Override
     public Optional<Member> getMember(long kakaoMemberId, OauthType kakao) {
         return memberRepository.findByOauthIdAndOauthType(kakaoMemberId, OauthType.KAKAO);
+//        if (dbMember.isEmpty()) throw new MemberException(MemberExceptionType.NOT_FOUND_MEMBER);
+//        return dbMember;
     }
 
     @Override
