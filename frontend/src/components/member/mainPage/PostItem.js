@@ -1,34 +1,27 @@
 import { Feed, Card, Icon } from "semantic-ui-react"
 
-const PostItem = () => {
+const PostItem = (props) => {
   return (
     <Card>
-      <Card.Content>
-        <Card.Description>게시물!</Card.Description>
-      </Card.Content>
-      <Feed.Meta>
-        <Feed.Like>
-          <Icon name="like" />4
-        </Feed.Like>
-        <Feed.Like>
-          <Icon name="sticky note outline" />
-          10
-        </Feed.Like>
-      </Feed.Meta>
+      <Feed.Event>
+        <Feed.Content>
+          <Feed.Summary>
+            <Feed.User>{props.author}</Feed.User>
+          </Feed.Summary>
+          <Feed.Extra text>{props.content}</Feed.Extra>
+          <Feed.Meta>
+            <Feed.Like>
+              <Icon name="like" />
+              {props.post_likes}
+            </Feed.Like>
+            <Feed.Like>
+              <Icon name="sticky note outline" />
+              {props.comments_cnt}
+            </Feed.Like>
+          </Feed.Meta>
+        </Feed.Content>
+      </Feed.Event>
     </Card>
-    // <Feed.Event>
-    //   <Feed.Content>
-    //     <Feed.Extra text>게시물!</Feed.Extra>
-    //     <Feed.Meta>
-    //       <Feed.Like>
-    //         <Icon name="like" />4
-    //       </Feed.Like>
-    //       <Feed.Like>
-    //         <Icon name="sticky note outline"/>10
-    //       </Feed.Like>
-    //     </Feed.Meta>
-    //   </Feed.Content>
-    // </Feed.Event>
   )
 }
 
