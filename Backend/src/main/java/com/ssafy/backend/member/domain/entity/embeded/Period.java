@@ -11,7 +11,6 @@ import java.time.LocalDateTime;
 public class Period {
 
     @CreatedDate
-    @Column(updatable = false, nullable = false)
     private LocalDateTime createdAt;
 
     @LastModifiedDate
