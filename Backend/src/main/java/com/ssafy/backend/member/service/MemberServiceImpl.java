@@ -1,9 +1,11 @@
 package com.ssafy.backend.member.service;
 
 import com.auth0.jwt.interfaces.DecodedJWT;
+import com.ssafy.backend.common.exception.BaseException;
 import com.ssafy.backend.common.exception.member.MemberException;
 import com.ssafy.backend.common.exception.member.MemberExceptionType;
 import com.ssafy.backend.jwt.JwtUtil;
+import com.ssafy.backend.jwt.RefreshTokenRepository;
 import com.ssafy.backend.member.domain.entity.Member;
 import com.ssafy.backend.member.domain.enums.NicknameType;
 import com.ssafy.backend.member.domain.enums.OauthType;
@@ -26,6 +28,7 @@ import java.util.Optional;
 public class MemberServiceImpl implements MemberService{
 
     private final MemberRepository memberRepository;
+    private final RefreshTokenRepository refreshTokenRepository;
     private final JwtUtil jwtUtil;
 
     @Override
@@ -63,34 +66,52 @@ public class MemberServiceImpl implements MemberService{
     }
 
     @Override
-    public Map<String, Object> tokenRefresh() {
-//        // refresh token 받아오기
-//        HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
-//        ServletRequestAttributes requestAttributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
-//        requestAttributes.getRequest().getHeader("Authorization");
-//        String refreshToken = request.getHeader("Authorization");
-//
-//        // refresh token 인증
-//        jwtUtil.isValidForm(refreshToken);
-//        refreshToken = refreshToken.substring(7);
-//        jwtUtil.isValidToken(refreshToken, "refreshToken");
-//
-//        // refresh token 에서 유저 aud값 가져오기
-//        DecodedJWT payload = jwtUtil.getDecodedJWT(refreshToken);
-//        int userId = Integer.parseInt(payload.getAudience().get(0));
-//
-//        // DB에 저장된 refresh token과 일치하는지 비교
-//        if (!userMapper.getUserRefreshToken(userId).equals(refreshToken)) {
-//            throw new BaseException("재로그인 하세요.", HttpStatus.UNAUTHORIZED);
-//        }
-//
-//        // 일치하면 토큰 재생성
-//        UserDto user = userMapper.getUserById(userId);
-//        String accessToken = jwtUtil.getAccessToken(user);
-//        HashMap<String, Object> tokens = new HashMap<>();
-//        tokens.put("accessToken", accessToken);
-//        return tokens;
-        return null;
+    public Map<String, Object> tokenRefresh() throws Exception {
+        // refresh token 받아오기
+        HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
+        String refreshToken = request.getHeader("Authorization");
+
+        // refresh token 인증
+        jwtUtil.isValidForm(refreshToken);
+        refreshToken = refreshToken.substring(7);
+        jwtUtil.isValidToken(refreshToken, "refreshToken");
+
+        // refresh token 에서 유저 aud값 가져오기
+        DecodedJWT payload = jwtUtil.getDecodedJWT(refreshToken);
+        long memberId = Long.parseLong(payload.getAudience().get(0));
+
+        // redis에 refresh 토큰이 없다면(리프레쉬 토큰 만료시)
+        if (refreshTokenRepository.findById(refreshToken).isEmpty()) {
+            throw new Exception("리프레쉬 토큰 만료!! -> 사용자 로그아웃 및 로그인 페이지 출력, 재로그인!");
+        }
+
+        HashMap<String, Object> tokens = new HashMap<>();
+
+        // 리프레쉬 토큰이 redis에 존재
+        refreshTokenRepository.findById(refreshToken).ifPresent(a->{
+            System.out.println("억세스 발급");
+            Optional<Member> dbMemberOpt = memberRepository.findById(memberId);
+            if (dbMemberOpt.isEmpty()) {
+                throw new MemberException(MemberExceptionType.NOT_FOUND_MEMBER);
+            }
+            Member dbMember = dbMemberOpt.get();
+            String accessToken = jwtUtil.getAccessToken(dbMember);
+
+            tokens.put("accessToken", accessToken);
+
+        });
+        return tokens;
+    }
+
+    @Override
+    public void logout() throws Exception {
+        HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
+        String accessToken = request.getHeader("Authorization").substring(7);
+
+        DecodedJWT payload = jwtUtil.getDecodedJWT(accessToken);
+        int userId = Integer.parseInt(payload.getAudience().get(0));
+
+        userMapper.deleteUserRefreshToken(userId);
     }
 
 }
