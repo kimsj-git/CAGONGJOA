@@ -1,5 +1,6 @@
 package com.ssafy.backend.member.controller;
 
+import com.ssafy.backend.common.annotation.Auth;
 import com.ssafy.backend.member.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -37,24 +38,19 @@ public class MemberController {
         memberService.checkDuplicatedNickname(nickname);
         return new ResponseEntity<>(HttpStatus.OK);
     }
-//
-//    @PostMapping("/signUp/verify")
-//    public ResponseEntity<Void> verifyRegisterCode(@RequestBody UserAuthRequest authRequest) {
-//        userService.verifyRegisterCode(authRequest);
-//        return new ResponseEntity<>(HttpStatus.OK);
-//    }
-//
-//    @GetMapping("/refresh")
-//    public ResponseEntity<Map<String, Object>> refresh() {
-//        return new ResponseEntity<>(userService.refresh(), HttpStatus.OK);
-//    }
-//
-//    @Auth
-//    @GetMapping("/logout")
-//    public ResponseEntity<Void> logout() {
-//        userService.logout();
-//        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-//    }
-//
+
+    // 억세스 토큰 만료시 토큰 리프레쉬
+    @GetMapping("/refresh")
+    public ResponseEntity<Map<String, Object>> refresh() {
+        return new ResponseEntity<>(memberService.tokenRefresh(), HttpStatus.OK);
+    }
+
+    @Auth
+    @GetMapping("/logout")
+    public ResponseEntity<Void> logout() {
+        memberService.logout();
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
 
 }

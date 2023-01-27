@@ -3,6 +3,7 @@ package com.ssafy.backend.member.domain.entity;
 import com.ssafy.backend.member.domain.entity.embeded.Period;
 import com.ssafy.backend.member.domain.enums.OauthType;
 import lombok.*;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import org.springframework.util.Assert;
 
 import javax.persistence.*;
@@ -24,13 +25,6 @@ public class Member {
     @Column(name = "oauth_type")
     @Enumerated(EnumType.STRING)
     private OauthType oauthType;
-
-//    @OneToOne(
-//            mappedBy = "member",
-//            fetch = FetchType.LAZY,
-//            cascade = CascadeType.PERSIST,
-//            orphanRemoval = true
-//    )
 
     @Embedded
     private Period period;

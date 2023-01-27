@@ -98,10 +98,10 @@ public class JwtUtil {
                     .verify(token);
 
             if (decodedJWT.getAudience().isEmpty()) {
-                throw new JWTVerificationException("NotValidToken");
+                throw new JWTVerificationException("NotValidToken"); // bad request를 클라가 받으면 로그인 페이지로
             }
         } catch (TokenExpiredException e) {
-            // 토큰 만료시
+            // 토큰 만료시 -> 401 갈기고 클라이언트에서 억세스 토큰 재발급
 //            throw new BaseException("TokenExpiredException", HttpStatus.UNAUTHORIZED);
             throw new Exception("aaa");
         } catch (JWTVerificationException e) {
