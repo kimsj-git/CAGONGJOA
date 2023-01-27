@@ -8,6 +8,7 @@ import com.ssafy.backend.member.repository.MemberRepository;
 import com.ssafy.backend.member.service.MemberService;
 import com.ssafy.backend.oauth.dto.OauthLoginDto;
 import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,7 +21,7 @@ import java.util.Map;
 import java.util.Optional;
 
 @RestController
-@AllArgsConstructor
+@RequiredArgsConstructor
 @Transactional
 @RequestMapping("/oauth")
 public class OAuthController {

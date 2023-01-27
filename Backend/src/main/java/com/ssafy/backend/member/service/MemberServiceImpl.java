@@ -106,12 +106,23 @@ public class MemberServiceImpl implements MemberService{
     @Override
     public void logout() throws Exception {
         HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
-        String accessToken = request.getHeader("Authorization").substring(7);
+        String refreshToken = request.getHeader("Authorization");
 
-        DecodedJWT payload = jwtUtil.getDecodedJWT(accessToken);
-        int userId = Integer.parseInt(payload.getAudience().get(0));
+        // refresh token 인증
+        jwtUtil.isValidForm(refreshToken);
+        refreshToken = refreshToken.substring(7);
+        jwtUtil.isValidToken(refreshToken, "refreshToken");
 
-        userMapper.deleteUserRefreshToken(userId);
+        // redis에 저장된 refresh토큰 삭제하기
+        refreshTokenRepository.deleteById(refreshToken);
+
+        refreshTokenRepository.findById(refreshToken).ifPresent(a ->{
+            try {
+                throw new Exception("토큰이 삭제되지 않았습니다.");
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        });
     }
 
 }
