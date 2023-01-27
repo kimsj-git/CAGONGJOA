@@ -6,7 +6,9 @@ import LoginPage from "./pages/member/LoginPage"
 import SignupPage from "./pages/member/SignupPage"
 import MainPage from "./pages/MainPage"
 import ChatPage from "./pages/ChatPage"
-import TodayCafe from "./pages/todaycafe/TodayCafe"
+import TodayCafe from "./components/todayCafe/TodayCafe"
+import MakeCoffee from "./components/todayCafe/MakeCoffee"
+import Fortune from "./components/todayCafe/Fortune"
 import MyPage from "./pages/MyPage"
 import NotFound from "./pages/NotFound"
 
@@ -38,6 +40,14 @@ function App() {
         </Route>
         <Route path="/signup">
           <SignupPage />
+        </Route>
+
+        {/* TodayCafe 관련 ROUTE */}
+        <Route path="/today-cafe/make-coffee" exact>
+          <MakeCoffee />
+        </Route>
+        <Route path="/today-cafe/fortune" exact>
+          <Fortune />
         </Route>
 
         {/* NotFound 페이지*/}
