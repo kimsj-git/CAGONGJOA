@@ -1,6 +1,8 @@
 import { NavLink } from "react-router-dom"
 import { Icon } from "semantic-ui-react"
 
+import PostForm from "../components/member/mainPage/PostForm"
+
 import classes from "./MainNavigation.module.css"
 
 const MainNavigation = () => {
@@ -19,9 +21,7 @@ const MainNavigation = () => {
             </NavLink>
           </li>
           <li>
-            {/* <NavLink to="/"> */}
-            <Icon name="write" size="big" />
-            {/* </NavLink> */}
+            <PostForm />
           </li>
           <li>
             <NavLink to="/today-cafe">
