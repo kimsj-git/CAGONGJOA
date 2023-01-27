@@ -18,20 +18,6 @@ public class MemberController {
 
     private final MemberService memberService;
 
-//    // 회원가입
-//    @PostMapping("/signUp")
-//    public ResponseEntity<Void> signUp(@RequestBody UserDto userDto) {
-//        userService.signUp(userDto);
-//        return new ResponseEntity<>(HttpStatus.OK);
-//    }
-//
-//    // 로그인
-//    @PostMapping("/login")
-//    public ResponseEntity<Map<String, Object>> signIn(@RequestBody UserDto userDto) {
-//        // 로그인 성공시 "accessToken", "refreshToken"을 key로 하는 토큰 데이터가 담긴 hash map 리턴
-//        return new ResponseEntity<>(userService.signIn(userDto), HttpStatus.OK);
-//    }
-
     // 닉네임 중복체크 (회원가입, 유저 정보 수정)
     @GetMapping("/checkDuplicatedNickname")
     public ResponseEntity<Void> checkValidEmail(@RequestParam String nickname) {
@@ -40,14 +26,15 @@ public class MemberController {
     }
 
     // 억세스 토큰 만료시 토큰 리프레쉬
+    @Auth
     @GetMapping("/refresh")
-    public ResponseEntity<Map<String, Object>> refresh() {
+    public ResponseEntity<Map<String, Object>> refresh() throws Exception {
         return new ResponseEntity<>(memberService.tokenRefresh(), HttpStatus.OK);
     }
 
     @Auth
     @GetMapping("/logout")
-    public ResponseEntity<Void> logout() {
+    public ResponseEntity<Void> logout() throws Exception { // refresh token 헤더로 가져오기
         memberService.logout();
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
