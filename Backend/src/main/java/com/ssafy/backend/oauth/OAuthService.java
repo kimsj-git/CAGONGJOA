@@ -3,6 +3,7 @@ import com.google.gson.JsonParser;
 import com.google.gson.JsonElement;
 import com.ssafy.backend.common.exception.BaseException;
 import com.ssafy.backend.oauth.dto.OauthLoginDto;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.io.*;
@@ -13,6 +14,9 @@ import java.util.Map;
 
 @Service
 public class OAuthService{
+
+    @Value("${kakaoOauth.REST_API_KEY}")
+    private String rest_api_key;
 
     // Access token으로 사용자 정보 가져오는 로직
     // 추후 oAuth exception 커스텀으로 만들어서 예외처리! 지금은 그냥 임시로 try catch로 진행
@@ -97,7 +101,7 @@ public class OAuthService{
             BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(conn.getOutputStream()));
             StringBuilder sb = new StringBuilder();
             sb.append("grant_type=authorization_code");
-            sb.append("&client_id=14ed85f5d91aca3e58af81536597cf53"); // TODO REST_API_KEY 입력
+            sb.append("&client_id="+rest_api_key); // TODO REST_API_KEY 입력
             sb.append("&redirect_uri=http://localhost:9000/oauth/kakao"); // TODO 인가코드 받은 redirect_uri 입력
             sb.append("&code=" + code);
             bw.write(sb.toString());
