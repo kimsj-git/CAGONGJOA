@@ -16,5 +16,8 @@ public interface MemberService {
 
     void saveMember(long oAuthId, String nickname, OauthType oauthType);
 
-    Map<String, Object> tokenRefresh();
+    Map<String, Object> tokenRefresh() throws Exception;
+
+    void logout() throws Exception;
+
 }
