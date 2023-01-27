@@ -15,4 +15,6 @@ public interface MemberService {
     Optional<Member> getMember(long kakaoMemberId, OauthType kakao);
 
     void saveMember(long oAuthId, String nickname, OauthType oauthType);
+
+    Map<String, Object> tokenRefresh();
 }
