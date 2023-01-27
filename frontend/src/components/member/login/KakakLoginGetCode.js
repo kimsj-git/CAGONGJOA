@@ -27,17 +27,17 @@ const KakaoLoginGetCode = () => {
           throw new Error("오류")
         }
         // DB 저장되어 있는 유저면
+        const responseData = await response.json()
         if (response.status === 200) {
-          const responseData = await response.json()
-          sessionStorage.setItem("token", responseData.token)
-          sessionStorage.setItem("nickname", responseData.nickname)
+          sessionStorage.setItem("accessToken", responseData.jwt.accessToken)
+          sessionStorage.setItem("refreshToken", responseData.jwt.refreshToken)
           history.push("/mainpage")
         }
         // 첫 로그인 회원일 경우
         if (response.status === 201) {
           history.push({
             pathname: `/signup`,
-            props: { oAuthId: response.oAuth_Id, type: response.type },
+            props: { oauthId: responseData.memberInfo.oauthId, type: responseData.memberInfo.oauthType },
           })
         }
       } catch (error) {
