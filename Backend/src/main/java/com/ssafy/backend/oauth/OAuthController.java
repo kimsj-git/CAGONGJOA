@@ -82,7 +82,7 @@ public class OAuthController {
 
     // 회원가입 후 DEFAULT 닉네임을 변경
     @PostMapping("/setNickname")
-    public ResponseEntity<Map<String, Object>> setMemberNickname(@RequestParam OauthLoginDto oauthLoginDto) throws Exception {
+    public ResponseEntity<Map<String, Object>> setMemberNickname(@RequestBody OauthLoginDto oauthLoginDto) throws Exception {
         Map<String, Object> resultMap = new HashMap<>();
         Optional<Member> defaultNicknameMember = memberService.getMember(oauthLoginDto.getOauthId(),
                 OauthType.valueOf(oauthLoginDto.getOauthType()));

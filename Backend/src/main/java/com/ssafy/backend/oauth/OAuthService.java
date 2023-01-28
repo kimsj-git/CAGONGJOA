@@ -17,6 +17,8 @@ public class OAuthService{
 
     @Value("${kakaoOauth.REST_API_KEY}")
     private String rest_api_key;
+    @Value("${kakaoOauth.REDIRECT_URL}")
+    private String redirect_uri;
 
     // Access token으로 사용자 정보 가져오는 로직
     // 추후 oAuth exception 커스텀으로 만들어서 예외처리! 지금은 그냥 임시로 try catch로 진행
@@ -48,10 +50,7 @@ public class OAuthService{
             System.out.println("response body : " + result);
 
             //Gson 라이브러리로 JSON파싱
-            JsonParser parser = new JsonParser();
-            JsonElement element = parser.parse(result);
-
-//            int id = element.getAsJsonObject().get("id").getAsInt();
+            JsonElement element = JsonParser.parseString(result);
             long id = element.getAsJsonObject().get("id").getAsLong();
 
             if (id < 0) {
@@ -102,7 +101,7 @@ public class OAuthService{
             StringBuilder sb = new StringBuilder();
             sb.append("grant_type=authorization_code");
             sb.append("&client_id="+rest_api_key); // TODO REST_API_KEY 입력
-            sb.append("&redirect_uri=http://localhost:9000/oauth/kakao"); // TODO 인가코드 받은 redirect_uri 입력
+            sb.append("&redirect_uri="+redirect_uri); // TODO 인가코드 받은 redirect_uri 입력
             sb.append("&code=" + code);
             bw.write(sb.toString());
             bw.flush();
