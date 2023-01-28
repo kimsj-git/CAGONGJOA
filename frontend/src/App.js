@@ -35,7 +35,7 @@ function App() {
         <Route path="/login" exact>
           <LoginPage />
         </Route>
-        <Route path="/oauth/kakao/callback">
+        <Route path="/oauth/kakao">
           <KakaoLoginGetCode />
         </Route>
         <Route path="/signup">
