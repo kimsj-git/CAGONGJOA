@@ -22,7 +22,6 @@ import java.util.Optional;
 
 @RestController
 @RequiredArgsConstructor
-@Transactional
 @RequestMapping("/oauth")
 public class OAuthController {
 
