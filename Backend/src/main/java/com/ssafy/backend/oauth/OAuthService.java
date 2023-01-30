@@ -58,20 +58,20 @@ public class OAuthService{
             }
 
 
-            // email 안받을 꺼면 email 코드 삭제
-            boolean hasEmail = element.getAsJsonObject().get("kakao_account").getAsJsonObject().get("has_email").getAsBoolean();
-            String email = "";
-
-            if(hasEmail){
-                email = element.getAsJsonObject().get("kakao_account").getAsJsonObject().get("email").getAsString();
-            }
-
-            System.out.println("id : " + id);
-            System.out.println("email : " + email);
+//            // email 안받을 꺼면 email 코드 삭제
+//            boolean hasEmail = element.getAsJsonObject().get("kakao_account").getAsJsonObject().get("has_email").getAsBoolean();
+//            String email = "";
+//
+//            if(hasEmail){
+//                email = element.getAsJsonObject().get("kakao_account").getAsJsonObject().get("email").getAsString();
+//            }
+//
+//            System.out.println("id : " + id);
+//            System.out.println("email : " + email);
 
             Map<String, String> returnMap = new HashMap<>();
             returnMap.put("id", String.valueOf(id));
-            returnMap.put("email", email);
+//            returnMap.put("email", email);
 
             br.close();
 
