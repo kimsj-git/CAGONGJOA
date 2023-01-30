@@ -1,13 +1,20 @@
+import { useHistory } from "react-router-dom"
 import { useSelector, useDispatch } from "react-redux"
 import { Modal,Button, ModalActions } from "semantic-ui-react"
 
 import { modalActions } from "../../../store/modal"
 
 const ConfirmCafe = () => {
+  const history = useHistory()
+  const dispatch = useDispatch()
+
   const open = useSelector((state) => state.modal.openConfirmCafe)
   const cafeName = useSelector((state) => state.modal.selectedCafe)
 
-  const dispatch = useDispatch()
+  const okBtnHandler = () => {
+    history.push("/")
+  }
+
   return (
     <Modal
       onClose={()=>dispatch(modalActions.toggleConfirmCafeModal())}
@@ -18,8 +25,8 @@ const ConfirmCafe = () => {
         <p>{cafeName}이 맞습니까?</p>
       </Modal.Description>
       <ModalActions>
-        <Button size="tiny">확인</Button>
-        <Button size="tiny">취소</Button>
+        <Button size="tiny" onClick={okBtnHandler}>확인</Button>
+        <Button size="tiny" onClick={()=>dispatch(modalActions.toggleConfirmCafeModal())}>취소</Button>
       </ModalActions>
     </Modal>
   )

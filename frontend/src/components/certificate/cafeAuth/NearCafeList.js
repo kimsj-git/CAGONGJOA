@@ -29,7 +29,7 @@ const NearCafeList = () => {
           <div>
             <p>현재 계신 카페를 선택해주세요!</p>,
             {CAFE_LIST_DUMMY_DATA.map((cafe) => {
-              return <NearCafeListItem cafeName={cafe} />
+              return <NearCafeListItem cafeName={cafe} key={cafe} />
             })}
           </div>
         )}
