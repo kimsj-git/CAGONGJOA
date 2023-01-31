@@ -1,6 +1,6 @@
 package com.ssafy.backend.member.domain.entity;
 
-import com.ssafy.backend.member.domain.entity.embeded.Period;
+import com.ssafy.backend.common.entity.embeded.Period;
 import com.ssafy.backend.member.domain.enums.OauthType;
 import lombok.*;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
