@@ -1,41 +1,41 @@
 import { NavLink } from "react-router-dom"
-import { Icon } from "semantic-ui-react"
+import { Icon, Grid } from "semantic-ui-react"
 
 import PostForm from "../components/member/mainPage/PostForm"
 
-import classes from "./MainNavigation.module.css"
+import classes from './MainNavigation.module.css'
 
 const MainNavigation = () => {
   return (
-    <header className={classes.header}>
-      <nav className={classes.nav}>
-        <ul>
-          <li>
+    <div>
+      <Grid className={classes.footer}>
+        <Grid.Row columns={5} only="mobile tablet" >
+          <Grid.Column>
             <NavLink to="/">
               <Icon name="home" size="big" />
             </NavLink>
-          </li>
-          <li>
+          </Grid.Column>
+          <Grid.Column>
             <NavLink to="/chat">
               <Icon name="talk" size="big" />
             </NavLink>
-          </li>
-          <li>
+          </Grid.Column>
+          <Grid.Column>
             <PostForm />
-          </li>
-          <li>
+          </Grid.Column>
+          <Grid.Column>
             <NavLink to="/today-cafe">
               <Icon name="coffee" size="big" />
             </NavLink>
-          </li>
-          <li>
+          </Grid.Column>
+          <Grid.Column>
             <NavLink to="/mypage">
               <Icon name="user" size="big" />
             </NavLink>
-          </li>
-        </ul>
-      </nav>
-    </header>
+          </Grid.Column>
+        </Grid.Row>
+      </Grid>
+    </div>
   )
 }
 
