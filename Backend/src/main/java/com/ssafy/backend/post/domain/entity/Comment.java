@@ -20,7 +20,7 @@ public class Comment extends BaseEntity {
         //1. 댓글의 ID
         @Id
         @GeneratedValue(strategy=GenerationType.IDENTITY) // MYSQL Auto Increment
-        //@Column(name = "id")
+        @Column(columnDefinition = "INT UNSIGNED")
         private Long id;
 
         //2. postid 를 조인으로 하여 사용

@@ -27,6 +27,7 @@ public class Post extends BaseEntity {
 
         @Id
         @GeneratedValue
+        @Column(columnDefinition = "INT UNSIGNED")
         private Long id;
 
         /** 2. 멤버 id를 멤버 테이블과 조인을 이용하여 사용 - 멤버가 삭제되면 모든 글이 삭제   **//*
