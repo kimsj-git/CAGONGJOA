@@ -3,8 +3,7 @@
 import { createSlice } from "@reduxjs/toolkit"
 
 const initialTimerState = {
-  startTime: null, 
-  nowTime: null,
+  accTime: 0,   // 누적시간 저장
 }
 
 const timerSlice = createSlice({
@@ -12,7 +11,7 @@ const timerSlice = createSlice({
   initialState: initialTimerState,
   reducers: {
     update(state, action) {
-      state.nowTime = action.payload
+      state.accTime += action.payload
     },
   },
 })
