@@ -1,7 +1,9 @@
-import { useState, useEffect, useCallback, Fragment } from "react"
+import { useState, useCallback, Fragment } from "react"
+import { Route } from "react-router"
 
 import MainPageTopBar from "../components/mainPage/MainPageTopBar"
 import PostList from "../components/mainPage/PostList"
+import MapDiv from "../components/map/MapDiv"
 
 // API 연결 후 DUMMY_POSTS 삭제
 const DUMMY_POSTS = [
@@ -104,6 +106,9 @@ const MainPage = () => {
       <section>
         <MainPageTopBar />
       </section>
+      <Route path="/map">
+        <MapDiv/>
+      </Route>
       <section>{content_feed}</section>
     </Fragment>
   )
