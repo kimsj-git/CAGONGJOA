@@ -37,10 +37,6 @@ function App() {
     <Layout>
       <Switch>
         {/* Navigation 관련 ROUTE*/}
-        <Route path="/" exact>
-          <MainPage />
-          {/* <Redirect to="/login" /> */}
-        </Route>
         <Route path="/chat" exact>
           <ChatPage />
         </Route>
@@ -68,6 +64,11 @@ function App() {
         </Route>
         <Route path="/today-cafe/fortune" exact>
           <Fortune />
+        </Route>
+
+        {/* MainPage Route */}
+        <Route path="/">
+          <MainPage />
         </Route>
 
         {/* NotFound 페이지*/}
