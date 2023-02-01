@@ -6,14 +6,18 @@ import { Provider } from "react-redux"
 import App from "./App"
 import reportWebVitals from "./reportWebVitals"
 import store from "./store/index"
-import 'semantic-ui-css/semantic.min.css'
+import "semantic-ui-css/semantic.min.css"
+import "primereact/resources/themes/lara-light-indigo/theme.css" // theme
+import "primereact/resources/primereact.css" // core css
+import "primeicons/primeicons.css" // icons
+// import "primeflex/primeflex.css" // css utility
 
 const root = ReactDOM.createRoot(document.getElementById("root"))
 root.render(
   <BrowserRouter>
     <Provider store={store}>
       {/* <React.StrictMode> */}
-        <App />
+      <App />
       {/* </React.StrictMode> */}
     </Provider>
   </BrowserRouter>

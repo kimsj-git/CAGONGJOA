@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback, Fragment } from "react"
 
-import MainPageTopBar from "../components/member/mainPage/MainPageTopBar"
-import PostList from "../components/member/mainPage/PostList"
+import MainPageTopBar from "../components/mainPage/MainPageTopBar"
+import PostList from "../components/mainPage/PostList"
 
 // API 연결 후 DUMMY_POSTS 삭제
 const DUMMY_POSTS = [

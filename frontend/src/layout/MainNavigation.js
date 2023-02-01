@@ -1,7 +1,7 @@
 import { NavLink } from "react-router-dom"
 import { Icon, Grid } from "semantic-ui-react"
 
-import PostForm from "../components/member/mainPage/PostForm"
+import PostForm from "../components/mainPage/PostForm"
 
 import classes from './MainNavigation.module.css'
 
