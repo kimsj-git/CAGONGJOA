@@ -215,6 +215,37 @@ public class PostServiceImpl implements PostService {
         return new AbstractMap.SimpleEntry<>(responseIsChecked, count);
     }
 
+    @Override
+    public void wirteCommentForm(String content, Long groupId) throws Exception {
+        //1. 유저 확인
+        Map.Entry<Long, Boolean> checked = checkMember();
+        long memberId = checked.getKey(); // 멤버 아이디를 확인한다.
+        boolean isCafeAuthorized = checked.getValue(); // 카페 인증 여부를 확인한다.
+
+
+        // 1-3. 글 저장하기
+
+        if (isCafeAuthorized) {
+            // 인증된 유저의 경우, 카테고리를 제한하지 않는다.
+
+        } else {
+            // 인증되지 않은 유저의 경우, 카테고리를 두개로 제한한다.
+        }
+
+        Post post = Post.postWriteBuilder()
+                .memberId(postWriteDto.getMemberId())
+                .content(postWriteDto.getContent())
+                .type(postWriteDto.getType())
+                .build();
+
+        Post result = postRepository.save(post);
+        return true;
+
+
+
+
+    }
+
     /**
      * 8. 댓글 좋아요
      **/

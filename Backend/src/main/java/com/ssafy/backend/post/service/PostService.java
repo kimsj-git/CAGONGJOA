@@ -30,12 +30,30 @@ public interface PostService {
     /** 5. 게시글 전부 조회  **/
     void findAllPost(PagingRequestDto requestDto) throws Exception;
 
+    /** 6. 게시글 페이징 10개씩  **/
+
+
+
+    /** 7. 게시글 좋아요  **/
     Map.Entry<Boolean, Long> likePost(Long postId,Boolean isChecked) throws Exception;
 
-    Map.Entry<Boolean, Long> likeComment(Long commentId,Boolean isChecked) throws Exception;
+    /** 댓글  **/
 
+    /** 1. 댓글 쓰기 **/
+    void wirteCommentForm(String content, Long groupId) throws Exception;
+
+    /** 2. 댓글 수정 **/
+
+    /** 3. 댓글 페이징 조회 **/
+
+    /** 4. 댓글 삭제 **/
     void deletecomment(Long commentId);
 
-    /** 6. 게시글 페이징  **/
-//    PostPagingDto getPostList(Pageable pageable, PostSearchCondition postSearchCondition);
+    /** 5. 댓글 좋아요 **/
+    Map.Entry<Boolean, Long> likeComment(Long commentId,Boolean isChecked) throws Exception;
+
+
+
+
+
 }

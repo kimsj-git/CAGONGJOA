@@ -29,9 +29,12 @@ public class Comment extends BaseEntity {
         private Post post;
 
         // 3. memberId를 조인으로 하여 사용
-        @ManyToOne(fetch = LAZY)
-        @JoinColumn(name = "member_id")
-        private Member member;
+//        @ManyToOne(fetch = LAZY)
+//        @JoinColumn(name = "member_id")
+//        private Member member;
+
+        @Column(name = "member_id")
+        private Long memberId;
 
         // 4. 댓글의 내용
         @Column(nullable = false)
@@ -44,6 +47,9 @@ public class Comment extends BaseEntity {
         // 7. 댓글 순서 - Auto Increment?
         @GeneratedValue(strategy=GenerationType.IDENTITY)
         private Long step;
+
+        @Builder(builderClassName = "CommentWriteBuilder", builderMethodName = "CommentWriteBuilder")
+        public Comment ()
 
 
 

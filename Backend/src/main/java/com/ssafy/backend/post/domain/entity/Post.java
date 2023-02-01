@@ -30,15 +30,15 @@ public class Post extends BaseEntity {
         @Column(columnDefinition = "INT UNSIGNED")
         private Long id;
 
-//        /** 2. 멤버 id를 멤버 테이블과 조인을 이용하여 사용 - 멤버가 삭제되면 모든 글이 삭제   **/
-//        @ManyToOne(fetch = LAZY)
-//        @JoinColumn(name = "member_id")
-//        @OnDelete(action = OnDeleteAction.CASCADE)
-//        private Member member;
+        /** 2. 멤버 id를 멤버 테이블과 조인을 이용하여 사용 - 멤버가 삭제되면 모든 글이 삭제   **/
+        @ManyToOne(fetch = LAZY)
+        @JoinColumn(name = "member_id")
+        @OnDelete(action = OnDeleteAction.CASCADE)
+        private Member member;
 
         // 임시컬럼 - member 인증되면 없앨거임
-        @Column(name = "member_id")
-        private Long memberId;
+//        @Column(name = "member_id")
+//        private Long memberId;
 
         /**  3. 피드 내용   **/
         private String content;
@@ -62,7 +62,12 @@ public class Post extends BaseEntity {
         }
 
         /**  연관 메서드    **/
-        /**  1. update    **/ // 추후 이미지도 추가해야함
+        /**  1. getId    **/ // 추후 이미지도 추가해야함
+
+        public void saveMember(Member member) {
+                this.member = member;
+                member.getId()
+        }
 
         public void updateContents(String content) {
                 this.content = content;
