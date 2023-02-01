@@ -1,5 +1,6 @@
 package com.ssafy.backend.member.domain.entity;
 
+import com.ssafy.backend.common.entity.BaseEntity;
 import com.ssafy.backend.common.entity.embeded.Period;
 import com.ssafy.backend.member.domain.enums.OauthType;
 import lombok.*;
@@ -11,8 +12,9 @@ import javax.persistence.*;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@EntityListeners(AuditingEntityListener.class)
 @ToString(of={"id", "nickname", "oauthId", "oauthType", "period"}) // 엔티티는 하면 안됨!
-public class Member {
+public class Member extends BaseEntity {
 
     @Id @GeneratedValue
     private Long id;
@@ -26,8 +28,8 @@ public class Member {
     @Enumerated(EnumType.STRING)
     private OauthType oauthType;
 
-    @Embedded
-    private Period period;
+//    @Embedded
+//    private Period period;
 
     @Builder(builderClassName = "oAuthBuilder", builderMethodName = "oAuthBuilder")
     public Member(String nickname, Long oAuthId, OauthType oAuthType) {

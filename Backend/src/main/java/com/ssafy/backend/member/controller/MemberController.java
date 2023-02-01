@@ -26,7 +26,6 @@ public class MemberController {
     }
 
     // 억세스 토큰 만료시 토큰 리프레쉬
-    @Auth
     @GetMapping("/refresh")
     public ResponseEntity<Map<String, Object>> refresh() throws Exception {
         return new ResponseEntity<>(memberService.tokenRefresh(), HttpStatus.OK);

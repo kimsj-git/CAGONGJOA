@@ -74,7 +74,7 @@ public class MemberServiceImpl implements MemberService{
         // refresh token 인증
         jwtUtil.isValidForm(refreshToken);
         refreshToken = refreshToken.substring(7);
-        jwtUtil.isValidToken(refreshToken, "refreshToken");
+        jwtUtil.isValidToken(refreshToken, "RefreshToken");
 
         // refresh token 에서 유저 aud값 가져오기
         DecodedJWT payload = jwtUtil.getDecodedJWT(refreshToken);
@@ -111,7 +111,7 @@ public class MemberServiceImpl implements MemberService{
         // refresh token 인증
         jwtUtil.isValidForm(refreshToken);
         refreshToken = refreshToken.substring(7);
-        jwtUtil.isValidToken(refreshToken, "refreshToken");
+        jwtUtil.isValidToken(refreshToken, "RefreshToken");
 
         // redis에 저장된 refresh토큰 삭제하기
         refreshTokenRepository.deleteById(refreshToken);
