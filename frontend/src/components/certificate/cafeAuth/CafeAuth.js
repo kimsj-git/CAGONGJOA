@@ -1,4 +1,3 @@
-import { useCallback, useEffect, useState } from "react"
 import { Modal, Button } from "semantic-ui-react"
 import { useSelector, useDispatch } from "react-redux"
 
@@ -8,51 +7,10 @@ const CafeAuth = () => {
   const dispatch = useDispatch()
   const open = useSelector((state) => state.modal.openCafeAuthModal)
 
-  const [location, setLocation] = useState({
-    myLocation: {
-      lat: 0,
-      lng: 0,
-    },
-    errMsg: null,
-  })
-
   const nextPageHander = () => {
     dispatch(modalActions.toggleNearCafeListModal())
     dispatch(modalActions.toggleCafeAuthModal())
   }
-
-  const getLocation = useCallback(() => {
-    if (navigator.geolocation) {
-      // GeoLocation을 이용해서 접속 위치를 얻어옵니다
-      navigator.geolocation.getCurrentPosition(
-        (position) => {
-          setLocation((prev) => ({
-            ...prev,
-            myLocation: {
-              lat: position.coords.latitude, // 위도
-              lng: position.coords.longitude, // 경도
-            },
-          }))
-        },
-        (err) => {
-          setLocation((prev) => ({
-            ...prev,
-            errMsg: err.message,
-          }))
-        }
-      )
-    } else {
-      // HTML5의 GeoLocation을 사용할 수 없을때 마커 표시 위치와 인포윈도우 내용을 설정합니다
-      setLocation((prev) => ({
-        ...prev,
-        errMsg: "geolocation을 사용할수 없어요..",
-      }))
-    }
-  }, [setLocation])
-  useEffect(() => {
-    getLocation()
-    console.log(location)
-  }, [getLocation])
 
   return (
     <Modal
