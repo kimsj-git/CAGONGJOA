@@ -30,11 +30,11 @@ public class Post extends BaseEntity {
         @Column(columnDefinition = "INT UNSIGNED")
         private Long id;
 
-        /** 2. 멤버 id를 멤버 테이블과 조인을 이용하여 사용 - 멤버가 삭제되면 모든 글이 삭제   **//*
-        @ManyToOne(fetch = LAZY)
-        @JoinColumn(name = "member_id")
-        @OnDelete(action = OnDeleteAction.CASCADE)
-        private Member member;*/
+//        /** 2. 멤버 id를 멤버 테이블과 조인을 이용하여 사용 - 멤버가 삭제되면 모든 글이 삭제   **/
+//        @ManyToOne(fetch = LAZY)
+//        @JoinColumn(name = "member_id")
+//        @OnDelete(action = OnDeleteAction.CASCADE)
+//        private Member member;
 
         // 임시컬럼 - member 인증되면 없앨거임
         @Column(name = "member_id")
@@ -56,11 +56,10 @@ public class Post extends BaseEntity {
         /**  생성자 : content, member, 카테고리, 이미지(나중추가)   **/
         @Builder(builderClassName = "postWriteBuilder", builderMethodName = "postWriteBuilder")
         public Post(String content, Long memberId, Type type) {
+                this.memberId = memberId;
                 this.content = content;
                 this.type = type;
-//              this.images = new ArrayList<>();
         }
-
 
         /**  연관 메서드    **/
         /**  1. update    **/ // 추후 이미지도 추가해야함
@@ -68,6 +67,8 @@ public class Post extends BaseEntity {
         public void updateContents(String content) {
                 this.content = content;
         }
+        
+
 
 
 }

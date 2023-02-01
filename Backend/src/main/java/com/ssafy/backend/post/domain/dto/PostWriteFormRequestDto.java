@@ -6,6 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
+import org.springframework.web.multipart.MultipartFile;
 
 @ToString
 @Data
@@ -19,6 +20,7 @@ public class PostWriteFormRequestDto {
     private Long memberId; // 테스팅시에만 사용, 추후 삭제
     private String content;
     private Type type;
+    private MultipartFile[] files;
 
 
 

@@ -1,6 +1,8 @@
 package com.ssafy.backend.post.controller;
 
+
 import com.ssafy.backend.common.annotation.Auth;
+import com.ssafy.backend.jwt.JwtUtil;
 import com.ssafy.backend.post.domain.dto.PagingRequestDto;
 import com.ssafy.backend.post.domain.dto.PostPagingResponseDto;
 import com.ssafy.backend.post.domain.dto.PostUpdateFormRequestDto;
@@ -10,16 +12,35 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @RestController
 @RequestMapping("/post")
 @RequiredArgsConstructor
 public class PostController {
     private final PostService postService;
+
+
+
+//    @PostMapping("/imgtest")
+//    public ResponseEntity<Object> upload(@RequestBody MultipartFile[] multipartFileList) throws Exception {
+//
+//        List<String> imagePathList = postService.imgTest(multipartFileList);
+//        System.out.println(imagePathList);
+    //        return new ResponseEntity<Object>(imagePathList, HttpStatus.OK);
+//    }
+
+    @Auth
+    @PostMapping("/usertest")
+    public ResponseEntity<Void> userTest() throws Exception {
+
+        long memberId = postService.userTest();
+        System.out.println(memberId);
+        return new ResponseEntity<Void>(HttpStatus.OK);
+    }
+
 
     /**  1. 메인페이지 글목록 주기 **/
 
@@ -66,7 +87,7 @@ public class PostController {
 
     /**  2. 게시글 글쓰기 화면   **/
 
-    @Auth
+//    @Auth
     @PostMapping("/writeForm")
     public ResponseEntity<Void> postWriteForm(@RequestBody PostWriteFormRequestDto requestPostDto) throws Exception {
 
@@ -102,11 +123,29 @@ public class PostController {
 
 
 
-    /**  6. 게시글 (10개씩) 조회  (피드)  **/
+    /**  6. 게시글 좋아요 누르기  **/
+    //@Auth
+    @PostMapping("/like")
+    public ResponseEntity<Void> postLike(@RequestParam Long postId, @RequestParam Boolean isChecked) throws Exception {
 
+        Map.Entry<Boolean, Long> postLikeResult = postService.likePost(postId, isChecked);
+        Boolean responseIsChecked = postLikeResult.getKey();
+        Long responsePostId = postLikeResult.getValue();
+        System.out.println("Controller - postlike - " + responseIsChecked + " " + responsePostId);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
 
-    /**  7. 게시글 전체 조회 (마이페이지) - 아직안됨  **/
+    /**  7. 댓글 좋아요 누르기  **/
+    @PostMapping("/comment/like")
+    public ResponseEntity<Void> commentLike(@RequestParam Long commentId, @RequestParam Boolean isChecked) throws Exception {
 
+        Map.Entry<Boolean, Long> postLikeResult = postService.likeComment(commentId, isChecked);
+        Boolean responseIsChecked = postLikeResult.getKey();
+        Long responseCommentId = postLikeResult.getValue();
+        System.out.println("Controller - commentLike - " + responseIsChecked + " " + responseCommentId);
+
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
 
     /**  8. 게시글 삭제   **/
 
@@ -116,6 +155,18 @@ public class PostController {
     public ResponseEntity<Void> deletePost(@RequestParam Long postId) throws Exception {
 
         postService.deletePost(postId);
+
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    /**  8. 댓글 삭제   **/
+
+    @Auth
+    @PostMapping("/comment/delete")
+
+    public ResponseEntity<Void> deleteComment(@RequestParam Long commentId) throws Exception {
+
+        postService.deletecomment(commentId);
 
         return new ResponseEntity<>(HttpStatus.OK);
     }
