@@ -3,7 +3,7 @@ import { Menu, Icon } from "semantic-ui-react"
 
 const SideNavigation = () => {
   return (
-    <Menu pointing secondary vertical>
+    <Menu icon='labeled' vertical>
       <Menu.Item name="home">
         <NavLink to="/">
           <Icon name="home" size="big" />

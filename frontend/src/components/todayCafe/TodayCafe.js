@@ -1,6 +1,7 @@
 import TodayCafePage from "../../pages/TodayCafePage"
 import CafeInfo from "./CafeInfo"
 import CafeTimer from "./CafeTimer"
+import CafeTodos from "./CafeTodos"
 
 import { Container, Grid } from "semantic-ui-react"
 
@@ -18,6 +19,11 @@ const TodayCafe = () => {
           <Grid.Row columns={1}>
             <Grid.Column>
               <CafeTimer />
+            </Grid.Column>
+          </Grid.Row>
+          <Grid.Row columns={1}>
+            <Grid.Column>
+              <CafeTodos />
             </Grid.Column>
           </Grid.Row>
         </Grid>

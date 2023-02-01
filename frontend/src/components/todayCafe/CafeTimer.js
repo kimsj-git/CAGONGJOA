@@ -37,7 +37,7 @@ const CafeTimer = () => {
         value={parseInt(accTime / 60)}
       >
         <p style={{ color: "green" }}>
-          {parseInt(accTime / 60)}분 {accTime % 60}초 경과!
+          {parseInt(accTime / 3600)}시간 {parseInt(accTime / 60) % 60}분 {accTime % 60}초 경과!
         </p>
       </Progress>
       {/* <section style={{ border: "dotted" }}>
