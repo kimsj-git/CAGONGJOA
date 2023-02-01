@@ -1,9 +1,9 @@
-import TodayCafe from "../../pages/TodayCafePage"
+import TodayCafePage from "../../pages/TodayCafePage"
 
 const MakeCoffee = () => {
-  return <TodayCafe>
+  return <TodayCafePage>
     <h1>커피 내리기</h1>
-  </TodayCafe>
+  </TodayCafePage>
 }
 
 export default MakeCoffee

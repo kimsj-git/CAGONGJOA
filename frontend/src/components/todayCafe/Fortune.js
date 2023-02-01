@@ -1,9 +1,9 @@
-import TodayCafe from "../../pages/TodayCafePage"
+import TodayCafePage from "../../pages/TodayCafePage"
 
 const Fortune = () => {
-  return <TodayCafe>
+  return <TodayCafePage>
     <h1>오늘의 운세</h1>
-  </TodayCafe>
+  </TodayCafePage>
 }
 
 export default Fortune
