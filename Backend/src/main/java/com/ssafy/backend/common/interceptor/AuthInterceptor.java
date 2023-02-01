@@ -35,9 +35,11 @@ public class AuthInterceptor implements HandlerInterceptor {
         String accessToken = request.getHeader("Authorization");
         jwtUtil.isValidForm(accessToken);
 
+        System.out.println("인터셉터에서의.. accessToken = " + accessToken);
+
         // 토큰이 유효한 토큰인지 인증
         accessToken = accessToken.substring(7);
-        jwtUtil.isValidToken(accessToken, "accessToken");
+        jwtUtil.isValidToken(accessToken, "AccessToken");
 
         return true;
     }

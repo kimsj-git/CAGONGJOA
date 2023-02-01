@@ -35,10 +35,10 @@ public class JwtUtil {
     @Value("${jwt.refresh.header}")
     private String refreshHeader;
 
-    private static final String ACCESS_TOKEN_SUBJECT = "AccessToken";
-    private static final String REFRESH_TOKEN_SUBJECT = "RefreshToken";
-    private static final String NICKNAME_CLAIM = "nickname";
-    private static final String BEARER = "Bearer ";
+    static final String ACCESS_TOKEN_SUBJECT = "AccessToken";
+    static final String REFRESH_TOKEN_SUBJECT = "RefreshToken";
+    static final String NICKNAME_CLAIM = "nickname";
+    static final String BEARER = "Bearer ";
 
     @PostConstruct
     public void setKey() {
@@ -48,7 +48,7 @@ public class JwtUtil {
     // 현재 accessToken : 10분/ refreshToken : 1시간 => 배포시 늘려야됨
     public String getAccessToken(Member member) {
         return JWT.create()
-                .withSubject(ACCESS_TOKEN_SUBJECT)
+                .withSubject("AccessToken")
                 .withAudience(member.getId().toString())
                 .withClaim(NICKNAME_CLAIM, member.getNickname())
                 .withExpiresAt(Date.from(LocalDateTime.now()
@@ -77,13 +77,13 @@ public class JwtUtil {
         // 토큰이 "Bearer "로 시작하는가?
         if (!token.startsWith(BEARER)) {
 //            throw new BaseException("token is not start with \"Bearer \"", HttpStatus.BAD_REQUEST);
-            throw new Exception("aaa");
+            throw new Exception("bbb");
         }
 
         // 토큰이 "Bearer " 이후로 존재하는가?
         if (token.length() < 8) {
 //            throw new BaseException("token is too short", HttpStatus.BAD_REQUEST);
-            throw new Exception("aaa");
+            throw new Exception("ccc");
         }
     }
 
@@ -103,11 +103,12 @@ public class JwtUtil {
         } catch (TokenExpiredException e) {
             // 토큰 만료시 -> 401 갈기고 클라이언트에서 억세스 토큰 재발급
 //            throw new BaseException("TokenExpiredException", HttpStatus.UNAUTHORIZED);
-            throw new Exception("aaa");
+            throw new Exception("ddd");
         } catch (JWTVerificationException e) {
             // 다른 경우는 모두 인증 실패
 //            throw new BaseException("JWTVerificationException", HttpStatus.BAD_REQUEST);
-            throw new Exception("aaa");
+            e.printStackTrace();
+            throw new Exception("eee");
         }
     }
 
@@ -117,7 +118,7 @@ public class JwtUtil {
             return JWT.decode(token);
         } catch (JWTDecodeException e) {
 //            throw new BaseException("Decode fail", HttpStatus.BAD_REQUEST);
-            throw new Exception("aaa");
+            throw new Exception("fff");
         }
     }
 }
