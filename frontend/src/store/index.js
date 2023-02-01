@@ -4,9 +4,10 @@ import { configureStore } from "@reduxjs/toolkit"
 
 import authReducer from "./auth"
 import modalReducer from "./modal"
+import timerReducer from "./timer"
 
 const store = configureStore({
-  reducer: { auth: authReducer, modal: modalReducer },
+  reducer: { auth: authReducer, modal: modalReducer, timer: timerReducer },
 })
 
 export default store
