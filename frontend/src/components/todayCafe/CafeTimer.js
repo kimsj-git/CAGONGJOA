@@ -1,51 +1,32 @@
-import { useState, useEffect, useRef, Fragment } from "react"
-import { useSelector, useDispatch} from 'react-redux'
+import { useEffect, useRef, Fragment } from "react"
+import { useSelector, useDispatch } from "react-redux"
 import { timerActions } from "../../store/timer"
 import { Progress } from "semantic-ui-react"
 
 const CafeTimer = () => {
-  // const dispatch = useDispatch()
-  // const sTime = useSelector((state) => state.timer.startTime)
-  // const eTime = useSelector((state) => state.timer.nowTime)
+  const dispatch = useDispatch()
+  const accTime = useSelector((state) => state.timer.accTime)
+  const addTimeHandler = () => {
+    dispatch(timerActions.update(1))
+  }
 
-  let nowTime = new Date()
-  const startTime = useRef(nowTime) // 시작시간 기록
-  const laterTime = useRef(nowTime) // 타이머 계산용 현재시간 기록
-  const [now, setNow] = useState(nowTime) // Re-rendering 위한 useState 사용
   const interval = useRef(null)
-  const timer = useRef(0)
-
-  // sTime = useRef(nowTime).current
-  // eTime = useRef(nowTime).current
 
   useEffect(() => {
-    // 1초(1000ms)마다 경과시간 계산
+    // 1초(1000ms)마다 누적시간(accTime) 업데이트
     interval.current = setInterval(() => {
-      // 경과시간 = (현재시간 - 시작시간), 초단위
-      timer.current =
-        (laterTime.current.getTime() - startTime.current.getTime()) / 1000
-
-      nowTime = new Date()
-
-      // useState 사용: state 변화 후에 컴포넌트 Re-rendering 위해
-      setNow(nowTime)
-
-      // useRef 사용: 현재 시간의 정확한 값을 1초마다 갱신 -> Re-rendering (x)
-      laterTime.current = nowTime
-
-      // 리덕스 사용 테스트
-      
+      addTimeHandler() // 리덕스에 저장된 accTime 값을 1초에 1씩 증가시키는 handler
     }, 1000)
     return () => clearInterval(interval.current)
   }, [])
 
-  // 경과시간(timer.current)이 변할 때만 실행되는 useEffect
-  // 경과시간 2시간(= 7200초) 되면 interval을 멈춘다.
+  // 누적시간(accTime)이 변할 때만 실행되는 useEffect
+  // 누적시간 2시간(= 7200초) 되면 interval을 멈춘다.
   useEffect(() => {
-    if (timer.current >= 7200) {
+    if (accTime >= 7200) {
       clearInterval(interval.current)
     }
-  }, [timer.current])
+  }, [accTime])
 
   return (
     <Fragment>
@@ -53,16 +34,17 @@ const CafeTimer = () => {
         total={120}
         color="green"
         progress="value"
-        value={parseInt(timer.current / 60)}
+        value={parseInt(accTime / 60)}
       >
-        <p style={{ color: "green" }}>{parseInt(timer.current / 60)}분 경과!</p>
+        <p style={{ color: "green" }}>
+          {parseInt(accTime / 60)}분 {accTime % 60}초 경과!
+        </p>
       </Progress>
-      <section style={{border: 'dotted'}}>
+      {/* <section style={{ border: "dotted" }}>
         <h3>시간 확인용 정보.. (임시)</h3>
-        <p>시작시간: {startTime.current.toString()}</p>
-        <p>현재시간: {now.toString()}</p>
-        <p>경과시간: {timer.current}초</p>
-      </section>
+        <p>리덕스</p>
+        <p>경과시간: {accTime}초</p>
+      </section> */}
     </Fragment>
   )
 }
