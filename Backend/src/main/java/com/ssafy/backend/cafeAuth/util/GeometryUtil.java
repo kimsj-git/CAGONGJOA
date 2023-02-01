@@ -3,6 +3,7 @@ package com.ssafy.backend.cafeAuth.util;
 import com.ssafy.backend.cafe.domain.dto.Location;
 
 public class GeometryUtil {
+
     public static Location calculate(Double baseLatitude, Double baseLongitude, Double distance,
                                      Double bearing) {
         Double radianLatitude = toRadian(baseLatitude);
