@@ -14,14 +14,14 @@ import javax.persistence.Id;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@ToString(of={"id", "period"})
+@ToString(of={"id"})
 public class Cafe {
     @Id
     @GeneratedValue
     private Long id;
 
-//    private Long cafe
+    private String cafeCode;
+    private String name;
+    private String brandType;
 
-    @Embedded
-    private Period period;
 }

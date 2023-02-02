@@ -1,11 +1,11 @@
-package com.ssafy.backend.cafeAuth.util;
+package com.ssafy.backend.cafe.util;
 
-import com.ssafy.backend.cafe.domain.dto.Location;
+import com.ssafy.backend.cafe.domain.dto.LocationDto;
 
 public class GeometryUtil {
 
-    public static Location calculate(Double baseLatitude, Double baseLongitude, Double distance,
-                                     Double bearing) {
+    public static LocationDto calculate(Double baseLatitude, Double baseLongitude, Double distance,
+                                        Double bearing) {
         Double radianLatitude = toRadian(baseLatitude);
         Double radianLongitude = toRadian(baseLongitude);
         Double radianAngle = toRadian(bearing);
@@ -17,7 +17,7 @@ public class GeometryUtil {
                 cos(radianLatitude), cos(distanceRadius) - sin(radianLatitude) * sin(latitude));
 
         longitude = normalizeLongitude(longitude);
-        return new Location(toDegree(latitude), toDegree(longitude));
+        return new LocationDto(toDegree(latitude), toDegree(longitude));
     }
 
     private static Double toRadian(Double coordinate) {

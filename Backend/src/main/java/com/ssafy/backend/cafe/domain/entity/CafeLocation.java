@@ -10,7 +10,7 @@ import javax.persistence.*;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@ToString(of={"id", "period"})
+@ToString(of={"id"})
 public class CafeLocation {
     @Id
     @GeneratedValue
@@ -20,10 +20,12 @@ public class CafeLocation {
     @JoinColumn(name = "cafe_id")
     private Cafe cafe;
 
+    private Double lat;
+    private Double lng;
+
+    @Transient
     private Point point;
 
     private String address;
 
-    @Embedded
-    private Period period;
 }
