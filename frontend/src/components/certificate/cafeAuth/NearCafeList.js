@@ -28,7 +28,7 @@ const NearCafeList = () => {
               <div>
                 <p>현재 계신 카페를 선택해주세요!</p>,
                 {cafeData.map((cafe) => {
-                  return <NearCafeListItem key={cafe.cafeId} cafeData={cafe} />
+                  return <NearCafeListItem key={cafe.cafeId} cafeName={cafe.name} cafeId={cafe.cafeId} />
                 })}
               </div>
             )}

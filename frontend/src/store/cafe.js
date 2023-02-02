@@ -17,7 +17,7 @@ const cafeSlice = createSlice({
   },
 })
 
-export const findNearCafeData = () => {
+export const findNearCafeData = (distance) => {
   return async (dispatch) => {
     dispatch(cafeActions.cafeListLoading())
     const sendRequest = async () => {
@@ -29,6 +29,7 @@ export const findNearCafeData = () => {
         body: {
           latitude: sessionStorage.getItem("lat"),
           longitude: sessionStorage.getItem("lng"),
+          dist: distance,
         },
       })
 
