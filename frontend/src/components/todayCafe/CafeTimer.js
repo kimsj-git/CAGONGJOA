@@ -1,7 +1,7 @@
-import { useEffect, useRef, Fragment } from "react"
+import { useEffect, useRef, Fragment, useState } from "react"
 import { useSelector, useDispatch } from "react-redux"
 import { timerActions } from "../../store/timer"
-import { Progress } from "semantic-ui-react"
+import { Progress, Icon } from "semantic-ui-react"
 
 const CafeTimer = () => {
   const dispatch = useDispatch()
@@ -10,7 +10,13 @@ const CafeTimer = () => {
     dispatch(timerActions.update(1))
   }
 
+  const hours = parseInt(accTime / 3600)
+  const minutes = parseInt(accTime / 60) % 60
+  const seconds = accTime % 60
+
   const interval = useRef(null)
+
+  const [isComplete, setIsComplete] = useState(false)
 
   useEffect(() => {
     // 1초(1000ms)마다 누적시간(accTime) 업데이트
@@ -25,6 +31,7 @@ const CafeTimer = () => {
   useEffect(() => {
     if (accTime >= 7200) {
       clearInterval(interval.current)
+      setIsComplete(true)
     }
   }, [accTime])
 
@@ -36,8 +43,8 @@ const CafeTimer = () => {
         progress="value"
         value={parseInt(accTime / 60)}
       >
-        <p style={{ color: "green" }}>
-          {parseInt(accTime / 3600)}시간 {parseInt(accTime / 60) % 60}분 {accTime % 60}초 경과!
+        <p style={{ color: "#00754A" }}>
+          {hours}시간 {minutes}분 {seconds}초 경과! {isComplete ? '[완료]' : ''}
         </p>
       </Progress>
       {/* <section style={{ border: "dotted" }}>

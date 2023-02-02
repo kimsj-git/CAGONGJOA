@@ -9,15 +9,13 @@ const CafeTodos = () => {
 
   return (
     <Grid>
-      <Grid.Row columns={1}>
+      <Grid.Row columns={2}>
         <Grid.Column>
           <h3>
             {date.getMonth() + 1}월 {date.getDate()}일 Todo
           </h3>
         </Grid.Column>
-      </Grid.Row>
-      <Grid.Row columns={1}>
-        <Grid.Column>
+        <Grid.Column textAlign="right">
           <Calendar
             id="icon"
             value={date}

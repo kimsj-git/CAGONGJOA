@@ -10,7 +10,6 @@ const TodayCafe = () => {
     <TodayCafePage>
       <Container>
         <Grid>
-          <h1>오늘의 카페</h1>
           <Grid.Row columns={1}>
             <Grid.Column>
               <CafeInfo />

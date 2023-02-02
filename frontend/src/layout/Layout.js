@@ -9,16 +9,14 @@ const Layout = (props) => {
     <Fragment>
       <Container>
         <Grid>
-          <Grid.Column only="computer" width={2}>
+          <Grid.Column only='computer'computer={2}>
             <SideNavigation />
           </Grid.Column>
-          <Grid.Column only="mobile tablet" width={1} />
-          <Grid.Column width={14}>
+          <Grid.Column mobile={16} computer={14}>
             <Grid.Row>
               <main style={{ paddingBottom: "5rem" }}>{props.children}</main>
             </Grid.Row>
           </Grid.Column>
-          <Grid.Column only="mobile tablet" width={1} />
         </Grid>
       </Container>
       <MainNavigation />

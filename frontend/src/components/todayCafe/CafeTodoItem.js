@@ -1,4 +1,4 @@
-import { Card, Checkbox } from "semantic-ui-react"
+import { Card, Checkbox, Button } from "semantic-ui-react"
 
 const CafeTodoItem = (props) => {
   const onCheckHandler = () => {
@@ -20,6 +20,7 @@ const CafeTodoItem = (props) => {
             checked={props.isCompleted}
             onChange={onCheckHandler}
           />
+        <Button floated="right" icon="trash alternate"/>
         </Card.Description>
       </Card.Content>
     </Card>

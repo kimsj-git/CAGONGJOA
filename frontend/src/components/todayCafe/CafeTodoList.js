@@ -27,12 +27,11 @@ const CafeTodoList = () => {
               />
             ))}
             <Card fluid>
-              
               <Card.Content extra>
                 {/* <Card.Description> */}
-                  <Input placeholder='할일 추가...' />
+                <Input placeholder="할일 추가..." />
                 {/* </Card.Description> */}
-                <Button>추가</Button>
+                <Button icon="add" positive floated="right" />
               </Card.Content>
             </Card>
           </Card.Group>
