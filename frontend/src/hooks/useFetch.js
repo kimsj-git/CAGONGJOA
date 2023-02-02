@@ -20,7 +20,7 @@ const useFetch = () => {
         const response = await fetch(`${REST_DEFAULT_URL}/member/refresh`,{
           method: "GET",
           headers: {
-            Authorization : `Bearer ${sessionStorage.getItem('refreshToken')}`
+            "Authorization-refresh" : `Bearer ${sessionStorage.getItem('refreshToken')}`
           }
         })
         if (!response.ok){

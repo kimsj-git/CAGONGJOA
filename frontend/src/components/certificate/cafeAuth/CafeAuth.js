@@ -10,7 +10,7 @@ const CafeAuth = () => {
   const open = useSelector((state) => state.modal.openCafeAuthModal)
 
   const nextPageHander = () => {
-    dispatch(findNearCafeData())
+    dispatch(findNearCafeData(0.2))
     dispatch(modalActions.toggleNearCafeListModal())
     dispatch(modalActions.toggleCafeAuthModal())
   }
