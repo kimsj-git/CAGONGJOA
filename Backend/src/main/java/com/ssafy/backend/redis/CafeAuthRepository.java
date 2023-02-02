@@ -1,4 +1,6 @@
 package com.ssafy.backend.redis;
 
-public interface CafeAuthRepository extends {
+import org.springframework.data.repository.CrudRepository;
+
+public interface CafeAuthRepository extends CrudRepository<CafeAuth, String> {
 }
