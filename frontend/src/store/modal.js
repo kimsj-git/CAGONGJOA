@@ -6,7 +6,7 @@ const initialModalState = {
   openCafeAuthModal: false,
   openNearCafeList: false,
   openConfirmCafe: false,
-  selectedCafe: ""
+  selectedCafe: {}
 }
 
 const modalSlice = createSlice({
@@ -25,6 +25,8 @@ const modalSlice = createSlice({
     },
   },
 })
+
+
 
 export const modalActions = modalSlice.actions
 
