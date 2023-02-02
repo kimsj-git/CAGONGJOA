@@ -10,12 +10,10 @@ const NearCafeList = () => {
   const open = useSelector((state) => state.modal.openNearCafeList)
   const cafeData = useSelector((state) => state.cafe.nearCafe)
   const isLoading = useSelector((state) => state.cafe.isCafeListLoading)
-
   return (
     <Modal
       closeIcon
       onClose={() => dispatch(modalActions.toggleNearCafeListModal())}
-      onOpen={() => dispatch(modalActions.toggleNearCafeListModal())}
       open={open}
       size="small"
     >
@@ -26,9 +24,9 @@ const NearCafeList = () => {
           <>
             {cafeData.length > 0 && (
               <div>
-                <p>현재 계신 카페를 선택해주세요!</p>,
+                <p>현재 계신 카페를 선택해주세요!</p>
                 {cafeData.map((cafe) => {
-                  return <NearCafeListItem key={cafe.cafeId} cafeName={cafe.name} cafeId={cafe.cafeId} />
+                  return <NearCafeListItem key={cafe.id} cafeName={cafe.name} cafeId={cafe.id} />
                 })}
               </div>
             )}

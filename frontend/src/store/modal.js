@@ -23,6 +23,9 @@ const modalSlice = createSlice({
       state.openConfirmCafe = !state.openConfirmCafe
       state.selectedCafe = actions.payload
     },
+    closeConfirmCafeModal(state) {
+      state.openConfirmCafe = false
+    }
   },
 })
 

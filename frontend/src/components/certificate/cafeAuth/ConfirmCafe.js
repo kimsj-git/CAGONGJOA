@@ -15,40 +15,44 @@ const ConfirmCafe = () => {
   const cafeData = useSelector((state) => state.modal.selectedCafe)
 
   const { sendRequest: selectCafe } = useFetch()
-
   const okBtnHandler = () => {
     selectCafe({
-      url: `${REST_DEFAULT_URL}/cafeAuth/select`,
+      url: `${REST_DEFAULT_URL}/cafe/auth/select`,
       method: "POST",
-      headers: {Authorization: `Bearer ${sessionStorage.getItem("accessToken")}`,
-      body: {cafeId:`${cafeData.cafeId}`}
-    },
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${sessionStorage.getItem("accessToken")}`,
+      },
+      body: JSON.stringify({ cafeId: `${cafeData.cafeId}` }),
     })
+    dispatch(modalActions.toggleConfirmCafeModal())
+    dispatch(modalActions.toggleNearCafeListModal())
     history.push("/")
   }
-
-  return (
-    <Modal
-      onClose={() => dispatch(modalActions.toggleConfirmCafeModal())}
-      open={open}
-      size="mini"
-    >
-      <Modal.Description>
-        <p>{cafeData.name}이 맞습니까?</p>
-      </Modal.Description>
-      <ModalActions>
-        <Button size="tiny" onClick={okBtnHandler}>
-          확인
-        </Button>
-        <Button
-          size="tiny"
-          onClick={() => dispatch(modalActions.toggleConfirmCafeModal())}
-        >
-          취소
-        </Button>
-      </ModalActions>
-    </Modal>
-  )
+  if (cafeData) {
+    return (
+      <Modal
+        onClose={() => dispatch(modalActions.closeConfirmCafeModal())}
+        open={open}
+        size="mini"
+      >
+        <Modal.Description>
+          <p>{cafeData.cafeName} 맞습니까?</p>
+        </Modal.Description>
+        <ModalActions>
+          <Button size="tiny" onClick={okBtnHandler}>
+            확인
+          </Button>
+          <Button
+            size="tiny"
+            onClick={() => dispatch(modalActions.toggleConfirmCafeModal())}
+          >
+            취소
+          </Button>
+        </ModalActions>
+      </Modal>
+    )
+  }
 }
 
 export default ConfirmCafe

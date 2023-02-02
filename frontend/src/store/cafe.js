@@ -21,16 +21,17 @@ export const findNearCafeData = (distance) => {
   return async (dispatch) => {
     dispatch(cafeActions.cafeListLoading())
     const sendRequest = async () => {
-      const response = await fetch(`${REST_DEFAULT_URL}/cafeAuth/check`, {
+      const response = await fetch(`${REST_DEFAULT_URL}/cafe`, {
         method: "POST",
         headers: {
-          Authorization: `Bearer ${sessionStorage.getItem("accessToken")}`,
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${sessionStorage.getItem("accessToken")}`,
         },
-        body: {
+        body: JSON.stringify({
           latitude: sessionStorage.getItem("lat"),
           longitude: sessionStorage.getItem("lng"),
           dist: distance,
-        },
+        }),
       })
 
       if (!response.ok) {
@@ -39,7 +40,7 @@ export const findNearCafeData = (distance) => {
 
       const data = await response.json()
       
-      return data
+      return data.data
     }
     try {
       const cafeData = await sendRequest()
