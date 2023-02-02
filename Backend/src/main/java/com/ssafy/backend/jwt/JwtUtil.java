@@ -30,10 +30,6 @@ public class JwtUtil {
     private long accessTokenValidityInMinutes;
     @Value("${jwt.refresh.expiration}")
     private long refreshTokenValidityInMinutes;
-    @Value("${jwt.access.header}")
-    private String accessHeader;
-    @Value("${jwt.refresh.header}")
-    private String refreshHeader;
 
     static final String ACCESS_TOKEN_SUBJECT = "AccessToken";
     static final String REFRESH_TOKEN_SUBJECT = "RefreshToken";
