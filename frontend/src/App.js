@@ -43,7 +43,7 @@ function App() {
         <Route path="/today-cafe" exact>
           <TodayCafe />
         </Route>
-        <Route path="/mypage" exact>
+        <Route path="/mypage">
           <MyPage />
         </Route>
 
