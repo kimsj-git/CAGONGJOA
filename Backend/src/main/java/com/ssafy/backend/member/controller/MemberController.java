@@ -20,7 +20,7 @@ public class MemberController {
 
     // 닉네임 중복체크 (회원가입, 유저 정보 수정)
     @GetMapping("/checkDuplicatedNickname")
-    public ResponseEntity<Void> checkValidEmail(@RequestParam String nickname) {
+    public ResponseEntity<Void> checkDupNick(@RequestParam String nickname) {
         memberService.checkDuplicatedNickname(nickname);
         return new ResponseEntity<>(HttpStatus.OK);
     }

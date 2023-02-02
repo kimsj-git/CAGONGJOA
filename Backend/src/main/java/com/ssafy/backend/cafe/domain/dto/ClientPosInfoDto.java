@@ -1,13 +1,14 @@
 package com.ssafy.backend.cafe.domain.dto;
 
 import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.ToString;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
-@Getter
+@Data
+@NoArgsConstructor
 @AllArgsConstructor
-@ToString
-public class Location {
+public class ClientPosInfoDto {
     private Double latitude;
     private Double longitude;
+    private Double dist;
 }
