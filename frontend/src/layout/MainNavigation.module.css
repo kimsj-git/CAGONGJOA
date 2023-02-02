@@ -1,8 +1,8 @@
 .nav {
     position: fixed;
     bottom: 0;
-    /* width: 100%; */
-    height: 5rem;
+    width: 100%;
+    /* height: 5rem; */
     display: flex;
     padding: 0 10%;
     justify-content: space-around;
@@ -10,7 +10,7 @@
     /* background-color: lightgray; */
   }
 
-@media (min-width:992px) {
+@media screen and (min-width:992px) {
   .nav {
     display: none;
   }
