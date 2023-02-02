@@ -40,10 +40,6 @@ public class CafeServiceImpl implements CafeService{
         double y2 = southWest.getLongitude();
 
         String pointFormat = String.format("'LINESTRING(%f %f, %f %f)')", x1, y1, x2, y2);
-//        Query query = em.createNativeQuery("SELECT c.id, c.cafe_id, c.address "
-//                        + "FROM cafe_location AS c "
-//                        + "WHERE MBRContains(ST_LINESTRINGFROMTEXT(" + pointFormat + ", c.point) = 1",
-//                NearByCafeResultDto.class).setMaxResults(10);
 
         Query query
                 = em.createNativeQuery(
@@ -51,12 +47,7 @@ public class CafeServiceImpl implements CafeService{
                                 + "FROM (SELECT * "
                                         + "FROM cafe_location AS c "
                                         + "WHERE MBRContains(ST_LINESTRINGFROMTEXT(" + pointFormat + ", c.point) = 1) AS cl "
-                                + "INNER JOIN cafe cf ON cf.id = cl.cafe_id").setMaxResults(10);
-
-//        List<NearByCafeResultDto> cafeLocations = query.getResultList();
-//        System.out.println("cafeLocations = " + cafeLocations);
-//        System.out.println(cafeLocations.get(0).getPoint().getX());
-
+                                + "INNER JOIN cafe cf ON cf.id = cl.cafe_id");
 
         List<Object[]> results = query.getResultList();
 
@@ -73,9 +64,6 @@ public class CafeServiceImpl implements CafeService{
             nearByCafeResultDtos.add(dto);
         }
 
-        for (NearByCafeResultDto nearByCafeResultDto : nearByCafeResultDtos) {
-            System.out.println("nearByCafeResultDto = " + nearByCafeResultDto);
-        }
         return nearByCafeResultDtos;
     }
 }

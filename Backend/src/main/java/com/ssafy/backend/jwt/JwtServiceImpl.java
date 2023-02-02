@@ -1,13 +1,14 @@
 package com.ssafy.backend.jwt;
 
 import com.ssafy.backend.member.domain.entity.Member;
+import com.ssafy.backend.redis.RefreshToken;
+import com.ssafy.backend.redis.RefreshTokenRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Optional;
 
 @Service
 @Transactional
