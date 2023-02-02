@@ -1,6 +1,8 @@
 import { Fragment } from "react"
 import { Feed } from "semantic-ui-react"
+import { Button } from "primereact/button"
 import PostItem from "./PostItem"
+import PostTypeCarousel from "./PostTypeCarousel"
 
 const PostList = (props) => {
   const posts = props.posts
@@ -8,6 +10,7 @@ const PostList = (props) => {
   return (
     <Fragment>
       <h1>Feed</h1>
+      <PostTypeCarousel />
       <Feed>
         {posts.map((post) => (
           <PostItem
@@ -17,6 +20,7 @@ const PostList = (props) => {
             content={post.content}
             post_likes={post.post_likes}
             comments_cnt={post.comments_cnt}
+            isLoading={props.isLoading}
           />
         ))}
       </Feed>
