@@ -13,18 +13,10 @@ import {
 } from "semantic-ui-react"
 import { ScrollPanel } from "primereact/scrollpanel"
 import CommentItem from "./CommentItem"
-import ToggleButton from "../common/ToggleButton"
+import LikeButton from "../common/LikeButton"
 
 const PostDetail = (props) => {
   const [open, setOpen] = useState(false)
-=======
-} from "semantic-ui-react";
-import { ScrollPanel } from "primereact/scrollpanel";
-import CommentItem from "./CommentItem";
-
-const PostDetail = (props) => {
-  const [open, setOpen] = useState(false);
->>>>>>> c32e4344c2aa14d34ad3c131487dd12280a8cd22
 
   return (
     <Modal
@@ -42,24 +34,17 @@ const PostDetail = (props) => {
         ></Button>
       }
     >
-<<<<<<< HEAD
       <Label
         color="orange"
         floating
         icon={{ name: "comment", size: "large", style: { margin: "0px" } }}
       />
 
-=======
->>>>>>> c32e4344c2aa14d34ad3c131487dd12280a8cd22
       <Modal.Content>
         <div>
           <Grid>
             <Grid.Column mobile={16} tablet={8} computer={8}>
-<<<<<<< HEAD
               <ScrollPanel style={{ width: "100%", height: "77.5vh" }}>
-=======
-              <ScrollPanel style={{ width: "100%", height: "630px" }}>
->>>>>>> c32e4344c2aa14d34ad3c131487dd12280a8cd22
                 <Card fluid style={{ boxShadow: "none" }}>
                   <Card.Content>
                     <Image
@@ -78,7 +63,9 @@ const PostDetail = (props) => {
                       ui={true}
                       style={{ marginBlock: "0.5rem" }}
                     />
-                    <Card.Description>
+                    <Card.Description
+                      style={{ fontSize: "1.2rem", lineHeight: "1.8" }}
+                    >
                       이름을 하나에 별빛이 아직 동경과 아이들의 시와 했던
                       봅니다. 이름과, 사랑과 무엇인지 이름을 그러나 내일
                       버리었습니다. 피어나듯이 보고, 어머니, 별 이름을 마리아
@@ -89,7 +76,6 @@ const PostDetail = (props) => {
                       그러나 내일 버리었습니다. 피어나듯이 보고, 어머니, 별
                       이름을 마리아 내일 별 봅니다. 비둘기, 피어나듯이 나는
                       이네들은 걱정도 가득 까닭입니다. 별 이제 같이 있습니다.
-<<<<<<< HEAD
                       프랑시스 다하지 남은 이름과, 있습니다. 남은 이름과,
                       있습니다. 이름을 하나에 별빛이 아직 동경과 아이들의 시와
                       했던 봅니다. 이름과, 사랑과 무엇인지 이름을 그러나 내일
@@ -118,7 +104,7 @@ const PostDetail = (props) => {
                   // inverted
                   color="orange"
                   icon="edit"
-                  content="12"
+                  content="수정"
                 ></Button>
                 <Button
                   fluid
@@ -126,52 +112,15 @@ const PostDetail = (props) => {
                   // inverted
                   color="grey"
                   icon="delete"
-                  content="12"
+                  content="삭제"
                 ></Button>
-                <Button
-                  fluid
-                  inverted
-                  color="red"
-                  icon="thumbs up"
-                  content="12"
-                ></Button>
-                <ToggleButton
-                  color="red"
-                  content="12"
-                  fluid
-                  inverted
-                  icon="thumbs up"
-                />
+                <LikeButton fluid inverted content="12" />
               </div>
             </Grid.Column>
             <Grid.Column mobile={16} tablet={8} computer={8}>
               <Header>댓글 5</Header>
               <Divider />
               <ScrollPanel style={{ width: "100%", height: "70vh" }}>
-=======
-                      프랑시스 다하지 남은 이름과, 있습니다.
-                    </Card.Description>
-                  </Card.Content>
-                  <Card.Content extra>
-                    <div style={{ display: "flex" }}>
-                      <Button
-                        fluid
-                        inverted
-                        color="red"
-                        icon="thumbs up"
-                        content="12"
-                      ></Button>
-                    </div>
-                  </Card.Content>
-                </Card>
-              </ScrollPanel>
-            </Grid.Column>
-            <Grid.Column mobile={16} tablet={8} computer={8}>
-              {/* <Modal.Description style={{ width: "100%", height: "100%" }}> */}
-              <Header>댓글 5</Header>
-              <Divider />
-              <ScrollPanel style={{ width: "100%", height: "500px" }}>
->>>>>>> c32e4344c2aa14d34ad3c131487dd12280a8cd22
                 <Comment.Group>
                   <CommentItem />
                   <CommentItem />
@@ -194,23 +143,12 @@ const PostDetail = (props) => {
                   size="tiny"
                 />
               </Form>
-<<<<<<< HEAD
-=======
-              {/* </Modal.Description> */}
->>>>>>> c32e4344c2aa14d34ad3c131487dd12280a8cd22
             </Grid.Column>
           </Grid>
         </div>
       </Modal.Content>
     </Modal>
-<<<<<<< HEAD
   )
 }
 
 export default PostDetail
-=======
-  );
-};
-
-export default PostDetail;
->>>>>>> c32e4344c2aa14d34ad3c131487dd12280a8cd22
