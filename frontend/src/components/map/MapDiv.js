@@ -1,21 +1,29 @@
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { Map, MapMarker } from "react-kakao-maps-sdk"
 import { Button, Icon } from "semantic-ui-react"
 
-import classes from './MapDiv.module.css'
+import classes from "./MapDiv.module.css"
 import MapCafeMarker from "./MapCafeMarker"
 import MapCircle from "./MapCircle"
-
+import { useDispatch, useSelector } from "react-redux"
+import { findMapCafeList } from "../../store/cafe"
 const MapDiv = () => {
+  const dispatch = useDispatch()
   const [center, setCenter] = useState({
     lat: sessionStorage.getItem("lat"),
     lng: sessionStorage.getItem("lng"),
   })
-
+  const cafeList = useSelector((state) => state.cafe.mapCafeList)
   const [isMoved, setIsMoved] = useState(false)
+
+  const findCafeList = () => {
+    dispatch(findMapCafeList({ lat: center.lat, lng: center.lng, distance: 0.3 }))
+  }
+
   const dragHandler = () => {
     setIsMoved(true)
   }
+
   const goToMyPosition = () => {
     setCenter({
       lat: sessionStorage.getItem("lat"),
@@ -23,30 +31,7 @@ const MapDiv = () => {
     })
     setIsMoved(false)
   }
-  // 드래그 했을 때 새로운 카페 정보를 가져오기
-  const DUMMY_DATA = [
-    {
-      lat: center.lat - 0.0003,
-      lng: center.lng + 0.001,
-      name: "스타벅스",
-      crowdValue: "원활",
-      address: "서울시 강남구 역삼역..",
-    },
-    {
-      lat: center.lat - 0.0007,
-      lng: center.lng - 0.0009,
-      name: "할리스",
-      crowdValue: "혼잡",
-      address: "서울시 강남구 테헤란로..",
-    },
-    {
-      lat: center.lat + 0.001,
-      lng: center.lng - 0.003,
-      name: "파스쿠찌",
-      crowdValue: "보통",
-      address: "서울시 강남구 역삼역 1번출구",
-    },
-  ]
+
   return (
     <>
       <Map
@@ -63,7 +48,7 @@ const MapDiv = () => {
       >
         <MapMarker position={{ lat: center.lat, lng: center.lng }} />
 
-        {DUMMY_DATA.map((cafe, index) => {
+        {cafeList.map((cafe, index) => {
           return (
             <MapCafeMarker
               key={index}
@@ -76,11 +61,26 @@ const MapDiv = () => {
           )
         })}
         <MapCircle lat={center.lat} lng={center.lng} />
-      {isMoved && (
-        <Button className={classes.myLocationBtn} icon circular onClick={goToMyPosition}>
-          <Icon name="map marker alternate" color="red" />
-        </Button>
-      )}
+        {isMoved && (
+          <>
+            <Button
+              className={classes.myLocationBtn}
+              icon
+              circular
+              onClick={goToMyPosition}
+            >
+              <Icon name="map marker alternate" color="red" />
+            </Button>
+            <Button
+              className={classes.findCafeBtn}
+              icon
+              circular
+              onClick={findCafeList}
+            >
+              현재 위치에서 카페 찾기
+            </Button>
+          </>
+        )}
       </Map>
     </>
   )

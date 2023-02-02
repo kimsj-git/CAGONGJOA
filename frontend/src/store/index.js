@@ -7,9 +7,17 @@ import modalReducer from "./modal"
 import timerReducer from "./timer"
 import cafeReducer from "./cafe"
 import todoReducer from "./todo"
+import mapReducer from "./map"
 
 const store = configureStore({
-  reducer: { auth: authReducer, modal: modalReducer, timer: timerReducer, todo: todoReducer, cafe:cafeReducer },
+  reducer: {
+    auth: authReducer,
+    modal: modalReducer,
+    timer: timerReducer,
+    todo: todoReducer,
+    cafe: cafeReducer,
+    map: mapReducer,
+  },
 })
 
 export default store
