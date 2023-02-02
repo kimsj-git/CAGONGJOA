@@ -1,4 +1,4 @@
-package com.ssafy.backend.jwt;
+package com.ssafy.backend.redis;
 
 import org.springframework.data.repository.CrudRepository;
 

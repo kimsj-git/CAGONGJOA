@@ -1,17 +1,14 @@
 package com.ssafy.backend.member.service;
 
 import com.auth0.jwt.interfaces.DecodedJWT;
-import com.ssafy.backend.common.exception.BaseException;
 import com.ssafy.backend.common.exception.member.MemberException;
 import com.ssafy.backend.common.exception.member.MemberExceptionType;
 import com.ssafy.backend.jwt.JwtUtil;
-import com.ssafy.backend.jwt.RefreshTokenRepository;
+import com.ssafy.backend.redis.RefreshTokenRepository;
 import com.ssafy.backend.member.domain.entity.Member;
-import com.ssafy.backend.member.domain.enums.NicknameType;
 import com.ssafy.backend.member.domain.enums.OauthType;
 import com.ssafy.backend.member.repository.MemberRepository;
 import lombok.*;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.request.RequestContextHolder;
