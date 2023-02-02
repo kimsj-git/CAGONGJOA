@@ -1,33 +1,32 @@
 import React, { useState } from "react"
 import { Button } from "semantic-ui-react"
+import "./LikeButton.css"
 
-const ToggleButton = (props) => {
-  const [active, setActive] = useState(false)
+const LikeButton = (props) => {
+  const [likeState, setLikeState] = useState(false)
   const handleClick = () => {
-    setActive(!active)
+    setLikeState(!likeState)
   }
   const {
     fluid = false,
     inverted = true,
     basic = false,
     compact = false,
-    color,
-    icon,
+    size = "medium",
   } = props
   return (
     <Button
-      toggle
+      id={likeState ? "like" : "unlike"}
       fluid={fluid}
       inverted={inverted}
       basic={basic}
-      active={active}
       compact={compact}
       onClick={handleClick}
-      color={props.color}
-      icon={props.icon}
+      icon="thumbs up"
       content={props.content}
+      size={props.size}
     />
   )
 }
 
-export default ToggleButton
+export default LikeButton

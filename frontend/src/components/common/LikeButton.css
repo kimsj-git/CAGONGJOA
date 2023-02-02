@@ -1,0 +1,11 @@
+#like {
+  background-color: #ff5144;
+  box-shadow: none !important;
+  color: #fff;
+}
+
+#unlike {
+  background-color: transparent;
+  box-shadow: 0 0 0 2px #ff695e inset !important;
+  color: #ff695e;
+}
