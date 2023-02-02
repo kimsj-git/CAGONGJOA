@@ -1,9 +1,11 @@
 package com.ssafy.backend.member.service;
 
+import com.auth0.jwt.interfaces.Claim;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.ssafy.backend.common.exception.member.MemberException;
 import com.ssafy.backend.common.exception.member.MemberExceptionType;
 import com.ssafy.backend.jwt.JwtUtil;
+import com.ssafy.backend.member.domain.dto.MemberIdAndNicknameDto;
 import com.ssafy.backend.redis.RefreshTokenRepository;
 import com.ssafy.backend.member.domain.entity.Member;
 import com.ssafy.backend.member.domain.enums.OauthType;
@@ -120,6 +122,17 @@ public class MemberServiceImpl implements MemberService{
                 throw new RuntimeException(e);
             }
         });
+    }
+
+    @Override
+    public MemberIdAndNicknameDto getMemberIdAndNicknameByJwtToken() throws Exception {
+        HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
+        String accessToken = request.getHeader("Authorization");
+        accessToken = accessToken.substring(7);
+        DecodedJWT payload = jwtUtil.getDecodedJWT(accessToken);
+        long memberId = Long.parseLong(payload.getAudience().get(0));
+        String nickname = String.valueOf(payload.getClaim("nickname"));
+        return new MemberIdAndNicknameDto(memberId, nickname);
     }
 
 }

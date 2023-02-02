@@ -1,5 +1,6 @@
 package com.ssafy.backend.member.service;
 
+import com.ssafy.backend.member.domain.dto.MemberIdAndNicknameDto;
 import com.ssafy.backend.member.domain.entity.Member;
 import com.ssafy.backend.member.domain.enums.OauthType;
 
@@ -19,5 +20,7 @@ public interface MemberService {
     Map<String, Object> tokenRefresh() throws Exception;
 
     void logout() throws Exception;
+
+    MemberIdAndNicknameDto getMemberIdAndNicknameByJwtToken() throws Exception;
 
 }
