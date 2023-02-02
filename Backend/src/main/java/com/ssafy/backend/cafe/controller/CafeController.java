@@ -6,6 +6,7 @@ import com.ssafy.backend.cafe.domain.dto.NearByCafeResultDto;
 import com.ssafy.backend.cafe.domain.dto.SelectCafeRequestDto;
 import com.ssafy.backend.cafe.domain.entity.CafeLocation;
 import com.ssafy.backend.cafe.service.CafeService;
+import com.ssafy.backend.common.annotation.CafeAuth;
 import com.ssafy.backend.common.dto.ResponseDTO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -23,6 +24,12 @@ import java.util.List;
 public class CafeController {
 
     private final CafeService cafeService;
+
+    @GetMapping("/test")
+    @CafeAuth
+    public void test() {
+        System.out.println("testest");
+    }
 
     @GetMapping("/auth")
     public ResponseEntity<ResponseDTO> checkCafeAuth() throws Exception {
