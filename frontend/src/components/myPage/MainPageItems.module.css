@@ -1,0 +1,10 @@
+.navItem {
+    cursor: default;
+    color: black;
+}
+
+.navItem:hover{
+    cursor: default;
+    text-decoration: none;
+    color: black;
+}
