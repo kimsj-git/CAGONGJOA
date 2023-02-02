@@ -1,6 +1,5 @@
 package com.ssafy.backend.post.domain.dto;
 
-import com.ssafy.backend.post.domain.enums.Type;
 import lombok.*;
 
 @ToString
@@ -8,7 +7,7 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class CommentWriteFormRequestDTO {
+public class CommentWriteRequestDTO {
 
     private String nickname; // nickname 을 받아서 사용
     private Long postId;

@@ -1,14 +1,14 @@
 package com.ssafy.backend.post.domain.entity;
 
+import com.ssafy.backend.common.entity.BaseEntity;
 import com.ssafy.backend.member.domain.entity.Member;
-import com.ssafy.backend.post.domain.enums.Type;
+import com.ssafy.backend.post.domain.enums.PostType;
 import lombok.*;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
 import javax.persistence.*;
 
-import java.time.LocalDateTime;
 
 import static javax.persistence.FetchType.LAZY;
 
@@ -24,14 +24,13 @@ public class Post extends BaseEntity {
     //== Column  ==//
 
         /** 1. 게시글의 ID  **/
-
         @Id
         @GeneratedValue
         @Column(columnDefinition = "INT UNSIGNED")
         private Long id;
 
         /** 2. 멤버 id를 멤버 테이블과 조인을 이용하여 사용 - 멤버가 삭제되면 모든 글이 삭제   **/
-        @ManyToOne(fetch = LAZY)
+        @ManyToOne
         @JoinColumn(name = "member_id")
         @OnDelete(action = OnDeleteAction.CASCADE)
         private Member member;
@@ -45,7 +44,7 @@ public class Post extends BaseEntity {
 
         /**  4. 피드 타입 : 7가지 중 하나 (중복X)   **/
         @Enumerated(EnumType.STRING)
-        private Type type;
+        private PostType type;
 
         /**  5. 이미지 참조 - 추후 추가    **/
 
@@ -55,8 +54,8 @@ public class Post extends BaseEntity {
 
         /**  생성자 : content, member, 카테고리, 이미지(나중추가)   **/
         @Builder(builderClassName = "postWriteBuilder", builderMethodName = "postWriteBuilder")
-        public Post(String content, Long memberId, Type type) {
-                this.memberId = memberId;
+        public Post(String content, Member member, PostType type) {
+                this.member = member;
                 this.content = content;
                 this.type = type;
         }
@@ -66,14 +65,12 @@ public class Post extends BaseEntity {
 
         public void saveMember(Member member) {
                 this.member = member;
-                member.getId()
+                member.getId();
         }
 
         public void updateContents(String content) {
                 this.content = content;
         }
         
-
-
 
 }

@@ -1,6 +1,6 @@
 package com.ssafy.backend.post.domain.entity;
 
-import com.ssafy.backend.member.domain.entity.Member;
+import com.ssafy.backend.common.entity.BaseEntity;
 import lombok.*;
 
 import javax.persistence.*;
@@ -49,7 +49,13 @@ public class Comment extends BaseEntity {
         private Long step;
 
         @Builder(builderClassName = "CommentWriteBuilder", builderMethodName = "CommentWriteBuilder")
-        public Comment ()
+        public Comment (Long id, Post post, Long memberId, String content, Long group) {
+                this.id = id;
+                this.post = post;
+                this.memberId = memberId;
+                this.content = content;
+                this.group = group;
+        }
 
 
 

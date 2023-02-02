@@ -1,7 +1,7 @@
 package com.ssafy.backend.post.domain.dto;
 
 
-import com.ssafy.backend.post.domain.enums.Type;
+import com.ssafy.backend.post.domain.enums.PostType;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -20,7 +20,7 @@ public class PostUpdateFormRequestDto {
 
     private Long postId;
     private String content;
-    private Type type;
+    private PostType type;
 
 
 

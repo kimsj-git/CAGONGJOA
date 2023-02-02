@@ -1,35 +1,29 @@
 package com.ssafy.backend.post.service;
 
 import com.amazonaws.services.s3.AmazonS3;
-import com.amazonaws.services.s3.model.CannedAccessControlList;
-import com.amazonaws.services.s3.model.ObjectMetadata;
-import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.ssafy.backend.jwt.JwtUtil;
 import com.ssafy.backend.member.domain.entity.Member;
-import com.ssafy.backend.post.domain.dto.PagingRequestDto;
-import com.ssafy.backend.post.domain.dto.PostUpdateFormRequestDto;
-import com.ssafy.backend.post.domain.dto.PostWriteFormRequestDto;
-import com.ssafy.backend.post.domain.entity.CommentLike;
-import com.ssafy.backend.post.domain.entity.Post;
-import com.ssafy.backend.post.domain.entity.PostImage;
-import com.ssafy.backend.post.domain.entity.PostLike;
-import com.ssafy.backend.post.repository.CommentLikeRepository;
-import com.ssafy.backend.post.repository.ImageRepository;
-import com.ssafy.backend.post.repository.PostLikeRepository;
-import com.ssafy.backend.post.repository.PostRepository;
+import com.ssafy.backend.member.repository.MemberRepository;
+import com.ssafy.backend.post.domain.dto.*;
+import com.ssafy.backend.post.domain.entity.*;
+import com.ssafy.backend.post.domain.enums.PostType;
+import com.ssafy.backend.post.repository.*;
 import com.ssafy.backend.post.util.PostUtil;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.transaction.Transactional;
-import javax.validation.constraints.NotNull;
 import java.util.*;
 
 @RequiredArgsConstructor // 얘도 커스텀?
@@ -41,12 +35,16 @@ public class PostServiceImpl implements PostService {
     private final AmazonS3 amazonS3;
     private final PostRepository postRepository;
     private final ImageRepository imageRepository;
+    // Pageable 객체를 하나만 만든다. - 여러 api 요청들에서 사용할 수 있게
+    private Slice<Post> postSlice;
 
 
     private final JwtUtil jwtUtil;
     private final PostUtil postUtil;
     private final PostLikeRepository postLikeRepository;
     private final CommentLikeRepository commentLikeRepository;
+    private final MemberRepository memberRepository;
+    private final CommentRepository commentRepository;
 
 
     public long userTest() throws Exception {
@@ -92,6 +90,7 @@ public class PostServiceImpl implements PostService {
 
         // 1-2. 이미지 업로드
         MultipartFile[] files = postWriteDto.getFiles();
+
         List<String> imagePathUrl = postUtil.imageUpload(files);
 
         // 1-3. 글 저장하기
@@ -103,13 +102,16 @@ public class PostServiceImpl implements PostService {
             // 인증되지 않은 유저의 경우, 카테고리를 두개로 제한한다.
         }
 
+        Optional<Member> optionalMember = memberRepository.findById(memberId);
+        Member member = optionalMember.orElseThrow();
+
         Post post = Post.postWriteBuilder()
-                .memberId(postWriteDto.getMemberId())
+                .member(member)
                 .content(postWriteDto.getContent())
                 .type(postWriteDto.getType())
                 .build();
 
-        Post result = postRepository.save(post);
+        postRepository.save(post);
         return true;
     }
 
@@ -144,46 +146,66 @@ public class PostServiceImpl implements PostService {
 
     }
 
+    @Override
+    public void findOnePost(Long postId, String nickname) throws Exception {
+
+    }
+
     // 3-2 회원탈퇴 시 게시글 모두 삭제
 
     /**
      * 4. 글 조회 (1건 / 상세)
      **/
-    @Override
-    public void findOnePost(Long postId, String nickname) throws Exception {
-        // 1. 유저 확인
-        System.out.println(nickname);
-        Map.Entry<Long, Boolean> checked = checkMember();
-        long memberId = checked.getKey(); // 멤버 아이디를 확인한다.
-        boolean isCafeAuthorized = checked.getValue(); // 카페 인증 여부를 확인한다.
-        System.out.println(memberId + " " + isCafeAuthorized);
-
-        // 2. 글 불러오기
-        Optional<Post> findOneResult = postRepository.findByMemberId(memberId);
-
-        Post post = findOneResult.orElseThrow();
-
-        // 3. 리턴
-        System.out.println(post);
-
-    }
+//    @Override
+//    public void findOnePost(Long postId, String nickname) throws Exception {
+//        // 1. 유저 확인
+//        System.out.println(nickname);
+//        Map.Entry<Long, Boolean> checked = checkMember();
+//        long memberId = checked.getKey(); // 멤버 아이디를 확인한다.
+//        boolean isCafeAuthorized = checked.getValue(); // 카페 인증 여부를 확인한다.
+//        System.out.println(memberId + " " + isCafeAuthorized);
+//
+//        // 2. 글 불러오기
+//        Optional<Post> findOneResult = postRepository.findByMemberId(memberId);
+//
+//        Post post = findOneResult.orElseThrow();
+//
+//        // 3. 리턴
+//        System.out.println(post);
+//
+//    }
 
     /**
      * 5. 글 전체 조회 (20개)
      **/
     @Override
-    public void findAllPost(PagingRequestDto requestDto) throws Exception {
-        String nickname = requestDto.getNickname();
+    public Slice<Post> findAllPost(Long postId, Pageable pageable) throws Exception {
+
         Map.Entry<Long, Boolean> checked = checkMember();
         long memberId = checked.getKey(); // 멤버 아이디를 확인한다.
         boolean isCafeAuthorized = checked.getValue(); // 카페 인증 여부를 확인한다.
 
-        System.out.println(memberId + " " + isCafeAuthorized);
-        Optional<Post> selectAllResult = postRepository.findByMemberId(memberId);
+        if(postId == -1) {
+            // Default 값으로 진행
+        }else {
 
-        Post post = selectAllResult.orElseThrow();
+            postSlice = postRepository.findAllByIdLessThanAndMemberId(postId, memberId, pageable);
+            
+            if(postSlice.isEmpty() || postSlice == null) {
+                System.out.println("널이래용");
+            }
+//            postSlice = postRepository.findAllByMemberId(memberId);
+        }
 
-        System.out.println(post);
+        return postSlice;
+    }
+
+    /**
+     * 6. 다음글내놔 벅벅
+     **/
+    @Override
+    public void nextPost() {
+
     }
 
     /**
@@ -215,39 +237,63 @@ public class PostServiceImpl implements PostService {
         return new AbstractMap.SimpleEntry<>(responseIsChecked, count);
     }
 
+
+    /**
+     * 2-1. 댓글 쓰기
+     **/
     @Override
-    public void wirteCommentForm(String content, Long groupId) throws Exception {
+    public void writeComment(CommentWriteRequestDTO commentWriteDto) throws Exception {
         //1. 유저 확인
         Map.Entry<Long, Boolean> checked = checkMember();
         long memberId = checked.getKey(); // 멤버 아이디를 확인한다.
         boolean isCafeAuthorized = checked.getValue(); // 카페 인증 여부를 확인한다.
 
+        Long postId = commentWriteDto.getPostId();
+        String content = commentWriteDto.getContent();
+        Long group = commentWriteDto.getGroup();
 
+        Optional<Post> postOptional = postRepository.findById(postId);
+        Post post = postOptional.orElseThrow();
         // 1-3. 글 저장하기
 
-        if (isCafeAuthorized) {
-            // 인증된 유저의 경우, 카테고리를 제한하지 않는다.
-
-        } else {
-            // 인증되지 않은 유저의 경우, 카테고리를 두개로 제한한다.
-        }
-
-        Post post = Post.postWriteBuilder()
-                .memberId(postWriteDto.getMemberId())
-                .content(postWriteDto.getContent())
-                .type(postWriteDto.getType())
+        Comment comment = Comment.CommentWriteBuilder()
+                .post(post)
+                .memberId(memberId)
+                .content(content)
+                .group(group)
                 .build();
 
-        Post result = postRepository.save(post);
-        return true;
-
-
-
+        // 인증 여부에 따라 글을 쓸수있다 - GeoAuth
+        commentRepository.save(comment);
 
     }
 
+
     /**
-     * 8. 댓글 좋아요
+     * 2-2. 댓글 업데이트
+     **/
+
+
+    @Override
+    public void updateComment(CommentUpdateRequestDTO commentUpdateDto) throws Exception{
+        Map.Entry<Long, Boolean> checked = checkMember();
+        long memberId = checked.getKey(); // 멤버 아이디를 확인한다.
+        boolean isCafeAuthorized = checked.getValue(); // 카페 인증 여부를 확인한다.
+
+        Long id = commentUpdateDto.getCommentId();
+        String content = commentUpdateDto.getContent();
+
+
+        Comment comment = Comment.CommentWriteBuilder()
+                .id(id)
+                .content(content)
+                .build();
+
+        commentRepository.save(comment);
+    }
+
+    /**
+     * 3. 댓글 좋아요
      **/
     @Override
     public Map.Entry<Boolean, Long> likeComment(Long commentId, Boolean isChecked) throws Exception {
@@ -279,8 +325,14 @@ public class PostServiceImpl implements PostService {
         return new AbstractMap.SimpleEntry<>(responseIsChecked, count);
     }
 
+    /**
+     * 4. 댓글 삭제
+     **/
+
     @Override
     public void deletecomment(Long commentId) {
+
+        commentRepository.deleteById(commentId);
 
     }
 }

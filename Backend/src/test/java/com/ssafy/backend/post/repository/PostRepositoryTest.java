@@ -1,7 +1,6 @@
 package com.ssafy.backend.post.repository;
 
 import com.ssafy.backend.post.domain.entity.Post;
-import com.ssafy.backend.post.domain.enums.Type;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -12,7 +11,6 @@ import org.springframework.data.domain.Sort;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.IntStream;
 
 @SpringBootTest
 public class PostRepositoryTest {
