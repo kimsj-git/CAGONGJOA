@@ -1,12 +1,14 @@
-import { useEffect, useState } from "react"
+import { useState } from "react"
 import { Map, MapMarker } from "react-kakao-maps-sdk"
 import { Button, Icon } from "semantic-ui-react"
+import { useDispatch, useSelector } from "react-redux"
 
 import classes from "./MapDiv.module.css"
 import MapCafeMarker from "./MapCafeMarker"
 import MapCircle from "./MapCircle"
-import { useDispatch, useSelector } from "react-redux"
 import { findMapCafeList } from "../../store/cafe"
+import MapSpinner from "./MapSpinner"
+
 const MapDiv = () => {
   const dispatch = useDispatch()
   const [center, setCenter] = useState({
@@ -81,6 +83,7 @@ const MapDiv = () => {
             </Button>
           </>
         )}
+      <MapSpinner/>
       </Map>
     </>
   )
