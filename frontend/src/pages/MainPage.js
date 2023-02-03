@@ -1,10 +1,10 @@
 import { useState, useCallback, Fragment, useEffect } from "react"
 import { Route, useLocation } from "react-router"
-import { Button } from "semantic-ui-react"
 import MainPageTopBar from "../components/mainPage/MainPageTopBar"
 import PostList from "../components/mainPage/PostList"
 import MapDiv from "../components/map/MapDiv"
 import useFetch from "../hooks/useFetch.js"
+import CafeAuthFetch from "../components/certificate/cafeAuth/CafeAuthFetch"
 
 const DEFAULT_REST_URL = process.env.REACT_APP_REST_DEFAULT_URL
 
@@ -63,6 +63,7 @@ const MainPage = () => {
   const { data: postsList, isLoading, sendRequest: getPosts } = useFetch()
 
   useEffect(() => {
+    CafeAuthFetch()
     getPosts({
       url: `${DEFAULT_REST_URL}/post/main`,
       headers: {

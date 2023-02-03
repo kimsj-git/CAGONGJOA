@@ -4,7 +4,7 @@ import KakaoLogin from "../../components/member/login/KakaoLogin"
 const LoginPage = () => {
   return (
     <div id="login-wrapper">
-      <h1>카스라이팅</h1>
+      <h1>카공조아</h1>
       <KakaoLogin />
     </div>
   )

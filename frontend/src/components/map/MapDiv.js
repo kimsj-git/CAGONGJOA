@@ -17,13 +17,18 @@ const MapDiv = () => {
   })
   const cafeList = useSelector((state) => state.cafe.mapCafeList)
   const [isMoved, setIsMoved] = useState(false)
+  const [isFinded, setIsFinded] = useState(true)
 
   const findCafeList = () => {
-    dispatch(findMapCafeList({ lat: center.lat, lng: center.lng, distance: 0.3 }))
+    dispatch(
+      findMapCafeList({ lat: center.lat, lng: center.lng, distance: 0.3 })
+    )
+    setIsFinded(true)
   }
 
   const dragHandler = () => {
     setIsMoved(true)
+    setIsFinded(false)
   }
 
   const goToMyPosition = () => {
@@ -32,6 +37,7 @@ const MapDiv = () => {
       lng: sessionStorage.getItem("lng"),
     })
     setIsMoved(false)
+    setIsFinded(false)
   }
 
   return (
@@ -54,8 +60,8 @@ const MapDiv = () => {
           return (
             <MapCafeMarker
               key={index}
-              lat={cafe.lat}
-              lng={cafe.lng}
+              lat={cafe.latitude}
+              lng={cafe.longitude}
               name={cafe.name}
               crowdValue={cafe.crowdValue}
               address={cafe.address}
@@ -64,7 +70,6 @@ const MapDiv = () => {
         })}
         <MapCircle lat={center.lat} lng={center.lng} />
         {isMoved && (
-          <>
             <Button
               className={classes.myLocationBtn}
               icon
@@ -73,17 +78,18 @@ const MapDiv = () => {
             >
               <Icon name="map marker alternate" color="red" />
             </Button>
-            <Button
-              className={classes.findCafeBtn}
-              icon
-              circular
-              onClick={findCafeList}
-            >
-              현재 위치에서 카페 찾기
-            </Button>
-          </>
         )}
-      <MapSpinner/>
+        {!isFinded && (
+          <Button
+            className={classes.findCafeBtn}
+            icon
+            circular
+            onClick={findCafeList}
+          >
+            현재 위치에서 카페 찾기
+          </Button>
+        )}
+        <MapSpinner />
       </Map>
     </>
   )

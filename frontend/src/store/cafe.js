@@ -20,11 +20,11 @@ const cafeSlice = createSlice({
   },
 })
 
-export const findNearCafeData = (distance) => {
+export const findNearCafeData = () => {
   return async (dispatch) => {
     dispatch(cafeActions.cafeListLoading())
     const sendRequest = async () => {
-      const response = await fetch(`${REST_DEFAULT_URL}/cafe`, {
+      const response = await fetch(`${REST_DEFAULT_URL}/cafe/auth`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -33,16 +33,13 @@ export const findNearCafeData = (distance) => {
         body: JSON.stringify({
           latitude: sessionStorage.getItem("lat"),
           longitude: sessionStorage.getItem("lng"),
-          dist: distance,
         }),
       })
 
       if (!response.ok) {
         throw new Error("fetch error")
       }
-
       const data = await response.json()
-      
       return data.data
     }
     try {
@@ -75,9 +72,7 @@ export const findMapCafeList = (dataSet) => {
       if (!response.ok) {
         throw new Error("fetch error")
       }
-
       const data = await response.json()
-      console.log(data.data)
       return data.data
     }
     try {
