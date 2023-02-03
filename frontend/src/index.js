@@ -6,6 +6,7 @@ import { Provider } from "react-redux"
 import App from "./App"
 import reportWebVitals from "./reportWebVitals"
 import store from "./store/index"
+import "./index.css"
 import "semantic-ui-css/semantic.min.css"
 import "primereact/resources/themes/lara-light-indigo/theme.css" // theme
 import "primereact/resources/primereact.css" // core css

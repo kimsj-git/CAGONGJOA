@@ -74,7 +74,7 @@ const PostForm = () => {
       open={firstOpen}
       onClose={() => setFirstOpen(false)}
       onOpen={() => setFirstOpen(true)}
-      trigger={<Button circular icon="write" size="big" />}
+      trigger={<Icon name="write" size="big" color="blue" />}
     >
       <Modal.Header center>
         {currentCafe + "의 이야기를 들려주세요!"}
