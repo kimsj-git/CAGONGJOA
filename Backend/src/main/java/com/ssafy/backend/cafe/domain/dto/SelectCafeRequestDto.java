@@ -9,6 +9,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class SelectCafeRequestDto {
     private long cafeId;
-    private Double lat;
-    private Double lng;
+    private Double latitude;
+    private Double longitude;
 }
