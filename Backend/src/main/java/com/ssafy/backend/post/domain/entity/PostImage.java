@@ -35,6 +35,8 @@ public class PostImage {
         @Column(name = "img_url")
         private String imgUrl;
 
-
+        /**  4. 엑세스키   **/
+        @Column(name="access_key")
+        private String accessKey;
 
 }

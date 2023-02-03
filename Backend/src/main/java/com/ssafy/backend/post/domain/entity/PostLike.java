@@ -24,14 +24,12 @@ public class PostLike {
         @Column(columnDefinition = "INT UNSIGNED")
         private Long id;
 
-//        /** 2. post id를 post 테이블과 조인을 이용하여 사용 - 게시글이 삭제되면 모든 좋아요 삭제   **/
-//        @ManyToOne(fetch = LAZY)
-//        @JoinColumn(name = "post_id")
-//        @OnDelete(action = OnDeleteAction.CASCADE)
-//        private Post post;
+        /** 2. post id를 post 테이블과 조인을 이용하여 사용 - 게시글이 삭제되면 모든 좋아요 삭제   **/
+        @ManyToOne(fetch = LAZY)
+        @JoinColumn(name = "post_id")
+        @OnDelete(action = OnDeleteAction.CASCADE)
+        private Post post;
 
-        @Column(name = "post_id")
-        private Long postId;
 
         /** 3. 멤버 - 매핑이 따로 필요없을듯 한데?  **/
         // 멤버가 삭제되면 Post 가 전부삭제 - 따라서 likes 도 전부삭제
@@ -39,8 +37,8 @@ public class PostLike {
         private Long memberId;
 
         @Builder(builderClassName = "PostLikeBuilder", builderMethodName = "PostLikeBuilder")
-        public PostLike (Long postId, Long memberId) {
-                this.postId = postId;
+        public PostLike (Post post, Long memberId) {
+                this.post = post;
                 this.memberId = memberId;
         }
 

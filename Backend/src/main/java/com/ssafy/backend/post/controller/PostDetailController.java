@@ -1,10 +1,18 @@
 package com.ssafy.backend.post.controller;
 
 import com.ssafy.backend.common.annotation.Auth;
+import com.ssafy.backend.common.dto.ResponseDTO;
+import com.ssafy.backend.post.domain.dto.CommentPagingRequestDto;
 import com.ssafy.backend.post.domain.dto.CommentUpdateRequestDTO;
 import com.ssafy.backend.post.domain.dto.CommentWriteRequestDTO;
+import com.ssafy.backend.post.domain.entity.Comment;
+import com.ssafy.backend.post.service.CommentService;
 import com.ssafy.backend.post.service.PostService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -17,28 +25,36 @@ import java.util.Map;
 public class PostDetailController {
 
     private final PostService postService;
+    private final CommentService commentService;
+    private ResponseDTO responseDTO;
 
-    /**  2-1. 댓글 더보기 **/
+    /**  2-1. 댓글 더보기  (보류) **/
 
     @Auth
-    @GetMapping("/comment/next")
-    public ResponseEntity<Void> nextComment() throws Exception {
+    @GetMapping("/comment/feed")
+    public ResponseEntity<ResponseDTO> nextComment(
+            @RequestBody CommentPagingRequestDto requestDto,
+            @PageableDefault(size = 10, sort = "id", direction = Sort.Direction.DESC) Pageable pageable) throws Exception {
 
-        // 여기에요
+        Slice<Comment> comments = commentService.feedComment(requestDto, pageable);
 
-        return new ResponseEntity<>(HttpStatus.OK);
+        responseDTO = new ResponseDTO("댓글 불러오기 완료!", "", HttpStatus.OK, comments);
+
+        return new ResponseEntity<>(responseDTO, HttpStatus.OK);
     }
 
     /**  2-2. 댓글 작성 (테스트필요) **/
 
     @Auth
-    @GetMapping("/comment/write")
-    public ResponseEntity<Void> commentWrite(@RequestBody CommentWriteRequestDTO commentWriteDto) throws Exception {
+    @PostMapping("/comment/write")
+    public ResponseEntity<ResponseDTO> commentWrite(
+            @RequestBody CommentWriteRequestDTO commentWriteDto) throws Exception {
 
+        commentService.writeComment(commentWriteDto);
 
-        postService.writeComment(commentWriteDto);
+        responseDTO = new ResponseDTO("댓글 작성 완료!", "", HttpStatus.OK, null);
 
-        return new ResponseEntity<>(HttpStatus.OK);
+        return new ResponseEntity<>(responseDTO, HttpStatus.OK);
     }
 
 
@@ -46,7 +62,7 @@ public class PostDetailController {
     @PostMapping("/comment/like")
     public ResponseEntity<Void> commentLike(@RequestParam Long commentId, @RequestParam Boolean isChecked) throws Exception {
 
-        Map.Entry<Boolean, Long> postLikeResult = postService.likeComment(commentId, isChecked);
+        Map.Entry<Boolean, Long> postLikeResult = commentService.likeComment(commentId, isChecked);
         Boolean responseIsChecked = postLikeResult.getKey();
         Long responseCommentId = postLikeResult.getValue();
         System.out.println("Controller - commentLike - " + responseIsChecked + " " + responseCommentId);
@@ -60,7 +76,7 @@ public class PostDetailController {
     @GetMapping("/comment/update")
     public ResponseEntity<Void> commentUpdate(CommentUpdateRequestDTO commentUpdateDto) throws Exception {
 
-        postService.updateComment(commentUpdateDto);
+        commentService.updateComment(commentUpdateDto);
 
         return new ResponseEntity<>(HttpStatus.OK);
     }
@@ -68,34 +84,16 @@ public class PostDetailController {
     /**  2-5. 댓글 삭제   **/
 
     @Auth
-    @PostMapping("/comment/delete")
+    @DeleteMapping("/comment/delete")
 
-    public ResponseEntity<Void> deleteComment(@RequestParam Long commentId) throws Exception {
+    public ResponseEntity<ResponseDTO> deleteComment(@RequestParam Long commentId) throws Exception {
 
-        postService.deletecomment(commentId);
-
-        return new ResponseEntity<>(HttpStatus.OK);
-    }
-
-    /**  2-6. 게시글 수정 페이지로 이동  **/
-    @PutMapping("/update")
-    @Auth
-    public ResponseEntity<Void> updatePost(@RequestParam String nickname, Long postId) throws Exception {
-
-        return new ResponseEntity<>(HttpStatus.OK);
-    }
-
-
-    /**  2-7. 게시글 삭제   **/
-
-    @Auth
-    @PostMapping("/delete")
-
-    public ResponseEntity<Void> deletePost(@RequestParam Long postId) throws Exception {
-
-        postService.deletePost(postId);
-
-        return new ResponseEntity<>(HttpStatus.OK);
+        if(commentService.deleteComment(commentId)) {
+            responseDTO = new ResponseDTO("댓글 삭제 완료!", "", HttpStatus.OK, null);
+        }else {
+            responseDTO = new ResponseDTO("", "401 error 유저 <> 글쓴이 확인필요", HttpStatus.UNAUTHORIZED, null);
+        }
+        return new ResponseEntity<>(responseDTO,HttpStatus.OK);
     }
 
 }

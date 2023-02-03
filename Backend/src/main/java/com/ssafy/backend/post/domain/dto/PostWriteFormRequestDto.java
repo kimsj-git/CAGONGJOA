@@ -14,15 +14,9 @@ import org.springframework.web.multipart.MultipartFile;
 @AllArgsConstructor
 public class PostWriteFormRequestDto {
 
-    /**   2. 글 등록 요청       **/
-
-    private String nickname; // nickname 을 받아서 사용
-    private Long memberId; // 테스팅시에만 사용, 추후 삭제
     private String content;
     private PostType type;
-    private MultipartFile[] files;
-
-
+//    private MultipartFile[] files;
 
 
 }

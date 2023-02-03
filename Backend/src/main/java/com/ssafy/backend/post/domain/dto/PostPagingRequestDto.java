@@ -6,24 +6,18 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @ToString
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
 public class PostPagingRequestDto {
-
-    @Builder.Default
-    private int page = 1;
-
-    @Builder.Default
-    private int size = 10;
-
+    private Long postId;
     private PostType[] types;
 
 
-    public Pageable getPageable(String...props) {
-        return PageRequest.of(this.page -1, this.size, Sort.by(props).descending());
-    }
 
 }

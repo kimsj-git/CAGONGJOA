@@ -1,6 +1,7 @@
 package com.ssafy.backend.post.controller;
 
 import com.ssafy.backend.common.annotation.Auth;
+import com.ssafy.backend.common.dto.ResponseDTO;
 import com.ssafy.backend.post.domain.dto.PostUpdateFormRequestDto;
 import com.ssafy.backend.post.domain.dto.PostWriteFormRequestDto;
 import com.ssafy.backend.post.service.PostService;
@@ -19,32 +20,42 @@ import java.util.Map;
 public class PostFormController {
 
     private final PostService postService;
+    private ResponseDTO responseDTO;
 
-    /**  3-1. 글 등록 요청  [테스트완료] **/
+    /**
+     * 3-1. 글 등록 요청 [이미지 + 글 테스트완료 - 위치인증 값 필요]
+     **/
 
 //    @Auth
     @PostMapping("/write")
-    public ResponseEntity<Void> postSave(@ModelAttribute PostWriteFormRequestDto requestPostDto) throws Exception {
+    public ResponseEntity<ResponseDTO> postSave(
+            @RequestPart(value = "imgFiles", required = false) MultipartFile[] files,
+            @RequestPart(value = "writeForm") PostWriteFormRequestDto requestPostDto) throws Exception {
 
-        if(postService.writePost(requestPostDto)) { // 위치인증된 유저
-            return new ResponseEntity<>(HttpStatus.OK);
-        }else { // 위치인증 되지 않은 유저
-            return new ResponseEntity<>(HttpStatus.OK);
-        }
 
+        boolean isPost = postService.writePost(files, requestPostDto);  // 위치인증된 유저
+
+        responseDTO = new ResponseDTO("글쓰기 완료!", "", HttpStatus.OK, null);
+
+        return new ResponseEntity<>(responseDTO, HttpStatus.OK);
     }
 
 
-    /**  3-2. 게시글 수정  [테스트완료] **/
+    /**
+     * 3-2. 게시글 수정  [이미지 + 글 테스트완료 - 위치인증 값 필요] - 자랑하기까지 요걸로 퉁
+     **/
     @Auth
-    @PostMapping("/updateForm")
+    @PostMapping("/update")
 
-    public ResponseEntity<Void> postUpdate(@RequestBody PostUpdateFormRequestDto updateDto) throws Exception {
+    public ResponseEntity<ResponseDTO> postUpdate(
+            @RequestPart(value = "imgFiles", required = false) MultipartFile[] files,
+            @RequestPart(value = "updateForm", required = false) PostUpdateFormRequestDto updateDto) throws Exception {
 
-        postService.updatePost(updateDto);
+        postService.updatePost(files, updateDto);
 
-        return new ResponseEntity<>(HttpStatus.OK);
+        responseDTO = new ResponseDTO("글 업데이트 완료!", "", HttpStatus.OK, null);
+
+        return new ResponseEntity<>(responseDTO, HttpStatus.OK);
     }
-
 
 }

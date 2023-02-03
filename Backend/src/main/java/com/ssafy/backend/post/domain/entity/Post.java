@@ -44,7 +44,8 @@ public class Post extends BaseEntity {
 
         /**  4. 피드 타입 : 7가지 중 하나 (중복X)   **/
         @Enumerated(EnumType.STRING)
-        private PostType type;
+        @Column(name = "type")
+        private PostType postType;
 
         /**  5. 이미지 참조 - 추후 추가    **/
 
@@ -54,10 +55,10 @@ public class Post extends BaseEntity {
 
         /**  생성자 : content, member, 카테고리, 이미지(나중추가)   **/
         @Builder(builderClassName = "postWriteBuilder", builderMethodName = "postWriteBuilder")
-        public Post(String content, Member member, PostType type) {
+        public Post(String content, Member member, PostType postType) {
                 this.member = member;
                 this.content = content;
-                this.type = type;
+                this.postType = postType;
         }
 
         /**  연관 메서드    **/

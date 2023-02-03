@@ -1,6 +1,5 @@
 package com.ssafy.backend.post.service;
 
-import com.amazonaws.services.s3.AmazonS3;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.ssafy.backend.jwt.JwtUtil;
 import com.ssafy.backend.member.domain.entity.Member;
@@ -11,13 +10,9 @@ import com.ssafy.backend.post.domain.enums.PostType;
 import com.ssafy.backend.post.repository.*;
 import com.ssafy.backend.post.util.PostUtil;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 import org.springframework.web.multipart.MultipartFile;
@@ -30,13 +25,11 @@ import java.util.*;
 @Service
 @Transactional
 public class PostServiceImpl implements PostService {
-    @Value("${cloud.aws.s3.bucket}")
-    private String bucket;
-    private final AmazonS3 amazonS3;
     private final PostRepository postRepository;
-    private final ImageRepository imageRepository;
-    // Pageable 객체를 하나만 만든다. - 여러 api 요청들에서 사용할 수 있게
     private Slice<Post> postSlice;
+    private Post post;
+    private Comment comment;
+    private PostImage postImage;
 
 
     private final JwtUtil jwtUtil;
@@ -45,6 +38,7 @@ public class PostServiceImpl implements PostService {
     private final CommentLikeRepository commentLikeRepository;
     private final MemberRepository memberRepository;
     private final CommentRepository commentRepository;
+    private final ImageRepository imageRepository;
 
 
     public long userTest() throws Exception {
@@ -59,60 +53,46 @@ public class PostServiceImpl implements PostService {
 
     }
 
-    @Override
-    /**    0. 유저 확인   **/
-    public Map.Entry<Long, Boolean> checkMember() throws Exception {
-
-        // 1. 실제 DB에 저장된 닉네임과 맞는지 확인
-        // 2. 맞으면 DB에서 사용자의 id 를 가져오기 (pk)
-//        long memberId = postUtil.userTest();
-
-
-        Long memberId = 1L;
-        //Long memberId = postRepository.findByMemberId();
-        // 3. 카페 인증된 회원인지 확인
-        boolean isCafeAuthorized = true;
-
-        return new AbstractMap.SimpleEntry<>(memberId, isCafeAuthorized);
-    }
-
-
     /**
      * 1. 글 등록
      **/
     @Override
-    public boolean writePost(PostWriteFormRequestDto postWriteDto) throws Exception {
+    public boolean writePost(MultipartFile[] files, PostWriteFormRequestDto postWriteDto) throws Exception {
 
         //1. 유저 확인
-        Map.Entry<Long, Boolean> checked = checkMember();
+        Map.Entry<Long, Boolean> checked = postUtil.checkMember();
         long memberId = checked.getKey(); // 멤버 아이디를 확인한다.
         boolean isCafeAuthorized = checked.getValue(); // 카페 인증 여부를 확인한다.
 
-        // 1-2. 이미지 업로드
-        MultipartFile[] files = postWriteDto.getFiles();
+        // 1-2. 글 저장하기
 
-        List<String> imagePathUrl = postUtil.imageUpload(files);
+        if (!isCafeAuthorized) {
+            // 인증되지 않은 유저의 경우, 카테고리를 제한하지 않는다.
 
-        // 1-3. 글 저장하기
-
-        if (isCafeAuthorized) {
-            // 인증된 유저의 경우, 카테고리를 제한하지 않는다.
-
-        } else {
-            // 인증되지 않은 유저의 경우, 카테고리를 두개로 제한한다.
         }
 
         Optional<Member> optionalMember = memberRepository.findById(memberId);
         Member member = optionalMember.orElseThrow();
+        String content = postWriteDto.getContent();
+        System.out.println("content : " + content);
 
         Post post = Post.postWriteBuilder()
                 .member(member)
-                .content(postWriteDto.getContent())
-                .type(postWriteDto.getType())
+                .content(content)
+                .postType(postWriteDto.getType())
                 .build();
 
         postRepository.save(post);
+        //System.out.println(post.getId());
+
+        // 1-3. 이미지 업로드
+        if(files != null) {
+            postUtil.imageUpload(post, files);
+        }
+//        else System.out.println("파일이 널입니다.");
+
         return true;
+
     }
 
 
@@ -120,12 +100,11 @@ public class PostServiceImpl implements PostService {
      * 2. 글 업데이트
      **/
     @Override
-    public void updatePost(PostUpdateFormRequestDto updateDto) {
+    public void updatePost(MultipartFile[] files, PostUpdateFormRequestDto updateDto) throws Exception{
 
         // 1. 글 업데이트
         Long postId = updateDto.getPostId();
         String content = updateDto.getContent();
-        //List<Image> images = updateDto.getImages();
 
         Optional<Post> updateResult = postRepository.findById(postId);
         Post post = updateResult.orElseThrow();
@@ -133,6 +112,12 @@ public class PostServiceImpl implements PostService {
         post.updateContents(content);
 
         postRepository.save(post);
+        
+        // 2. 이미지 업데이트s
+        postUtil.imageDeleteAll(post);
+        if(files != null) {
+            postUtil.imageUpload(post, files);
+        }
     }
 
     /**
@@ -146,65 +131,57 @@ public class PostServiceImpl implements PostService {
 
     }
 
-    @Override
-    public void findOnePost(Long postId, String nickname) throws Exception {
 
-    }
 
     // 3-2 회원탈퇴 시 게시글 모두 삭제
 
     /**
-     * 4. 글 조회 (1건 / 상세)
-     **/
-//    @Override
-//    public void findOnePost(Long postId, String nickname) throws Exception {
-//        // 1. 유저 확인
-//        System.out.println(nickname);
-//        Map.Entry<Long, Boolean> checked = checkMember();
-//        long memberId = checked.getKey(); // 멤버 아이디를 확인한다.
-//        boolean isCafeAuthorized = checked.getValue(); // 카페 인증 여부를 확인한다.
-//        System.out.println(memberId + " " + isCafeAuthorized);
-//
-//        // 2. 글 불러오기
-//        Optional<Post> findOneResult = postRepository.findByMemberId(memberId);
-//
-//        Post post = findOneResult.orElseThrow();
-//
-//        // 3. 리턴
-//        System.out.println(post);
-//
-//    }
-
-    /**
-     * 5. 글 전체 조회 (20개)
+     * 4. 글 전체 조회 (10개)
      **/
     @Override
-    public Slice<Post> findAllPost(Long postId, Pageable pageable) throws Exception {
+    public Slice<Post> feedPosts(PostPagingRequestDto requestDto, Pageable pageable) throws Exception {
 
-        Map.Entry<Long, Boolean> checked = checkMember();
+        Map.Entry<Long, Boolean> checked = postUtil.checkMember();
         long memberId = checked.getKey(); // 멤버 아이디를 확인한다.
         boolean isCafeAuthorized = checked.getValue(); // 카페 인증 여부를 확인한다.
 
-        if(postId == -1) {
-            // Default 값으로 진행
-        }else {
+        Long postId = requestDto.getPostId();
+        PostType[] types = requestDto.getTypes();
 
-            postSlice = postRepository.findAllByIdLessThanAndMemberId(postId, memberId, pageable);
-            
+        if(postId == -1) {
+            // 처음 요청할때 (refresh)
+            postSlice = postRepository.findAllByMemberId(memberId, types, pageable);
+        }else {
+            // 두번째 이상으로 요청할 때 (마지막 글의 pk 를 기준으로 함)
+            postSlice = postRepository.findAllByIdLessThanAndMemberId(postId, memberId, types, pageable);
+
+            // 갖고올 게시물이 없으면
             if(postSlice.isEmpty() || postSlice == null) {
                 System.out.println("널이래용");
             }
-//            postSlice = postRepository.findAllByMemberId(memberId);
+
         }
 
         return postSlice;
     }
 
     /**
-     * 6. 다음글내놔 벅벅
+     * 4. 상세페이지 조회
      **/
     @Override
-    public void nextPost() {
+    public void findOnePost(Long postId) throws Exception {
+
+        Map.Entry<Long, Boolean> checked = postUtil.checkMember();
+
+        Optional<Post> postOptional = postRepository.findById(postId);
+        post = postOptional.orElseThrow();
+
+        List<Comment> commentList = commentRepository.findAllByPost(post);
+
+        List<PostImage> postImageOptional = imageRepository.findAllByPostId(postId);
+
+        List<String> imgUrlLinks;
+
 
     }
 
@@ -212,127 +189,53 @@ public class PostServiceImpl implements PostService {
      * 7. 게시글 좋아요
      **/
     @Override
-    public Map.Entry<Boolean, Long> likePost(Long postId, Boolean isChecked) throws Exception {
-
+    public PostLikeResponseDto likePost(PostLikeRequestDto likeRequestDto) throws Exception {
 
         //1. 유저 확인
-        Map.Entry<Long, Boolean> checked = checkMember();
+        Map.Entry<Long, Boolean> checked = postUtil.checkMember();
         long memberId = checked.getKey(); // 멤버 아이디를 확인한다.
-        boolean isCafeAuthorized = checked.getValue(); // 카페 인증 여부를 확인한다.
+
+        Long postId = likeRequestDto.getPostId();
+        Boolean isChecked = likeRequestDto.getIsChecked();
+
         Boolean responseIsChecked;
-
-        if (!isChecked) {
-            PostLike postLike = PostLike.PostLikeBuilder()
-                    .postId(postId)
-                    .memberId(memberId)
-                    .build();
-            postLikeRepository.save(postLike);
-            responseIsChecked = true;
-        } else {
-            postLikeRepository.deleteByPostIdAndMemberId(postId, memberId);
-            responseIsChecked = false;
-        }
-
-        Long count = postLikeRepository.countByPostId(postId);
-        return new AbstractMap.SimpleEntry<>(responseIsChecked, count);
-    }
-
-
-    /**
-     * 2-1. 댓글 쓰기
-     **/
-    @Override
-    public void writeComment(CommentWriteRequestDTO commentWriteDto) throws Exception {
-        //1. 유저 확인
-        Map.Entry<Long, Boolean> checked = checkMember();
-        long memberId = checked.getKey(); // 멤버 아이디를 확인한다.
-        boolean isCafeAuthorized = checked.getValue(); // 카페 인증 여부를 확인한다.
-
-        Long postId = commentWriteDto.getPostId();
-        String content = commentWriteDto.getContent();
-        Long group = commentWriteDto.getGroup();
 
         Optional<Post> postOptional = postRepository.findById(postId);
-        Post post = postOptional.orElseThrow();
-        // 1-3. 글 저장하기
 
-        Comment comment = Comment.CommentWriteBuilder()
-                .post(post)
-                .memberId(memberId)
-                .content(content)
-                .group(group)
-                .build();
+        post = postOptional.orElseThrow();
 
-        // 인증 여부에 따라 글을 쓸수있다 - GeoAuth
-        commentRepository.save(comment);
-
-    }
-
-
-    /**
-     * 2-2. 댓글 업데이트
-     **/
-
-
-    @Override
-    public void updateComment(CommentUpdateRequestDTO commentUpdateDto) throws Exception{
-        Map.Entry<Long, Boolean> checked = checkMember();
-        long memberId = checked.getKey(); // 멤버 아이디를 확인한다.
-        boolean isCafeAuthorized = checked.getValue(); // 카페 인증 여부를 확인한다.
-
-        Long id = commentUpdateDto.getCommentId();
-        String content = commentUpdateDto.getContent();
-
-
-        Comment comment = Comment.CommentWriteBuilder()
-                .id(id)
-                .content(content)
-                .build();
-
-        commentRepository.save(comment);
-    }
-
-    /**
-     * 3. 댓글 좋아요
-     **/
-    @Override
-    public Map.Entry<Boolean, Long> likeComment(Long commentId, Boolean isChecked) throws Exception {
-        Boolean responseIsChecked;
-
-        //1. 유저 확인
-        Map.Entry<Long, Boolean> checked = checkMember();
-        long memberId = checked.getKey(); // 멤버 아이디를 확인한다.
-        boolean isCafeAuthorized = checked.getValue(); // 카페 인증 여부를 확인한다.
-
-
-        // False 라면 생성
-
-        if (!isChecked) {
-            CommentLike commentLike = CommentLike.CommentLikeBuilder()
-                    .commentId(commentId)
-                    .memberId(memberId)
-                    .build();
-            commentLikeRepository.save(commentLike);
-            responseIsChecked = true;
-        }
-        // True 라면 삭제
-        else {
-            commentLikeRepository.deleteByCommentIdAndMemberId(commentId, memberId);
+        System.out.println("isChecked : " + likeRequestDto.getIsChecked());
+        if (!isChecked) {// 눌려있지 않다면 누른다음에, 좋아요 DB에 추가를 한다
+            if(postLikeRepository.findByPostIdAndMemberId(postId, memberId) == null) { // null 이면 맞음
+                PostLike postLike = PostLike.PostLikeBuilder()
+                        .post(post)
+                        .memberId(memberId)
+                        .build();
+                postLikeRepository.save(postLike);
+                // false -> true 로 바꿔서 반환
+                responseIsChecked = true;
+                System.out.println("postLike 생성완료");
+            }else {// 유효성체크 : 안눌러져있는데, 또 누르기요청 : 에러발생
+                System.out.println("postLike 에러");
+                return null;
+            }
+        } else {
+            // true - > DB 의 값을 삭제한다
+            System.out.println("postLike 삭제");
+            postLikeRepository.deleteByPostIdAndMemberId(postId, memberId);
+            // true -> false
             responseIsChecked = false;
         }
-        Long count = commentLikeRepository.countCommentLikeByCommentId(commentId);
 
-        return new AbstractMap.SimpleEntry<>(responseIsChecked, count);
+        int count = postLikeRepository.countByPostId(postId);
+        PostLikeResponseDto response = PostLikeResponseDto.builder()
+                .postId(postId)
+                .isChecked(responseIsChecked)
+                .likeCount(count)
+                .build();
+        return response;
     }
 
-    /**
-     * 4. 댓글 삭제
-     **/
 
-    @Override
-    public void deletecomment(Long commentId) {
 
-        commentRepository.deleteById(commentId);
-
-    }
 }
