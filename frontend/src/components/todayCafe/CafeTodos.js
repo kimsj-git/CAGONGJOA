@@ -1,4 +1,4 @@
-import { useState, Fragment } from "react"
+import { useState } from "react"
 import { Grid } from "semantic-ui-react"
 import { Calendar } from "primereact/calendar"
 
@@ -11,9 +11,9 @@ const CafeTodos = () => {
     <Grid>
       <Grid.Row columns={2}>
         <Grid.Column>
-          <h3>
+          <p>
             {date.getMonth() + 1}월 {date.getDate()}일 Todo
-          </h3>
+          </p>
         </Grid.Column>
         <Grid.Column textAlign="right">
           <Calendar
