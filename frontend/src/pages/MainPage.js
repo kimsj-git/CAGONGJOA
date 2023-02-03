@@ -1,8 +1,6 @@
 import { useState, useCallback, Fragment, useEffect } from "react"
-import { useDispatch } from "react-redux"
 import { Route, useLocation } from "react-router"
 import { Button } from "semantic-ui-react"
-import { findMapCafeList } from "../store/cafe"
 import MainPageTopBar from "../components/mainPage/MainPageTopBar"
 import PostList from "../components/mainPage/PostList"
 import MapDiv from "../components/map/MapDiv"
@@ -130,10 +128,6 @@ const MainPage = () => {
   if (error) {
     content_feed = <p>{error}</p>
   }
-  const dispatch = useDispatch()
-  const findCafeList = () => {
-    dispatch(findMapCafeList({ lat: 32, lng: 127, dist: 0.3 }))
-  }
 
   return (
     <Fragment>
@@ -141,11 +135,9 @@ const MainPage = () => {
         <MainPageTopBar />
       </section>
       {isMap && (
-        <>
-          <Route path="/map">
-            <MapDiv />
-          </Route>
-        </>
+        <Route path="/map">
+          <MapDiv />
+        </Route>
       )}
       {!isMap && <section>{content_feed}</section>}
     </Fragment>
