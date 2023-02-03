@@ -1,5 +1,6 @@
 package com.ssafy.backend.post.domain.entity;
 
+import com.ssafy.backend.member.domain.entity.Member;
 import lombok.*;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
@@ -30,18 +31,21 @@ public class CommentLike {
 //        @OnDelete(action = OnDeleteAction.CASCADE)
 //        private Comment comment;
 
-        @Column(name = "comment_id")
-        private Long commentId;
+        @ManyToOne
+        @JoinColumn (name = "comment_id")
+        @OnDelete(action = OnDeleteAction.CASCADE)
+        private Comment comment;
 
         /** 3. 멤버 - 좋아요를 누른 멤버의 id 를 저장   **/
         // 알림 다이어트를 해서, 멤버 좋아요는 필요없을듯 함. 그래도 혹시모르니 매핑해놓겠음
-        @Column(name = "member_id")
-        private Long memberId;
+        @ManyToOne
+        @JoinColumn (name = "member_id")
+        private Member member;
 
         @Builder(builderMethodName = "CommentLikeBuilder", builderClassName = "CommentLikeBuilder")
-        CommentLike(long commentId, long memberId) {
-                this.commentId = commentId;
-                this.memberId = memberId;
+        CommentLike(Comment comment, Member member) {
+                this.comment = comment;
+                this.member = member;
         }
 
 

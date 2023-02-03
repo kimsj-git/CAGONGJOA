@@ -26,17 +26,18 @@ public class PostFormController {
      * 3-1. 글 등록 요청 [이미지 + 글 테스트완료 - 위치인증 값 필요]
      **/
 
-//    @Auth
+    @Auth
     @PostMapping("/write")
     public ResponseEntity<ResponseDTO> postSave(
             @RequestPart(value = "imgFiles", required = false) MultipartFile[] files,
             @RequestPart(value = "writeForm") PostWriteFormRequestDto requestPostDto) throws Exception {
 
 
-        boolean isPost = postService.writePost(files, requestPostDto);  // 위치인증된 유저
-
-        responseDTO = new ResponseDTO("글쓰기 완료!", "", HttpStatus.OK, null);
-
+        if(postService.writePost(files, requestPostDto)){
+            responseDTO = new ResponseDTO("글쓰기 완료!", "", HttpStatus.OK, null);
+        }else {
+            responseDTO = new ResponseDTO("", "code : 404 / 잘못된 카테고리 요청 ", HttpStatus.NOT_FOUND, null);
+        }
         return new ResponseEntity<>(responseDTO, HttpStatus.OK);
     }
 

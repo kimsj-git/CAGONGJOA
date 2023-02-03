@@ -2,10 +2,12 @@ package com.ssafy.backend.post.controller;
 
 
 import com.ssafy.backend.common.annotation.Auth;
+import com.ssafy.backend.common.annotation.CafeAuth;
 import com.ssafy.backend.common.dto.ResponseDTO;
 import com.ssafy.backend.post.domain.dto.PostLikeRequestDto;
 import com.ssafy.backend.post.domain.dto.PostLikeResponseDto;
 import com.ssafy.backend.post.domain.dto.PostPagingRequestDto;
+import com.ssafy.backend.post.domain.dto.PostPagingResponseDto;
 import com.ssafy.backend.post.domain.entity.Post;
 import com.ssafy.backend.post.service.PostService;
 import com.ssafy.backend.post.util.PostUtil;
@@ -16,6 +18,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Map;
+
 @RestController
 @RequestMapping("main/post")
 @RequiredArgsConstructor
@@ -25,16 +29,6 @@ public class PostMainController {
     private final PostUtil postUtil;
 
     private ResponseDTO responseDTO;
-
-//    @PostMapping("/usertest")
-//        public ResponseEntity<Map.Entry<Long,Boolean>> userTest() throws Exception {
-//
-//        Map.Entry<Long,Boolean> result = postService.checkMember();
-//
-//
-//        return new ResponseEntity<Map.Entry<Long,Boolean>>(result, HttpStatus.OK);
-//    }
-
 
 
     /**
@@ -47,7 +41,7 @@ public class PostMainController {
             @RequestBody PostPagingRequestDto requestDto,
             @PageableDefault(size = 10, sort = "id", direction = Sort.Direction.DESC) Pageable pageable) throws Exception {
 
-        Slice<Post> postSlice = postService.feedPosts(requestDto, pageable);
+        Slice<PostPagingResponseDto> postSlice = postService.feedPosts(requestDto, pageable);
 
         System.out.println(postSlice.getContent());
 
@@ -63,6 +57,7 @@ public class PostMainController {
      * 1-2. 게시글 좋아요 누르기  [테스트완료]
      **/
     @Auth
+//  @CafeAuth  // 카페인증 되어야 누를수있음
     @PostMapping("/like")
     public ResponseEntity<ResponseDTO> postLike(
             @RequestBody PostLikeRequestDto likeRequestDto) throws Exception {
@@ -74,8 +69,8 @@ public class PostMainController {
             return new ResponseEntity<>(responseDTO, HttpStatus.OK);
         }
         else {
-            responseDTO = new ResponseDTO("", "409에러 : 중복 좋아요 에러", HttpStatus.CONFLICT, null);
-            return new ResponseEntity<>(responseDTO, HttpStatus.CONFLICT);
+            responseDTO = new ResponseDTO("", "400에러(잘못된요청) : 중복 좋아요 에러, 처리 X", HttpStatus.BAD_REQUEST, null);
+            return new ResponseEntity<>(responseDTO, HttpStatus.BAD_REQUEST);
         }
 
 
@@ -94,19 +89,20 @@ public class PostMainController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-//
-//    /**
-//     * 1-4. 글쓰기 클릭  [테스트완료]
-//     **/
-//    @Auth
-//    @PostMapping("/write")
-//    public ResponseEntity<Void> postWrite(@RequestParam String memberNickname) throws Exception {
-//
-//        postService.checkMember();
-//
-//        return new ResponseEntity<>(HttpStatus.OK);
-//
-//    }
+
+    /**
+     * 1-4. 글쓰기 클릭  [테스트완료]
+     **/
+    @Auth
+//    @CafeAuth
+    @PostMapping("/write")
+    public ResponseEntity<ResponseDTO> postWrite() throws Exception {
+
+        responseDTO = new ResponseDTO("유저 인증됨!", "", HttpStatus.OK, null);
+
+        return new ResponseEntity<>(responseDTO, HttpStatus.OK);
+
+    }
 
 
 }

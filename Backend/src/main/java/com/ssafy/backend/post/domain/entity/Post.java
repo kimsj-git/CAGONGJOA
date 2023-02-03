@@ -10,6 +10,9 @@ import org.hibernate.annotations.OnDeleteAction;
 import javax.persistence.*;
 
 
+import java.util.ArrayList;
+import java.util.List;
+
 import static javax.persistence.FetchType.LAZY;
 
 @Table(name = "post")
@@ -26,7 +29,7 @@ public class Post extends BaseEntity {
         /** 1. 게시글의 ID  **/
         @Id
         @GeneratedValue
-        @Column(columnDefinition = "INT UNSIGNED")
+        @Column
         private Long id;
 
         /** 2. 멤버 id를 멤버 테이블과 조인을 이용하여 사용 - 멤버가 삭제되면 모든 글이 삭제   **/
@@ -47,31 +50,30 @@ public class Post extends BaseEntity {
         @Column(name = "type")
         private PostType postType;
 
-        /**  5. 이미지 참조 - 추후 추가    **/
+        /**  5. 양방향 매핑   **/
+        @OneToMany(mappedBy = "post")
+        List<Comment> commentList = new ArrayList<>();
 
-//        @OneToMany(mappedBy = "post", cascade = CascadeType.PERSIST, orphanRemoval = true)
-//        private List<Image> images;
+        @OneToMany(mappedBy = "post")
+        List<PostImage> postImageList = new ArrayList<>();
+
+        @OneToMany(mappedBy = "post")
+        List<PostLike> postLikeList = new ArrayList<>();
 
 
         /**  생성자 : content, member, 카테고리, 이미지(나중추가)   **/
         @Builder(builderClassName = "postWriteBuilder", builderMethodName = "postWriteBuilder")
-        public Post(String content, Member member, PostType postType) {
+        public Post(String content, Member member, PostType postType, List<PostImage> postImageList) {
                 this.member = member;
                 this.content = content;
                 this.postType = postType;
+                this.postImageList = postImageList;
         }
 
-        /**  연관 메서드    **/
-        /**  1. getId    **/ // 추후 이미지도 추가해야함
-
-        public void saveMember(Member member) {
-                this.member = member;
-                member.getId();
-        }
 
         public void updateContents(String content) {
                 this.content = content;
         }
-        
+
 
 }

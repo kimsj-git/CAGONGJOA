@@ -16,7 +16,8 @@ public class PostWriteFormRequestDto {
 
     private String content;
     private PostType type;
-//    private MultipartFile[] files;
+
+    private Boolean cafeAuthorized;
 
 
 }

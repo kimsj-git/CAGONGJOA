@@ -5,10 +5,19 @@ import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.*;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.interfaces.DecodedJWT;
+import com.ssafy.backend.cafe.domain.dto.ClientPosInfoDto;
+import com.ssafy.backend.cafe.domain.entity.Cafe;
+import com.ssafy.backend.cafe.repository.CafeRepository;
+import com.ssafy.backend.cafe.service.CafeServiceImpl;
 import com.ssafy.backend.jwt.JwtUtil;
+import com.ssafy.backend.member.domain.dto.MemberIdAndNicknameDto;
+import com.ssafy.backend.member.service.MemberServiceImpl;
+import com.ssafy.backend.post.domain.dto.CheckedResponseDto;
 import com.ssafy.backend.post.domain.entity.Post;
 import com.ssafy.backend.post.domain.entity.PostImage;
 import com.ssafy.backend.post.repository.ImageRepository;
+import com.ssafy.backend.redis.CafeAuth;
+import com.ssafy.backend.redis.CafeAuthRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -17,6 +26,7 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.swing.text.html.Option;
 import javax.transaction.Transactional;
 import java.util.*;
 
@@ -30,35 +40,48 @@ public class PostUtil {
     private String bucket;
     private PostImage postImage;
     private final ImageRepository imageRepository;
+    private CafeAuth cafeAuth;
+    private final MemberServiceImpl memberService;
+    private final CafeServiceImpl cafeService;
+    private final CafeAuthRepository cafeAuthRepository;
+    private final CafeRepository cafeRepository;
 
-
-    public long accessTokenDecode() throws Exception {
-
-        HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
-        String accessToken = request.getHeader("Authorization");
-        accessToken = accessToken.substring(7);
-        //System.out.println("어세스토큰 : " + accessToken);
-        DecodedJWT payload = JWT.decode(accessToken);
-        // 준모, JwtUtil 의 getDecodedToken 익셉션 해결되면 말해줘. 임시로 이렇게 해놓을게
-        long memberId = Integer.parseInt(payload.getAudience().get(0));
-        //System.out.println(memberId);
-        return memberId;
-    }
 
     /**    0. 유저 확인   **/
-    public Map.Entry<Long, Boolean> checkMember() throws Exception {
+    public CheckedResponseDto checkMember() throws Exception {
 
-        // 1. accessToken 을 해독하여, payload 에서 memberId 를 가져온다.
-        Long memberId = accessTokenDecode();
-        // 2. 카페 인증된 회원인지 확인하며, 인증되었다면 카페의 이름을 가져온다.
-        boolean isCafeAuthorized = true;
-        // 3. 주변의 카페 리스트를 가져온다.
+        // 1. accessToken 을 해독하여, payload 에서 memberId 와 nickname 을 가져온다.
+        MemberIdAndNicknameDto memberIdAndNicknameDto = memberService.getMemberIdAndNicknameByJwtToken();
+        Long memberId = memberIdAndNicknameDto.getId();
+        String nickname = memberIdAndNicknameDto.getNickname();
 
-        return new AbstractMap.SimpleEntry<>(memberId, isCafeAuthorized);
+        // 2. 카페 인증된 회원인지 확인하며, 인증되었다면 카페의 이름을 가져온다. KEY : 닉네임
+
+
+        Long cafeId;
+        String cafeName;
+        Optional<CafeAuth> cafeAuth = cafeAuthRepository.findById(nickname);
+        if (cafeAuth.isEmpty() || cafeAuth == null) { // 인증되지 않은 회원
+            cafeName = "CafeNotAuthorized";
+        } else { // 인증된 회원
+            cafeId = cafeAuth.orElseThrow().getCafeId();
+            Optional<Cafe> optionalCafe = cafeRepository.findById(cafeId);
+            Cafe cafe = optionalCafe.orElseThrow();
+            cafeName = cafe.getName(); // 카페 이름을 얻는다.
+
+        }
+
+        CheckedResponseDto checkedResponseDto = CheckedResponseDto.builder()
+                .nickname(nickname)
+                .memberId(memberId)
+                .cafeName(cafeName)
+                .build();
+
+        return checkedResponseDto;
     }
 
 
-    public void imageUpload(Post post, MultipartFile[] multipartFiles) throws Exception {
+    public List<PostImage> imageUpload(Post post, MultipartFile[] multipartFiles) throws Exception {
         List<String> imagePathList = new ArrayList<>();
         ObjectMetadata objectMetaData = new ObjectMetadata();
         List<PostImage> postImages = new ArrayList<>();
@@ -97,8 +120,7 @@ public class PostUtil {
 
             postImages.add(postImage);
         }
-        System.out.println(postImages);
-        imageRepository.saveAll(postImages);
+        return postImages;
     }
 
     public void imageDeleteAll(Post post) {

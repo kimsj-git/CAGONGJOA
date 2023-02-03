@@ -4,6 +4,7 @@ package com.ssafy.backend.post.service;
 import com.ssafy.backend.jwt.JwtUtil;
 import com.ssafy.backend.member.domain.entity.Member;
 import com.ssafy.backend.member.repository.MemberRepository;
+import com.ssafy.backend.post.domain.dto.CheckedResponseDto;
 import com.ssafy.backend.post.domain.dto.CommentPagingRequestDto;
 import com.ssafy.backend.post.domain.dto.CommentUpdateRequestDTO;
 import com.ssafy.backend.post.domain.dto.CommentWriteRequestDTO;
@@ -49,13 +50,13 @@ public class CommentServiceImpl implements CommentService {
     public Slice<Comment> feedComment(CommentPagingRequestDto requestDto, Pageable pageable) throws Exception {
         postUtil.checkMember();
 
-       Long commentId = requestDto.getCommentId();
-       Long postId = requestDto.getPostId();
+        Long commentId = requestDto.getCommentId();
+        Long postId = requestDto.getPostId();
 
-       Optional<Post> postOptional = postRepository.findById(postId);
-       post = postOptional.orElseThrow();
+        Optional<Post> postOptional = postRepository.findById(postId);
+        post = postOptional.orElseThrow();
 
-       Slice<Comment> comments = commentRepository.findAllByIdLessThanAndPost(commentId, post);
+        Slice<Comment> comments = commentRepository.findAllByIdLessThanAndPost(commentId, post);
 
         return comments;
     }
@@ -66,24 +67,24 @@ public class CommentServiceImpl implements CommentService {
     @Override
     public void writeComment(CommentWriteRequestDTO commentWriteDto) throws Exception {
         //1. 유저 확인
-        Map.Entry<Long, Boolean> checked = postUtil.checkMember();
-        long memberId = checked.getKey(); // 멤버 아이디를 확인한다.
-        boolean isCafeAuthorized = checked.getValue(); // 카페 인증 여부를 확인한다.
-        System.out.println(commentWriteDto);
+        CheckedResponseDto checked = postUtil.checkMember();
+        long memberId = checked.getMemberId(); // 멤버 아이디를 확인한다.
+
+        // 2. 값 확인
         Long commentMemberId = commentWriteDto.getMemberId();
         Long postId = commentWriteDto.getPostId();
         String content = commentWriteDto.getContent();
         Long group = commentWriteDto.getGroup();
         Long step = commentWriteDto.getStep();
 
+        // 3. 값 찾아오기
         Optional<Member> memberOptional = memberRepository.findById(commentMemberId);
         member = memberOptional.orElseThrow();
 
         Optional<Post> postOptional = postRepository.findById(postId);
         post = postOptional.orElseThrow();
-        // 1-3. 글 저장하기
-        System.out.println(post);
-        System.out.println(memberId);
+
+        // 4. 글 저장하기
         comment = Comment.CommentWriteBuilder()
                 .post(post)
                 .member(member)
@@ -103,9 +104,8 @@ public class CommentServiceImpl implements CommentService {
 
     @Override
     public void updateComment(CommentUpdateRequestDTO commentUpdateDto) throws Exception{
-        Map.Entry<Long, Boolean> checked = postUtil.checkMember();
-        long memberId = checked.getKey(); // 멤버 아이디를 확인한다.
-        boolean isCafeAuthorized = checked.getValue(); // 카페 인증 여부를 확인한다.
+        CheckedResponseDto checked = postUtil.checkMember();
+        long memberId = checked.getMemberId(); // 멤버 아이디를 확인한다.
 
         Long id = commentUpdateDto.getCommentId();
         String content = commentUpdateDto.getContent();
@@ -126,17 +126,16 @@ public class CommentServiceImpl implements CommentService {
         Boolean responseIsChecked;
 
         //1. 유저 확인
-        Map.Entry<Long, Boolean> checked = postUtil.checkMember();
-        long memberId = checked.getKey(); // 멤버 아이디를 확인한다.
-        boolean isCafeAuthorized = checked.getValue(); // 카페 인증 여부를 확인한다.
+        CheckedResponseDto checked = postUtil.checkMember();
+        long memberId = checked.getMemberId(); // 멤버 아이디를 확인한다.
 
 
         // False 라면 생성
 
         if (!isChecked) {
             CommentLike commentLike = CommentLike.CommentLikeBuilder()
-                    .commentId(commentId)
-                    .memberId(memberId)
+                    .comment(comment)
+                    .member(member)
                     .build();
             commentLikeRepository.save(commentLike);
             responseIsChecked = true;
@@ -159,9 +158,8 @@ public class CommentServiceImpl implements CommentService {
     public boolean deleteComment(Long commentId) throws Exception{
 
         //1. 유저를 확인한다.
-        Map.Entry<Long, Boolean> checked = postUtil.checkMember();
-        long memberId = checked.getKey(); // 멤버 아이디를 확인한다.
-        boolean isCafeAuthorized = checked.getValue(); // 카페 인증 여부를 확인한다.
+        CheckedResponseDto checked = postUtil.checkMember();
+        long memberId = checked.getMemberId(); // 멤버 아이디를 확인한다.
 
         //2. 유저(나) 와 댓글유저가 일치하는지 확인한다.
 

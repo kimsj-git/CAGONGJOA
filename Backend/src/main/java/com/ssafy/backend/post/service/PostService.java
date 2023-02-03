@@ -27,7 +27,7 @@ public interface PostService {
     void findOnePost(Long postId) throws Exception;
 
     /** 5. 게시글 10개씩 조회  **/
-    Slice<Post> feedPosts(PostPagingRequestDto requestDto, Pageable pageable) throws Exception;
+    Slice<PostPagingResponseDto> feedPosts(PostPagingRequestDto requestDto, Pageable pageable) throws Exception;
 
     /** 6. 게시글 좋아요  **/
     PostLikeResponseDto likePost(PostLikeRequestDto likeRequestDto) throws Exception;
