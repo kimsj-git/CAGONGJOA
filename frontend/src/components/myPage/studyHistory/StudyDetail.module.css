@@ -1,0 +1,13 @@
+.studyDetailWrapper {
+  margin-top: 50px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 50%;
+  height: 300px;
+  background-color: bisque;
+  background-image: url("data:image/svg+xml,%3csvg width='100%25' height='100%25' xmlns='http://www.w3.org/2000/svg'%3e%3crect width='100%25' height='100%25' fill='none' rx='25' ry='25' stroke='black' stroke-width='8' stroke-dasharray='30' stroke-dashoffset='0' stroke-linecap='round'/%3e%3c/svg%3e");
+  border-radius: 25px;
+  box-shadow: rgba(0, 0, 0, 0.4) 10px 10px 0 10px;
+}
