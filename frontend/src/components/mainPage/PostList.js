@@ -9,7 +9,6 @@ const PostList = (props) => {
 
   return (
     <Fragment>
-      <h1>Feed</h1>
       <PostTypeCarousel />
       <Feed>
         {posts.map((post) => (
