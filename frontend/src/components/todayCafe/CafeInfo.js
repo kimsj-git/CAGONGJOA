@@ -17,13 +17,14 @@ const CafeInfo = () => {
             />
           </Grid.Column>
           <Grid.Column only="tablet computer" tablet={5} computer={10}>
-            <Grid style={{textAlign: 'center'}}>
+            <Grid style={{ textAlign: "center" }}>
               <Grid.Row style={{ display: "flex", justifyContent: "right" }}>
                 <CafeReport icon={false} size={"large"} content={"제보하기"} />
               </Grid.Row>
               <Grid.Row only="computer" columns={1}>
                 <Grid.Column>
-                  <CafeTimer />
+                  {/* 카페 타이머를 2개 렌더링하면 시간 2배 버그 발생 */}
+                  {/* <CafeTimer /> */}
                 </Grid.Column>
               </Grid.Row>
             </Grid>
