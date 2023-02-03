@@ -7,7 +7,7 @@ import modalReducer from "./modal"
 import timerReducer from "./timer"
 import cafeReducer from "./cafe"
 import todoReducer from "./todo"
-import mapReducer from "./map"
+import studyHistoryReducer from "./studyHistory"
 
 const store = configureStore({
   reducer: {
@@ -16,7 +16,7 @@ const store = configureStore({
     timer: timerReducer,
     todo: todoReducer,
     cafe: cafeReducer,
-    map: mapReducer,
+    studyHistory: studyHistoryReducer,
   },
 })
 
