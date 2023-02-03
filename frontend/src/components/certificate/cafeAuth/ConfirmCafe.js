@@ -13,7 +13,7 @@ const ConfirmCafe = () => {
 
   const open = useSelector((state) => state.modal.openConfirmCafe)
   const cafeData = useSelector((state) => state.modal.selectedCafe)
-
+  console.log(cafeData)
   const { sendRequest: selectCafe } = useFetch()
   const okBtnHandler = () => {
     selectCafe({
@@ -23,8 +23,13 @@ const ConfirmCafe = () => {
         "Content-Type": "application/json",
         "Authorization": `Bearer ${sessionStorage.getItem("accessToken")}`,
       },
-      body: JSON.stringify({ cafeId: `${cafeData.cafeId}` }),
+      body: {
+        cafeId: cafeData.id,
+        latitude: sessionStorage.getItem("lat"),
+        longitude: sessionStorage.getItem("lng"),
+      },
     })
+    sessionStorage.setItem('cafeAuth',1)
     dispatch(modalActions.toggleConfirmCafeModal())
     dispatch(modalActions.toggleNearCafeListModal())
     history.push("/")
@@ -37,7 +42,7 @@ const ConfirmCafe = () => {
         size="mini"
       >
         <Modal.Description>
-          <p>{cafeData.cafeName} 맞습니까?</p>
+          <p>{cafeData.name} 맞습니까?</p>
         </Modal.Description>
         <ModalActions>
           <Button size="tiny" onClick={okBtnHandler}>

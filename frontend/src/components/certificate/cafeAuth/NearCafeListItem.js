@@ -7,11 +7,11 @@ const NearCafeListItem = (props) => {
   const dispatch = useDispatch()
 
   const confirmHandler = () => {
-    dispatch(modalActions.toggleConfirmCafeModal(props))
+    dispatch(modalActions.toggleConfirmCafeModal(props.cafeData))
   }
   return (
     <Button circular size="small" onClick={confirmHandler}>
-      {props.cafeName}
+      {props.cafeData.name}
     </Button>
   )
 }
