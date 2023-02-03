@@ -3,3 +3,21 @@
     width: auto !important;
   }
 }
+@media only screen and (min-width: 992px) and (max-width: 1199px) {
+  .ui.container {
+    width: auto !important;
+  }
+}
+
+.link.item i {
+  margin-right: 8%;
+}
+
+.ui.secondary.vertical.menu > .link.item {
+  border-radius: 3rem !important;
+  padding-left: 2rem !important;
+}
+
+.ui.secondary.vertical.menu > .link.item:hover .icon {
+  transform: scale(1.1);
+}

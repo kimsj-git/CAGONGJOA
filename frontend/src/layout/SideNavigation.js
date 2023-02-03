@@ -4,9 +4,11 @@ import PostForm from "../components/mainPage/PostForm"
 
 const SideNavigation = () => {
   return (
-    <Segment vertical textAlign="left" style={{ paddingLeft: "3rem" }}>
-      <div style={{ marginBlock: "2rem 5rem", fontSize: "2rem" }}>카공조아</div>
-      <Menu secondary vertical fluid>
+    <Segment vertical textAlign="left" style={{ paddingLeft: "1.5rem" }}>
+      <div style={{ margin: "3rem 1rem 5rem", fontSize: "2.5rem" }}>
+        카공조아
+      </div>
+      <Menu secondary vertical fluid style={{ fontSize: "1.3rem" }}>
         <Menu.Item name="home" link>
           <NavLink to="/">
             <div
@@ -16,7 +18,7 @@ const SideNavigation = () => {
                 alignItems: "center",
               }}
             >
-              <Icon name="home" size="big" />
+              <Icon name="home" size="big" color="black" />
               <p>홈</p>
             </div>
           </NavLink>
