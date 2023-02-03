@@ -8,14 +8,13 @@ const Layout = (props) => {
   return (
     <Fragment>
       <Container>
-        <Grid>
-          <Grid.Column only="computer" computer={2}>
+        <Grid divided>
+          <Grid.Column only="computer" computer={3}>
             <SideNavigation />
           </Grid.Column>
-          <Grid.Column mobile={16} computer={14}>
-            <Grid.Row>
-              <main style={{ paddingBottom: "5rem" }}>{props.children}</main>
-            </Grid.Row>
+
+          <Grid.Column mobile={16} computer={10}>
+            <main style={{ paddingBottom: "5rem" }}>{props.children}</main>
           </Grid.Column>
         </Grid>
       </Container>

@@ -5,7 +5,7 @@ import PostList from "../components/mainPage/PostList"
 import MapDiv from "../components/map/MapDiv"
 import useFetch from "../hooks/useFetch.js"
 import CafeAuthFetch from "../components/certificate/cafeAuth/CafeAuthFetch"
-
+import { Grid } from "semantic-ui-react"
 const DEFAULT_REST_URL = process.env.REACT_APP_REST_DEFAULT_URL
 
 // API 연결 후 DUMMY_POSTS 삭제
@@ -61,6 +61,7 @@ const MainPage = () => {
   const [error, setError] = useState(null)
   const isMap = location.pathname === "/map"
   const { data: postsList, isLoading, sendRequest: getPosts } = useFetch()
+  const isAuthenticated = sessionStorage.getItem("cafeAuth")
 
   useEffect(() => {
     CafeAuthFetch()
@@ -132,15 +133,20 @@ const MainPage = () => {
 
   return (
     <Fragment>
-      <section>
-        <MainPageTopBar />
-      </section>
-      {isMap && (
-        <Route path="/map">
-          <MapDiv />
-        </Route>
-      )}
-      {!isMap && <section>{content_feed}</section>}
+      <Grid>
+        <Grid.Row only="mobile">
+          <MainPageTopBar isAuthenticated={isAuthenticated} />
+        </Grid.Row>
+        {isMap && (
+          <Route path="/map">
+            <MapDiv />
+          </Route>
+        )}
+        {!isMap && <Grid.Column width={16}>{content_feed}</Grid.Column>}
+      </Grid>
+      {/* <section> */}
+
+      {/* </section> */}
     </Fragment>
   )
 }
