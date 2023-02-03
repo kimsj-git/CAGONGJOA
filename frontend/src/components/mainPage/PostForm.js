@@ -9,6 +9,7 @@ import {
   Label,
   Segment,
 } from "semantic-ui-react"
+import { BsPencil, BsPencilFill } from "react-icons/bs"
 import ImageUploadBox from "./ImageUploadBox"
 import { Editor } from "primereact/editor"
 
@@ -74,7 +75,7 @@ const PostForm = () => {
       open={firstOpen}
       onClose={() => setFirstOpen(false)}
       onOpen={() => setFirstOpen(true)}
-      trigger={<Icon name="write" size="big" color="blue" />}
+      trigger={<BsPencil size="36" color="black" />}
     >
       <Modal.Header center>
         {currentCafe + "의 이야기를 들려주세요!"}

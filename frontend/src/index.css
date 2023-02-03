@@ -9,7 +9,12 @@
   }
 }
 
-.link.item i {
+.link.item p {
+  color: black;
+  font-weight: 500;
+}
+
+.link.item svg {
   margin-right: 8%;
 }
 
@@ -18,6 +23,6 @@
   padding-left: 2rem !important;
 }
 
-.ui.secondary.vertical.menu > .link.item:hover .icon {
+.ui.secondary.vertical.menu > .link.item:hover svg {
   transform: scale(1.1);
 }
