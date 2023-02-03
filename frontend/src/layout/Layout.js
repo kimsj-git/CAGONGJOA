@@ -9,7 +9,7 @@ const Layout = (props) => {
     <Fragment>
       <Container>
         <Grid>
-          <Grid.Column only='computer'computer={2}>
+          <Grid.Column only="computer" computer={2}>
             <SideNavigation />
           </Grid.Column>
           <Grid.Column mobile={16} computer={14}>
