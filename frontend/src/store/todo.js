@@ -17,6 +17,15 @@ const todoSlice = createSlice({
     update(state, action) {
       state.todoList.find(todo => todo.id === action.payload).isCompleted = !state.todoList.find(todo => todo.id === action.payload).isCompleted
     },
+    addTodo(state, action) {
+      const newTodo = action.payload
+      state.todoList = [...state.todoList, newTodo]
+    },
+    deleteTodo(state, action) {
+      const deletedTodoId = action.payload
+      const filteredTodoList = state.todoList.filter((todo) => todo.id !=deletedTodoId)
+      state.todoList = filteredTodoList
+    }
   },
 })
 
