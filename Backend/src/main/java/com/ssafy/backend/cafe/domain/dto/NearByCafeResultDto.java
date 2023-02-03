@@ -16,7 +16,7 @@ public class NearByCafeResultDto {
     private BigInteger id;
     private String name;
     private String address;
-    private BigDecimal lat;
-    private BigDecimal lng;
+    private BigDecimal latitude;
+    private BigDecimal longitude;
     private String brand_type;
 }

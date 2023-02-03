@@ -68,12 +68,10 @@ public class CafeServiceImpl implements CafeService {
 
     @Override
     public void saveCafeAuth(SelectCafeRequestDto selectCafeRequestDto) throws Exception {
-
         // 현 위치와 cafeId가 정말로 일치하는지 먼저 체크
         List<NearByCafeResultDto> nearByCafeLocations
-                = getNearByCafeLocations(new ClientPosInfoDto(selectCafeRequestDto.getLat(),
-                selectCafeRequestDto.getLng(),
-                0.05));
+                = this.getNearByCafeLocations(new ClientPosInfoDto(selectCafeRequestDto.getLatitude(),
+                selectCafeRequestDto.getLongitude(), 0.05));
 
         ArrayList<Long> cafeIdLstForValid = new ArrayList<>();
         for (NearByCafeResultDto nearByCafeLocation : nearByCafeLocations) {
@@ -105,6 +103,10 @@ public class CafeServiceImpl implements CafeService {
         Double longitude = clientPosInfoDto.getLongitude();
         Double distance = clientPosInfoDto.getDist();
 
+        System.out.println("distance = " + distance);
+        System.out.println("longitude = " + longitude);
+        System.out.println("latitude = " + latitude);
+
         LocationDto northEast = GeometryUtil
                 .calculate(latitude, longitude, distance, Direction.NORTHEAST.getBearing());
         LocationDto southWest = GeometryUtil
@@ -134,8 +136,8 @@ public class CafeServiceImpl implements CafeService {
                     .id((BigInteger) result[0])
                     .name((String) result[1])
                     .address((String) result[2])
-                    .lat((BigDecimal)result[3])
-                    .lng((BigDecimal)result[4])
+                    .latitude((BigDecimal)result[3])
+                    .longitude((BigDecimal)result[4])
                     .brand_type((String) result[5]).build();
             nearByCafeResultDtos.add(dto);
         }

@@ -43,7 +43,7 @@ public class CafeController {
         사용자 위치의 카페 + 위경도 정보를 클라이언트로부터 제공받은 후, cafe id와 닉네임으로 redis에 위치 정보 등록
     */
     @PostMapping("/auth/select")
-    public ResponseEntity<ResponseDTO> cafeAuth(SelectCafeRequestDto selectCafeRequestDto) throws Exception {
+    public ResponseEntity<ResponseDTO> cafeAuth(@RequestBody SelectCafeRequestDto selectCafeRequestDto) throws Exception {
         cafeService.saveCafeAuth(selectCafeRequestDto);
         ResponseDTO responseDTO = new ResponseDTO("위치 인증 완료!", "", HttpStatus.CREATED, null);
         return new ResponseEntity<>(responseDTO, HttpStatus.OK);
@@ -56,6 +56,7 @@ public class CafeController {
      */
     @PostMapping("/auth")
     public ResponseEntity<ResponseDTO> cafeAuth(@RequestBody LocationDto locationDto) {
+        System.out.println("locationDto = " + locationDto);
         final double DIST = 0.05; // 50m 반경에 해당하는 근거리 카페만 가져온다
         ClientPosInfoDto clientPosInfoDto
                 = new ClientPosInfoDto(locationDto.getLatitude(), locationDto.getLongitude(), DIST);
