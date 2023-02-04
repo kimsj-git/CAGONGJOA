@@ -1,5 +1,5 @@
 import { useState, useCallback, Fragment, useEffect } from "react"
-import { Route, useLocation } from "react-router"
+import { Route, useLocation,useHistory } from "react-router"
 import MainPageTopBar from "../components/mainPage/MainPageTopBar"
 import PostList from "../components/mainPage/PostList"
 import MapDiv from "../components/map/MapDiv"
@@ -56,6 +56,7 @@ const DUMMY_POSTS = [
 ]
 
 const MainPage = () => {
+  const history = useHistory()
   const location = useLocation()
   const [posts, setPosts] = useState([])
   const [error, setError] = useState(null)
@@ -129,6 +130,11 @@ const MainPage = () => {
 
   if (error) {
     content_feed = <p>{error}</p>
+  }
+
+  // 엑세스 토큰이 없을 때 login화면으로 이동
+  if (!sessionStorage.getItem('accessToken')){
+    history.push('/login')
   }
 
   return (

@@ -5,8 +5,8 @@ import { useHistory } from "react-router-dom"
 const DEFAULT_REST_URL = process.env.REACT_APP_REST_DEFAULT_URL
 
 const KakaoLoginGetCode = () => {
-  const history = useHistory()
   // 화면 생성시 시작
+  const history = useHistory()
   const PARAMS = new URL(document.location).searchParams
   const KAKAO_CODE = PARAMS.get("code")
   useEffect(() => {
@@ -25,6 +25,7 @@ const KakaoLoginGetCode = () => {
         if (response.status === 200) {
           sessionStorage.setItem("accessToken", responseData.jwt.accessToken)
           sessionStorage.setItem("refreshToken", responseData.jwt.refreshToken)
+          // nickname도 받아와서 sessionStorage에 담기
           history.push("/")
         }
         // 첫 로그인 회원일 경우
