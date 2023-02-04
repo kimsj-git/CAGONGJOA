@@ -1,4 +1,3 @@
-import { useState } from "react"
 import { useSelector, useDispatch } from "react-redux"
 import domtoimage from "dom-to-image"
 
@@ -11,13 +10,11 @@ const StudyDetail = () => {
   const year = useSelector((state) => state.studyHistory.year)
   const month = useSelector((state) => state.studyHistory.month)
   const day = useSelector((state) => state.studyHistory.day)
-  const [imageTag, setImageTag] = useState("")
   const onCaptureHandler = () => {
     const node = document.getElementById("detail")
     domtoimage
       .toPng(node)
-      .then((dataUrl) => {setImageTag(dataUrl)
-        dispatch(postActions.uploadImage(dataUrl))})
+      .then((dataUrl) => dispatch(postActions.uploadImage(dataUrl)))
       .catch((error) => console.error(error))
   }
 
@@ -34,10 +31,7 @@ const StudyDetail = () => {
           <p>커피콩: 2개 획득</p>
         </div>
       </div>
-      <PostForm
-        isStudyHistory={true}
-        onCaptureHandler={onCaptureHandler}
-      />
+      <PostForm isStudyHistory={true} onCaptureHandler={onCaptureHandler} />
     </>
   )
 }

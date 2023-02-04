@@ -3,7 +3,7 @@ import { Item, Button, Icon, Grid } from "semantic-ui-react"
 const Profile = () => {
   return (
     <Grid.Row columns={2}>
-      <Grid.Column width={4}>
+      <Grid.Column width={5}>
         <Item.Image size="tiny" src="/images/wireframe/image.png" />
       </Grid.Column>
       <Grid.Column width={2}>

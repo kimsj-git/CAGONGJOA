@@ -10,15 +10,18 @@ import MyCafeBadge from "../components/myPage/myCafeBadge/MyCafeBadge"
 import MyPost from "../components/myPage/myPost/MyPost"
 import Settings from "../components/myPage/settingsPage/Settings"
 
+import classes from "./MyPage.module.css"
+import BlockList from "../components/myPage/settingsPage/BlockList"
+
 const MyPage = () => {
   const location = useLocation()
   const isMyPage = location.pathname === "/mypage"
+  const isSettingsPage = location.pathname === "/mypage/setting"
 
   return (
-    <>
+    <div className={classes.wrapper}>
       {isMyPage && (
         <>
-          <h1>My Page</h1>
           <Grid divided="vertically" textAlign="center">
             <Profile />
             <MainPageItems />
@@ -26,27 +29,33 @@ const MyPage = () => {
           </Grid>
         </>
       )}
-      {!isMyPage &&
-      <>
+      {!isMyPage && (
+        <>
           <Route path="/mypage/study">
-            <StudyHistory/>
+            <StudyHistory />
           </Route>
           <Route path="/mypage/badge">
             <MyBadge />
           </Route>
           <Route path="/mypage/cafebadge">
-            <MyCafeBadge/>
+            <MyCafeBadge />
           </Route>
           <Route path="/mypage/mypost">
-            <MyPost/>
+            <MyPost />
           </Route>
-          <Route path="/mypage/setting">
-            <Settings/>
+          <Route path="/mypage/setting" exact>
+            <Grid divided="vertically" textAlign="center">
+              <Settings />
+            </Grid>
           </Route>
-      </>
-      
-      }
-    </>
+          <Route path="/mypage/setting/blocklist">
+            <Grid divided="vertically" textAlign="center">
+              <BlockList />
+            </Grid>
+          </Route>
+        </>
+      )}
+    </div>
   )
 }
 
