@@ -1,21 +1,52 @@
 // auth 관련 상태관리
 
-import { createSlice } from "@reduxjs/toolkit";
+import { createSlice } from "@reduxjs/toolkit"
 
-const initialAuthState = { username: '' }
+const initialAuthState = {
+  username: "",
+  checkLoading: false,
+  isNicknameValid: false,
+}
 
 const authSlice = createSlice({
   name: "username",
   initialState: initialAuthState,
   reducers: {
-    login(state, action){
-      state.username = action.payload
+    check(state, actions) {
+      state.isNicknameValid = actions.payload
     },
-    logout(state){
-      state.username = ''
+    nowLoading(state) {
+      state.checkLoading = true
     },
-  }
+    finishLoading(state){
+      state.checkLoading = false
+    }
+  },
 })
+
+const DEFAULT_REST_URL = process.env.REACT_APP_REST_DEFAULT_URL
+
+export const checkNickname = (nickname) => {
+  return async (dispatch) => {
+    const sendRequest = async () => {
+      const response = await fetch(
+        `${DEFAULT_REST_URL}/member/checkDuplicatedNickname?nickname=${nickname}`
+      )
+      if (!response.ok) {
+        return false
+      } else {
+        return true
+      }
+    }
+    try{
+      const result = await sendRequest()
+      dispatch(authActions.check(result))
+    }catch (error) {
+      console.error(error)
+    }
+    dispatch(authActions.finishLoading())
+  }
+}
 
 export const authActions = authSlice.actions
 

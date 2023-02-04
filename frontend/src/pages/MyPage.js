@@ -9,6 +9,7 @@ import MyBadge from "../components/myPage/myBadge/MyBadge"
 import MyCafeBadge from "../components/myPage/myCafeBadge/MyCafeBadge"
 import MyPost from "../components/myPage/myPost/MyPost"
 import Settings from "../components/myPage/settingsPage/Settings"
+import Logout from "../components/member/logout/Logout"
 
 import classes from "./MyPage.module.css"
 import BlockList from "../components/myPage/settingsPage/BlockList"
@@ -16,7 +17,6 @@ import BlockList from "../components/myPage/settingsPage/BlockList"
 const MyPage = () => {
   const location = useLocation()
   const isMyPage = location.pathname === "/mypage"
-  const isSettingsPage = location.pathname === "/mypage/setting"
 
   return (
     <div className={classes.wrapper}>
@@ -24,6 +24,7 @@ const MyPage = () => {
         <>
           <Grid divided="vertically" textAlign="center">
             <Profile />
+            <Logout/>
             <MainPageItems />
             <CafeAuth />
           </Grid>

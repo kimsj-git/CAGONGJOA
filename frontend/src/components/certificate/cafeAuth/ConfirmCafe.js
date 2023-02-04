@@ -30,6 +30,7 @@ const ConfirmCafe = () => {
       },
     })
     sessionStorage.setItem('cafeAuth',1)
+    sessionStorage.setItem('cafeName', cafeData.name)
     dispatch(modalActions.toggleConfirmCafeModal())
     dispatch(modalActions.toggleNearCafeListModal())
     history.push("/")

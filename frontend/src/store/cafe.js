@@ -44,9 +44,10 @@ export const findNearCafeData = () => {
     }
     try {
       const cafeData = await sendRequest()
+      console.log(cafeData)
       dispatch(cafeActions.replaceNearCafe(cafeData))
     } catch (error) {
-      console.log(error)
+      console.error(error)
     }
     dispatch(cafeActions.cafeListLoading())
   }
@@ -79,7 +80,7 @@ export const findMapCafeList = (dataSet) => {
       const cafeData = await sendRequest()
       dispatch(cafeActions.replaceMapCafeList(cafeData))
     } catch (error) {
-      console.log(error)
+      console.error(error)
     }
     dispatch(cafeActions.cafeListLoading())
   }
