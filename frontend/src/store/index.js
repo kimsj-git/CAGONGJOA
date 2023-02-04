@@ -8,6 +8,7 @@ import timerReducer from "./timer"
 import cafeReducer from "./cafe"
 import todoReducer from "./todo"
 import studyHistoryReducer from "./studyHistory"
+import postReducer from "./post"
 
 const store = configureStore({
   reducer: {
@@ -17,6 +18,7 @@ const store = configureStore({
     todo: todoReducer,
     cafe: cafeReducer,
     studyHistory: studyHistoryReducer,
+    post: postReducer,
   },
 })
 

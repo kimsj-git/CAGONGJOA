@@ -1,3 +1,4 @@
+import { useDispatch, useSelector } from "react-redux"
 import {
   useRef,
   useEffect,
@@ -6,8 +7,10 @@ import {
   useImperativeHandle,
 } from "react"
 import { Icon } from "semantic-ui-react"
+
 import ImagePreview from "./ImagePreview"
 import "./ImageUploadBox.css"
+import { postActions } from "../../store/post"
 
 const ImageUploadBox = forwardRef((props, ref) => {
   useImperativeHandle(ref, () => ({
@@ -16,15 +19,14 @@ const ImageUploadBox = forwardRef((props, ref) => {
       return uploadedImages
     },
   }))
-  const [uploadedImages, setUploadedImages] = useState(props.studyHistoryImage ? [props.studyHistoryImage] : [])
+  const dispatch = useDispatch()
+  const uploadedImages = useSelector((state) => state.post.uploadedImage)
   const [previewImages, setPreviewImages] = useState([])
   const uploadBoxRef = useRef()
   const inputRef = useRef()
   useEffect(() => {
-    console.log(uploadedImages)
     const uploadBox = uploadBoxRef.current
     const input = inputRef.current
-
     const handleFiles = (files) => {
       for (const file of files) {
         if (!file.type.startsWith("image/")) continue
@@ -32,7 +34,7 @@ const ImageUploadBox = forwardRef((props, ref) => {
         reader.onloadend = (e) => {
           const result = e.target.result
           if (result) {
-            setUploadedImages((state) => [...state, result].slice(0, props.max))
+            dispatch(postActions.handleFiles(result))
           }
         }
         reader.readAsDataURL(file)
@@ -67,7 +69,7 @@ const ImageUploadBox = forwardRef((props, ref) => {
       uploadBox.removeEventListener("dragover", dragOverHandler)
       input.removeEventListener("change", changeHandler)
     }
-  }, [props.max])
+  }, [])
 
   useEffect(() => {
     const imageJSXs = uploadedImages.map((image, index) => {
@@ -75,13 +77,14 @@ const ImageUploadBox = forwardRef((props, ref) => {
         return element === image
       }
       const deleteFunc = () => {
-        uploadedImages.splice(uploadedImages.findIndex(isDeleteImage), 1)
-        setUploadedImages([...uploadedImages])
+        const deleteimage = uploadedImages.findIndex(isDeleteImage)
+        dispatch(postActions.removeImage(deleteimage))
       }
       return <ImagePreview image={image} deleteFunc={deleteFunc} key={index} />
     })
     setPreviewImages(imageJSXs)
   }, [uploadedImages])
+
   return (
     <div className="ImageUploadBox">
       <label
