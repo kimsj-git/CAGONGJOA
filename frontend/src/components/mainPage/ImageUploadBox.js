@@ -16,12 +16,12 @@ const ImageUploadBox = forwardRef((props, ref) => {
       return uploadedImages
     },
   }))
-  const [uploadedImages, setUploadedImages] = useState([])
+  const [uploadedImages, setUploadedImages] = useState(props.studyHistoryImage ? [props.studyHistoryImage] : [])
   const [previewImages, setPreviewImages] = useState([])
   const uploadBoxRef = useRef()
   const inputRef = useRef()
-
   useEffect(() => {
+    console.log(uploadedImages)
     const uploadBox = uploadBoxRef.current
     const input = inputRef.current
 
@@ -82,7 +82,6 @@ const ImageUploadBox = forwardRef((props, ref) => {
     })
     setPreviewImages(imageJSXs)
   }, [uploadedImages])
-
   return (
     <div className="ImageUploadBox">
       <label

@@ -1,38 +1,43 @@
-import { useRef, useState } from "react"
+import { useState } from "react"
 import { useSelector } from "react-redux"
 import domtoimage from "dom-to-image"
 import { Button } from "semantic-ui-react"
 
-import classes from "./StudyDetail.module.css"
+import "./StudyDetail.css"
+import PostForm from "../../mainPage/PostForm"
 
 const StudyDetail = () => {
-  const studyDetail = useRef()
   const year = useSelector((state) => state.studyHistory.year)
   const month = useSelector((state) => state.studyHistory.month)
   const day = useSelector((state) => state.studyHistory.day)
   const [imageTag, setImageTag] = useState("")
-
-  const onClickHandler = () => {
+  const onCaptureHandler = () => {
+    const node = document.getElementById("detail")
     domtoimage
-      .toPng(document.getElementById("detail"), {
-        filter: (node) => {
-          return node.tagName !== "IMG"
-        },
-      })
-      .then((res) => console.log(1))
-      .catch((err) => console.log(err))
+      .toPng(node)
+      .then((dataUrl) => setImageTag(dataUrl))
+      .catch((error) => console.error(error))
   }
+
   return (
-    <div>
-      <div id="detail" ref={studyDetail} className={classes.studyDetailWrapper}>
-        {year}년 {month}월 {day}일<p>위치: 스타벅스 강남R점</p>
-        <p>1시간 13분 / 2시간</p>
-        <p>60% 달성</p>
-        <p>커피콩: 2개 획득</p>
-      <Button onClick={onClickHandler}>자랑하기</Button>
+    <>
+      <div id="detail" class="detail-wrapper">
+        <div class="detail">
+          <p>
+            {year}년 {month}월 {day}일
+          </p>
+          <p>위치: 스타벅스</p>
+          <p>1시간 13분 / 2시간</p>
+          <p>60% 달성</p>
+          <p>커피콩: 2개 획득</p>
+        </div>
       </div>
-      {imageTag && <img id="image" src={imageTag} alt="#" />}
-    </div>
+      <PostForm
+        studyHistoryImage={imageTag}
+        isStudyHistory={true}
+        onCaptureHandler={onCaptureHandler}
+      />
+    </>
   )
 }
 
