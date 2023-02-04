@@ -1,12 +1,13 @@
 import { useState } from "react"
-import { useSelector } from "react-redux"
+import { useSelector, useDispatch } from "react-redux"
 import domtoimage from "dom-to-image"
-import { Button } from "semantic-ui-react"
 
 import "./StudyDetail.css"
 import PostForm from "../../mainPage/PostForm"
+import { postActions } from "../../../store/post"
 
 const StudyDetail = () => {
+  const dispatch = useDispatch()
   const year = useSelector((state) => state.studyHistory.year)
   const month = useSelector((state) => state.studyHistory.month)
   const day = useSelector((state) => state.studyHistory.day)
@@ -15,7 +16,8 @@ const StudyDetail = () => {
     const node = document.getElementById("detail")
     domtoimage
       .toPng(node)
-      .then((dataUrl) => setImageTag(dataUrl))
+      .then((dataUrl) => {setImageTag(dataUrl)
+        dispatch(postActions.uploadImage(dataUrl))})
       .catch((error) => console.error(error))
   }
 
@@ -33,7 +35,6 @@ const StudyDetail = () => {
         </div>
       </div>
       <PostForm
-        studyHistoryImage={imageTag}
         isStudyHistory={true}
         onCaptureHandler={onCaptureHandler}
       />

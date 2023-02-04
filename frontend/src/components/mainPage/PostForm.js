@@ -10,10 +10,14 @@ import {
   Segment,
 } from "semantic-ui-react"
 import { BsPencil } from "react-icons/bs"
+import { useDispatch } from "react-redux"
+
 import ImageUploadBox from "./ImageUploadBox"
 import { Editor } from "primereact/editor"
+import { postActions } from "../../store/post"
 
 const PostForm = (props) => {
+  const dispatch = useDispatch()
   // 유저 정보 가져오기
   // const nickname = sessionStorage.getItem('nickname');
   // const currentCafe = sessionStorage.getItem('currentCafe');
@@ -74,7 +78,10 @@ const PostForm = (props) => {
       {isStudyHistory && (
         <Modal
           open={firstOpen}
-          onClose={() => setFirstOpen(false)}
+          onClose={() => {
+            setFirstOpen(false) 
+            dispatch(postActions.closeModal())
+          }}
           onOpen={() => setFirstOpen(true)}
           trigger={<Button onClick={props.onCaptureHandler}>자랑하기</Button>}
         >
@@ -111,7 +118,6 @@ const PostForm = (props) => {
                 <ImageUploadBox
                   ref={uploadedImagesRef}
                   max={10}
-                  studyHistoryImage={props.studyHistoryImage}
                 />
               </Segment>
             </Form.Field>
@@ -143,6 +149,7 @@ const PostForm = (props) => {
                 icon="checkmark"
                 content="확인"
                 onClick={() => {
+                  dispatch(postActions.closeModal())
                   setFirstOpen(false)
                   setSecondOpen(false)
                 }}
@@ -154,7 +161,10 @@ const PostForm = (props) => {
       {!isStudyHistory && (
         <Modal
           open={firstOpen}
-          onClose={() => setFirstOpen(false)}
+          onClose={() => {
+            setFirstOpen(false)
+            dispatch(postActions.closeModal())
+          }}
           onOpen={() => setFirstOpen(true)}
           trigger={<BsPencil size="36" color="black" />}
         >
@@ -204,7 +214,9 @@ const PostForm = (props) => {
           </Modal.Actions>
 
           <Modal
-            onClose={() => setSecondOpen(false)}
+            onClose={() => {
+              setSecondOpen(false)
+            }}
             open={secondOpen}
             size="small"
             basic
@@ -223,6 +235,7 @@ const PostForm = (props) => {
                 icon="checkmark"
                 content="확인"
                 onClick={() => {
+                  dispatch(postActions.closeModal())
                   setFirstOpen(false)
                   setSecondOpen(false)
                 }}
