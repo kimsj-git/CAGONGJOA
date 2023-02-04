@@ -72,14 +72,14 @@ const PostForm = (props) => {
     //     })
     //   })
     //   .then(setOpen(false))
-  }, [postImages])
+  }, [postImages, postContent, postType])
   return (
     <>
       {isStudyHistory && (
         <Modal
           open={firstOpen}
           onClose={() => {
-            setFirstOpen(false) 
+            setFirstOpen(false)
             dispatch(postActions.closeModal())
           }}
           onOpen={() => setFirstOpen(true)}
@@ -115,10 +115,7 @@ const PostForm = (props) => {
                     style={{ height: "100px" }}
                   />
                 </div>
-                <ImageUploadBox
-                  ref={uploadedImagesRef}
-                  max={10}
-                />
+                <ImageUploadBox ref={uploadedImagesRef} max={10} />
               </Segment>
             </Form.Field>
           </Modal.Content>

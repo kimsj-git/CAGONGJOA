@@ -69,7 +69,7 @@ const ImageUploadBox = forwardRef((props, ref) => {
       uploadBox.removeEventListener("dragover", dragOverHandler)
       input.removeEventListener("change", changeHandler)
     }
-  }, [])
+  }, [dispatch])
 
   useEffect(() => {
     const imageJSXs = uploadedImages.map((image, index) => {
@@ -83,7 +83,7 @@ const ImageUploadBox = forwardRef((props, ref) => {
       return <ImagePreview image={image} deleteFunc={deleteFunc} key={index} />
     })
     setPreviewImages(imageJSXs)
-  }, [uploadedImages])
+  }, [uploadedImages, dispatch])
 
   return (
     <div className="ImageUploadBox">
