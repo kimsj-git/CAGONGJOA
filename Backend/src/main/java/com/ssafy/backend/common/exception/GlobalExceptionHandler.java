@@ -22,6 +22,6 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(Exception.class)
     public ResponseEntity handleMemberEx(Exception exception){
         exception.printStackTrace();
-        return new ResponseEntity(HttpStatus.OK);
+        return new ResponseEntity("서버 에러 발생", HttpStatus.INTERNAL_SERVER_ERROR);
     }
 }

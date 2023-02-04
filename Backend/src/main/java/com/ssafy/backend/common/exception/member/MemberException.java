@@ -5,8 +5,6 @@ import com.ssafy.backend.common.exception.BaseExceptionType;
 
 public class MemberException extends BaseException {
     private BaseExceptionType exceptionType;
-
-
     public MemberException(BaseExceptionType exceptionType) {
         this.exceptionType = exceptionType;
     }
