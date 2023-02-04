@@ -1,5 +1,6 @@
 package com.ssafy.backend.common.exception;
 
+import com.ssafy.backend.common.dto.ResponseDTO;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
@@ -12,16 +13,28 @@ import org.springframework.web.bind.annotation.*;
 public class GlobalExceptionHandler {
 
     @ExceptionHandler(BaseException.class)
-    public ResponseEntity handleBaseEx(BaseException exception){
+    public ResponseEntity<ResponseDTO> handleBaseEx(BaseException exception){
         log.error("BaseException errorMessage(): {}",exception.getExceptionType().getErrorMessage());
         log.error("BaseException HttpStatus(): {}",exception.getExceptionType().getHttpStatus());
 
-        return new ResponseEntity(exception.getMessage(), exception.getExceptionType().getHttpStatus());
+        ResponseDTO responseDTO = ResponseDTO.builder()
+                .errMsg(exception.getExceptionType().getErrorMessage())
+                .httpStatus(exception.getExceptionType().getHttpStatus())
+                .data(null)
+                .build();
+
+        return new ResponseEntity<>(responseDTO, HttpStatus.OK);
     }
 
     @ExceptionHandler(Exception.class)
-    public ResponseEntity handleMemberEx(Exception exception){
-        exception.printStackTrace();
-        return new ResponseEntity("서버 에러 발생", HttpStatus.INTERNAL_SERVER_ERROR);
+    public ResponseEntity<ResponseDTO> handleMemberEx(Exception exception){
+
+        ResponseDTO responseDTO = ResponseDTO.builder()
+                .errMsg("server error..")
+                .httpStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+                .data(null)
+                .build();
+
+        return new ResponseEntity<>(responseDTO, HttpStatus.OK);
     }
 }

@@ -22,7 +22,7 @@ public class OAuthService{
 
     // Access token으로 사용자 정보 가져오는 로직
     // 추후 oAuth exception 커스텀으로 만들어서 예외처리! 지금은 그냥 임시로 try catch로 진행
-    public Map<String, String> getKakaoMemberInfo(String token) throws Exception {
+    public Map<String, String> getKakaoMemberInfo(String token) {
 
         String reqURL = "https://kapi.kakao.com/v2/user/me";
 
@@ -52,11 +52,6 @@ public class OAuthService{
             //Gson 라이브러리로 JSON파싱
             JsonElement element = JsonParser.parseString(result);
             long id = element.getAsJsonObject().get("id").getAsLong();
-
-            if (id < 0) {
-                throw new Exception();
-            }
-
 
 //            // email 안받을 꺼면 email 코드 삭제
 //            boolean hasEmail = element.getAsJsonObject().get("kakao_account").getAsJsonObject().get("has_email").getAsBoolean();

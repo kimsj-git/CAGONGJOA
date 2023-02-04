@@ -10,7 +10,7 @@ import java.util.List;
 public interface CafeService {
     List<NearByCafeResultDto> getNearByCafeLocations(ClientPosInfoDto clientPosInfoDto);
 
-    void saveCafeAuth(SelectCafeRequestDto selectCafeRequestDto) throws Exception;
+    void saveCafeAuth(SelectCafeRequestDto selectCafeRequestDto);
 
-    void checkCafeAuth() throws Exception;
+    void checkCafeAuth();
 }

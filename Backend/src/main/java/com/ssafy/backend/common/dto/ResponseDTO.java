@@ -4,7 +4,7 @@ import lombok.*;
 import org.springframework.http.HttpStatus;
 
 @Data
-@Builder
+@Builder(access = AccessLevel.PUBLIC)
 @AllArgsConstructor
 @NoArgsConstructor
 public class ResponseDTO {
@@ -12,5 +12,4 @@ public class ResponseDTO {
     private String errMsg;
     private HttpStatus httpStatus;
     private Object data;
-
 }
