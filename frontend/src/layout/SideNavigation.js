@@ -16,14 +16,18 @@ import { IoIosSearch, IoSearch } from "react-icons/io"
 const SideNavigation = () => {
   return (
     <Segment
+      className="side-bar"
       vertical
       textAlign="left"
       style={{ paddingInline: "1.5rem 0.5rem" }}
     >
-      <div style={{ margin: "3rem 1rem 5rem", fontSize: "2.5rem" }}>
+      <div
+        className="logo-title"
+        style={{ margin: "3rem 1rem 5rem", fontSize: "2.5rem" }}
+      >
         카공조아
       </div>
-      <Menu secondary vertical fluid style={{ fontSize: "1.3rem" }}>
+      <Menu secondary vertical fluid style={{ fontSize: "1.2rem" }}>
         <Menu.Item name="home" link>
           <NavLink to="/">
             <div
@@ -33,7 +37,7 @@ const SideNavigation = () => {
                 alignItems: "center",
               }}
             >
-              <AiOutlineHome size="36" color="black" />
+              <AiOutlineHome size="30" color="black" />
               <p>홈</p>
             </div>
           </NavLink>
@@ -46,7 +50,7 @@ const SideNavigation = () => {
               alignItems: "center",
             }}
           >
-            <HiOutlineMapPin size="36" color="black" />
+            <HiOutlineMapPin size="30" color="black" />
             <p>위치인증</p>
           </div>
         </Menu.Item>
@@ -71,7 +75,7 @@ const SideNavigation = () => {
                 alignItems: "center",
               }}
             >
-              <MdOutlineLocalCafe size="36" color="black" />
+              <MdOutlineLocalCafe size="30" color="black" />
               <p>오늘의 카페</p>
             </div>
           </NavLink>
@@ -85,7 +89,7 @@ const SideNavigation = () => {
                 alignItems: "center",
               }}
             >
-              <BsChatDots size="36" color="black" />
+              <BsChatDots size="30" color="black" />
               <p>채팅</p>
             </div>
           </NavLink>
@@ -98,7 +102,7 @@ const SideNavigation = () => {
               alignItems: "center",
             }}
           >
-            <AiOutlineBell size="36" color="black" />
+            <AiOutlineBell size="30" color="black" />
             <p>알림</p>
           </div>
         </Menu.Item>
@@ -111,7 +115,7 @@ const SideNavigation = () => {
                 alignItems: "center",
               }}
             >
-              <HiOutlineUser size="36" color="black" />
+              <HiOutlineUser size="30" color="black" />
               <p>마이페이지</p>
             </div>
           </NavLink>
@@ -124,7 +128,7 @@ const SideNavigation = () => {
               alignItems: "center",
             }}
           >
-            <IoIosSearch size="36" color="black" />
+            <IoIosSearch size="30" color="black" />
             <p>검색</p>
           </div>
         </Menu.Item>

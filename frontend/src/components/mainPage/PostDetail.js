@@ -13,7 +13,7 @@ import {
 } from "semantic-ui-react"
 import { ScrollPanel } from "primereact/scrollpanel"
 import CommentItem from "./CommentItem"
-import LikeButton from "../common/LikeButton"
+import ToggleButton from "../common/ToggleButton"
 
 const PostDetail = (props) => {
   const [open, setOpen] = useState(false)
@@ -114,7 +114,7 @@ const PostDetail = (props) => {
                   icon="delete"
                   content="삭제"
                 ></Button>
-                <LikeButton fluid inverted content="12" />
+                <ToggleButton btnType="like" fluid inverted content="12" />
               </div>
             </Grid.Column>
             <Grid.Column mobile={16} tablet={8} computer={8}>

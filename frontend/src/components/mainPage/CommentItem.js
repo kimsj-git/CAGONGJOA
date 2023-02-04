@@ -1,6 +1,6 @@
 import { useState } from "react"
 import { Comment, Icon, Button, Form } from "semantic-ui-react"
-import LikeButton from "../common/LikeButton"
+import ToggleButton from "../common/ToggleButton"
 
 const CommentItem = () => {
   const [replyMode, setReplyMode] = useState(false)
@@ -33,7 +33,7 @@ const CommentItem = () => {
         </Comment.Metadata> */}
           <Comment.Actions>
             <Comment.Action>
-              <LikeButton content="3" compact size="mini" />
+              <ToggleButton btnType="like" content="3" compact size="mini" />
               <Button
                 size="mini"
                 compact

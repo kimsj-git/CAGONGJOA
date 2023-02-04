@@ -1,11 +1,12 @@
 import { useState, useCallback, Fragment, useEffect } from "react"
-import { Route, useLocation,useHistory } from "react-router"
+import { Route, useLocation, useHistory } from "react-router"
 import MainPageTopBar from "../components/mainPage/MainPageTopBar"
 import PostList from "../components/mainPage/PostList"
 import MapDiv from "../components/map/MapDiv"
 import useFetch from "../hooks/useFetch.js"
 import CafeAuthFetch from "../components/certificate/cafeAuth/CafeAuthFetch"
 import { Grid } from "semantic-ui-react"
+import JamSurvey from "../components/mainPage/JamSurvey"
 const DEFAULT_REST_URL = process.env.REACT_APP_REST_DEFAULT_URL
 
 // API 연결 후 DUMMY_POSTS 삭제
@@ -133,9 +134,9 @@ const MainPage = () => {
   }
 
   // 엑세스 토큰이 없을 때 login화면으로 이동
-  if (!sessionStorage.getItem('accessToken')){
-    history.push('/login')
-  }
+  // if (!sessionStorage.getItem('accessToken')){
+  //   history.push('/login')
+  // }
 
   return (
     <Fragment>
@@ -143,6 +144,9 @@ const MainPage = () => {
         <Grid.Row only="mobile">
           <MainPageTopBar isAuthenticated={isAuthenticated} />
         </Grid.Row>
+        <Grid.Column width={16}>
+          <JamSurvey />
+        </Grid.Column>
         {isMap && (
           <Route path="/map">
             <MapDiv />
