@@ -9,11 +9,11 @@ import {
   Label,
   Segment,
 } from "semantic-ui-react"
-import { BsPencil, BsPencilFill } from "react-icons/bs"
+import { BsPencil } from "react-icons/bs"
 import ImageUploadBox from "./ImageUploadBox"
 import { Editor } from "primereact/editor"
 
-const PostForm = () => {
+const PostForm = (props) => {
   // 유저 정보 가져오기
   // const nickname = sessionStorage.getItem('nickname');
   // const currentCafe = sessionStorage.getItem('currentCafe');
@@ -24,6 +24,7 @@ const PostForm = () => {
   const [postContent, setPostContent] = useState("")
   const [postImages, setPostImages] = useState([])
   const [postType, setPostType] = useState("")
+  const isStudyHistory = props.isStudyHistory
   const postTypes = [
     { key: "free", text: "자유", value: "free", icon: "chat" },
     { key: "qna", text: "궁금해요", value: "qna", icon: "question" },
@@ -44,7 +45,6 @@ const PostForm = () => {
     setSecondOpen(true)
   }
   const uploadedImagesRef = useRef()
-
   useEffect(() => {
     const post = {
       postContent: postContent,
@@ -69,84 +69,169 @@ const PostForm = () => {
     //   })
     //   .then(setOpen(false))
   }, [postImages])
-
   return (
-    <Modal
-      open={firstOpen}
-      onClose={() => setFirstOpen(false)}
-      onOpen={() => setFirstOpen(true)}
-      trigger={<BsPencil size="36" color="black" />}
-    >
-      <Modal.Header center>
-        {currentCafe + "의 이야기를 들려주세요!"}
-      </Modal.Header>
-      <Modal.Content image scrolling>
-        {/* <Image size="medium" src="/images/wireframe/image.png" wrapped /> */}
+    <>
+      {isStudyHistory && (
+        <Modal
+          open={firstOpen}
+          onClose={() => setFirstOpen(false)}
+          onOpen={() => setFirstOpen(true)}
+          trigger={<Button onClick={props.onCaptureHandler}>자랑하기</Button>}
+        >
+          <Modal.Header>{currentCafe + "의 이야기를 들려주세요!"}</Modal.Header>
+          <Modal.Content image scrolling>
+            {/* <Image size="medium" src="/images/wireframe/image.png" wrapped /> */}
 
-        <Form.Field>
-          <Segment raised>
-            <Label htmlFor="post-type" color="yellow" ribbon>
-              글 타입을 선택해주세요!
-            </Label>
-            <Dropdown
-              id="post-type"
-              fluid
-              placeholder="글 타입을 선택해주세요!"
-              selection
-              floating
-              required
-              options={postTypes}
-              onChange={(event, data) => {
-                setPostType(data.value)
-              }}
-              style={{ marginBottom: "20px" }}
-              defaultValue={"free"}
-            />
-            <div className="card">
-              <Editor
-                value={postContent}
-                onTextChange={(e) => setPostContent(e.htmlValue)}
-                style={{ height: "100px" }}
-              />
-            </div>
-            <ImageUploadBox ref={uploadedImagesRef} max={10} />
-          </Segment>
-        </Form.Field>
-      </Modal.Content>
-      <Modal.Actions>
-        <Button onClick={submitHandler} color="olive">
-          완료
-          <Icon name="chevron right" />
-        </Button>
-      </Modal.Actions>
+            <Form.Field>
+              <Segment raised>
+                <Label htmlFor="post-type" color="yellow" ribbon>
+                  글 타입을 선택해주세요!
+                </Label>
+                <Dropdown
+                  id="post-type"
+                  fluid
+                  placeholder="글 타입을 선택해주세요!"
+                  selection
+                  floating
+                  required
+                  options={postTypes}
+                  onChange={(event, data) => {
+                    setPostType(data.value)
+                  }}
+                  style={{ marginBottom: "20px" }}
+                  defaultValue={"free"}
+                />
+                <div className="card">
+                  <Editor
+                    value={postContent}
+                    onTextChange={(e) => setPostContent(e.htmlValue)}
+                    style={{ height: "100px" }}
+                  />
+                </div>
+                <ImageUploadBox
+                  ref={uploadedImagesRef}
+                  max={10}
+                  studyHistoryImage={props.studyHistoryImage}
+                />
+              </Segment>
+            </Form.Field>
+          </Modal.Content>
+          <Modal.Actions>
+            <Button onClick={submitHandler} color="olive">
+              완료
+              <Icon name="chevron right" />
+            </Button>
+          </Modal.Actions>
 
-      <Modal
-        onClose={() => setSecondOpen(false)}
-        open={secondOpen}
-        size="small"
-        basic
-        closeOnDimmerClick={false}
-      >
-        <Header icon>
-          <Icon name="check circle" />글 작성이 완료되었습니다!
-        </Header>
-        {/* <Modal.Content>
+          <Modal
+            onClose={() => setSecondOpen(false)}
+            open={secondOpen}
+            size="small"
+            basic
+            closeOnDimmerClick={false}
+          >
+            <Header icon>
+              <Icon name="check circle" />글 작성이 완료되었습니다!
+            </Header>
+            {/* <Modal.Content>
           <p></p>
         </Modal.Content> */}
-        <Modal.Actions>
-          <Button
+            <Modal.Actions>
+              <Button
+                basic
+                color="green"
+                icon="checkmark"
+                content="확인"
+                onClick={() => {
+                  setFirstOpen(false)
+                  setSecondOpen(false)
+                }}
+              />
+            </Modal.Actions>
+          </Modal>
+        </Modal>
+      )}
+      {!isStudyHistory && (
+        <Modal
+          open={firstOpen}
+          onClose={() => setFirstOpen(false)}
+          onOpen={() => setFirstOpen(true)}
+          trigger={<BsPencil size="36" color="black" />}
+        >
+          <Modal.Header>{currentCafe + "의 이야기를 들려주세요!"}</Modal.Header>
+          <Modal.Content image scrolling>
+            {/* <Image size="medium" src="/images/wireframe/image.png" wrapped /> */}
+
+            <Form.Field>
+              <Segment raised>
+                <Label htmlFor="post-type" color="yellow" ribbon>
+                  글 타입을 선택해주세요!
+                </Label>
+                <Dropdown
+                  id="post-type"
+                  fluid
+                  placeholder="글 타입을 선택해주세요!"
+                  selection
+                  floating
+                  required
+                  options={postTypes}
+                  onChange={(event, data) => {
+                    setPostType(data.value)
+                  }}
+                  style={{ marginBottom: "20px" }}
+                  defaultValue={"free"}
+                />
+                <div className="card">
+                  <Editor
+                    value={postContent}
+                    onTextChange={(e) => setPostContent(e.htmlValue)}
+                    style={{ height: "100px" }}
+                  />
+                </div>
+                <ImageUploadBox
+                  ref={uploadedImagesRef}
+                  max={10}
+                  studyHistroyImage={props.studyHistroyImage}
+                />
+              </Segment>
+            </Form.Field>
+          </Modal.Content>
+          <Modal.Actions>
+            <Button onClick={submitHandler} color="olive">
+              완료
+              <Icon name="chevron right" />
+            </Button>
+          </Modal.Actions>
+
+          <Modal
+            onClose={() => setSecondOpen(false)}
+            open={secondOpen}
+            size="small"
             basic
-            color="green"
-            icon="checkmark"
-            content="확인"
-            onClick={() => {
-              setFirstOpen(false)
-              setSecondOpen(false)
-            }}
-          />
-        </Modal.Actions>
-      </Modal>
-    </Modal>
+            closeOnDimmerClick={false}
+          >
+            <Header icon>
+              <Icon name="check circle" />글 작성이 완료되었습니다!
+            </Header>
+            {/* <Modal.Content>
+          <p></p>
+        </Modal.Content> */}
+            <Modal.Actions>
+              <Button
+                basic
+                color="green"
+                icon="checkmark"
+                content="확인"
+                onClick={() => {
+                  setFirstOpen(false)
+                  setSecondOpen(false)
+                }}
+              />
+            </Modal.Actions>
+          </Modal>
+        </Modal>
+      )}
+    </>
   )
 }
 

@@ -1,0 +1,13 @@
+.detail {
+  padding:30px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  width: 200px;
+  height: 200px;
+}
+.detail-wrapper {
+  background-color: bisque;
+  border: 3px dashed black;
+  border-radius: 25px;
+}
