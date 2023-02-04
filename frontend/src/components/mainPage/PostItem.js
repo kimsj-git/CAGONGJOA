@@ -1,7 +1,7 @@
 import { Card, Button, Image, Label } from "semantic-ui-react"
 import PostDetail from "./PostDetail"
 import LoadingPost from "./LoadingPost"
-import LikeButton from "../common/LikeButton"
+import ToggleButton from "../common/ToggleButton"
 
 const PostItem = (props) => {
   return props.isLoading ? (
@@ -33,7 +33,7 @@ const PostItem = (props) => {
       </Card.Content>
       <Card.Content extra>
         <div style={{ display: "flex" }}>
-          <LikeButton fluid inverted content="12" />
+          <ToggleButton fluid inverted content="12" btnType="like" />
           <PostDetail post={props} />
         </div>
       </Card.Content>

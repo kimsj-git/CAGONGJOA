@@ -163,7 +163,7 @@ const PostForm = (props) => {
             dispatch(postActions.closeModal())
           }}
           onOpen={() => setFirstOpen(true)}
-          trigger={<BsPencil size="36" color="black" />}
+          trigger={<BsPencil size="30" color="black" />}
         >
           <Modal.Header>{currentCafe + "의 이야기를 들려주세요!"}</Modal.Header>
           <Modal.Content image scrolling>
