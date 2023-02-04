@@ -17,10 +17,10 @@ public interface MemberService {
 
     void saveMember(long oAuthId, String nickname, OauthType oauthType);
 
-    Map<String, Object> tokenRefresh() throws Exception;
+    Map<String, Object> tokenRefresh();
 
     void logout() throws Exception;
 
-    MemberIdAndNicknameDto getMemberIdAndNicknameByJwtToken() throws Exception;
+    MemberIdAndNicknameDto getMemberIdAndNicknameByJwtToken();
 
 }

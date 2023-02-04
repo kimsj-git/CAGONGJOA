@@ -34,7 +34,7 @@ public class OAuthController {
      * [GET] /oauth/kakao/callback
      */
     @GetMapping("/kakao")
-    public ResponseEntity<Map<String, Object>> kakaoCallback(@RequestParam String code) throws Exception {
+    public ResponseEntity<Map<String, Object>> kakaoCallback(@RequestParam String code) {
         System.out.println(code);
         Map<String, Object> resultMap = new HashMap<>();
 

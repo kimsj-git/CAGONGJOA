@@ -5,30 +5,24 @@ import com.ssafy.backend.cafe.domain.dto.ClientPosInfoDto;
 import com.ssafy.backend.cafe.domain.dto.LocationDto;
 import com.ssafy.backend.cafe.domain.dto.NearByCafeResultDto;
 import com.ssafy.backend.cafe.domain.dto.SelectCafeRequestDto;
-import com.ssafy.backend.cafe.domain.entity.CafeLocation;
 import com.ssafy.backend.cafe.domain.enums.Direction;
 import com.ssafy.backend.cafe.repository.CafeRepository;
 import com.ssafy.backend.cafe.util.GeometryUtil;
+import com.ssafy.backend.common.exception.cafe.CafeException;
+import com.ssafy.backend.common.exception.cafe.CafeExceptionType;
 import com.ssafy.backend.jwt.JwtUtil;
-import com.ssafy.backend.member.domain.dto.MemberIdAndNicknameDto;
 import com.ssafy.backend.member.service.MemberService;
 import com.ssafy.backend.redis.CafeAuth;
 import com.ssafy.backend.redis.CafeAuthRepository;
 import lombok.RequiredArgsConstructor;
-import org.locationtech.jts.geom.Point;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.context.request.RequestContextHolder;
-import org.springframework.web.context.request.ServletRequestAttributes;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
-import java.sql.Blob;
 import java.util.*;
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
-import javax.servlet.http.HttpServletRequest;
 
 @Service
 @RequiredArgsConstructor
@@ -36,21 +30,19 @@ import javax.servlet.http.HttpServletRequest;
 public class CafeServiceImpl implements CafeService {
 
     private final EntityManager em;
-    private final CafeRepository cafeRepository;
-    private final JwtUtil jwtUtil;
     private final MemberService memberService;
     private final CafeAuthRepository cafeAuthRepository;
 
 
     @Override
-    public void checkCafeAuth() throws Exception {
+    public void checkCafeAuth() {
         // 인증된 상태라면 레디스 데이터 삭제 후 재생성 (time out 시간 초기화)
         String nickname = memberService.getMemberIdAndNicknameByJwtToken().getNickname();
         Optional<CafeAuth> cafeAuthOptional = cafeAuthRepository.findById(nickname); // key = nickname
 
         // 레디스에 인증정보가 없다면
         if (cafeAuthOptional.isEmpty()) {
-            throw new Exception("401, 위치 인증 만료 상태");
+            throw new CafeException(CafeExceptionType.CAFE_AUTH_EXPIRED);
         }
 
         // 존재한다면 삭제후 갱신
@@ -67,7 +59,7 @@ public class CafeServiceImpl implements CafeService {
     }
 
     @Override
-    public void saveCafeAuth(SelectCafeRequestDto selectCafeRequestDto) throws Exception {
+    public void saveCafeAuth(SelectCafeRequestDto selectCafeRequestDto) {
         // 현 위치와 cafeId가 정말로 일치하는지 먼저 체크
         List<NearByCafeResultDto> nearByCafeLocations
                 = this.getNearByCafeLocations(new ClientPosInfoDto(selectCafeRequestDto.getLatitude(),
@@ -79,7 +71,7 @@ public class CafeServiceImpl implements CafeService {
         }
 
         if (!cafeIdLstForValid.contains(selectCafeRequestDto.getCafeId())) {
-            throw new Exception("400 Bad -> 해킹시도");
+            throw new CafeException(CafeExceptionType.CAFE_AUTH_MISMATCH);
         }
 
         // 현 위치와 cafe ID가 정말로 일치한다면
@@ -89,10 +81,12 @@ public class CafeServiceImpl implements CafeService {
                                 .nickname(nickname)
                                 .expiration(600) // 600초
                                 .build();
+
         cafeAuthRepository.save(cafeAuth);
         Optional<CafeAuth> cafeAuthOptional = cafeAuthRepository.findById(nickname); // key = nickname
+
         if (cafeAuthOptional.isEmpty()) {
-            throw new Exception("레디스 저장 실패");
+            throw new CafeException(CafeExceptionType.CAFE_AUTH_SAVE_FAIL);
         }
     }
 

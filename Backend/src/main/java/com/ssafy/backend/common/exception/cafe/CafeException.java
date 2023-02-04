@@ -1,11 +1,11 @@
-package com.ssafy.backend.common.exception.member;
+package com.ssafy.backend.common.exception.cafe;
 
 import com.ssafy.backend.common.exception.BaseException;
 import com.ssafy.backend.common.exception.BaseExceptionType;
 
-public class MemberException extends BaseException {
+public class CafeException extends BaseException {
     private BaseExceptionType exceptionType;
-    public MemberException(BaseExceptionType exceptionType) {
+    public CafeException(BaseExceptionType exceptionType) {
         this.exceptionType = exceptionType;
     }
 

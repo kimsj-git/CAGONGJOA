@@ -2,6 +2,8 @@ package com.ssafy.backend.member.service;
 
 import com.auth0.jwt.interfaces.Claim;
 import com.auth0.jwt.interfaces.DecodedJWT;
+import com.ssafy.backend.common.exception.jwt.JwtException;
+import com.ssafy.backend.common.exception.jwt.JwtExceptionType;
 import com.ssafy.backend.common.exception.member.MemberException;
 import com.ssafy.backend.common.exception.member.MemberExceptionType;
 import com.ssafy.backend.jwt.JwtUtil;
@@ -65,7 +67,7 @@ public class MemberServiceImpl implements MemberService{
     }
 
     @Override
-    public Map<String, Object> tokenRefresh() throws Exception {
+    public Map<String, Object> tokenRefresh() {
         // refresh token 받아오기
         HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
         String refreshToken = request.getHeader("Authorization");
@@ -81,7 +83,7 @@ public class MemberServiceImpl implements MemberService{
 
         // redis에 refresh 토큰이 없다면(리프레쉬 토큰 만료시)
         if (refreshTokenRepository.findById(refreshToken).isEmpty()) {
-            throw new Exception("리프레쉬 토큰 만료!! -> 사용자 로그아웃 및 로그인 페이지 출력, 재로그인!");
+            throw new JwtException(JwtExceptionType.TOKEN_EXPIRED);
         }
 
         HashMap<String, Object> tokens = new HashMap<>();
@@ -125,7 +127,7 @@ public class MemberServiceImpl implements MemberService{
     }
 
     @Override
-    public MemberIdAndNicknameDto getMemberIdAndNicknameByJwtToken() throws Exception {
+    public MemberIdAndNicknameDto getMemberIdAndNicknameByJwtToken() {
         HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
         String accessToken = request.getHeader("Authorization");
         accessToken = accessToken.substring(7);
