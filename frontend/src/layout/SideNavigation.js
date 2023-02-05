@@ -1,6 +1,7 @@
 import { NavLink } from "react-router-dom"
 import { Menu, Icon, Segment } from "semantic-ui-react"
 import PostForm from "../components/mainPage/PostForm"
+import SearchModal from "../components/mainPage/SearchModal"
 import {
   AiOutlineHome,
   AiFillHome,
@@ -128,7 +129,7 @@ const SideNavigation = () => {
               alignItems: "center",
             }}
           >
-            <IoIosSearch size="30" color="black" />
+            <SearchModal />
             <p>검색</p>
           </div>
         </Menu.Item>

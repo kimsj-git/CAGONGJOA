@@ -6,7 +6,8 @@ import { findMapCafeList } from "../../store/cafe"
 
 import { BsFillPatchQuestionFill } from "react-icons/bs"
 import { AiOutlineBell } from "react-icons/ai"
-import { IoIosSearch } from "react-icons/io"
+
+import SearchModal from "./SearchModal"
 
 const MainPageTopBar = (props) => {
   const history = useHistory()
@@ -45,7 +46,11 @@ const MainPageTopBar = (props) => {
             style={{ marginInline: "5% 10%" }}
           />
         ) : (
-          <BsFillPatchQuestionFill size="36" color="grey" />
+          <BsFillPatchQuestionFill
+            style={{ marginInline: "1rem" }}
+            size="36"
+            color="grey"
+          />
         )}
         <p
           style={{
@@ -67,7 +72,7 @@ const MainPageTopBar = (props) => {
           <AiOutlineBell size="30" color="black" />
         </Menu.Item>
         <Menu.Item>
-          <IoIosSearch size="30" color="black" />
+          <SearchModal />
         </Menu.Item>
       </Menu.Item>
     </Menu>
