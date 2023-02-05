@@ -66,8 +66,14 @@ pipeline { // 파이프라인의 시작
         stage('Stop and Remove Old Container') {
             // 안되면 try catch 적용해보기
             steps {
-                sh 'docker stop $(docker ps -q --filter ancestor=frontend:latest)'
-                sh 'docker rm $(docker ps -a -q --filter ancestor=frontend:latest)'
+                script{
+                    try {
+                        sh 'docker stop $(docker ps -q --filter ancestor=frontend:latest)'
+                        sh 'docker rm $(docker ps -a -q --filter ancestor=frontend:latest)'
+                    } catch (Exception e) {
+                        echo "An error occurred: ${e}"
+                    }
+                }
             }
 
             post {
