@@ -41,12 +41,12 @@ public class MemberServiceImpl implements MemberService{
     }
 
     @Override
-    public void changeNickname(Member member, String newNickname) throws Exception {
+    public void changeNickname(Member member, String newNickname) {
 
         // 닉네임 유효성 체크 = 받는 dto에서!
 
         if (member.getNickname().equals(newNickname)) {
-            throw new Exception("바꾸려는 닉네임이 기존과 동일"); // 임시 ***
+            throw new MemberException(MemberExceptionType.SAME_NICKNAME);
         }
 
         member.setNickname(newNickname);
@@ -105,7 +105,7 @@ public class MemberServiceImpl implements MemberService{
     }
 
     @Override
-    public void logout() throws Exception {
+    public void logout() {
         HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
         String refreshToken = request.getHeader("Authorization");
 
@@ -118,11 +118,7 @@ public class MemberServiceImpl implements MemberService{
         refreshTokenRepository.deleteById(refreshToken);
 
         refreshTokenRepository.findById(refreshToken).ifPresent(a ->{
-            try {
-                throw new Exception("토큰이 삭제되지 않았습니다.");
-            } catch (Exception e) {
-                throw new RuntimeException(e);
-            }
+            throw new MemberException(MemberExceptionType.NOT_DELETE_REFRESH_TOKEN);
         });
     }
 
