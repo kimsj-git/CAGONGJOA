@@ -11,5 +11,6 @@ import lombok.*;
 public class CheckedResponseDto {
     private Long memberId;
     private String nickname;
-    private String cafeName;
+    private String verifiedCafeName;
+    private Long verifiedCafeId;
 }

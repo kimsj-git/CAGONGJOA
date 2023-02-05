@@ -14,6 +14,7 @@ import static javax.persistence.FetchType.LAZY;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 @Builder
+@Setter
 public class PostImage {
 
     //== Column  ==//
@@ -26,9 +27,9 @@ public class PostImage {
         private Long id;
 
         /** 2. post id를 post 테이블과 조인을 이용하여 사용 - 게시글이 삭제되면 모든 이미지 삭제   **/
+        @Setter
         @ManyToOne
         @JoinColumn(name = "post_id")
-        @OnDelete(action = OnDeleteAction.CASCADE)
         private Post post;
 
         /**  3. 이미지 url   **/

@@ -13,6 +13,7 @@ public interface CommentRepository extends JpaRepository<Comment, Long> {
 
     List<Comment> findAllByPost(Post post);
 
-    Slice<Comment> findAllByIdLessThanAndPost(Long commentId, Post post);
+    Slice<Comment> findAllByIdLessThanAndPostId(Long commentId, Long postId);
 
+    Slice<Comment> findAllByPostId(Long postId);
 }

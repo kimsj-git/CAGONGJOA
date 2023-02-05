@@ -5,6 +5,7 @@ import com.ssafy.backend.post.domain.entity.Comment;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 
+import java.util.List;
 import java.util.Map;
 
 public interface CommentService {
@@ -14,7 +15,7 @@ public interface CommentService {
 
     /** 1. 댓글 불러오기 **/
 
-    Slice<Comment> feedComment(CommentPagingRequestDto requestDto, Pageable pageable) throws Exception;
+    List<CommentPagingResponseDto> feedComment(CommentPagingRequestDto requestDto, Pageable pageable) throws Exception;
 
 
     void writeComment(CommentWriteRequestDTO commentWriteDto) throws Exception;

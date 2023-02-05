@@ -16,7 +16,7 @@ import java.util.List;
 @Builder
 public class PostPagingRequestDto {
     private Long postId;
-    private List<String> types;
+    private List<PostType> types;
     private Double latitude;
     private Double longitude;
     private Double dist;

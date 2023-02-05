@@ -12,6 +12,4 @@ public class CommentPagingRequestDto {
     private Long postId;
     private Long commentId;
 
-
-
 }

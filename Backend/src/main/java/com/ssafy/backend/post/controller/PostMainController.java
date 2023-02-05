@@ -4,10 +4,7 @@ package com.ssafy.backend.post.controller;
 import com.ssafy.backend.common.annotation.Auth;
 import com.ssafy.backend.common.annotation.CafeAuth;
 import com.ssafy.backend.common.dto.ResponseDTO;
-import com.ssafy.backend.post.domain.dto.PostLikeRequestDto;
-import com.ssafy.backend.post.domain.dto.PostLikeResponseDto;
-import com.ssafy.backend.post.domain.dto.PostPagingRequestDto;
-import com.ssafy.backend.post.domain.dto.PostPagingResponseDto;
+import com.ssafy.backend.post.domain.dto.*;
 import com.ssafy.backend.post.domain.entity.Post;
 import com.ssafy.backend.post.service.PostService;
 import com.ssafy.backend.post.util.PostUtil;
@@ -18,6 +15,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -41,12 +39,15 @@ public class PostMainController {
             @RequestBody PostPagingRequestDto requestDto,
             @PageableDefault(size = 10, sort = "id", direction = Sort.Direction.DESC) Pageable pageable) throws Exception {
 
-        Slice<PostPagingResponseDto> postSlice = postService.feedPosts(requestDto, pageable);
+        List<PostPagingResponseDto> postSlice = postService.feedPosts(requestDto, pageable);
+        if(postSlice == null || postSlice.isEmpty()) {
+            responseDTO
+                    = new ResponseDTO("해당하는 게시물이 없음", "", HttpStatus.OK, postSlice);
+        }else {
+            responseDTO
+                    = new ResponseDTO("feed 생성 성공!", "", HttpStatus.OK, postSlice);
+        }
 
-        System.out.println(postSlice.getContent());
-
-        responseDTO
-                = new ResponseDTO("카페 위치 인증 버튼 click", "", HttpStatus.OK, null);
         // 리턴객체 : 유저정보(카페로고, 닉네임, 칭호, 카페이름), 만든시간, 이미지, 글내용 전체, 좋아요 개수, 댓글 개수, 게시물 PK
 
         return new ResponseEntity<>(responseDTO, HttpStatus.OK);
@@ -82,11 +83,12 @@ public class PostMainController {
 
   @Auth
     @PostMapping("/detail")
-    public ResponseEntity<Void> postDetail(@RequestParam Long postId) throws Exception {
-        postService.findOnePost(postId);
+    public ResponseEntity<ResponseDTO> postDetail(@RequestParam Long postId) throws Exception {
+    PostDetailResponseDto detailResponseDto = postService.findOnePost(postId);
+    responseDTO = new ResponseDTO("조회 완료!", "", HttpStatus.OK, detailResponseDto);
 
         // 유저에게 게시글 내용을 보여주기
-        return new ResponseEntity<>(HttpStatus.OK);
+        return new ResponseEntity<>(responseDTO,HttpStatus.OK);
     }
 
 

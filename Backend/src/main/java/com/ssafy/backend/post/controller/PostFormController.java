@@ -33,10 +33,10 @@ public class PostFormController {
             @RequestPart(value = "writeForm") PostWriteFormRequestDto requestPostDto) throws Exception {
 
 
-        if(postService.writePost(files, requestPostDto)){
+        if (postService.writePost(files, requestPostDto)) {
             responseDTO = new ResponseDTO("글쓰기 완료!", "", HttpStatus.OK, null);
-        }else {
-            responseDTO = new ResponseDTO("", "code : 404 / 잘못된 카테고리 요청 ", HttpStatus.NOT_FOUND, null);
+        } else {
+            responseDTO = new ResponseDTO("", "code : 404 / 잘못된 카테고리 요청 / 미인증 유저가 2개 카테고리 이외를 시도함 ", HttpStatus.NOT_FOUND, null);
         }
         return new ResponseEntity<>(responseDTO, HttpStatus.OK);
     }
@@ -52,9 +52,12 @@ public class PostFormController {
             @RequestPart(value = "imgFiles", required = false) MultipartFile[] files,
             @RequestPart(value = "updateForm", required = false) PostUpdateFormRequestDto updateDto) throws Exception {
 
-        postService.updatePost(files, updateDto);
-
-        responseDTO = new ResponseDTO("글 업데이트 완료!", "", HttpStatus.OK, null);
+        boolean isUpdated = postService.updatePost(files, updateDto);
+        if (isUpdated) {
+            responseDTO = new ResponseDTO("글 업데이트 완료!", "", HttpStatus.OK, null);
+        } else {
+            responseDTO = new ResponseDTO("", "잘못된 글 id", HttpStatus.BAD_REQUEST, null);
+        }
 
         return new ResponseEntity<>(responseDTO, HttpStatus.OK);
     }

@@ -3,12 +3,14 @@ package com.ssafy.backend.post.util;
 
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.*;
-import com.auth0.jwt.JWT;
-import com.auth0.jwt.interfaces.DecodedJWT;
 import com.ssafy.backend.cafe.domain.dto.ClientPosInfoDto;
+import com.ssafy.backend.cafe.domain.dto.LocationDto;
+import com.ssafy.backend.cafe.domain.dto.NearByCafeResultDto;
 import com.ssafy.backend.cafe.domain.entity.Cafe;
+import com.ssafy.backend.cafe.domain.enums.Direction;
 import com.ssafy.backend.cafe.repository.CafeRepository;
 import com.ssafy.backend.cafe.service.CafeServiceImpl;
+import com.ssafy.backend.cafe.util.GeometryUtil;
 import com.ssafy.backend.jwt.JwtUtil;
 import com.ssafy.backend.member.domain.dto.MemberIdAndNicknameDto;
 import com.ssafy.backend.member.service.MemberServiceImpl;
@@ -21,13 +23,13 @@ import com.ssafy.backend.redis.CafeAuthRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import org.springframework.web.context.request.RequestContextHolder;
-import org.springframework.web.context.request.ServletRequestAttributes;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.swing.text.html.Option;
+import javax.persistence.EntityManager;
+import javax.persistence.Query;
 import javax.transaction.Transactional;
+import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.*;
 
 @RequiredArgsConstructor // 얘도 커스텀?
@@ -35,6 +37,7 @@ import java.util.*;
 @Transactional
 public class PostUtil {
     private final JwtUtil jwtUtil;
+    private final EntityManager em;
     private final AmazonS3 amazonS3;
     @Value("${cloud.aws.s3.bucket}")
     private String bucket;
@@ -62,7 +65,8 @@ public class PostUtil {
         String cafeName;
         Optional<CafeAuth> cafeAuth = cafeAuthRepository.findById(nickname);
         if (cafeAuth.isEmpty() || cafeAuth == null) { // 인증되지 않은 회원
-            cafeName = "CafeNotAuthorized";
+            cafeName = "CafeUnAuthorized";
+            cafeId = -1L;
         } else { // 인증된 회원
             cafeId = cafeAuth.orElseThrow().getCafeId();
             Optional<Cafe> optionalCafe = cafeRepository.findById(cafeId);
@@ -74,7 +78,8 @@ public class PostUtil {
         CheckedResponseDto checkedResponseDto = CheckedResponseDto.builder()
                 .nickname(nickname)
                 .memberId(memberId)
-                .cafeName(cafeName)
+                .verifiedCafeName(cafeName)
+                .verifiedCafeId(cafeId)
                 .build();
 
         return checkedResponseDto;
@@ -95,12 +100,14 @@ public class PostUtil {
             String contentType = multipartFile.getContentType().toString();
             System.out.println("파일 확장자명 : " + contentType);
 
-//            확장자 검사
+            //확장자 검사
 //            assert contentType != null;
-//            if(contentType.equals("image/jpeg") || contentType.equals("image/jpg") || contentType.equals("image/png") || contentType.equals("image/jfif") || contentType.equals("image/gif") || contentType.equals("image/bmp") ) {
-//                System.out.println("Exception 발생");
-//                return null;
-//            }
+            if(contentType.equals("image/jpeg") || contentType.equals("image/jpg") || contentType.equals("image/png") || contentType.equals("image/jfif") || contentType.equals("image/gif") || contentType.equals("image/bmp") ) {
+
+            }else {
+                System.out.println("Exception 발생");
+                return null;
+            }
 
             objectMetaData.setContentType(multipartFile.getContentType()); // 이미지 타입 설정
             objectMetaData.setContentLength(size); // 사이즈 설정
@@ -113,7 +120,6 @@ public class PostUtil {
             String imagePath = amazonS3.getUrl(bucket, randomName).toString();
 
             postImage = PostImage.builder()
-                    .post(post)
                     .imgUrl(imagePath)
                     .accessKey(randomName)
                     .build();
@@ -129,15 +135,63 @@ public class PostUtil {
 
         // null 이면 이미지를 삭제하지 않고 바로 리턴하여 돌아간다.
         if(postImages.isEmpty() || postImages == null) {
+            System.out.println("img empty!");
             return;
         }
-
         for(PostImage data : postImages) {
             // acess key를 가져와서 S3 데이터를 삭제한다.
             amazonS3.deleteObject(bucket, data.getAccessKey());
         }
-        // postId 로 모두 삭제한다.
+        post.deleteImages();
         imageRepository.deleteAllByPostId(post.getId());
 
+    }
+
+    @org.springframework.transaction.annotation.Transactional(readOnly = true)
+    public List<NearByCafeResultDto> getNearByCafeLocations(ClientPosInfoDto clientPosInfoDto) {
+        Double latitude = clientPosInfoDto.getLatitude();
+        Double longitude = clientPosInfoDto.getLongitude();
+        Double distance = clientPosInfoDto.getDist();
+
+        System.out.println("distance = " + distance);
+        System.out.println("longitude = " + longitude);
+        System.out.println("latitude = " + latitude);
+
+        LocationDto northEast = GeometryUtil
+                .calculate(latitude, longitude, distance, Direction.NORTHEAST.getBearing());
+        LocationDto southWest = GeometryUtil
+                .calculate(latitude, longitude, distance, Direction.SOUTHWEST.getBearing());
+
+        double x1 = northEast.getLatitude();
+        double y1 = northEast.getLongitude();
+        double x2 = southWest.getLatitude();
+        double y2 = southWest.getLongitude();
+
+        String pointFormat = String.format("'LINESTRING(%f %f, %f %f)')", x1, y1, x2, y2);
+
+        Query query
+                = em.createNativeQuery(
+                "SELECT cf.id, cf.name, cl.address, cl.lat, cl.lng, cf.brand_type "
+                        + "FROM (SELECT * "
+                        + "FROM cafe_location AS c "
+                        + "WHERE MBRContains(ST_LINESTRINGFROMTEXT(" + pointFormat + ", c.point) = 1) AS cl "
+                        + "INNER JOIN cafe cf ON cf.id = cl.cafe_id");
+
+        List<Object[]> results = query.getResultList();
+
+        List<NearByCafeResultDto> nearByCafeResultDtos = new ArrayList<>();
+
+        for (Object[] result : results) {
+            NearByCafeResultDto dto = NearByCafeResultDto.builder()
+                    .id((BigInteger) result[0])
+                    .name((String) result[1])
+                    .address((String) result[2])
+                    .latitude((BigDecimal)result[3])
+                    .longitude((BigDecimal)result[4])
+                    .brand_type((String) result[5]).build();
+            nearByCafeResultDtos.add(dto);
+        }
+
+        return nearByCafeResultDtos;
     }
 }

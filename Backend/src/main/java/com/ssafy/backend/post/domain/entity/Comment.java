@@ -11,8 +11,6 @@ import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
 
-import static javax.persistence.FetchType.LAZY;
-
 @Table(name = "comment")
 @Entity
 @Getter
@@ -35,7 +33,7 @@ public class Comment extends BaseEntity {
         @OnDelete(action = OnDeleteAction.CASCADE)
         private Post post;
 
-//         3. memberId를 조인으로 하여 사용
+//      3. memberId를 조인으로 하여 사용
         @ManyToOne
         @JoinColumn(name = "member_id")
         @OnDelete(action = OnDeleteAction.CASCADE)
@@ -45,22 +43,25 @@ public class Comment extends BaseEntity {
         @Column
         private String content;
         // 5. 댓글 그룹의 pk
-        @Column
-        private Long group;
-        @Column
-        private Long step;
+        @Column(name = "group_no")
+        private Long groupNo;
+        @Column(name = "step_no")
+        private Long stepNo;
 
         @OneToMany(mappedBy = "comment")
-
         private List<CommentLike> commentLikeList = new ArrayList<>();
 
         @Builder(builderClassName = "CommentWriteBuilder", builderMethodName = "CommentWriteBuilder")
         public Comment (Post post, Member member, String content, Long group, Long step) {
                 this.post = post;
-                this.member = member;
                 this.content = content;
-                this.group = group;
-                this.step = step;
+                this.groupNo = group;
+                this.member = member;
+                this.stepNo = step;
+        }
+
+        public void updateComment(String content) {
+                this.content = content;
         }
 
 

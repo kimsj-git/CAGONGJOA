@@ -3,6 +3,7 @@ package com.ssafy.backend.post.controller;
 import com.ssafy.backend.common.annotation.Auth;
 import com.ssafy.backend.common.dto.ResponseDTO;
 import com.ssafy.backend.post.domain.dto.CommentPagingRequestDto;
+import com.ssafy.backend.post.domain.dto.CommentPagingResponseDto;
 import com.ssafy.backend.post.domain.dto.CommentUpdateRequestDTO;
 import com.ssafy.backend.post.domain.dto.CommentWriteRequestDTO;
 import com.ssafy.backend.post.domain.entity.Comment;
@@ -29,15 +30,15 @@ public class PostDetailController {
     private final CommentService commentService;
     private ResponseDTO responseDTO;
 
-    /**  2-1. 댓글 더보기  (보류) **/
+    /**  2-1. 댓글 더보기  **/
 
     @Auth
     @GetMapping("/comment/feed")
-    public ResponseEntity<ResponseDTO> nextComment(
+    public ResponseEntity<ResponseDTO> feedComment(
             @RequestBody CommentPagingRequestDto requestDto,
-            @PageableDefault(size = 10, sort = "id", direction = Sort.Direction.DESC) Pageable pageable) throws Exception {
+            @PageableDefault(size = 5, sort = "id", direction = Sort.Direction.DESC) Pageable pageable) throws Exception {
 
-        Slice<Comment> comments = commentService.feedComment(requestDto, pageable);
+        List<CommentPagingResponseDto> comments = commentService.feedComment(requestDto, pageable);
 
         responseDTO = new ResponseDTO("댓글 불러오기 완료!", "", HttpStatus.OK, comments);
 

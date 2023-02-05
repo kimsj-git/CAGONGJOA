@@ -4,10 +4,7 @@ package com.ssafy.backend.post.service;
 import com.ssafy.backend.jwt.JwtUtil;
 import com.ssafy.backend.member.domain.entity.Member;
 import com.ssafy.backend.member.repository.MemberRepository;
-import com.ssafy.backend.post.domain.dto.CheckedResponseDto;
-import com.ssafy.backend.post.domain.dto.CommentPagingRequestDto;
-import com.ssafy.backend.post.domain.dto.CommentUpdateRequestDTO;
-import com.ssafy.backend.post.domain.dto.CommentWriteRequestDTO;
+import com.ssafy.backend.post.domain.dto.*;
 import com.ssafy.backend.post.domain.entity.Comment;
 import com.ssafy.backend.post.domain.entity.CommentLike;
 import com.ssafy.backend.post.domain.entity.Post;
@@ -18,22 +15,19 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import javax.transaction.Transactional;
-import java.util.AbstractMap;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 @RequiredArgsConstructor
 @Service
 @Transactional
 public class CommentServiceImpl implements CommentService {
 
-
     private final PostRepository postRepository;
     private final PostLikeRepository postLikeRepository;
     private final CommentRepository commentRepository;
     private final CommentLikeRepository commentLikeRepository;
     private final MemberRepository memberRepository;
-
+    private Slice<Comment> comments;
     private final JwtUtil jwtUtil;
     private final PostUtil postUtil;
     private Slice<Post> postSlice;
@@ -41,28 +35,41 @@ public class CommentServiceImpl implements CommentService {
     private Member member;
     private Comment comment;
 
-
-
     /**
      * 2-1. 댓글 불러오기
      **/
     @Override
-    public Slice<Comment> feedComment(CommentPagingRequestDto requestDto, Pageable pageable) throws Exception {
+    public List<CommentPagingResponseDto> feedComment(CommentPagingRequestDto requestDto, Pageable pageable) throws Exception {
+        // 가지고와야할 값 - 댓글, 대댓글 / 작성시간 /
         postUtil.checkMember();
 
+        List<CommentPagingResponseDto> commentResponseList = new ArrayList<>();
+        CommentPagingResponseDto commentPagingResponseDto;
         Long commentId = requestDto.getCommentId();
         Long postId = requestDto.getPostId();
 
-        Optional<Post> postOptional = postRepository.findById(postId);
-        post = postOptional.orElseThrow();
+        if(commentId == -1) {
+            comments = commentRepository.findAllByPostId(postId);
+        }else {
+            comments = commentRepository.findAllByIdLessThanAndPostId(commentId, postId);
+        }
 
-        Slice<Comment> comments = commentRepository.findAllByIdLessThanAndPost(commentId, post);
+        for (Comment comment : comments) {
+            commentPagingResponseDto = CommentPagingResponseDto.CommentResponseBuilder()
+                    .memberId(comment.getMember().getId())
+                    .content(comment.getContent())
+                    .createdAt(comment.getCreatedAt())
+                    .commentLike(comment.getCommentLikeList().size())
+                    .build();
 
-        return comments;
+            commentResponseList.add(commentPagingResponseDto);
+        }
+
+        return commentResponseList;
     }
 
     /**
-     * 2-2. 댓글 쓰기
+     * 2-2. 댓글 쓰기 [테스트 완료 - step_no 랑 group_no 알고리즘만 경희랑 이야기해서 짜면될듯]
      **/
     @Override
     public void writeComment(CommentWriteRequestDTO commentWriteDto) throws Exception {
@@ -86,10 +93,10 @@ public class CommentServiceImpl implements CommentService {
 
         // 4. 글 저장하기
         comment = Comment.CommentWriteBuilder()
-                .post(post)
-                .member(member)
-                .content(content)
                 .group(group)
+                .member(member)
+                .post(post)
+                .content(content)
                 .step(step)
                 .build();
 
@@ -107,13 +114,16 @@ public class CommentServiceImpl implements CommentService {
         CheckedResponseDto checked = postUtil.checkMember();
         long memberId = checked.getMemberId(); // 멤버 아이디를 확인한다.
 
-        Long id = commentUpdateDto.getCommentId();
+        Long commentId = commentUpdateDto.getCommentId();
         String content = commentUpdateDto.getContent();
 
-
-        Comment comment = Comment.CommentWriteBuilder()
-                .content(content)
-                .build();
+        Optional<Comment> optionalComment = commentRepository.findById(commentId);
+        if(optionalComment == null || optionalComment.isEmpty()) {
+            return;
+        }else {
+            Comment comment = optionalComment.orElseThrow();
+            comment.updateComment(content);
+        }
 
         commentRepository.save(comment);
     }
@@ -128,7 +138,6 @@ public class CommentServiceImpl implements CommentService {
         //1. 유저 확인
         CheckedResponseDto checked = postUtil.checkMember();
         long memberId = checked.getMemberId(); // 멤버 아이디를 확인한다.
-
 
         // False 라면 생성
 
@@ -151,7 +160,7 @@ public class CommentServiceImpl implements CommentService {
     }
 
     /**
-     * 4. 댓글 삭제
+     * 4. 댓글 삭제 - 삭제되면 대댓글도 같이삭제?
      **/
 
     @Override
