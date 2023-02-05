@@ -8,8 +8,9 @@ public enum MemberExceptionType implements BaseExceptionType {
     //== 회원가입, 로그인 시 ==//
     // 밑에 생성자 파라미터에 정의한 내용을 넣어줌
     ALREADY_EXIST_NICKNAME(HttpStatus.BAD_REQUEST, "이미 존재하는 닉네임입니다.", SignType.MEMBER),
-    WRONG_PASSWORD(HttpStatus.BAD_REQUEST, "비밀번호가 잘못되었습니다.", SignType.MEMBER),
-    NOT_FOUND_MEMBER(HttpStatus.BAD_REQUEST, "회원 정보가 없습니다.", SignType.MEMBER);
+    NOT_FOUND_MEMBER(HttpStatus.BAD_REQUEST, "회원 정보가 없습니다.", SignType.MEMBER),
+    SAME_NICKNAME(HttpStatus.BAD_REQUEST, "수정 전 닉네임과 동일합니다.", SignType.MEMBER),
+    NOT_DELETE_REFRESH_TOKEN(HttpStatus.INTERNAL_SERVER_ERROR, "리프레쉬 토큰 삭제 실패", SignType.MEMBER);
 
 
     private final HttpStatus httpStatus;
