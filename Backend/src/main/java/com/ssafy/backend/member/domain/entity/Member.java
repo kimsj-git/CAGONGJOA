@@ -1,7 +1,6 @@
 package com.ssafy.backend.member.domain.entity;
 
 import com.ssafy.backend.common.entity.BaseEntity;
-import com.ssafy.backend.common.entity.embeded.Period;
 import com.ssafy.backend.member.domain.enums.OauthType;
 import lombok.*;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -13,7 +12,7 @@ import javax.persistence.*;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @EntityListeners(AuditingEntityListener.class)
-@ToString(of={"id", "nickname", "oauthId", "oauthType", "period"}) // 엔티티는 하면 안됨!
+@ToString(of={"id", "nickname", "oauthId", "oauthType"}) // 엔티티는 하면 안됨!
 public class Member extends BaseEntity {
 
     @Id @GeneratedValue
@@ -27,9 +26,6 @@ public class Member extends BaseEntity {
     @Column(name = "oauth_type")
     @Enumerated(EnumType.STRING)
     private OauthType oauthType;
-
-//    @Embedded
-//    private Period period;
 
     @Builder(builderClassName = "oAuthBuilder", builderMethodName = "oAuthBuilder")
     public Member(String nickname, Long oAuthId, OauthType oAuthType) {

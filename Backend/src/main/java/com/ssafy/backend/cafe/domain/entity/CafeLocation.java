@@ -1,5 +1,4 @@
 package com.ssafy.backend.cafe.domain.entity;
-import com.ssafy.backend.common.entity.embeded.Period;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
