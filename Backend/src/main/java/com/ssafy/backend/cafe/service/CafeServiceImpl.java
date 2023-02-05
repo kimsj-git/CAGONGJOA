@@ -1,16 +1,13 @@
 package com.ssafy.backend.cafe.service;
 
-import com.auth0.jwt.interfaces.DecodedJWT;
 import com.ssafy.backend.cafe.domain.dto.ClientPosInfoDto;
 import com.ssafy.backend.cafe.domain.dto.LocationDto;
 import com.ssafy.backend.cafe.domain.dto.NearByCafeResultDto;
 import com.ssafy.backend.cafe.domain.dto.SelectCafeRequestDto;
 import com.ssafy.backend.cafe.domain.enums.Direction;
-import com.ssafy.backend.cafe.repository.CafeRepository;
 import com.ssafy.backend.cafe.util.GeometryUtil;
 import com.ssafy.backend.common.exception.cafe.CafeException;
 import com.ssafy.backend.common.exception.cafe.CafeExceptionType;
-import com.ssafy.backend.jwt.JwtUtil;
 import com.ssafy.backend.member.service.MemberService;
 import com.ssafy.backend.redis.CafeAuth;
 import com.ssafy.backend.redis.CafeAuthRepository;

@@ -4,15 +4,10 @@ import com.ssafy.backend.cafe.domain.dto.ClientPosInfoDto;
 import com.ssafy.backend.cafe.domain.dto.LocationDto;
 import com.ssafy.backend.cafe.domain.dto.NearByCafeResultDto;
 import com.ssafy.backend.cafe.domain.dto.SelectCafeRequestDto;
-import com.ssafy.backend.cafe.domain.entity.CafeLocation;
 import com.ssafy.backend.cafe.service.CafeService;
-import com.ssafy.backend.common.annotation.CafeAuth;
-import com.ssafy.backend.common.dto.ErrSignRespDto;
 import com.ssafy.backend.common.dto.ResponseDTO;
-import com.ssafy.backend.common.exception.enums.SignType;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -28,7 +23,7 @@ public class CafeController {
     private final CafeService cafeService;
 
     @GetMapping("/auth")
-    public ResponseEntity<ResponseDTO> checkCafeAuth() throws Exception {
+    public ResponseEntity<ResponseDTO> checkCafeAuth() {
         // 15분 마다 클라이언트로부터 비동기로 레디스 체크 -> 인증된 상태라면 레디스 데이터 삭제 후 재생성 (time out 시간 초기화)
         cafeService.checkCafeAuth();
         ResponseDTO responseDTO = new ResponseDTO("위치 인증 체크 완료!", "", HttpStatus.OK, null);
@@ -39,7 +34,7 @@ public class CafeController {
         사용자 위치의 카페 + 위경도 정보를 클라이언트로부터 제공받은 후, cafe id와 닉네임으로 redis에 위치 정보 등록
     */
     @PostMapping("/auth/select")
-    public ResponseEntity<ResponseDTO> cafeAuth(@RequestBody SelectCafeRequestDto selectCafeRequestDto) throws Exception {
+    public ResponseEntity<ResponseDTO> cafeAuth(@RequestBody SelectCafeRequestDto selectCafeRequestDto) {
         cafeService.saveCafeAuth(selectCafeRequestDto);
         ResponseDTO responseDTO = new ResponseDTO("위치 인증 완료!", "", HttpStatus.CREATED, null);
         return new ResponseEntity<>(responseDTO, HttpStatus.OK);
