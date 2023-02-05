@@ -23,7 +23,6 @@ RUN ./gradlew bootJar
 FROM adoptopenjdk:11-hotspot
 # builder 이미지에서 build/libs/*.jar 파일을 app.jar로 복사
 COPY --from=builder build/libs/*.jar app.jar
-COPY /home/ubuntu/myEnv/springEnv .env
 
 EXPOSE 9000
 ENTRYPOINT ["java","-jar", "/app.jar"]
