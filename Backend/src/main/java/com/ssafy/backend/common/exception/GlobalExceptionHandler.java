@@ -1,8 +1,7 @@
 package com.ssafy.backend.common.exception;
 
+import com.ssafy.backend.common.dto.ErrSignRespDto;
 import com.ssafy.backend.common.dto.ResponseDTO;
-import lombok.AllArgsConstructor;
-import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,7 +19,7 @@ public class GlobalExceptionHandler {
         ResponseDTO responseDTO = ResponseDTO.builder()
                 .errMsg(exception.getExceptionType().getErrorMessage())
                 .httpStatus(exception.getExceptionType().getHttpStatus())
-                .data(null)
+                .data(new ErrSignRespDto(exception.getExceptionType().getDataSign()))
                 .build();
 
         return new ResponseEntity<>(responseDTO, HttpStatus.OK);
@@ -30,7 +29,7 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ResponseDTO> handleMemberEx(Exception exception){
 
         ResponseDTO responseDTO = ResponseDTO.builder()
-                .errMsg("server error..")
+                .errMsg(exception.getMessage())
                 .httpStatus(HttpStatus.INTERNAL_SERVER_ERROR)
                 .data(null)
                 .build();
