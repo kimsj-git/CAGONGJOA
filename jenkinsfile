@@ -69,7 +69,7 @@ pipeline { // 파이프라인의 시작
                 sh 'docker stop $(docker ps -q --filter ancestor=frontend:latest)'
                 sh 'docker rm $(docker ps -a -q --filter ancestor=frontend:latest)'
             }
-            
+
             post {
             success {
                   echo 'Deploy Frontend success!'
@@ -126,7 +126,7 @@ pipeline { // 파이프라인의 시작
             // server라는 태그
             dir ('./Backend'){
                 sh '''
-                docker run -p 9000:9000 -v /etc/environment:/etc/environment -d server
+                docker run -p 9000:9000 --env-file /home/ubuntu/myEnv/springEnv -d server
                 '''
             }
           }
