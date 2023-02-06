@@ -69,12 +69,13 @@ const Signup = () => {
       clearTimeout(identifier)
     }
   }, [nickname, dispatch])
+  const isNicknameLengthValid = nickname.length > 4 && nickname.length < 10
   const isFormValid =
     isNicknameValid &&
     nickname.trim() !== "" &&
     isChecked &&
-    nickname.length > 4 &&
-    nickname.length < 10
+    isNicknameLengthValid
+
   return (
     <form onSubmit={formSubmissionHandler}>
       {!isTyped ? (
@@ -102,8 +103,12 @@ const Signup = () => {
           icon={<Icon name="check circle" color="red" />}
         />
       )}
+
       {!isNicknameValid && isChecked && isTyped && (
         <p style={{ color: "red" }}>중복된 닉네임입니다.</p>
+      )}
+      {isChecked && isTyped && !isNicknameLengthValid &&(
+        <p style={{color:"red"}}>5글자 이상 10글자 이하만 가능합니다. </p>
       )}
       {isFormValid ? (
         <Button onClick={giveSignupData}>제출</Button>

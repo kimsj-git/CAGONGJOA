@@ -7,8 +7,11 @@ const MapCafeMarker = (props) => {
   const [isOpen, setIsOpen] = useState(false)
   const [isModalOpen, setIsModalOpen] = useState(false)
 
-  const hoverHandler = () => {
-    setIsOpen(!isOpen)
+  const hoverOpenHandler = () => {
+    setIsOpen(true)
+  }
+  const hoverCloseHandler = () => {
+    setIsOpen(false)
   }
 
   const cafeDetailOpenHandler = () => {
@@ -23,8 +26,8 @@ const MapCafeMarker = (props) => {
         position={{ lat: props.lat, lng: props.lng }}
         clickable={true}
         onClick={cafeDetailOpenHandler}
-        onMouseOver={hoverHandler}
-        onMouseOut={hoverHandler}
+        onMouseOver={hoverOpenHandler}
+        onMouseOut={hoverCloseHandler}
       >
         {isOpen && (
           <div style={{ padding: "5px", color: "#000" }}>{props.name}</div>

@@ -5,7 +5,15 @@ const DEFAULT_REST_URL = process.env.REACT_APP_REST_DEFAULT_URL
 const Logout = () => {
   const history = useHistory()
   const logout = async () => {
-    await fetch(`${DEFAULT_REST_URL}/member/logout`)
+    const response = await fetch(`${DEFAULT_REST_URL}/member/logout`,
+    {
+      method: "GET",
+      headers: {
+        Authorization : `Bearer ${sessionStorage.getItem('refreshToken')}`
+      }
+    })
+    const data = await response.json()
+    console.log(data)
     sessionStorage.clear()
     history.push('/login')
   }
