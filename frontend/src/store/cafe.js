@@ -40,6 +40,10 @@ export const findNearCafeData = () => {
         throw new Error("fetch error")
       }
       const data = await response.json()
+
+      console.log(response);
+      console.log(data);
+
       return data.data
     }
     try {
