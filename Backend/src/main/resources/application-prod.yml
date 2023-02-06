@@ -1,5 +1,5 @@
 server:
-  port: ${A308_REDIS_PORT}
+  port: ${A308_SERVER_PORT}
   servlet:
     context-path: /api
 
