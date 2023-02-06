@@ -13,19 +13,8 @@ const MainPageTopBar = (props) => {
   const location = useLocation()
   const dispatch = useDispatch()
 
-  const findCafeList = () => {
-    dispatch(
-      findMapCafeList({
-        lat: sessionStorage.getItem("lat"),
-        lng: sessionStorage.getItem("lng"),
-        distance: 0.3,
-      })
-    )
-  }
-
   const openMapHandler = () => {
     if (location.pathname === "/") {
-      findCafeList()
       history.push("/map")
     }
     if (location.pathname === "/map") {

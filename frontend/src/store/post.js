@@ -12,7 +12,6 @@ const postSlice = createSlice({
       state.uploadedImage = [...state.uploadedImage, actions.payload]
     },
     closeModal(state){
-      console.log(1)
       state.uploadedImage = []
     },
     handleFiles(state, actions){

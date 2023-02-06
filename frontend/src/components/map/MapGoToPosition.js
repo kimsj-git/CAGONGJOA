@@ -1,6 +1,5 @@
 const REST_DEFAULT_URL = process.env.REACT_APP_REST_DEFAULT_URL
-
-const CafeAuthFetch = async () => {
+const MapGoToPosition = async () => {
   try {
     const response = await fetch(`${REST_DEFAULT_URL}/cafe/auth`, {
       method: "GET",
@@ -9,6 +8,7 @@ const CafeAuthFetch = async () => {
       },
     })
     const responseData = await response.json()
+    console.log(responseData)
     if (
       responseData.httpStatus === "UNAUTHORIZED" &&
       responseData.data.sign === "JWT"
@@ -23,14 +23,17 @@ const CafeAuthFetch = async () => {
       }
       const data = await response.json()
       sessionStorage.setItem("accessToken", data.jwt.accessToken)
-      CafeAuthFetch()
+      MapGoToPosition()
     } else if (
       responseData.httpStatus === "UNAUTHORIZED" &&
       responseData.data.sign === "CAFE"
     ) {
-      sessionStorage.setItem("cafeAuth", 0)
-    } else if (responseData.httpStatus==="OK") {
-      sessionStorage.setItem("cafeAuth", 1)
+      return "UNAUTHORIZED CAFE"
+    } else if (responseData.httpStatus === "OK") {
+      //현재 인증한 카페 위치 얻기, MapDiv
+    // const selectedCafeData = {lat:responseData.data.latitude, lng:responseData.data.longitude, cafeName:responseData.data.name}
+    // sessionStorage.setItem("location",JSON.stringify(selectedCafeData))
+        return "AUTHORIZED CAFE"
     } else {
       throw new Error("fetch error")
     }
@@ -39,4 +42,4 @@ const CafeAuthFetch = async () => {
   }
 }
 
-export default CafeAuthFetch
+export default MapGoToPosition

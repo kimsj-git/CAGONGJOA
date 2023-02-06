@@ -1,5 +1,6 @@
-import { Modal, Button } from "semantic-ui-react"
+import { Modal } from "semantic-ui-react"
 import { useSelector, useDispatch } from "react-redux"
+import { HiOutlineMapPin } from "react-icons/hi2"
 
 import { modalActions } from "../../../store/modal"
 import { findNearCafeData } from "../../../store/cafe"
@@ -24,9 +25,16 @@ const CafeAuth = () => {
         open={open}
         size="small"
         trigger={
-          <Button circular size="small">
-            인증하기
-          </Button>
+          <div
+            style={{
+              display: "flex",
+              flexDirection: "row",
+              alignItems: "center",
+            }}
+          >
+            <HiOutlineMapPin size="30" color="black" />
+            <p>위치인증</p>
+          </div>
         }
       >
         <Modal.Header>카페 방문 인증</Modal.Header>

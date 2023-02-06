@@ -15,8 +15,8 @@ const ConfirmCafe = () => {
   const cafeData = useSelector((state) => state.modal.selectedCafe)
   console.log(cafeData)
   const { sendRequest: selectCafe } = useFetch()
-  const okBtnHandler = () => {
-    selectCafe({
+  const okBtnHandler = async () => {
+    await selectCafe({
       url: `${REST_DEFAULT_URL}/cafe/auth/select`,
       method: "POST",
       headers: {
@@ -25,12 +25,12 @@ const ConfirmCafe = () => {
       },
       body: {
         cafeId: cafeData.id,
-        latitude: sessionStorage.getItem("lat"),
-        longitude: sessionStorage.getItem("lng"),
+        latitude: JSON.parse(sessionStorage.getItem('location')).lat,
+        longitude: JSON.parse(sessionStorage.getItem('location')).lng,
       },
     })
-    sessionStorage.setItem('cafeAuth',1)
-    sessionStorage.setItem('cafeName', cafeData.name)
+    const selectedCafeData = {lat:cafeData.latitude, lng:cafeData.longitude, cafeName:cafeData.name}
+    sessionStorage.setItem("location",JSON.stringify(selectedCafeData))
     dispatch(modalActions.toggleConfirmCafeModal())
     dispatch(modalActions.toggleNearCafeListModal())
     history.push("/")

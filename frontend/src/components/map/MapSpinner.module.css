@@ -2,6 +2,6 @@
     display:flex;
     position: absolute;
     left:50%;
-    top:80%;
+    top:50%;
     z-index: 3;
 }
