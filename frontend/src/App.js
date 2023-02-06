@@ -11,23 +11,22 @@ import TodayCafe from "./components/todayCafe/TodayCafe"
 import MakeCoffee from "./components/todayCafe/MakeCoffee"
 import Fortune from "./components/todayCafe/Fortune"
 import MyPage from "./pages/MyPage"
+import SearchPage from "./pages/SearchPage"
 import NotFound from "./pages/NotFound"
 
 function App() {
-
   const getLocation = useCallback(() => {
     if (navigator.geolocation) {
       // GeoLocation을 이용해서 접속 위치를 얻어옵니다
-      navigator.geolocation.getCurrentPosition(
-        (position) => {
-              sessionStorage.setItem('lat', position.coords.latitude) // 위도
-              sessionStorage.setItem('lng', position.coords.longitude) // 경도
-        })}
-    else {
+      navigator.geolocation.getCurrentPosition((position) => {
+        sessionStorage.setItem("lat", position.coords.latitude) // 위도
+        sessionStorage.setItem("lng", position.coords.longitude) // 경도
+      })
+    } else {
       // HTML5의 GeoLocation을 사용할 수 없을때 마커 표시 위치와 인포윈도우 내용을 설정합니다
       console.log("X")
-      }
-    }, [])
+    }
+  }, [])
 
   useEffect(() => {
     getLocation()
@@ -45,6 +44,9 @@ function App() {
         </Route>
         <Route path="/mypage">
           <MyPage />
+        </Route>
+        <Route path="/search">
+          <SearchPage />
         </Route>
 
         {/* Login 관련 ROUTE */}

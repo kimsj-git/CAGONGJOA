@@ -1,6 +1,7 @@
 import { NavLink } from "react-router-dom"
 import { Menu, Icon, Segment } from "semantic-ui-react"
 import PostForm from "../components/mainPage/PostForm"
+import SearchModal from "../components/mainPage/SearchModal"
 import {
   AiOutlineHome,
   AiFillHome,
@@ -121,16 +122,18 @@ const SideNavigation = () => {
           </NavLink>
         </Menu.Item>
         <Menu.Item name="search" link>
-          <div
-            style={{
-              display: "flex",
-              flexDirection: "row",
-              alignItems: "center",
-            }}
-          >
-            <IoIosSearch size="30" color="black" />
-            <p>검색</p>
-          </div>
+          <NavLink to="/search">
+            <div
+              style={{
+                display: "flex",
+                flexDirection: "row",
+                alignItems: "center",
+              }}
+            >
+              <SearchModal />
+              <p>검색</p>
+            </div>
+          </NavLink>
         </Menu.Item>
       </Menu>
     </Segment>
