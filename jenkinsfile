@@ -41,6 +41,26 @@ pipeline { // 파이프라인의 시작
                 }
             }
         }
+
+        stage('Stop and Remove Old Container - Front') {
+            // 안되면 try catch 적용해보기
+            steps {
+                script{
+                    try {
+                        sh 'docker stop $(docker ps -q --filter ancestor=frontend:latest)'
+                        sh 'docker rm $(docker ps -a -q --filter ancestor=frontend:latest)'
+                    } catch (Exception e) {
+                        echo "An error occurred: ${e}"
+                    }
+                }
+            }
+
+            post {
+            success {
+                  echo 'Stop and Remove success!'
+            }
+          }
+        }
         
         stage('Bulid Frontend') {
           // 도커 빌드 
@@ -63,26 +83,7 @@ pipeline { // 파이프라인의 시작
           }
         }
 
-        stage('Stop and Remove Old Container - Front') {
-            // 안되면 try catch 적용해보기
-            steps {
-                script{
-                    try {
-                        sh 'docker stop $(docker ps -q --filter ancestor=frontend:latest)'
-                        sh 'docker rm $(docker ps -a -q --filter ancestor=frontend:latest)'
-                    } catch (Exception e) {
-                        echo "An error occurred: ${e}"
-                    }
-                }
-            }
-
-            post {
-            success {
-                  echo 'Stop and Remove success!'
-            }
-          }
-        }
-
+        
         stage('Deploy New Frontend Container') {
             steps {
                 sh 'docker run -p 3000:80 -d frontend:latest'
@@ -95,6 +96,26 @@ pipeline { // 파이프라인의 시작
           }
         }
 
+        stage('Stop and Remove Old Container - Back') {
+            // 안되면 try catch 적용해보기
+            steps {
+                script{
+                    try {
+                        sh 'docker stop $(docker ps -q --filter ancestor=backend:latest)'
+                        sh 'docker rm $(docker ps -a -q --filter ancestor=backend:latest)'
+                    } catch (Exception e) {
+                        echo "An error occurred: ${e}"
+                    }
+                }
+            }
+
+            post {
+            success {
+                  echo 'Stop and Remove success!'
+            }
+          }
+        }
+        
 
         stage('Bulid Backend') {
           // 도커 빌드 
@@ -122,25 +143,6 @@ pipeline { // 파이프라인의 시작
           }
         }
 
-        stage('Stop and Remove Old Container - Back') {
-            // 안되면 try catch 적용해보기
-            steps {
-                script{
-                    try {
-                        sh 'docker stop $(docker ps -q --filter ancestor=backend:latest)'
-                        sh 'docker rm $(docker ps -a -q --filter ancestor=backend:latest)'
-                    } catch (Exception e) {
-                        echo "An error occurred: ${e}"
-                    }
-                }
-            }
-
-            post {
-            success {
-                  echo 'Stop and Remove success!'
-            }
-          }
-        }
         
         stage('Deploy Backend') {
           agent any
