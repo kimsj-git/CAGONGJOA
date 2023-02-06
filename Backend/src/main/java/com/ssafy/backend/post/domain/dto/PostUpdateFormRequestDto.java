@@ -6,22 +6,16 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
-import org.springframework.web.multipart.MultipartFile;
-
-import java.math.BigInteger;
 
 @ToString
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class PostWriteFormRequestDto {
+public class PostUpdateFormRequestDto {
 
+    /**   2. 글 등록 요청       **/
+    private Long postId;
     private String content;
     private PostType type;
-    private Boolean cafeAuthorized;
-    private Double latitude;
-    private Double longitude;
-    private Double dist;
-
 
 }
