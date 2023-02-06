@@ -7,6 +7,7 @@ import useFetch from "../hooks/useFetch.js"
 import CafeAuthFetch from "../components/certificate/cafeAuth/CafeAuthFetch"
 import { Grid } from "semantic-ui-react"
 import JamSurvey from "../components/mainPage/JamSurvey"
+import PostTypeCarousel from "../components/mainPage/PostTypeCarousel"
 const DEFAULT_REST_URL = process.env.REACT_APP_REST_DEFAULT_URL
 
 // API 연결 후 DUMMY_POSTS 삭제
@@ -141,11 +142,12 @@ const MainPage = () => {
   return (
     <Fragment>
       <Grid>
-        <Grid.Row only="mobile">
+        <Grid.Row>
           <MainPageTopBar isAuthenticated={isAuthenticated} />
         </Grid.Row>
         <Grid.Column width={16}>
           <JamSurvey />
+          <PostTypeCarousel />
         </Grid.Column>
         {isMap && (
           <Route path="/map">
