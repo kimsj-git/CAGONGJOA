@@ -1,13 +1,12 @@
 import { Menu, Image } from "semantic-ui-react"
-import { useHistory, useLocation } from "react-router-dom"
+import { useHistory, useLocation, NavLink } from "react-router-dom"
 import { useDispatch } from "react-redux"
 
 import { findMapCafeList } from "../../store/cafe"
 
 import { BsFillPatchQuestionFill } from "react-icons/bs"
 import { AiOutlineBell } from "react-icons/ai"
-
-import SearchModal from "./SearchModal"
+import { IoIosSearch } from "react-icons/io"
 
 const MainPageTopBar = (props) => {
   const history = useHistory()
@@ -72,7 +71,9 @@ const MainPageTopBar = (props) => {
           <AiOutlineBell size="30" color="black" />
         </Menu.Item>
         <Menu.Item>
-          <SearchModal />
+          <NavLink to="/search">
+            <IoIosSearch size="30" color="black" />
+          </NavLink>
         </Menu.Item>
       </Menu.Item>
     </Menu>

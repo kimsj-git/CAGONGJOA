@@ -1,0 +1,19 @@
+@media (min-width: 992px) and (max-width: 1199px) {
+  .side-bar .logo-title,
+  .side-bar p {
+    display: none;
+    white-space: nowrap;
+  }
+
+  #side-col {
+    width: 120px !important;
+    padding: 0 !important;
+  }
+  #side-col .side-bar .menu {
+    /* padding: 0 !important; */
+    margin-inline: 0 !important;
+  }
+}
+
+.side-bar * {
+}

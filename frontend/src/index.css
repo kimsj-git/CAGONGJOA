@@ -9,6 +9,10 @@
   }
 }
 
+.ui.container {
+  background-color: #fbfcfd;
+}
+
 .link.item p {
   color: black;
   font-weight: 500;

@@ -1,35 +1,56 @@
 import { NavLink } from "react-router-dom"
-import { Menu, Icon, Segment } from "semantic-ui-react"
+import { useState } from "react"
+import { Menu, Segment } from "semantic-ui-react"
 import PostForm from "../components/mainPage/PostForm"
-import SearchModal from "../components/mainPage/SearchModal"
 import {
   AiOutlineHome,
   AiFillHome,
   AiFillBell,
   AiOutlineBell,
 } from "react-icons/ai"
-import { BsChat, BsChatFill, BsChatDots, BsChatDotsFill } from "react-icons/bs"
+import { BsChatDots, BsChatDotsFill } from "react-icons/bs"
 import { MdOutlineLocalCafe, MdLocalCafe } from "react-icons/md"
 import { HiOutlineUser, HiUser } from "react-icons/hi"
 import { HiOutlineMapPin, HiMapPin } from "react-icons/hi2"
-import { IoIosSearch, IoSearch } from "react-icons/io"
+import { IoIosSearch } from "react-icons/io"
+import { IoSearch } from "react-icons/io5"
+import "./SideNavigation.css"
 
 const SideNavigation = () => {
+  const [activeItem, setActiveItem] = useState("home")
+  const menuClickHandler = (e, { name }) => {
+    setActiveItem(name)
+    console.log(name)
+  }
+
   return (
     <Segment
       className="side-bar"
       vertical
       textAlign="left"
-      style={{ paddingInline: "1.5rem 0.5rem" }}
+      style={{
+        position: "sticky",
+        top: "0px",
+        paddingInline: "1.5rem 0.5rem",
+        borderRight: "1px solid lightgray",
+        height: "100vh",
+      }}
     >
       <div
         className="logo-title"
         style={{ margin: "3rem 1rem 5rem", fontSize: "2.5rem" }}
       >
-        카공조아
+        <NavLink to="/" style={{ color: "black" }}>
+          카공조아
+        </NavLink>
       </div>
       <Menu secondary vertical fluid style={{ fontSize: "1.2rem" }}>
-        <Menu.Item name="home" link>
+        <Menu.Item
+          name="home"
+          link
+          onClick={menuClickHandler}
+          active={activeItem === "home"}
+        >
           <NavLink to="/">
             <div
               style={{
@@ -38,12 +59,21 @@ const SideNavigation = () => {
                 alignItems: "center",
               }}
             >
-              <AiOutlineHome size="30" color="black" />
+              {activeItem === "home" ? (
+                <AiFillHome size="30" color="black" />
+              ) : (
+                <AiOutlineHome size="30" color="black" />
+              )}
               <p>홈</p>
             </div>
           </NavLink>
         </Menu.Item>
-        <Menu.Item name="location" link>
+        <Menu.Item
+          name="location"
+          link
+          onClick={menuClickHandler}
+          active={activeItem === "location"}
+        >
           <div
             style={{
               display: "flex",
@@ -51,11 +81,20 @@ const SideNavigation = () => {
               alignItems: "center",
             }}
           >
-            <HiOutlineMapPin size="30" color="black" />
+            {activeItem === "location" ? (
+              <HiMapPin size="30" color="black" />
+            ) : (
+              <HiOutlineMapPin size="30" color="black" />
+            )}
             <p>위치인증</p>
           </div>
         </Menu.Item>
-        <Menu.Item name="post" link>
+        <Menu.Item
+          name="post"
+          link
+          onClick={menuClickHandler}
+          active={activeItem === "post"}
+        >
           <div
             style={{
               display: "flex",
@@ -67,7 +106,12 @@ const SideNavigation = () => {
             <p>글 쓰기</p>
           </div>
         </Menu.Item>
-        <Menu.Item name="today-cafe" link>
+        <Menu.Item
+          name="today-cafe"
+          link
+          onClick={menuClickHandler}
+          active={activeItem === "today-cafe"}
+        >
           <NavLink to="/today-cafe">
             <div
               style={{
@@ -76,12 +120,21 @@ const SideNavigation = () => {
                 alignItems: "center",
               }}
             >
-              <MdOutlineLocalCafe size="30" color="black" />
+              {activeItem === "today-cafe" ? (
+                <MdLocalCafe size="30" color="black" />
+              ) : (
+                <MdOutlineLocalCafe size="30" color="black" />
+              )}
               <p>오늘의 카페</p>
             </div>
           </NavLink>
         </Menu.Item>
-        <Menu.Item name="chat" link>
+        <Menu.Item
+          name="chat"
+          link
+          onClick={menuClickHandler}
+          active={activeItem === "chat"}
+        >
           <NavLink to="/chat">
             <div
               style={{
@@ -90,12 +143,21 @@ const SideNavigation = () => {
                 alignItems: "center",
               }}
             >
-              <BsChatDots size="30" color="black" />
+              {activeItem === "chat" ? (
+                <BsChatDotsFill size="30" color="black" />
+              ) : (
+                <BsChatDots size="30" color="black" />
+              )}
               <p>채팅</p>
             </div>
           </NavLink>
         </Menu.Item>
-        <Menu.Item name="notice" link>
+        <Menu.Item
+          name="notice"
+          link
+          onClick={menuClickHandler}
+          active={activeItem === "notice"}
+        >
           <div
             style={{
               display: "flex",
@@ -103,11 +165,20 @@ const SideNavigation = () => {
               alignItems: "center",
             }}
           >
-            <AiOutlineBell size="30" color="black" />
+            {activeItem === "notice" ? (
+              <AiFillBell size="30" color="black" />
+            ) : (
+              <AiOutlineBell size="30" color="black" />
+            )}
             <p>알림</p>
           </div>
         </Menu.Item>
-        <Menu.Item name="mypage" link>
+        <Menu.Item
+          name="mypage"
+          link
+          onClick={menuClickHandler}
+          active={activeItem === "mypage"}
+        >
           <NavLink to="/mypage">
             <div
               style={{
@@ -116,12 +187,21 @@ const SideNavigation = () => {
                 alignItems: "center",
               }}
             >
-              <HiOutlineUser size="30" color="black" />
+              {activeItem === "mypage" ? (
+                <HiUser size="30" color="black" />
+              ) : (
+                <HiOutlineUser size="30" color="black" />
+              )}
               <p>마이페이지</p>
             </div>
           </NavLink>
         </Menu.Item>
-        <Menu.Item name="search" link>
+        <Menu.Item
+          name="search"
+          link
+          onClick={menuClickHandler}
+          active={activeItem === "search"}
+        >
           <NavLink to="/search">
             <div
               style={{
@@ -130,7 +210,11 @@ const SideNavigation = () => {
                 alignItems: "center",
               }}
             >
-              <SearchModal />
+              {activeItem === "search" ? (
+                <IoSearch size="30" color="black" />
+              ) : (
+                <IoIosSearch size="30" color="black" />
+              )}
               <p>검색</p>
             </div>
           </NavLink>

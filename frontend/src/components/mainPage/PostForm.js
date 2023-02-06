@@ -166,43 +166,43 @@ const PostForm = (props) => {
           trigger={<BsPencil size="30" color="black" />}
         >
           <Modal.Header>{currentCafe + "의 이야기를 들려주세요!"}</Modal.Header>
-          <Modal.Content image scrolling>
-            {/* <Image size="medium" src="/images/wireframe/image.png" wrapped /> */}
+          {/* <Modal.Content image scrolling> */}
+          {/* <Image size="medium" src="/images/wireframe/image.png" wrapped /> */}
 
-            <Form.Field>
-              <Segment raised>
-                <Label htmlFor="post-type" color="yellow" ribbon>
-                  글 타입을 선택해주세요!
-                </Label>
-                <Dropdown
-                  id="post-type"
-                  fluid
-                  placeholder="글 타입을 선택해주세요!"
-                  selection
-                  floating
-                  required
-                  options={postTypes}
-                  onChange={(event, data) => {
-                    setPostType(data.value)
-                  }}
-                  style={{ marginBottom: "20px" }}
-                  defaultValue={"free"}
+          <Form.Field>
+            <Segment raised>
+              <Label htmlFor="post-type" color="yellow" ribbon>
+                글 타입을 선택해주세요!
+              </Label>
+              <Dropdown
+                id="post-type"
+                fluid
+                placeholder="글 타입을 선택해주세요!"
+                selection
+                floating
+                required
+                options={postTypes}
+                onChange={(event, data) => {
+                  setPostType(data.value)
+                }}
+                style={{ marginBottom: "20px" }}
+                defaultValue={"free"}
+              />
+              <div className="card">
+                <Editor
+                  value={postContent}
+                  onTextChange={(e) => setPostContent(e.htmlValue)}
+                  style={{ height: "100px" }}
                 />
-                <div className="card">
-                  <Editor
-                    value={postContent}
-                    onTextChange={(e) => setPostContent(e.htmlValue)}
-                    style={{ height: "100px" }}
-                  />
-                </div>
-                <ImageUploadBox
-                  ref={uploadedImagesRef}
-                  max={10}
-                  studyHistroyImage={props.studyHistroyImage}
-                />
-              </Segment>
-            </Form.Field>
-          </Modal.Content>
+              </div>
+              <ImageUploadBox
+                ref={uploadedImagesRef}
+                max={10}
+                studyHistroyImage={props.studyHistroyImage}
+              />
+            </Segment>
+          </Form.Field>
+          {/* </Modal.Content> */}
           <Modal.Actions>
             <Button onClick={submitHandler} color="olive">
               완료

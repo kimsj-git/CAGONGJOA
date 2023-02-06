@@ -1,42 +1,47 @@
 import { useState } from "react"
 import { Segment, Tab, Input, Icon } from "semantic-ui-react"
+import SearchBar from "../components/common/SearchBar"
+import PostList from "../components/mainPage/PostList"
+import PostSearchResult from "../components/searchPage/PostSearchResult"
+import UserSearchResult from "../components/searchPage/UserSearchResult"
+import "./SearchPage.css"
 
 const SearchPage = () => {
-  const [searchValue, setSearchValue] = useState("")
   const panes = [
     {
-      menuItem: "Tab 1",
-      render: () => <Tab.Pane attached={false}>Tab 1 Content</Tab.Pane>,
+      menuItem: {
+        key: "posts",
+        icon: "newspaper outline",
+        content: "게시물",
+      },
+      render: () => (
+        // <Tab.Pane>
+        <PostSearchResult style={{ marginTop: "1rem" }} />
+        // </Tab.Pane>
+      ),
     },
     {
-      menuItem: "Tab 2",
-      render: () => <Tab.Pane attached={false}>Tab 2 Content</Tab.Pane>,
-    },
-    {
-      menuItem: "Tab 3",
-      render: () => <Tab.Pane attached={false}>Tab 3 Content</Tab.Pane>,
+      menuItem: { key: "users", icon: "users", content: "유저" },
+      render: () => (
+        // <Tab.Pane>
+        <UserSearchResult style={{ marginTop: "1rem" }} />
+        // </Tab.Pane>
+      ),
     },
   ]
 
-  const currentLocation = sessionStorage.getItem("cafeAuth")
-    ? "현재 카페 상호명"
-    : "강남구 역삼동"
-
   return (
     // <Segment>
-    <>
-      <Input
-        fluid
-        icon={<Icon name="search" color="orange" />}
-        iconPosition="left"
-        placeholder={`${currentLocation} 근처에서 검색`}
-        value={searchValue}
-        onChange={(e) => setSearchValue(e.target.value)}
-        style={{ borderRadius: "30px" }}
-        size="large"
+    <div style={{ padding: "2rem 1rem" }}>
+      <SearchBar />
+      <Tab
+        id="search-result"
+        menu={{ secondary: true, pointing: true }}
+        panes={panes}
+        style={{ marginTop: "2rem" }}
+        renderActiveOnly
       />
-      <Tab menu={{ secondary: true, pointing: true }} panes={panes} />
-    </>
+    </div>
     // </Segment>
   )
 }
