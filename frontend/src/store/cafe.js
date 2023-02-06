@@ -31,8 +31,7 @@ export const findNearCafeData = () => {
           "Authorization": `Bearer ${sessionStorage.getItem("accessToken")}`,
         },
         body: JSON.stringify({
-          latitude: sessionStorage.getItem("lat"),
-          longitude: sessionStorage.getItem("lng"),
+          latitude: "testparams"
         }),
       })
 

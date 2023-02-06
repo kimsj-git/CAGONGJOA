@@ -27,9 +27,10 @@ public class CafeController {
 
     @GetMapping("/test")
     @CafeAuth
-    public String test() {
+    public ResponseEntity<ResponseDTO> test() {
         System.out.println("testest");
-        return "test";
+        ResponseDTO responseDTO = new ResponseDTO("CICD TEST!!!", "", HttpStatus.OK, null);
+        return new ResponseEntity<>(responseDTO, HttpStatus.OK);
     }
 
     @GetMapping("/auth")
