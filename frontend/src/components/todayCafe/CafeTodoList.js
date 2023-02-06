@@ -80,6 +80,7 @@ const CafeTodoList = () => {
                   placeholder="할일 추가..."
                   value={enteredTodo}
                   onChange={inputChangeHandler}
+                  style={{ width: "calc(100% - 50px)" }}
                   disabled={!isAuthenticated}
                 />
                 <Button
