@@ -63,7 +63,7 @@ pipeline { // 파이프라인의 시작
           }
         }
 
-        stage('Stop and Remove Old Container') {
+        stage('Stop and Remove Old Container - Front') {
             // 안되면 try catch 적용해보기
             steps {
                 script{
@@ -78,7 +78,7 @@ pipeline { // 파이프라인의 시작
 
             post {
             success {
-                  echo 'Deploy Frontend success!'
+                  echo 'Stop and Remove success!'
             }
           }
         }
@@ -108,7 +108,7 @@ pipeline { // 파이프라인의 시작
             // -t 옵션으로 이미지에 server라는 태그를 달아줌 
             dir ('./Backend'){
                 sh """
-                docker build . -t server
+                docker build . -t backend:latest
                 """
             }
           }
@@ -118,6 +118,26 @@ pipeline { // 파이프라인의 시작
             // 빌드하다 실패하면 error 뱉고, 나머지 과정 하지말고 종료 
             failure {
               error 'This pipeline stops here...'
+            }
+          }
+        }
+
+        stage('Stop and Remove Old Container - Back') {
+            // 안되면 try catch 적용해보기
+            steps {
+                script{
+                    try {
+                        sh 'docker stop $(docker ps -q --filter ancestor=backend:latest)'
+                        sh 'docker rm $(docker ps -a -q --filter ancestor=backend:latest)'
+                    } catch (Exception e) {
+                        echo "An error occurred: ${e}"
+                    }
+                }
+            }
+
+            post {
+            success {
+                  echo 'Stop and Remove success!'
             }
           }
         }
@@ -132,7 +152,7 @@ pipeline { // 파이프라인의 시작
             // server라는 태그
             dir ('./Backend'){
                 sh '''
-                docker run -p 9000:9000 --env-file /home/ubuntu/myEnv/springEnv -d server
+                docker run -p 9000:9000 --env-file /home/ubuntu/myEnv/springEnv -d backend:latest
                 '''
             }
           }
