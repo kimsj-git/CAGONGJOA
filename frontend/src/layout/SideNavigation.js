@@ -122,16 +122,18 @@ const SideNavigation = () => {
           </NavLink>
         </Menu.Item>
         <Menu.Item name="search" link>
-          <div
-            style={{
-              display: "flex",
-              flexDirection: "row",
-              alignItems: "center",
-            }}
-          >
-            <SearchModal />
-            <p>검색</p>
-          </div>
+          <NavLink to="/search">
+            <div
+              style={{
+                display: "flex",
+                flexDirection: "row",
+                alignItems: "center",
+              }}
+            >
+              <SearchModal />
+              <p>검색</p>
+            </div>
+          </NavLink>
         </Menu.Item>
       </Menu>
     </Segment>
