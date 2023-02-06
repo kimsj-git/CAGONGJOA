@@ -138,10 +138,10 @@ public class TodayCafeServiceImpl implements TodayCafeService {
                         .content(getFortune())
                         .responseType(1)
                         .build();
-                return fortuneResponseDto;
-                Long cafeId;
+                Long cafeId = 1L;
 
                 Optional<CafeVisitLog> optionalCafeVisitLog = cafeVisitLogRepository.findByMemberIdAndCafeId(memberId, cafeId);
+                return fortuneResponseDto;
 
             }else if(type == 2) { // 커피 하나로 뽑기
                 if(coffeeCnt >= 1){ // coffee 가 있으면
@@ -162,7 +162,7 @@ public class TodayCafeServiceImpl implements TodayCafeService {
                 }
 
             }else {
-
+                return fortuneResponseDto;
             }
 
 

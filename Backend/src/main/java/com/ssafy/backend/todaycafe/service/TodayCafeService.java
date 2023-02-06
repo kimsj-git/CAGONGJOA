@@ -1,6 +1,7 @@
 package com.ssafy.backend.todaycafe.service;
 
 import com.ssafy.backend.todaycafe.domain.dto.CoffeeMakeResponseDto;
+import com.ssafy.backend.todaycafe.domain.dto.FortuneResponseDto;
 
 public interface TodayCafeService {
 
@@ -8,6 +9,6 @@ public interface TodayCafeService {
 
     CoffeeMakeResponseDto makeCoffee(int type) throws Exception;
 
-    String randomFortune(int type) throws Exception;
+    FortuneResponseDto randomFortune(int type) throws Exception;
 
 }
