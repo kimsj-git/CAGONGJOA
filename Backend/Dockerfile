@@ -1,5 +1,5 @@
 # FROM은 베이스 이미지(Base image)를 지정
-FROM adoptopenjdk:11-hotspot AS builder
+FROM adoptopenjdk:11-hotspot
 
 # COPY server/gradlew .
 # COPY server/gradle gradle
@@ -22,7 +22,7 @@ RUN ./gradlew bootJar
 # base image
 FROM adoptopenjdk:11-hotspot
 # builder 이미지에서 build/libs/*.jar 파일을 app.jar로 복사
-COPY --from=builder build/libs/*.jar app.jar
+COPY --from=0 build/libs/*.jar app.jar
 
 EXPOSE 9000
 ENTRYPOINT ["java","-jar", "/app.jar"]
