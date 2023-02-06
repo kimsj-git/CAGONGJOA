@@ -16,11 +16,6 @@ const TodayCafe = () => {
             </Grid.Column>
           </Grid.Row>
           <Grid.Row columns={1}>
-            <Grid.Column only="mobile tablet">
-              <CafeTimer />
-            </Grid.Column>
-          </Grid.Row>
-          <Grid.Row columns={1}>
             <Grid.Column>
               <CafeTodos />
             </Grid.Column>

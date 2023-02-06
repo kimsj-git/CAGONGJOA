@@ -2,6 +2,7 @@ import { useState } from "react"
 import { Modal, Button, Form} from "semantic-ui-react"
 
 const CafeReport = (props) => {
+  const isAuthenticated = sessionStorage.getItem("cafeAuth")
   const [open, setOpen] = useState(false)
   
   const initialValues ={
@@ -26,7 +27,7 @@ const CafeReport = (props) => {
       onOpen={() => setOpen(true)}
       open={open}
       size="mini"
-      trigger={<Button icon={props.icon} size={props.size} style={{float: 'right'}}>{props.content? props.content : null}</Button>}
+      trigger={<Button icon={props.icon} size={props.size} disabled={!isAuthenticated} style={{float: 'right'}}>{props.content? props.content : null}</Button>}
     >
       <Modal.Header style={{display: 'flex', justifyContent: 'center'}}>카페 정보 제공하기</Modal.Header>
       <Modal.Content>
