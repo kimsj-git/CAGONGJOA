@@ -27,6 +27,10 @@ public class Member extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private OauthType oauthType;
 
+    // 종섭 추가
+    @OneToOne(mappedBy = "member", cascade = CascadeType.ALL)
+    private MemberCoin memberCoin;
+
     @Builder(builderClassName = "oAuthBuilder", builderMethodName = "oAuthBuilder")
     public Member(String nickname, Long oAuthId, OauthType oAuthType) {
         Assert.notNull(nickname, "nickname must not be null");
@@ -41,6 +45,11 @@ public class Member extends BaseEntity {
 
     public void setNickname(String nickname) {
         this.nickname = nickname;
+    }
+
+    // 종섭 추가
+    public void addMemberCoin(MemberCoin memberCoin) {
+        this.memberCoin = memberCoin;
     }
 
 
