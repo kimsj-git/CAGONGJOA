@@ -24,7 +24,7 @@ export const findNearCafeData = () => {
   return async (dispatch) => {
     dispatch(cafeActions.cafeListLoading())
     const sendRequest = async () => {
-      const response = await fetch(`${REST_DEFAULT_URL}/cafe/auth`, {
+      const response = await fetch(`${REST_DEFAULT_URL}/api/cafe/test`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

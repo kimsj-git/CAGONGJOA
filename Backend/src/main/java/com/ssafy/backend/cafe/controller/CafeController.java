@@ -27,8 +27,9 @@ public class CafeController {
 
     @GetMapping("/test")
     @CafeAuth
-    public void test() {
+    public String test() {
         System.out.println("testest");
+        return "test";
     }
 
     @GetMapping("/auth")
@@ -57,7 +58,7 @@ public class CafeController {
     @PostMapping("/auth")
     public ResponseEntity<ResponseDTO> cafeAuth(@RequestBody LocationDto locationDto) {
         System.out.println("locationDto = " + locationDto);
-        final double DIST = 0.05; // 50m 반경에 해당하는 근거리 카페만 가져온다
+        final double DIST = 0.2; // Test
         ClientPosInfoDto clientPosInfoDto
                 = new ClientPosInfoDto(locationDto.getLatitude(), locationDto.getLongitude(), DIST);
         List<NearByCafeResultDto> nearByCafeLocations = cafeService.getNearByCafeLocations(clientPosInfoDto);
