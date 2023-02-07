@@ -133,4 +133,13 @@ public class MemberServiceImpl implements MemberService{
         return new MemberIdAndNicknameDto(memberId, nickname);
     }
 
+    @Override
+    public void deleteMember() {
+        long memberId = getMemberIdAndNicknameByJwtToken().getId();
+        memberRepository.deleteById(memberId);
+        memberRepository.findById(memberId).ifPresent(a -> {
+            throw new MemberException(MemberExceptionType.NOT_DELETE_MEMBER);
+        });
+    }
+
 }
