@@ -1,6 +1,7 @@
 package com.ssafy.backend.member.controller;
 
 import com.ssafy.backend.common.annotation.Auth;
+import com.ssafy.backend.common.dto.ResponseDTO;
 import com.ssafy.backend.member.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -33,11 +34,18 @@ public class MemberController {
 
     @Auth
     @GetMapping("/logout")
-    public ResponseEntity<Void> logout() throws Exception { // refresh token 헤더로 가져오기
+    public ResponseEntity<Void> logout() { // refresh token 헤더로 가져오기
         // 로그아웃시 1. redis의 refresh 토큰 지우기 2. redis의 위치인증 정보 지우기
         memberService.logout();
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
+    @DeleteMapping
+    public ResponseEntity<ResponseDTO> deleteMember() {
+//        memberService.logout();
+        memberService.deleteMember();
+        ResponseDTO responseDTO = new ResponseDTO("회원 삭제 완료!", "", HttpStatus.OK, null);
+        return new ResponseEntity<>(responseDTO, HttpStatus.OK);
+    }
 
 }

@@ -10,7 +10,7 @@ import java.util.Optional;
 public interface MemberService {
     void checkDuplicatedNickname(String nickName);
 
-    void changeNickname(Member member, String newNickname) throws Exception;
+    void changeNickname(Member member, String newNickname);
 
     // 메소드 오버로딩으로 구현할것
     Optional<Member> getMember(long kakaoMemberId, OauthType kakao);
@@ -19,8 +19,10 @@ public interface MemberService {
 
     Map<String, Object> tokenRefresh();
 
-    void logout() throws Exception;
+    void logout();
 
     MemberIdAndNicknameDto getMemberIdAndNicknameByJwtToken();
+
+    void deleteMember();
 
 }
