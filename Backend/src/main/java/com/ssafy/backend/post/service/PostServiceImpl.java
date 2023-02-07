@@ -2,15 +2,20 @@ package com.ssafy.backend.post.service;
 
 import com.ssafy.backend.cafe.domain.dto.ClientPosInfoDto;
 import com.ssafy.backend.cafe.domain.dto.NearByCafeResultDto;
+import com.ssafy.backend.cafe.domain.entity.Cafe;
+import com.ssafy.backend.cafe.repository.CafeRepository;
 import com.ssafy.backend.cafe.service.CafeServiceImpl;
 import com.ssafy.backend.jwt.JwtUtil;
 import com.ssafy.backend.member.domain.entity.Member;
 import com.ssafy.backend.member.repository.MemberRepository;
+import com.ssafy.backend.member.service.MemberServiceImpl;
 import com.ssafy.backend.post.domain.dto.*;
 import com.ssafy.backend.post.domain.entity.*;
 import com.ssafy.backend.post.domain.enums.PostType;
 import com.ssafy.backend.post.repository.*;
 import com.ssafy.backend.post.util.PostUtil;
+import com.ssafy.backend.redis.CafeAuth;
+import com.ssafy.backend.redis.CafeAuthRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
@@ -30,8 +35,6 @@ public class PostServiceImpl implements PostService {
     private final PostLikeRepository postLikeRepository;
     private final MemberRepository memberRepository;
     private final CommentRepository commentRepository;
-    private final ImageRepository imageRepository;
-    private final CommentLikeRepository commentLikeRepository;
     // Entity & Dto
     private List<PostPagingResponseDto> postResponseDtoList;
     private ClientPosInfoDto clientPosInfoDto;
@@ -40,23 +43,10 @@ public class PostServiceImpl implements PostService {
     private PostCafe postCafe;
     private List<String> imgUrlPaths;
     // Util
-    private final JwtUtil jwtUtil;
     private final PostUtil postUtil;
-    private CafeServiceImpl cafeService;
-
-
-/*
-    public long userTest() throws Exception {
-        HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
-        String accessToken = request.getHeader("Authorization");
-        System.out.println("어세스토큰 : " + accessToken);
-        accessToken = accessToken.substring(7);
-        DecodedJWT payload = jwtUtil.getDecodedJWT(accessToken);
-        long memberId = Integer.parseInt(payload.getAudience().get(0));
-        System.out.println(memberId);
-        return memberId;
-    }
-*/
+    private final CafeServiceImpl cafeService;
+    private final CafeAuthRepository cafeAuthRepository;
+    private final CafeRepository cafeRepository;
 
     /**
      * 1. 글 등록 [ 테스트 완료 ]
@@ -67,14 +57,15 @@ public class PostServiceImpl implements PostService {
         //1. 유저 확인
         CheckedResponseDto checked = postUtil.checkMember();
         long memberId = checked.getMemberId(); // 멤버 아이디를 확인한다.
-        String cafeName = checked.getVerifiedCafeName(); // 카페 닉네임을 확인한다.
-        if (cafeName.isEmpty() || cafeName == "CafeNotAuthorized") { // 카페 이름이 없으면 - 인증되지 않은 유저
+        Optional<CafeAuth> cafeAuth = cafeAuthRepository.findById(checked.getNickname());
+        if (cafeAuth.isEmpty() || cafeAuth == null) { // 카페 이름이 없으면 - 인증되지 않은 유저
             if (requestDto.getType() == PostType.QNA || requestDto.getType() == PostType.LOST) { // 카테고리가 둘중 하나면 넘어가기
-
             } else { // 그렇지 않다면 false
                 return false;
             }
         }
+        Cafe cafe = cafeRepository.findById(cafeAuth.get().getCafeId()).get(); // 카페 닉네임을 확인한다.
+        String cafeNickname = cafe.getName();
 
         // 1-2. 글 저장하기
 
@@ -89,15 +80,15 @@ public class PostServiceImpl implements PostService {
         Double longitude = requestDto.getLongitude();
         Double dist = requestDto.getDist();
 
-//        clientPosInfoDto = new ClientPosInfoDto(latitude, longitude, dist);
-//        List<NearByCafeResultDto> nearByCafeResultDtos = postUtil.getNearByCafeLocations(clientPosInfoDto);
-//        List<PostCafe> postCafeList = new ArrayList<>();
-//        for (NearByCafeResultDto dto : nearByCafeResultDtos) {
-//            postCafe = PostCafe.PostCafeBuilder()
-//                    .cafeLocationId(dto.getId().longValue())
-//                    .build();
-//            postCafeList.add(postCafe);
-//        }
+        clientPosInfoDto = new ClientPosInfoDto(latitude, longitude, dist);
+        List<NearByCafeResultDto> nearByCafeResultDtos = cafeService.getNearByCafeLocations(clientPosInfoDto);
+        List<PostCafe> postCafeList = new ArrayList<>();
+        for (NearByCafeResultDto dto : nearByCafeResultDtos) {
+            postCafe = PostCafe.PostCafeBuilder()
+                    .cafeLocationId(dto.getId().longValue())
+                    .build();
+            postCafeList.add(postCafe);
+        }
 
 
         // 1-4. 이미지 업로드 Build
@@ -136,7 +127,7 @@ public class PostServiceImpl implements PostService {
         String content = updateDto.getContent();
 
         Optional<Post> updateResult = postRepository.findById(postId);
-        if(updateResult == null || updateResult.isEmpty()) {
+        if (updateResult == null || updateResult.isEmpty()) {
             return false;
         }
 
@@ -147,7 +138,7 @@ public class PostServiceImpl implements PostService {
         postUtil.imageDeleteAll(post);
         if (files != null) {
             List<PostImage> postImages = postUtil.imageUpload(post, files);
-            for (PostImage postImage: postImages) {
+            for (PostImage postImage : postImages) {
                 post.addPostImage(postImage);
             }
         }
@@ -177,7 +168,7 @@ public class PostServiceImpl implements PostService {
         // 1. 유저 기본사항을 체크한다. OK
         CheckedResponseDto checked = postUtil.checkMember();
         long memberId = checked.getMemberId(); // 멤버 아이디를 확인한다.
-        String cafeName = checked.getVerifiedCafeName(); // 인증되었을때 카페 이름을 확인한다.
+        CafeAuth cafeAuth = cafeAuthRepository.findById(checked.getNickname()).get();
         String nickName = checked.getNickname(); // 인증되었을 때 유저 닉네임을 가져온다.
 
         // 2. request Dto 값들 체크 - OK
@@ -191,8 +182,8 @@ public class PostServiceImpl implements PostService {
         // 3. 주변 카페들 정보 알아오기 - 주변 카페에 해당되는 글들만 된다. - Map 객체가 너무 많이 만들어진다. 리팩터링 필요
         // NearByCafeLocation 안된다. DB에서 point 를 불러오는데서 에러가남.
         clientPosInfoDto = new ClientPosInfoDto(latitude, longitude, dist);
-//        List<NearByCafeResultDto> nearByCafeResultDtos = postUtil.getNearByCafeLocations(clientPosInfoDto);
-        List<NearByCafeResultDto> nearByCafeResultDtos = new ArrayList<>();
+        List<NearByCafeResultDto> nearByCafeResultDtos = cafeService.getNearByCafeLocations(clientPosInfoDto);
+
 
         // cafe id 와 name 만 전달해줄거임
         List<Map.Entry<BigInteger, String>> cafeInfos = new ArrayList<>();
@@ -258,34 +249,34 @@ public class PostServiceImpl implements PostService {
         // 1. 로그인된 유저의 정보를 확인한다.
         CheckedResponseDto checked = postUtil.checkMember();
         long memberId = checked.getMemberId(); // 멤버 아이디를 확인한다.
-        Long verifiedCafeId = checked.getVerifiedCafeId();
-        String nickName = checked.getVerifiedCafeName();
-        String verifiedCafeName = checked.getVerifiedCafeName();
+        String nickname = checked.getNickname();
+        boolean isCafeAuthorized;
+        Optional<CafeAuth> cafeAuth = cafeAuthRepository.findById(nickname);
+        if (cafeAuth.isEmpty() || cafeAuth == null) { // 카페 이름이 없으면 - 인증되지 않은 유저
+            isCafeAuthorized = false;
+        }else{
+        Cafe cafe = cafeRepository.findById(cafeAuth.get().getCafeId()).get(); // 카페 닉네임을 확인한다.
+        String cafeName = cafe.getName();
+            isCafeAuthorized = true;
+        }
 
         Optional<Post> postOptional = postRepository.findById(postId);
-        if(postOptional == null || postOptional.isEmpty()) {
+        if (postOptional == null || postOptional.isEmpty()) {
             // 잘못된 postId 형식
             return null;
         }
         post = postOptional.orElseThrow();
-        boolean isCafeAuthorized;
-        // 2. 유저 인증여부 확인
-        if(nickName == "CafeUnAuthorized") { // 미인증 회원이면
-            isCafeAuthorized = false;
-        }else {
-            isCafeAuthorized = true;
-        }
+
         imgUrlPaths = new ArrayList<>();
-        for (PostImage postImage: post.getPostImageList()) {
+        for (PostImage postImage : post.getPostImageList()) {
             imgUrlPaths.add(postImage.getImgUrl());
         }
 
         Slice<Comment> commentSlice = commentRepository.findAllByPostId(postId);
 
         PostDetailResponseDto detailResponseDto = PostDetailResponseDto.builder()
-                .nickname(nickName)
+                .nickname(nickname)
                 .isCafeAuthorized(isCafeAuthorized)
-                .verifiedCafeName(verifiedCafeName)
                 .postId(postId)
                 .createdAt(post.getCreatedAt())
                 .postContent(post.getContent())

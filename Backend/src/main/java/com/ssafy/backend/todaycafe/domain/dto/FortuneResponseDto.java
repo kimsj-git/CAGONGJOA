@@ -11,4 +11,8 @@ import lombok.*;
 public class FortuneResponseDto {
     private String content;
     private Integer responseType;
+
+    public void updateResponseType(int responseType) {
+        this.responseType = responseType;
+    }
 }

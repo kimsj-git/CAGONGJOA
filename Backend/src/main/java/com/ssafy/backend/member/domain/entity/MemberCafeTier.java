@@ -17,7 +17,8 @@ import javax.persistence.*;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class MemberCafeTier {
 
-    @Id @GeneratedValue
+    @Id
+    @GeneratedValue
     private Long id;
 
     @ManyToOne
@@ -37,8 +38,4 @@ public class MemberCafeTier {
         this.cafe = cafe;
         this.exp = exp;
     }
-
-
-
-
 }

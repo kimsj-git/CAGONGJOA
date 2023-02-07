@@ -18,7 +18,7 @@ public class CoffeeMakeController {
     private final TodayCafeService todayCafeService;
 
     @Auth
-//    @CafeAuth
+    @CafeAuth
     @PutMapping("/")
     public ResponseEntity<ResponseDTO> makeOneCoffee(@RequestParam int coffeeMakeType) throws Exception {
         System.out.println("requestType : " + coffeeMakeType);
