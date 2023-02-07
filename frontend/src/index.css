@@ -100,6 +100,7 @@
   font-weight: normal;
   font-style: normal;
 }
-.side-bar * {
+.side-bar *,
+#title {
   font-family: "IM_Hyemin-Bold" !important;
 }

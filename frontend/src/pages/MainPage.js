@@ -1,14 +1,14 @@
-import { useState, useCallback, Fragment, useEffect } from "react"
-import { Route, useLocation, useHistory } from "react-router"
-import MainPageTopBar from "../components/mainPage/MainPageTopBar"
-import PostList from "../components/mainPage/PostList"
-import MapDiv from "../components/map/MapDiv"
-import useFetch from "../hooks/useFetch.js"
-import CafeAuthFetch from "../components/certificate/cafeAuth/CafeAuthFetch"
-import { Grid } from "semantic-ui-react"
-import JamSurvey from "../components/mainPage/JamSurvey"
-import PostTypeCarousel from "../components/mainPage/PostTypeCarousel"
-const DEFAULT_REST_URL = process.env.REACT_APP_REST_DEFAULT_URL
+import { useState, useCallback, Fragment, useEffect } from "react";
+import { Route, useLocation, useHistory } from "react-router";
+import MainPageTopBar from "../components/mainPage/MainPageTopBar";
+import PostList from "../components/mainPage/PostList";
+import MapDiv from "../components/map/MapDiv";
+import useFetch from "../hooks/useFetch.js";
+import CafeAuthFetch from "../components/certificate/cafeAuth/CafeAuthFetch";
+import { Grid } from "semantic-ui-react";
+import JamSurvey from "../components/mainPage/JamSurvey";
+import PostTypeCarousel from "../components/mainPage/PostTypeCarousel";
+const DEFAULT_REST_URL = process.env.REACT_APP_REST_DEFAULT_URL;
 
 // API 연결 후 DUMMY_POSTS 삭제
 const DUMMY_POSTS = [
@@ -55,19 +55,19 @@ const DUMMY_POSTS = [
     post_likes: 99,
     comments_cnt: 25,
   },
-]
+];
 
 const MainPage = () => {
-  const history = useHistory()
-  const location = useLocation()
-  const [posts, setPosts] = useState([])
-  const [error, setError] = useState(null)
-  const isMap = location.pathname === "/map"
-  const { data: postsList, isLoading, sendRequest: getPosts } = useFetch()
-  const isAuthenticated = sessionStorage.getItem("cafeAuth")
+  const history = useHistory();
+  const location = useLocation();
+  const [posts, setPosts] = useState([]);
+  const [error, setError] = useState(null);
+  const isMap = location.pathname === "/map";
+  const { data: postsList, isLoading, sendRequest: getPosts } = useFetch();
+  const isAuthenticated = sessionStorage.getItem("cafeAuth");
 
   useEffect(() => {
-    CafeAuthFetch()
+    CafeAuthFetch();
     getPosts({
       url: `${DEFAULT_REST_URL}/post/main`,
       headers: {
@@ -76,8 +76,8 @@ const MainPage = () => {
       body: {
         type: ["free", "qna", "together", "tip", "recommend", "help", "lost"],
       },
-    })
-  }, [])
+    });
+  }, []);
 
   const fetchPostsHandler = useCallback(async () => {
     try {
@@ -87,13 +87,13 @@ const MainPage = () => {
           Authorization: `Bearer ${sessionStorage.getItem("accessToken")}`,
         },
         body: {},
-      })
+      });
       if (!response.ok) {
-        throw new Error("error")
+        throw new Error("error");
       }
 
-      const data = await response.json()
-      const loadedPosts = []
+      const data = await response.json();
+      const loadedPosts = [];
 
       for (const key in data) {
         loadedPosts.push({
@@ -105,13 +105,13 @@ const MainPage = () => {
           created_at: data[key].createdAt,
           images: data[key].imagPathUrl,
           is_authorized: data[key].isAuthorized,
-        })
+        });
       }
-      setPosts(loadedPosts)
+      setPosts(loadedPosts);
     } catch (error) {
-      setError(error.message)
+      setError(error.message);
     }
-  }, [])
+  }, []);
 
   // API 연결 후 활성화
   // useEffect(() => {
@@ -123,15 +123,15 @@ const MainPage = () => {
       <p>주변 카페 게시물을 찾지 못했습니다...</p>
       <p>위치를 변경해보세요.</p>
     </div>
-  )
+  );
 
   // API 연결 후 DUMMY_POSTS를 posts로 변경
   if (DUMMY_POSTS.length > 0) {
-    content_feed = <PostList isLoading={isLoading} posts={DUMMY_POSTS} />
+    content_feed = <PostList isLoading={isLoading} posts={DUMMY_POSTS} />;
   }
 
   if (error) {
-    content_feed = <p>{error}</p>
+    content_feed = <p>{error}</p>;
   }
 
   // 엑세스 토큰이 없을 때 login화면으로 이동
@@ -156,11 +156,8 @@ const MainPage = () => {
         )}
         {!isMap && <Grid.Column width={16}>{content_feed}</Grid.Column>}
       </Grid>
-      {/* <section> */}
-
-      {/* </section> */}
     </Fragment>
-  )
-}
+  );
+};
 
-export default MainPage
+export default MainPage;
