@@ -30,10 +30,10 @@ const MapGoToPosition = async () => {
     ) {
       return "UNAUTHORIZED CAFE"
     } else if (responseData.httpStatus === "OK") {
+      return "AUTHORIZED CAFE"
       //현재 인증한 카페 위치 얻기, MapDiv
     // const selectedCafeData = {lat:responseData.data.latitude, lng:responseData.data.longitude, cafeName:responseData.data.name}
     // sessionStorage.setItem("location",JSON.stringify(selectedCafeData))
-        return "AUTHORIZED CAFE"
     } else {
       throw new Error("fetch error")
     }

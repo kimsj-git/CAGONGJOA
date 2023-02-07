@@ -67,7 +67,7 @@ export const findNearCafeData = () => {
           longitude: JSON.parse(sessionStorage.getItem("location")).lng,
         }),
       })
-
+      console.log(response)
       if (!response.ok) {
         throw new Error("fetch error")
       }

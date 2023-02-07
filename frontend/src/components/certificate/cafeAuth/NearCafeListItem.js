@@ -10,8 +10,16 @@ const NearCafeListItem = (props) => {
     dispatch(modalActions.toggleConfirmCafeModal(props.cafeData))
   }
   return (
-    <Button circular size="small" onClick={confirmHandler}>
-      {props.cafeData.name}
+    <Button
+      circular
+      size="small"
+      onClick={confirmHandler}
+      color="blue"
+      style={{ width: "10em", margin:"10px" }}
+    >
+      {props.cafeData.name.length > 5
+        ? `${props.cafeData.name.substr(0, 5)}...`
+        : props.cafeData.name}
     </Button>
   )
 }

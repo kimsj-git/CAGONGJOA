@@ -13,7 +13,6 @@ const ConfirmCafe = () => {
 
   const open = useSelector((state) => state.modal.openConfirmCafe)
   const cafeData = useSelector((state) => state.modal.selectedCafe)
-  console.log(cafeData)
   const { sendRequest: selectCafe } = useFetch()
   const okBtnHandler = async () => {
     await selectCafe({
@@ -21,16 +20,22 @@ const ConfirmCafe = () => {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        "Authorization": `Bearer ${sessionStorage.getItem("accessToken")}`,
+        Authorization: `Bearer ${sessionStorage.getItem("accessToken")}`,
       },
       body: {
         cafeId: cafeData.id,
-        latitude: JSON.parse(sessionStorage.getItem('location')).lat,
-        longitude: JSON.parse(sessionStorage.getItem('location')).lng,
+        latitude: JSON.parse(sessionStorage.getItem("location")).lat,
+        longitude: JSON.parse(sessionStorage.getItem("location")).lng,
       },
     })
-    const selectedCafeData = {lat:cafeData.latitude, lng:cafeData.longitude, cafeName:cafeData.name}
-    sessionStorage.setItem("location",JSON.stringify(selectedCafeData))
+    const location = { lat: cafeData.latitude, lng: cafeData.longitude }
+    const selectedCafeData = {
+      lat: cafeData.latitude,
+      lng: cafeData.longitude,
+      cafeName: cafeData.name,
+    }
+    sessionStorage.setItem("location", JSON.stringify(location))
+    sessionStorage.setItem("myCafe", JSON.stringify(selectedCafeData))
     dispatch(modalActions.toggleConfirmCafeModal())
     dispatch(modalActions.toggleNearCafeListModal())
     history.push("/")
@@ -42,15 +47,16 @@ const ConfirmCafe = () => {
         open={open}
         size="mini"
       >
-        <Modal.Description>
-          <p>{cafeData.name} 맞습니까?</p>
-        </Modal.Description>
+        <Modal.Content style={{textAlign:"center"}}>
+          <p><b>{cafeData.name}</b> 맞습니까?</p>
+        </Modal.Content>
         <ModalActions>
-          <Button size="tiny" onClick={okBtnHandler}>
+          <Button size="mini" onClick={okBtnHandler} color="blue">
             확인
           </Button>
           <Button
-            size="tiny"
+            size="mini"
+            color="red"
             onClick={() => dispatch(modalActions.toggleConfirmCafeModal())}
           >
             취소

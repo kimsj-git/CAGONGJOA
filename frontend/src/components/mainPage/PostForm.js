@@ -9,7 +9,7 @@ import {
   Label,
   Segment,
 } from "semantic-ui-react"
-import { BsPencil } from "react-icons/bs"
+import { BsPencil, BsPencilFill } from "react-icons/bs"
 import { useDispatch } from "react-redux"
 
 import ImageUploadBox from "./ImageUploadBox"
@@ -160,10 +160,24 @@ const PostForm = (props) => {
           open={firstOpen}
           onClose={() => {
             setFirstOpen(false)
+            props.closeModal()
             dispatch(postActions.closeModal())
           }}
           onOpen={() => setFirstOpen(true)}
-          trigger={<BsPencil size="30" color="black" />}
+          trigger={
+            <div
+            style={{
+              display: "flex",
+              flexDirection: "row",
+              alignItems: "center",
+            }}
+          >{props.activeItem === "post" ? 
+          <BsPencilFill size="30" color="black" />:
+          <BsPencil size="30" color="black"/>
+        }
+          <p>글 쓰기</p>
+          </div>
+        }
         >
           <Modal.Header>{currentCafe + "의 이야기를 들려주세요!"}</Modal.Header>
           {/* <Modal.Content image scrolling> */}

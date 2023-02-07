@@ -13,8 +13,11 @@ const modalSlice = createSlice({
   name: "modal",
   initialState: initialModalState,
   reducers: {
-    toggleCafeAuthModal(state) {
-      state.openCafeAuthModal = !state.openCafeAuthModal
+    openCafeAuthModal(state) {
+      state.openCafeAuthModal = true
+    },
+    closeCafeAuthModal(state) {
+      state.openCafeAuthModal = false
     },
     toggleNearCafeListModal(state) {
       state.openNearCafeList = !state.openNearCafeList
