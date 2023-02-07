@@ -27,8 +27,8 @@ spring:
     password: ${A308_MYSQL_PW}
 
   jpa:
-    database: mysql
-    database-platform: org.hibernate.spatial.dialect.mysql.MySQL56InnoDBSpatialDialect
+#    database: mysql
+#    database-platform: org.hibernate.spatial.dialect.mysql.MySQL56InnoDBSpatialDialect
     open-in-view: true
     hibernate:
       ddl-auto: none
