@@ -1,0 +1,8 @@
+.p-carousel{
+    display:flex;
+    position: absolute;
+    width:100%;
+    top:2rem;
+    z-index: 2;
+    
+}

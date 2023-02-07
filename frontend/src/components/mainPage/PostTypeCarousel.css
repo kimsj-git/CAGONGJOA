@@ -1,0 +1,7 @@
+button span {
+  white-space: nowrap;
+}
+
+.p-carousel-item button {
+  margin: 4px 3px;
+}
