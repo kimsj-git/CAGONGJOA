@@ -20,7 +20,7 @@ spring:
     url: ${A308_MYSQL_URL}
     username: ${A308_MYSQL_USER}
     password: ${A308_MYSQL_PW}
-    
+
   jpa:
     database: mysql
     database-platform: org.hibernate.spatial.dialect.mysql.MySQL56InnoDBSpatialDialect
