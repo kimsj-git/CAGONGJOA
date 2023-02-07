@@ -154,7 +154,7 @@ pipeline { // 파이프라인의 시작
             // server라는 태그
             dir ('./Backend'){
                 sh '''
-                docker run -p 9000:9000 --env-file /home/ubuntu/myEnv/springEnv ---network ssafy-network -d backend:latest
+                docker run -p 9000:9000 --env-file /home/ubuntu/myEnv/springEnv --network ssafy-network -d backend:latest
                 '''
             }
           }
