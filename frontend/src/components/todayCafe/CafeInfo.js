@@ -7,7 +7,7 @@ const CafeInfo = () => {
   const logo_url = 'starbucks.png'
 
   return (
-    <Container>
+    <Container style={{backgroundColor: "#f9f9f9"}}>
       <Grid>
         {/* 모바일 태블릿 화면 카페 정보 */}
         <Grid.Row only="mobile tablet">
@@ -37,7 +37,7 @@ const CafeInfo = () => {
             <Grid.Column only="computer" computer={5}>
               <img
                 src={require(`../../assets/cafe_logos/${logo_url}`)}
-                style={{ width: '100%', border: "1.5vw solid #fbbc05", borderRadius: '70%'}}
+                style={{ width: '100%', border: "1vw solid #fbbc05", borderRadius: '70%'}}
                 alt="#"
               />
             </Grid.Column>
@@ -62,7 +62,7 @@ const CafeInfo = () => {
                     />
                   </Grid.Column>
                 </Grid.Row>
-                <Grid.Row columns={1} style={{paddingTop: '3rem'}}>
+                <Grid.Row columns={1}>
                   <Grid.Column>
                     <CafeTimer />
                   </Grid.Column>

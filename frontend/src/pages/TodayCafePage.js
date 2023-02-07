@@ -8,7 +8,7 @@ const TodayCafe = (props) => {
       style={{
         backgroundColor: "#f9f9f9",
         borderRadius: "30px 30px 0px 0px",
-        padding: "2rem",
+        padding: "5px",
         margin: "5px",
       }}
     >
