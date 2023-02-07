@@ -33,21 +33,15 @@ import java.math.BigInteger;
 import java.util.*;
 
 @RequiredArgsConstructor // 얘도 커스텀?
-@Service
 @Transactional
+@Service
 public class PostUtil {
-    private final JwtUtil jwtUtil;
-    private final EntityManager em;
     private final AmazonS3 amazonS3;
     @Value("${cloud.aws.s3.bucket}")
     private String bucket;
     private PostImage postImage;
     private final ImageRepository imageRepository;
-    private CafeAuth cafeAuth;
     private final MemberServiceImpl memberService;
-    private final CafeServiceImpl cafeService;
-    private final CafeAuthRepository cafeAuthRepository;
-    private final CafeRepository cafeRepository;
 
 
     /**    0. 유저 확인   **/
@@ -57,33 +51,15 @@ public class PostUtil {
         MemberIdAndNicknameDto memberIdAndNicknameDto = memberService.getMemberIdAndNicknameByJwtToken();
         Long memberId = memberIdAndNicknameDto.getId();
         String nickname = memberIdAndNicknameDto.getNickname();
-
         // 2. 카페 인증된 회원인지 확인하며, 인증되었다면 카페의 이름을 가져온다. KEY : 닉네임
-
-
-        Long cafeId;
-        String cafeName;
-        Optional<CafeAuth> cafeAuth = cafeAuthRepository.findById(nickname);
-        if (cafeAuth.isEmpty() || cafeAuth == null) { // 인증되지 않은 회원
-            cafeName = "CafeUnAuthorized";
-            cafeId = -1L;
-        } else { // 인증된 회원
-            cafeId = cafeAuth.orElseThrow().getCafeId();
-            Optional<Cafe> optionalCafe = cafeRepository.findById(cafeId);
-            Cafe cafe = optionalCafe.orElseThrow();
-            cafeName = cafe.getName(); // 카페 이름을 얻는다.
-
-        }
-
         CheckedResponseDto checkedResponseDto = CheckedResponseDto.builder()
                 .nickname(nickname)
                 .memberId(memberId)
-                .verifiedCafeName(cafeName)
-                .verifiedCafeId(cafeId)
                 .build();
 
         return checkedResponseDto;
     }
+
 
 
     public List<PostImage> imageUpload(Post post, MultipartFile[] multipartFiles) throws Exception {
@@ -147,51 +123,4 @@ public class PostUtil {
 
     }
 
-    @org.springframework.transaction.annotation.Transactional(readOnly = true)
-    public List<NearByCafeResultDto> getNearByCafeLocations(ClientPosInfoDto clientPosInfoDto) {
-        Double latitude = clientPosInfoDto.getLatitude();
-        Double longitude = clientPosInfoDto.getLongitude();
-        Double distance = clientPosInfoDto.getDist();
-
-        System.out.println("distance = " + distance);
-        System.out.println("longitude = " + longitude);
-        System.out.println("latitude = " + latitude);
-
-        LocationDto northEast = GeometryUtil
-                .calculate(latitude, longitude, distance, Direction.NORTHEAST.getBearing());
-        LocationDto southWest = GeometryUtil
-                .calculate(latitude, longitude, distance, Direction.SOUTHWEST.getBearing());
-
-        double x1 = northEast.getLatitude();
-        double y1 = northEast.getLongitude();
-        double x2 = southWest.getLatitude();
-        double y2 = southWest.getLongitude();
-
-        String pointFormat = String.format("'LINESTRING(%f %f, %f %f)')", x1, y1, x2, y2);
-
-        Query query
-                = em.createNativeQuery(
-                "SELECT cf.id, cf.name, cl.address, cl.lat, cl.lng, cf.brand_type "
-                        + "FROM (SELECT * "
-                        + "FROM cafe_location AS c "
-                        + "WHERE MBRContains(ST_LINESTRINGFROMTEXT(" + pointFormat + ", c.point) = 1) AS cl "
-                        + "INNER JOIN cafe cf ON cf.id = cl.cafe_id");
-
-        List<Object[]> results = query.getResultList();
-
-        List<NearByCafeResultDto> nearByCafeResultDtos = new ArrayList<>();
-
-        for (Object[] result : results) {
-            NearByCafeResultDto dto = NearByCafeResultDto.builder()
-                    .id((BigInteger) result[0])
-                    .name((String) result[1])
-                    .address((String) result[2])
-                    .latitude((BigDecimal)result[3])
-                    .longitude((BigDecimal)result[4])
-                    .brand_type((String) result[5]).build();
-            nearByCafeResultDtos.add(dto);
-        }
-
-        return nearByCafeResultDtos;
-    }
 }

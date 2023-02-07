@@ -1,11 +1,9 @@
 package com.ssafy.backend.cafe.controller;
 
-import com.ssafy.backend.cafe.domain.dto.ClientPosInfoDto;
-import com.ssafy.backend.cafe.domain.dto.LocationDto;
-import com.ssafy.backend.cafe.domain.dto.NearByCafeResultDto;
-import com.ssafy.backend.cafe.domain.dto.SelectCafeRequestDto;
+import com.ssafy.backend.cafe.domain.dto.*;
 import com.ssafy.backend.cafe.service.CafeService;
 import com.ssafy.backend.common.dto.ResponseDTO;
+import com.ssafy.backend.todaycafe.service.TodayCafeService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -21,6 +19,7 @@ import java.util.List;
 public class CafeController {
 
     private final CafeService cafeService;
+    private final TodayCafeService todayCafeService;
 
     @GetMapping("/auth")
     public ResponseEntity<ResponseDTO> checkCafeAuth() {
@@ -37,6 +36,16 @@ public class CafeController {
     public ResponseEntity<ResponseDTO> cafeAuth(@RequestBody SelectCafeRequestDto selectCafeRequestDto) {
         cafeService.saveCafeAuth(selectCafeRequestDto);
         ResponseDTO responseDTO = new ResponseDTO("위치 인증 완료!", "", HttpStatus.CREATED, null);
+        return new ResponseEntity<>(responseDTO, HttpStatus.OK);
+    }
+
+    @GetMapping("/auth/getResponse")
+    public ResponseEntity<ResponseDTO> AuthResponse() throws Exception {
+        cafeService.saveTier();
+        AfterCafeAuthResponseDto cafeAuthResponseDto = todayCafeService.saveCafeVisit();
+        // 위치인증 완료되었을 때, 기존 공부했던 시간 return 해줘야함
+        ResponseDTO responseDTO = new ResponseDTO("위치 인증 reponse 전달완료!", "", HttpStatus.OK, cafeAuthResponseDto);
+
         return new ResponseEntity<>(responseDTO, HttpStatus.OK);
     }
 

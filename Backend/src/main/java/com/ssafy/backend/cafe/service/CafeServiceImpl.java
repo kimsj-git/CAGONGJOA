@@ -5,10 +5,15 @@ import com.ssafy.backend.cafe.domain.dto.LocationDto;
 import com.ssafy.backend.cafe.domain.dto.NearByCafeResultDto;
 import com.ssafy.backend.cafe.domain.dto.SelectCafeRequestDto;
 import com.ssafy.backend.cafe.domain.enums.Direction;
+import com.ssafy.backend.cafe.repository.CafeRepository;
 import com.ssafy.backend.cafe.util.GeometryUtil;
 import com.ssafy.backend.common.exception.cafe.CafeException;
 import com.ssafy.backend.common.exception.cafe.CafeExceptionType;
+import com.ssafy.backend.member.domain.entity.MemberCafeTier;
+import com.ssafy.backend.member.repository.MemberCafeTierRepository;
+import com.ssafy.backend.member.repository.MemberRepository;
 import com.ssafy.backend.member.service.MemberService;
+import com.ssafy.backend.post.util.PostUtil;
 import com.ssafy.backend.redis.CafeAuth;
 import com.ssafy.backend.redis.CafeAuthRepository;
 import lombok.RequiredArgsConstructor;
@@ -29,6 +34,10 @@ public class CafeServiceImpl implements CafeService {
     private final EntityManager em;
     private final MemberService memberService;
     private final CafeAuthRepository cafeAuthRepository;
+    private final CafeRepository cafeRepository;
+    private final MemberRepository memberRepository;
+    private final MemberCafeTierRepository memberCafeTierRepository;
+    private final PostUtil postUtil;
 
 
     @Override
@@ -54,6 +63,8 @@ public class CafeServiceImpl implements CafeService {
 
         cafeAuthRepository.save(cafeAuth);
     }
+
+
 
     @Override
     public void saveCafeAuth(SelectCafeRequestDto selectCafeRequestDto) {
@@ -136,5 +147,24 @@ public class CafeServiceImpl implements CafeService {
         return nearByCafeResultDtos;
     }
 
+    @Override
+    public void saveTier() throws Exception {
+        String nickname = postUtil.checkMember().getNickname();
+        Long memberId = postUtil.checkMember().getMemberId();
+        System.out.println(memberId + " " + nickname);
+        CafeAuth cafeAuth = cafeAuthRepository.findById(nickname).get();
+        System.out.println(cafeAuth);
+        Long cafeId = cafeAuth.getCafeId();
+        Optional<MemberCafeTier> optionalMemberCafeTier = memberCafeTierRepository.findByMemberIdAndCafeId(memberId, cafeId);
+        
+        // 없을 때만 넣기
+        if(optionalMemberCafeTier.isEmpty() || optionalMemberCafeTier == null) {
+            MemberCafeTier memberCafeTier = MemberCafeTier.TierBuilder()
+                    .cafe(cafeRepository.findById(cafeId).get())
+                    .member(memberRepository.findById(memberId).get())
+                    .build();
+            memberCafeTierRepository.save(memberCafeTier);
+        }
+    }
 
 }

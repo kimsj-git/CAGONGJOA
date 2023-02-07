@@ -13,4 +13,6 @@ public interface CafeService {
     void saveCafeAuth(SelectCafeRequestDto selectCafeRequestDto);
 
     void checkCafeAuth();
+
+    void saveTier() throws Exception;
 }

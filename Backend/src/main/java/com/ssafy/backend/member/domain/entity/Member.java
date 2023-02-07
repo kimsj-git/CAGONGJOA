@@ -27,7 +27,7 @@ public class Member extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private OauthType oauthType;
 
-    // 종섭 추가
+    // 종섭 추가 - oneToOne 매핑 시, 주테이블에 FK 가 없으면 양방향 1대1 매핑으로 하라 했는데 (영한행님) 에러없으면 지움
     @OneToOne(mappedBy = "member", cascade = CascadeType.ALL)
     private MemberCoin memberCoin;
 
@@ -45,11 +45,6 @@ public class Member extends BaseEntity {
 
     public void setNickname(String nickname) {
         this.nickname = nickname;
-    }
-
-    // 종섭 추가
-    public void addMemberCoin(MemberCoin memberCoin) {
-        this.memberCoin = memberCoin;
     }
 
 
