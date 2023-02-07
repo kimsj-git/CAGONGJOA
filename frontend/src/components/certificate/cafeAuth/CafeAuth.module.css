@@ -1,0 +1,7 @@
+.modalContent {
+  width: 10rem;
+  height: 10rem;
+  border: 1px dashed black;
+  border-radius: 10px;
+  padding: 10px;
+}

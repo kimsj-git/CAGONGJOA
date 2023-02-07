@@ -1,8 +1,5 @@
 import { Menu, Image } from "semantic-ui-react"
 import { useHistory, useLocation, NavLink } from "react-router-dom"
-import { useDispatch } from "react-redux"
-
-import { findMapCafeList } from "../../store/cafe"
 
 import { BsFillPatchQuestionFill } from "react-icons/bs"
 import { AiOutlineBell } from "react-icons/ai"
@@ -11,7 +8,6 @@ import { IoIosSearch } from "react-icons/io"
 const MainPageTopBar = (props) => {
   const history = useHistory()
   const location = useLocation()
-  const dispatch = useDispatch()
 
   const openMapHandler = () => {
     if (location.pathname === "/") {
@@ -46,7 +42,7 @@ const MainPageTopBar = (props) => {
             fontSize: "1.3rem",
           }}
         >
-          강남구 역삼동
+          {sessionStorage.getItem("address")}
         </p>
       </Menu.Item>
       <Menu.Item

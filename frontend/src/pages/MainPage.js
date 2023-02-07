@@ -147,7 +147,7 @@ const MainPage = () => {
         </Grid.Row>
         <Grid.Column width={16}>
           <JamSurvey />
-          <PostTypeCarousel />
+          {/* <PostTypeCarousel /> */}
         </Grid.Column>
         {isMap && (
           <Route path="/map">

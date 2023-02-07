@@ -50,7 +50,7 @@ const MapDiv = () => {
 
   const goToMyPosition = async () => {
     const response = await MapGoToPosition()
-    if(response === "UNAUTHORIZED CAFE"){
+    if (response === "UNAUTHORIZED CAFE") {
       if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition((position) => {
           const location = {
@@ -59,14 +59,23 @@ const MapDiv = () => {
           }
           sessionStorage.setItem("location", JSON.stringify(location))
           setCenter({
-            lat:location.lat,
-            lng:location.lng
+            lat: location.lat,
+            lng: location.lng,
           })
         })
-        
       } else {
         console.log("X")
       }
+    } else if (response === "AUTHORIZED CAFE") {
+      const location = {
+        lat: JSON.parse(sessionStorage.getItem("myCafe")).lat,
+        lng: JSON.parse(sessionStorage.getItem("myCafe")).lng,
+      }
+      sessionStorage.setItem("location", JSON.stringify(location))
+      setCenter({
+        lat: location.lat,
+        lng: location.lng,
+      })
     }
     setIsMoved(false)
     setIsFinded(false)
@@ -124,22 +133,23 @@ const MapDiv = () => {
         >
           <Icon name="map marker alternate" color="red" />
         </Button>
-        {isMoved && (
-          <>
-            <MapLookFeed lat={center.lat} lng={center.lng} />
-          </>
-        )}
         {!isFinded && (
           <Button
             className={classes.findCafeBtn}
             icon
             circular
             onClick={findCafeList}
+            color="blue"
           >
             현재 위치에서 카페 찾기
           </Button>
         )}
-        <MapCafeFilterCarousel />
+        {isMoved && (
+          <>
+            <MapLookFeed lat={center.lat} lng={center.lng} />
+          </>
+        )}
+        <MapCafeFilterCarousel className={classes.filterCorousel}/>
         <MapSpinner />
       </Map>
     </>

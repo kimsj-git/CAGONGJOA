@@ -32,11 +32,12 @@ export const checkNickname = (nickname) => {
       const response = await fetch(
         `${DEFAULT_REST_URL}/member/checkDuplicatedNickname?nickname=${nickname}`
       )
-      if (!response.ok) {
+      const result = await response.json()
+      console.log(result)
+      if (result.httpStatus==="BAD_REQUEST" && result.data.sign==="MEMBER"){
         return false
-      } else {
-        return true
       }
+      return true
     }
     try{
       const result = await sendRequest()

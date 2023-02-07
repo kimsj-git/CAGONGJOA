@@ -1,4 +1,4 @@
-import { NavLink } from "react-router-dom"
+import { NavLink, useLocation } from "react-router-dom"
 import { useState } from "react"
 import { Menu, Segment } from "semantic-ui-react"
 import PostForm from "../components/mainPage/PostForm"
@@ -11,16 +11,26 @@ import {
 import { BsChatDots, BsChatDotsFill } from "react-icons/bs"
 import { MdOutlineLocalCafe, MdLocalCafe } from "react-icons/md"
 import { HiOutlineUser, HiUser } from "react-icons/hi"
-import { HiOutlineMapPin, HiMapPin } from "react-icons/hi2"
 import { IoIosSearch } from "react-icons/io"
 import { IoSearch } from "react-icons/io5"
+import CafeAuth from "../components/certificate/cafeAuth/CafeAuth"
 import "./SideNavigation.css"
 
 const SideNavigation = () => {
-  const [activeItem, setActiveItem] = useState("home")
+  const location = useLocation()
+  const directory = {"/":"home","/today-cafe": "today-cafe","/chat": "chat","/mypage": "mypage","/search":"search"}
+  const [activeItem, setActiveItem] = useState(directory[location.pathname])
+  const [prevItem, setPrevItem] = useState("")
   const menuClickHandler = (e, { name }) => {
     setActiveItem(name)
-    console.log(name)
+    if (activeItem !== name) {
+      setPrevItem(activeItem)
+      console.log(name)
+    }
+  }
+  const closeModal = () => {
+    console.log(prevItem)
+    setActiveItem(prevItem)
   }
 
   return (
@@ -74,20 +84,11 @@ const SideNavigation = () => {
           onClick={menuClickHandler}
           active={activeItem === "location"}
         >
-          <div
-            style={{
-              display: "flex",
-              flexDirection: "row",
-              alignItems: "center",
-            }}
-          >
-            {activeItem === "location" ? (
-              <HiMapPin size="30" color="black" />
-            ) : (
-              <HiOutlineMapPin size="30" color="black" />
-            )}
-            <p>위치인증</p>
-          </div>
+          {/* 위치인증 모달 창 */}
+          <CafeAuth
+            activeItem={activeItem}
+            closeModal={closeModal}
+          />
         </Menu.Item>
         <Menu.Item
           name="post"
@@ -95,16 +96,8 @@ const SideNavigation = () => {
           onClick={menuClickHandler}
           active={activeItem === "post"}
         >
-          <div
-            style={{
-              display: "flex",
-              flexDirection: "row",
-              alignItems: "center",
-            }}
-          >
-            <PostForm />
-            <p>글 쓰기</p>
-          </div>
+          {/* 글 쓰기 네비 Item */}
+          <PostForm activeItem={activeItem} closeModal={closeModal} />
         </Menu.Item>
         <Menu.Item
           name="today-cafe"

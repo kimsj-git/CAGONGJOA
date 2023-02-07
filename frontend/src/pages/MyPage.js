@@ -1,7 +1,6 @@
 import { Grid } from "semantic-ui-react"
 import { Route, useLocation } from "react-router-dom"
 
-import CafeAuth from "../components/certificate/cafeAuth/CafeAuth"
 import MainPageItems from "../components/myPage/MainPageItems"
 import Profile from "../components/myPage/Profile"
 import StudyHistory from "../components/myPage/studyHistory/StudyHistory"
@@ -26,7 +25,6 @@ const MyPage = () => {
             <Profile />
             <Logout/>
             <MainPageItems />
-            <CafeAuth />
           </Grid>
         </>
       )}
