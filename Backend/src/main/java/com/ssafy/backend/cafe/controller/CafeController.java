@@ -26,7 +26,6 @@ public class CafeController {
     private final CafeService cafeService;
 
     @GetMapping("/test")
-    @CafeAuth
     public ResponseEntity<ResponseDTO> test() {
         System.out.println("testest");
         ResponseDTO responseDTO = new ResponseDTO("CICD TEST!!!", "", HttpStatus.OK, null);
