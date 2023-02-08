@@ -1,8 +1,6 @@
 import { useState, useCallback, Fragment, useEffect } from "react"
-import { Route, useLocation, useHistory } from "react-router"
 import MainPageTopBar from "../components/mainPage/MainPageTopBar"
 import PostList from "../components/mainPage/PostList"
-import MapDiv from "../components/map/MapDiv"
 import useFetch from "../hooks/useFetch.js"
 import CafeAuthFetch from "../components/certificate/cafeAuth/CafeAuthFetch"
 import { Grid } from "semantic-ui-react"
@@ -99,9 +97,6 @@ const DUMMY_POSTS = [
 ]
 
 const MainPage = () => {
-  const history = useHistory()
-  const location = useLocation()
-  const isMap = location.pathname === "/map"
   const { data: posts, isLoading, sendRequest: getPosts } = useFetch()
   const isAuthenticated = sessionStorage.getItem("cafeAuth")
   let feed = (
@@ -162,12 +157,7 @@ const MainPage = () => {
           <JamSurvey />
           {/* <PostTypeCarousel /> */}
         </Grid.Column>
-        {isMap && (
-          <Route path="/map">
-            <MapDiv />
-          </Route>
-        )}
-        {!isMap && <Grid.Column width={16}>{feed}</Grid.Column>}
+        <Grid.Column width={16}>{feed}</Grid.Column>
       </Grid>
     </Fragment>
   )
