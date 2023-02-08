@@ -24,14 +24,15 @@ import Settings from "./components/myPage/settingsPage/Settings"
 import BlockList from "./components/myPage/settingsPage/BlockList"
 
 function App() {
-  const history = useHistory()
-  const Authenticated = sessionStorage.getItem("accessToken")
+  // 바로 로그인 화면으로
+  // const history = useHistory()
+  // const Authenticated = sessionStorage.getItem("accessToken")
   
-  useEffect(()=>{
-    if (!Authenticated){
-      history.push('/login')
-    }
-  }, [])
+  // useEffect(()=>{
+  //   if (!Authenticated){
+  //     history.push('/login')
+  //   }
+  // }, [])
 
   return (
     <Layout>
@@ -97,7 +98,7 @@ function App() {
         <Route path="/" exact>
           <MainPage />
         </Route>
-        <Route pathe="/map" exact>
+        <Route path="/map" exact>
           <MapPage/>
         </Route>
 
