@@ -38,4 +38,8 @@ public class MemberCafeTier {
         this.cafe = cafe;
         this.exp = exp;
     }
+
+    public void plusExp(Long exp) {
+        this.exp += exp;
+    }
 }

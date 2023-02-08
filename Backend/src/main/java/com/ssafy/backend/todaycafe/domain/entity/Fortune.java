@@ -1,10 +1,7 @@
 package com.ssafy.backend.todaycafe.domain.entity;
 
 import com.ssafy.backend.common.entity.BaseEntity;
-import com.ssafy.backend.member.domain.entity.Member;
 import lombok.*;
-import org.hibernate.annotations.OnDelete;
-import org.hibernate.annotations.OnDeleteAction;
 
 import javax.persistence.*;
 

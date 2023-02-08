@@ -47,5 +47,9 @@ public class Member extends BaseEntity {
         this.nickname = nickname;
     }
 
+    public void updateMemberCoin(MemberCoin memberCoin) {
+        this.memberCoin = memberCoin;
+    }
+
 
 }

@@ -15,6 +15,7 @@ import static javax.persistence.FetchType.LAZY;
 @AllArgsConstructor
 @Builder
 @Setter
+@ToString (of={"accessKey", "imgUrl"})
 public class PostImage {
 
     //== Column  ==//

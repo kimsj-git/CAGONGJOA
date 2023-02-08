@@ -50,7 +50,7 @@ public class OAuthController {
 
         // db에 해당 kakao oAuth의 id를 가진 레코드가 없다면 등록
         if (dbMember.isEmpty()) {
-            // 신규 회원 등록
+            // 신규 회원 등록 - 신규 회원이 등록되면 회원-재화 엔티티도 같이생성
             memberService.saveMember(kakaoMemberId, NicknameType.DEFAULT.toString(), OauthType.KAKAO);
 
             resultMap.put("memberInfo", new OauthLoginDto(NicknameType.DEFAULT.toString(),

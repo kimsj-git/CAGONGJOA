@@ -70,6 +70,7 @@ public class TodayCafeServiceImpl implements TodayCafeService {
                 .coffeeBeanCnt(coffeeBeanCnt)
                 .coffeeCnt(coffeeCnt)
                 .build();
+        System.out.println("커피 가져왔어여");
         return coffeeResponseDto;
     }
 
@@ -78,10 +79,11 @@ public class TodayCafeServiceImpl implements TodayCafeService {
         int fortuneSize = fortuneRepository.findAll().size();
         double randomInt = fortuneSize * Math.random();
         fortuneId = (long)(Math.ceil(randomInt)); // 0이 나오지 않게하기 위해 올림 처리
+        System.out.println("fortuneSize : " + fortuneSize + ", fortuneId : " + fortuneId);
         Optional<Fortune> optionalFortune = fortuneRepository.findById(fortuneId);
         Fortune fortune = optionalFortune.get();
+        System.out.println("운세 만들어졌어요");
         return new AbstractMap.SimpleEntry<>(fortuneId, fortune.getContent());
-
     }
 
     /** 1. 커피 내리기   **/
@@ -135,7 +137,7 @@ public class TodayCafeServiceImpl implements TodayCafeService {
         Long cafeId = cafeAuth.getCafeId(); // CafeAuth 를 거쳐왔기 때문에 null일 수 없음
         Optional<CafeVisitLog> optionalCafeVisitLog = cafeVisitLogRepository.findByMemberIdAndCafeId(memberId, cafeId);
         if(optionalCafeVisitLog.isEmpty() || optionalCafeVisitLog == null) {
-            fortuneResponseDto.setResponseType(0);
+            fortuneResponseDto.setResponseType(1);
             return fortuneResponseDto; // cafeVisitLog 가 없음
         }
 
@@ -146,7 +148,7 @@ public class TodayCafeServiceImpl implements TodayCafeService {
                 fortune = getFortune();
                 fortuneResponseDto = FortuneResponseDto.builder()
                         .content(fortune.getValue())
-                        .responseType(1)
+                        .responseType(2)
                         .build();
 
                 cafeVisitLog.updateFortune(fortune.getKey());
@@ -164,17 +166,19 @@ public class TodayCafeServiceImpl implements TodayCafeService {
                     }
                     fortuneResponseDto = FortuneResponseDto.builder()
                             .content(getFortune().getValue())
-                            .responseType(2)
+                            .responseType(3)
                             .build();
+                    memberCoin.useOneCoffee();
                     cafeVisitLog.updateFortune(fortune.getKey());
                     return fortuneResponseDto;
 
                 }else { // coffee 가 없으면
-                    fortuneResponseDto.setResponseType(3);
+                    fortuneResponseDto.setResponseType(4);
                     return fortuneResponseDto;
                 }
 
             }else {
+                fortuneResponseDto.setResponseType(5);
                 return fortuneResponseDto;
             }
     }
@@ -196,6 +200,9 @@ public class TodayCafeServiceImpl implements TodayCafeService {
             cafeVisitLog = CafeVisitLog.builder()
                     .cafe(cafeRepository.findById(cafeId).get())
                     .member(memberRepository.findById(memberId).get())
+                    .accTime(0)
+                    .fortuneId(0L)
+                    .isSurvey(false)
                     .visitedAt(visitedAtValue)
                     .build();
             System.out.println(cafeVisitLog);
@@ -213,6 +220,7 @@ public class TodayCafeServiceImpl implements TodayCafeService {
                         .member(memberRepository.findById(memberId).get())
                         .build();
                 cafeVisitLogRepository.save(cafeVisitLog);
+                memberCafeTierRepository.findByMemberIdAndCafeId(memberId,cafeId).get().plusExp(100L);
                 System.out.println("오늘은 아니고 방문이력 있음 - 새로생성");
             }
         }
@@ -221,15 +229,21 @@ public class TodayCafeServiceImpl implements TodayCafeService {
         memberCoin = memberCoinRepository.findByMemberId(memberId).get();
         MemberCafeTier tier = memberCafeTierRepository.findByMemberIdAndCafeId(memberId,cafeId).get();
         AfterCafeAuthResponseDto cafeAuthResponseDto = AfterCafeAuthResponseDto.builder()
-                .cafeName(cafeAuth.getNickname())
+                .cafeName(cafeRepository.findById(cafeId).get().getName())
                 .exp(tier.getExp())
                 .brandType(cafeVisitLog.getCafe().getBrandType())
                 .accTime(cafeVisitLog.getAccTime())
                 .coffeeBeanCnt(memberCoin.getCoffeeBeanCount())
                 .coffeeCnt(memberCoin.getCoffeeCount())
-                .fortune(fortuneRepository.findById(cafeVisitLog.getFortuneId()).get().getContent())
                 .build();
 
+        System.out.println("여기까지옴 4트");
+        Optional<Fortune> fortuneOptional = fortuneRepository.findById(cafeVisitLog.getFortuneId());
+        if(fortuneOptional.isPresent()) {
+            String fortuneContent = fortuneOptional.get().getContent();
+            cafeAuthResponseDto.updateFortune(fortuneContent);
+        }
+        System.out.println("여기까지옴 5트");
         return cafeAuthResponseDto;
     }
 }
