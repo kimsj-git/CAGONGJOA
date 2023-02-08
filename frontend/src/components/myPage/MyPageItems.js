@@ -26,7 +26,7 @@ const MainPageItems = () => {
       </Grid.Row>
       <Grid.Row>
         <Grid.Column>
-          <NavLink to={`${defaultURL}/feed/myposts`} className={classes.navItem}>
+          <NavLink to={`${defaultURL}/feed`} className={classes.navItem}>
             <Icon name="pencil alternate" />
             내가 쓴 글/댓글
           </NavLink>
