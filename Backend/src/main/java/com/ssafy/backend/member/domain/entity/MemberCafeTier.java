@@ -21,11 +21,11 @@ public class MemberCafeTier {
     @GeneratedValue
     private Long id;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")
     private Member member;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "cafe_id")
     @OnDelete(action = OnDeleteAction.CASCADE)
     private Cafe cafe;

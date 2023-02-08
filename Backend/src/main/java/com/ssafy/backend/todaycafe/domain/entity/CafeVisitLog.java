@@ -34,13 +34,13 @@ public class CafeVisitLog {
         private Integer accTime;
 
         /** 4. 멤버 id를 멤버 테이블과 조인을 이용하여 사용 - 멤버가 삭제되면 모든 글이 삭제   **/
-        @ManyToOne
+        @ManyToOne(fetch = FetchType.LAZY)
         @JoinColumn(name = "member_id")
         @OnDelete(action = OnDeleteAction.CASCADE)
         private Member member;
 
         /** 5. cafe_Id 를 cafe와 동기화하여 사용   **/
-        @ManyToOne
+        @ManyToOne(fetch = FetchType.LAZY)
         @JoinColumn (name = "cafe_id")
         private Cafe cafe;
 
@@ -50,8 +50,7 @@ public class CafeVisitLog {
         private Long fortuneId;
 
         /**  7. 혼잡도 제출여부 - 0,1   **/
-        @Column
-        @ColumnDefault("0")
+        @Column(name = "is_survey")
         private boolean isSurvey;
 
         /**  8. Todo 와 양방향 매핑 **/

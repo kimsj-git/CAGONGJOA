@@ -28,13 +28,13 @@ public class Comment extends BaseEntity {
         private Long id;
 
         //2. postid 를 조인으로 하여 사용
-        @ManyToOne
+        @ManyToOne(fetch = FetchType.LAZY)
         @JoinColumn(name = "post_id")
         @OnDelete(action = OnDeleteAction.CASCADE)
         private Post post;
 
 //      3. memberId를 조인으로 하여 사용
-        @ManyToOne
+        @ManyToOne(fetch = FetchType.LAZY)
         @JoinColumn(name = "member_id")
         @OnDelete(action = OnDeleteAction.CASCADE)
         private Member member;
