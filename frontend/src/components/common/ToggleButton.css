@@ -69,3 +69,17 @@
   box-shadow: 0 0 0 2px #2cc71b inset !important;
   color: #2cc71b; */
 }
+
+#type-select {
+  color: white !important;
+  background-color: rgb(255 153 0) !important;
+  border-radius: 2rem;
+  border: none;
+}
+
+#cancle-type-select {
+  box-shadow: 0 0 0 1px #767676 inset !important;
+  color: #767676 !important;
+  background: transparent none !important;
+  border-radius: 2rem;
+}

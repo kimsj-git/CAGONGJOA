@@ -1,25 +1,25 @@
-import { useSelector, useDispatch } from "react-redux"
-import domtoimage from "dom-to-image"
+import { useSelector, useDispatch } from "react-redux";
+import domtoimage from "dom-to-image";
 
-import "./StudyDetail.css"
-import PostForm from "../../mainPage/PostForm"
-import { postActions } from "../../../store/post"
-import { Grid, Icon } from "semantic-ui-react"
+import "./StudyDetail.css";
+import PostForm from "../../mainPage/PostForm";
+import { imageActions } from "../../../store/image";
+import { Grid, Icon } from "semantic-ui-react";
 
 const StudyDetail = () => {
-  const dispatch = useDispatch()
-  const year = useSelector((state) => state.studyHistory.year)
-  const month = useSelector((state) => state.studyHistory.month)
-  const day = useSelector((state) => state.studyHistory.day)
+  const dispatch = useDispatch();
+  const year = useSelector((state) => state.studyHistory.year);
+  const month = useSelector((state) => state.studyHistory.month);
+  const day = useSelector((state) => state.studyHistory.day);
   const onCaptureHandler = () => {
-    const node = document.getElementById("detail")
+    const node = document.getElementById("detail");
     domtoimage
       .toPng(node)
-      .then((dataUrl) => dispatch(postActions.uploadImage(dataUrl)))
-      .catch((error) => console.error(error))
-  }
-  const logo_url = "coffee_location_red.png"
-  const coffee_url = "bean.png"
+      .then((dataUrl) => dispatch(imageActions.uploadImage(dataUrl)))
+      .catch((error) => console.error(error));
+  };
+  const logo_url = "coffee_location_red.png";
+  const coffee_url = "bean.png";
   return (
     <>
       <div id="detail" class="detail-wrapper">
@@ -80,7 +80,7 @@ const StudyDetail = () => {
       </div>
       <PostForm isStudyHistory={true} onCaptureHandler={onCaptureHandler} />
     </>
-  )
-}
+  );
+};
 
-export default StudyDetail
+export default StudyDetail;
