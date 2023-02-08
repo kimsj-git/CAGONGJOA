@@ -11,14 +11,9 @@ import { Icon } from "semantic-ui-react"
 import ImagePreview from "./ImagePreview"
 import "./ImageUploadBox.css"
 import { postActions } from "../../store/post"
+import { IoIosImages } from "react-icons/io"
 
-const ImageUploadBox = forwardRef((props, ref) => {
-  useImperativeHandle(ref, () => ({
-    reportImages() {
-      console.log("reporting!")
-      return uploadedImages
-    },
-  }))
+const ImageUploadBox = () => {
   const dispatch = useDispatch()
   const uploadedImages = useSelector((state) => state.post.uploadedImage)
   const [previewImages, setPreviewImages] = useState([])
@@ -87,30 +82,29 @@ const ImageUploadBox = forwardRef((props, ref) => {
 
   return (
     <div className="ImageUploadBox">
-      <label
-        className="drag_or_click"
-        htmlFor="img-upload-box"
-        ref={uploadBoxRef}
-      >
-        <div className="icon_box">
-          <Icon name="images outline" size="big" />
-        </div>
-        <div className="text_box">
-          <h3>드래그 또는 클릭하여 업로드</h3>
-        </div>
-      </label>
-      <input
-        type="file"
-        multiple
-        accept="image/*"
-        id="img-upload-box"
-        ref={inputRef}
-      />
       <div className="preview_wrapper">
-        <div className="preview_container">{previewImages}</div>
+        <div className="preview_container">
+          <label
+            className="drag_or_click"
+            htmlFor="img-upload-box"
+            ref={uploadBoxRef}
+          >
+            <div className="icon_box">
+              <IoIosImages size={50} />
+            </div>
+          </label>
+          <input
+            type="file"
+            multiple
+            accept="image/*"
+            id="img-upload-box"
+            ref={inputRef}
+          />
+          {previewImages}
+        </div>
       </div>
     </div>
   )
-})
+}
 
 export default ImageUploadBox

@@ -1,12 +1,23 @@
-import React, { useState } from "react"
+import React, { useState, useEffect } from "react"
 import { Button } from "semantic-ui-react"
 import "./ToggleButton.css"
-
+import useFetch from "../../hooks/useFetch.js"
+const DEFAULT_REST_URL = process.env.REACT_APP_REST_DEFAULT_URL
 const ToggleButton = (props) => {
   const [btnState, setBtnState] = useState(false)
   const handleClick = () => {
+    props.likeHandler({
+      url: `${DEFAULT_REST_URL}/main/post/like`,
+      headers: {
+        Authorization: `Bearer ${sessionStorage.getItem("accessToken")}`,
+      },
+      body: {
+        isChecked: btnState,
+      },
+    })
     setBtnState(!btnState)
   }
+
   const {
     grouped = false,
     fluid = false,
