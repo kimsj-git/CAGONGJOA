@@ -19,10 +19,10 @@ public class PostPagingResponseDto {
 
     // 리턴객체 : 게시물 PK, 유저정보(현재카페, 티어, 닉네임, 뱃지) , 만든시간, 이미지, 글내용 전체, 좋아요 개수, 댓글 개수
     private Long postId;
-    private List<Map.Entry<BigInteger, String>> cafeInfos;
-    // private Tier tier;
-    // private Logo logo;
-    // private Badge badge
+//    private List<Map.Entry<BigInteger, String>> cafeInfos;
+    private String writerNickname;
+    private Long exp;
+    private String cafeName;
     private LocalDateTime createdAt;
     private List<String> imgUrlPath;
     private String content;
