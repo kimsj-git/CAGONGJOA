@@ -1,43 +1,43 @@
-import { NavLink, useLocation } from "react-router-dom";
-import { useState } from "react";
-import { Menu, Segment, Image } from "semantic-ui-react";
-import PostForm from "../components/mainPage/PostForm";
+import { NavLink, useLocation } from "react-router-dom"
+import { useState } from "react"
+import { Menu, Segment, Image } from "semantic-ui-react"
+import PostForm from "../components/mainPage/PostForm"
 import {
   AiOutlineHome,
   AiFillHome,
   AiFillBell,
   AiOutlineBell,
-} from "react-icons/ai";
-import { BsChatDots, BsChatDotsFill } from "react-icons/bs";
-import { MdOutlineLocalCafe, MdLocalCafe } from "react-icons/md";
-import { HiOutlineUser, HiUser } from "react-icons/hi";
-import { IoIosSearch } from "react-icons/io";
-import { IoSearch } from "react-icons/io5";
-import CafeAuth from "../components/certificate/cafeAuth/CafeAuth";
-import "./SideNavigation.css";
+} from "react-icons/ai"
+import { BsChatDots, BsChatDotsFill } from "react-icons/bs"
+import { MdOutlineLocalCafe, MdLocalCafe } from "react-icons/md"
+import { HiOutlineUser, HiUser } from "react-icons/hi"
+import { IoIosSearch } from "react-icons/io"
+import { IoSearch } from "react-icons/io5"
+import CafeAuth from "../components/certificate/cafeAuth/CafeAuth"
+import "./SideNavigation.css"
 
 const SideNavigation = () => {
-  const location = useLocation();
+  const location = useLocation()
   const directory = {
     "/": "home",
     "/today-cafe": "today-cafe",
     "/chat": "chat",
     "/mypage": "mypage",
     "/search": "search",
-  };
-  const [activeItem, setActiveItem] = useState(directory[location.pathname]);
-  const [prevItem, setPrevItem] = useState("");
+  }
+  const [activeItem, setActiveItem] = useState(directory[location.pathname])
+  const [prevItem, setPrevItem] = useState("")
   const menuClickHandler = (e, { name }) => {
-    setActiveItem(name);
+    setActiveItem(name)
     if (activeItem !== name) {
-      setPrevItem(activeItem);
-      console.log(name);
+      setPrevItem(activeItem)
+      console.log(name)
     }
-  };
+  }
   const closeModal = () => {
-    console.log(prevItem);
-    setActiveItem(prevItem);
-  };
+    console.log(prevItem)
+    setActiveItem(prevItem)
+  }
 
   return (
     <Segment
@@ -218,7 +218,7 @@ const SideNavigation = () => {
         </Menu.Item>
       </Menu>
     </Segment>
-  );
-};
+  )
+}
 
-export default SideNavigation;
+export default SideNavigation
