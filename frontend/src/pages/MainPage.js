@@ -113,19 +113,21 @@ const MainPage = () => {
 
   useEffect(() => {
     CafeAuthFetch()
-    getPosts({
-      url: `${DEFAULT_REST_URL}/main/post/feed`,
-      headers: {
-        Authorization: `Bearer ${sessionStorage.getItem("accessToken")}`,
-      },
-      body: {
-        postId: -1,
-        type: ["free", "qna", "together", "tip", "recommend", "help", "lost"],
-        latitude: JSON.parse(sessionStorage.getItem("location")).lat,
-        longitude: JSON.parse(sessionStorage.getItem("location")).lng,
-        dist: DIST,
-      },
-    })
+    if(sessionStorage.getItem("location")){
+      getPosts({
+        url: `${DEFAULT_REST_URL}/main/post/feed`,
+        headers: {
+          Authorization: `Bearer ${sessionStorage.getItem("accessToken")}`,
+        },
+        body: {
+          postId: -1,
+          type: ["free", "qna", "together", "tip", "recommend", "help", "lost"],
+          latitude: JSON.parse(sessionStorage.getItem("location")).lat,
+          longitude: JSON.parse(sessionStorage.getItem("location")).lng,
+          dist: DIST,
+        },
+      })
+    }
   }, [])
 
   // API 연결 후 활성화

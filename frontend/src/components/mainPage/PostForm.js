@@ -15,6 +15,7 @@ import useFetch from "../../hooks/useFetch.js"
 import ImageUploadBox from "./ImageUploadBox"
 import { Editor } from "primereact/editor"
 import { postActions } from "../../store/post"
+
 const DEFAULT_REST_URL = process.env.REACT_APP_REST_DEFAULT_URL
 const PostForm = (props) => {
   const dispatch = useDispatch()
@@ -65,6 +66,7 @@ const PostForm = (props) => {
     setPostContent("")
     setPostType("")
   }
+
   return (
     <>
       <Modal

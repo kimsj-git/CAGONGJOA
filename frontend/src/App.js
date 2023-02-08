@@ -1,6 +1,9 @@
+import { useEffect } from "react"
+import { useHistory } from "react-router-dom"
 import { Route, Switch } from "react-router-dom"
 import { Grid } from "semantic-ui-react"
 
+import MapPage from "./pages/MapPage"
 import KakaoLoginGetCode from "./components/member/login/KakakLoginGetCode"
 import Layout from "./layout/Layout"
 import LoginPage from "./pages/member/LoginPage"
@@ -21,6 +24,15 @@ import Settings from "./components/myPage/settingsPage/Settings"
 import BlockList from "./components/myPage/settingsPage/BlockList"
 
 function App() {
+  const history = useHistory()
+  const Authenticated = sessionStorage.getItem("accessToken")
+  
+  useEffect(()=>{
+    if (!Authenticated){
+      history.push('/login')
+    }
+  }, [])
+
   return (
     <Layout>
       <Switch>
@@ -84,6 +96,9 @@ function App() {
         {/* MainPage Route */}
         <Route path="/" exact>
           <MainPage />
+        </Route>
+        <Route pathe="/map" exact>
+          <MapPage/>
         </Route>
 
         {/* NotFound 페이지*/}
