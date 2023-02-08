@@ -11,9 +11,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.HashMap;
-import java.util.Map;
-
 @RestController
 @RequestMapping("/writeForm")
 @RequiredArgsConstructor
@@ -52,7 +49,7 @@ public class PostFormController {
             @RequestPart(value = "imgFiles", required = false) MultipartFile[] files,
             @RequestPart(value = "updateForm", required = false) PostUpdateFormRequestDto updateDto) throws Exception {
 
-        boolean isUpdated = postService.updatePost(files, updateDto);
+        boolean isUpdated = postService.updatePostForm(files, updateDto);
         if (isUpdated) {
             responseDTO = new ResponseDTO("글 업데이트 완료!", "", HttpStatus.OK, null);
         } else {

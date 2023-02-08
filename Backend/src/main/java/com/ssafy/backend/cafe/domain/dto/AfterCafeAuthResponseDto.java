@@ -20,5 +20,7 @@ public class AfterCafeAuthResponseDto {
     private int coffeeCnt;
     private String fortune;
 //    private List<> todoList;
-
+    public void updateFortune(String fortune) {
+        this.fortune = fortune;
+    }
 }

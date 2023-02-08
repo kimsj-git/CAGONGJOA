@@ -158,10 +158,12 @@ public class CafeServiceImpl implements CafeService {
         Optional<MemberCafeTier> optionalMemberCafeTier = memberCafeTierRepository.findByMemberIdAndCafeId(memberId, cafeId);
         
         // 없을 때만 넣기
+        MemberCafeTier memberCafeTier;
         if(optionalMemberCafeTier.isEmpty() || optionalMemberCafeTier == null) {
-            MemberCafeTier memberCafeTier = MemberCafeTier.TierBuilder()
+            memberCafeTier  = MemberCafeTier.TierBuilder()
                     .cafe(cafeRepository.findById(cafeId).get())
                     .member(memberRepository.findById(memberId).get())
+                    .exp(100L)
                     .build();
             memberCafeTierRepository.save(memberCafeTier);
         }

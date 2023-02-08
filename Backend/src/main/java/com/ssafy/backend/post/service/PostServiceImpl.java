@@ -5,10 +5,8 @@ import com.ssafy.backend.cafe.domain.dto.NearByCafeResultDto;
 import com.ssafy.backend.cafe.domain.entity.Cafe;
 import com.ssafy.backend.cafe.repository.CafeRepository;
 import com.ssafy.backend.cafe.service.CafeServiceImpl;
-import com.ssafy.backend.jwt.JwtUtil;
 import com.ssafy.backend.member.domain.entity.Member;
 import com.ssafy.backend.member.repository.MemberRepository;
-import com.ssafy.backend.member.service.MemberServiceImpl;
 import com.ssafy.backend.post.domain.dto.*;
 import com.ssafy.backend.post.domain.entity.*;
 import com.ssafy.backend.post.domain.enums.PostType;
@@ -36,7 +34,6 @@ public class PostServiceImpl implements PostService {
     private final MemberRepository memberRepository;
     private final CommentRepository commentRepository;
     // Entity & Dto
-    private List<PostPagingResponseDto> postResponseDtoList;
     private ClientPosInfoDto clientPosInfoDto;
     private Post post;
     private Slice<Post> postSlice;
@@ -57,15 +54,6 @@ public class PostServiceImpl implements PostService {
         //1. 유저 확인
         CheckedResponseDto checked = postUtil.checkMember();
         long memberId = checked.getMemberId(); // 멤버 아이디를 확인한다.
-        Optional<CafeAuth> cafeAuth = cafeAuthRepository.findById(checked.getNickname());
-        if (cafeAuth.isEmpty() || cafeAuth == null) { // 카페 이름이 없으면 - 인증되지 않은 유저
-            if (requestDto.getType() == PostType.QNA || requestDto.getType() == PostType.LOST) { // 카테고리가 둘중 하나면 넘어가기
-            } else { // 그렇지 않다면 false
-                return false;
-            }
-        }
-        Cafe cafe = cafeRepository.findById(cafeAuth.get().getCafeId()).get(); // 카페 닉네임을 확인한다.
-        String cafeNickname = cafe.getName();
 
         // 1-2. 글 저장하기
 
@@ -74,24 +62,7 @@ public class PostServiceImpl implements PostService {
         String content = requestDto.getContent();
         System.out.println("content : " + content);
 
-        // 1-3. 카페위치 저장하기
-
-        Double latitude = requestDto.getLatitude();
-        Double longitude = requestDto.getLongitude();
-        Double dist = requestDto.getDist();
-
-        clientPosInfoDto = new ClientPosInfoDto(latitude, longitude, dist);
-        List<NearByCafeResultDto> nearByCafeResultDtos = cafeService.getNearByCafeLocations(clientPosInfoDto);
-        List<PostCafe> postCafeList = new ArrayList<>();
-        for (NearByCafeResultDto dto : nearByCafeResultDtos) {
-            postCafe = PostCafe.PostCafeBuilder()
-                    .cafeLocationId(dto.getId().longValue())
-                    .build();
-            postCafeList.add(postCafe);
-        }
-
-
-        // 1-4. 이미지 업로드 Build
+        // 1-3. 이미지 업로드 Build
 
         post = Post.postWriteBuilder()
                 .member(member)
@@ -100,52 +71,37 @@ public class PostServiceImpl implements PostService {
                 .build();
 
         if (files != null) {
-            List<PostImage> postImages = postUtil.imageUpload(post, files);
+            List<PostImage> postImages = postUtil.imageUpload(files);
             for (PostImage postImage : postImages) {
                 post.addPostImage(postImage);
             }
         }
-//        if(postCafeList != null) {
-//            post.addPostCafe(postCafeList);
-//        }
+        
+        // 1-4. 유저 인증여부 확인
+        Optional<CafeAuth> cafeAuth = cafeAuthRepository.findById(checked.getNickname());
+        if (cafeAuth.isEmpty() || cafeAuth == null) { // 카페 이름이 없으면 - 인증되지 않은 유저
+            if (requestDto.getType() == PostType.QNA || requestDto.getType() == PostType.LOST) { // 카테고리가 둘중 하나면 넘어가기
+            } else { // 그렇지 않다면 false
+                return false;
+            }
+        }else { // 카페이름이 있으면 - 인증된 유저
+            Cafe cafe = cafeRepository.findById(cafeAuth.get().getCafeId()).get(); // 카페 닉네임을 확인한다.
+            String cafeNickname = cafe.getName();
 
-        // 1-5. repository 에 저장
+            // 1-3. 카페위치 저장하기
+
+            postCafe = PostCafe.PostCafeBuilder()
+                    .post(post)
+                    .cafe(cafe)
+                    .build();
+            post.addPostCafe(postCafe);
+        }
 
         postRepository.save(post);
         return true;
     }
 
 
-    /**
-     * 2. 글 업데이트 [ 테스트 완료 ]
-     **/
-    @Override
-    public boolean updatePost(MultipartFile[] files, PostUpdateFormRequestDto updateDto) throws Exception {
-
-        // 1. 글 업데이트
-        Long postId = updateDto.getPostId();
-        String content = updateDto.getContent();
-
-        Optional<Post> updateResult = postRepository.findById(postId);
-        if (updateResult == null || updateResult.isEmpty()) {
-            return false;
-        }
-
-        Post post = updateResult.orElseThrow();
-        post.updateContents(content);
-
-        // 2. 이미지 업데이트s
-        postUtil.imageDeleteAll(post);
-        if (files != null) {
-            List<PostImage> postImages = postUtil.imageUpload(post, files);
-            for (PostImage postImage : postImages) {
-                post.addPostImage(postImage);
-            }
-        }
-
-        postRepository.save(post);
-        return true;
-    }
 
     /**
      * 3. 글 삭제 [ Cascade 테스트 필요 ]
@@ -338,6 +294,58 @@ public class PostServiceImpl implements PostService {
                 .likeCount(count)
                 .build();
         return response;
+    }
+
+
+    @Override
+    public PostUpdateResponseDto updatePost(Long postId) {
+    post = postRepository.findById(postId).get();
+    List<PostImage> postImageList = post.getPostImageList();
+    List<Map.Entry<String,String>> imgList = new ArrayList<>();
+        for (PostImage postImage: postImageList) {
+            imgList.add(new AbstractMap.SimpleEntry<>(postImage.getAccessKey(),postImage.getImgUrl()));
+        }
+    PostUpdateResponseDto postUpdateResponseDto = PostUpdateResponseDto.builder()
+            .postId(postId)
+            .imgPathList(imgList)
+            .type(post.getPostType())
+            .Content(post.getContent())
+            .build();
+
+    return postUpdateResponseDto;
+
+    }
+
+    /**
+     * 2. 글 업데이트 [ 테스트 완료 ]
+     **/
+    @Override
+    public boolean updatePostForm(MultipartFile[] files, PostUpdateFormRequestDto updateDto) throws Exception {
+
+        // 1. 글 업데이트
+        Long postId = updateDto.getPostId();
+        String content = updateDto.getContent();
+        List<String> keyNameList = updateDto.getKeyNameList();
+
+        Optional<Post> updateResult = postRepository.findById(postId);
+        if (updateResult == null || updateResult.isEmpty()) {
+            return false;
+        }
+
+        Post post = updateResult.orElseThrow();
+        post.updateContents(content);
+
+        // 2. 이미지 업데이트
+        postUtil.imageDelete(post, keyNameList);
+        if (files != null) {
+            List<PostImage> postImages = postUtil.imageUpload(files);
+            for (PostImage postImage : postImages) {
+                post.addPostImage(postImage);
+            }
+        }
+
+        postRepository.save(post);
+        return true;
     }
 
 

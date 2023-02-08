@@ -8,6 +8,8 @@ import com.ssafy.backend.common.exception.member.MemberException;
 import com.ssafy.backend.common.exception.member.MemberExceptionType;
 import com.ssafy.backend.jwt.JwtUtil;
 import com.ssafy.backend.member.domain.dto.MemberIdAndNicknameDto;
+import com.ssafy.backend.member.domain.entity.MemberCoin;
+import com.ssafy.backend.member.repository.MemberCoinRepository;
 import com.ssafy.backend.redis.RefreshTokenRepository;
 import com.ssafy.backend.member.domain.entity.Member;
 import com.ssafy.backend.member.domain.enums.OauthType;
@@ -26,16 +28,17 @@ import java.util.Optional;
 @Service
 @Transactional
 @RequiredArgsConstructor
-public class MemberServiceImpl implements MemberService{
+public class MemberServiceImpl implements MemberService {
 
     private final MemberRepository memberRepository;
     private final RefreshTokenRepository refreshTokenRepository;
     private final JwtUtil jwtUtil;
+    private final MemberCoinRepository memberCoinRepository;
 
     @Override
     public void checkDuplicatedNickname(String nickName) {
         // 닉네임 조회 후 존재하면 에러 발생 시킴
-        memberRepository.findByNickname(nickName).ifPresent(x->{
+        memberRepository.findByNickname(nickName).ifPresent(x -> {
             throw new MemberException(MemberExceptionType.ALREADY_EXIST_NICKNAME);
         });
     }
@@ -59,11 +62,22 @@ public class MemberServiceImpl implements MemberService{
 
     @Override
     public void saveMember(long oAuthId, String nickname, OauthType oauthType) {
-        memberRepository.save(Member.oAuthBuilder()
+        Member member = Member.oAuthBuilder()
                 .nickname(nickname)
                 .oAuthId(oAuthId)
                 .oAuthType(oauthType)
-                .build());
+                .build();
+        Member savedMember = memberRepository.save(member);
+        System.out.println("MemberServiceImpl : 멤버 저장 완료");
+
+        MemberCoin memberCoin = MemberCoin.coinBuilder()
+                .member(savedMember)
+                .coffeeBeanCount(0)
+                .coffeeCount(0)
+                .build();
+        memberCoinRepository.save(memberCoin);
+        System.out.println("MemberServiceImpl : MemberCoin 저장완료");
+        member.updateMemberCoin(memberCoin);
     }
 
     @Override
@@ -89,7 +103,7 @@ public class MemberServiceImpl implements MemberService{
         HashMap<String, Object> tokens = new HashMap<>();
 
         // 리프레쉬 토큰이 redis에 존재
-        refreshTokenRepository.findById(refreshToken).ifPresent(a->{
+        refreshTokenRepository.findById(refreshToken).ifPresent(a -> {
             System.out.println("억세스 발급");
             Optional<Member> dbMemberOpt = memberRepository.findById(memberId);
             if (dbMemberOpt.isEmpty()) {
@@ -117,7 +131,7 @@ public class MemberServiceImpl implements MemberService{
         // redis에 저장된 refresh토큰 삭제하기
         refreshTokenRepository.deleteById(refreshToken);
 
-        refreshTokenRepository.findById(refreshToken).ifPresent(a ->{
+        refreshTokenRepository.findById(refreshToken).ifPresent(a -> {
             throw new MemberException(MemberExceptionType.NOT_DELETE_REFRESH_TOKEN);
         });
     }

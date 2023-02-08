@@ -14,4 +14,6 @@ public interface ImageRepository extends JpaRepository<PostImage, Long> {
 
     List<PostImage> findAllByPostId(Long postId);
 
+    List<PostImage> findAllByPostIdAndAccessKeyNotIn(Long postId, List<String> accessKeyList);
+
 }

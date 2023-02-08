@@ -1,5 +1,6 @@
 package com.ssafy.backend.post.domain.entity;
 
+import com.ssafy.backend.cafe.domain.entity.Cafe;
 import lombok.*;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
@@ -33,13 +34,14 @@ public class PostCafe {
 
 
         /** 3. 카페위치   **/
-        @Column(name = "cafe_location_id")
-        private Long cafeLocationId;
+        @ManyToOne
+        @JoinColumn(name = "cafe_location_id")
+        private Cafe cafe;
 
         @Builder(builderClassName = "PostCafeBuilder", builderMethodName = "PostCafeBuilder")
-        public PostCafe(Post post, Long cafeLocationId) {
+        public PostCafe(Post post, Cafe cafe) {
                 this.post = post;
-                this.cafeLocationId = cafeLocationId;
+                this.cafe = cafe;
         }
 
 }

@@ -7,6 +7,9 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
+import java.util.List;
+import java.util.Map;
+
 @ToString
 @Data
 @NoArgsConstructor
@@ -17,5 +20,6 @@ public class PostUpdateFormRequestDto {
     private Long postId;
     private String content;
     private PostType type;
+    private List<String> keyNameList;
 
 }

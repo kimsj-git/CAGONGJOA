@@ -93,6 +93,10 @@ public class Post extends BaseEntity {
         postImage.setPost(this);
     }
 
+    public void updatePostImage(List<PostImage> postImageList) {
+        this.postImageList = postImageList;
+    }
+
     public void addPostCafe(PostCafe postCafe) {
         this.postCafeList.add(postCafe);
         postCafe.setPost(this);

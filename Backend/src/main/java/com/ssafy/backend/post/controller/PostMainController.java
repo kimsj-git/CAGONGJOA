@@ -24,7 +24,6 @@ import java.util.Map;
 
 public class PostMainController {
     private final PostService postService;
-    private final PostUtil postUtil;
 
     private ResponseDTO responseDTO;
 
@@ -96,15 +95,28 @@ public class PostMainController {
      * 1-4. 글쓰기 클릭  [테스트완료]
      **/
     @Auth
-//    @CafeAuth
+    @CafeAuth
     @PostMapping("/write")
-    public ResponseEntity<ResponseDTO> postWrite() throws Exception {
+    public ResponseEntity<ResponseDTO> postWrite() {
 
-        responseDTO = new ResponseDTO("유저 인증됨!", "", HttpStatus.OK, null);
+        responseDTO = new ResponseDTO("카페 인증된 유저!", "", HttpStatus.OK, null);
 
         return new ResponseEntity<>(responseDTO, HttpStatus.OK);
 
     }
 
+    /**
+     * 1-5. 업데이트 하러가기
+     **/
+    @Auth
+//    @CafeAuth
+    @PutMapping("/update")
+    public ResponseEntity<ResponseDTO> updatePost(@RequestParam Long postId) {
+
+        PostUpdateResponseDto postUpdateResponseDto = postService.updatePost(postId);
+        responseDTO = new ResponseDTO("글 불러오기 완료!", "", HttpStatus.OK, postUpdateResponseDto);
+
+        return new ResponseEntity<>(responseDTO, HttpStatus.OK);
+    }
 
 }
