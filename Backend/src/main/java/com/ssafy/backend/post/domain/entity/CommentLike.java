@@ -31,14 +31,14 @@ public class CommentLike {
 //        @OnDelete(action = OnDeleteAction.CASCADE)
 //        private Comment comment;
 
-        @ManyToOne
+        @ManyToOne(fetch = FetchType.LAZY)
         @JoinColumn (name = "comment_id")
         @OnDelete(action = OnDeleteAction.CASCADE)
         private Comment comment;
 
         /** 3. 멤버 - 좋아요를 누른 멤버의 id 를 저장   **/
         // 알림 다이어트를 해서, 멤버 좋아요는 필요없을듯 함. 그래도 혹시모르니 매핑해놓겠음
-        @ManyToOne
+        @ManyToOne(fetch = FetchType.LAZY)
         @JoinColumn (name = "member_id")
         private Member member;
 

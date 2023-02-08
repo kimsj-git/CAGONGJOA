@@ -1,15 +1,16 @@
 package com.ssafy.backend.cafe.domain.dto;
 
+
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class ClientPosInfoDto {
-    private Double latitude;
-    private Double longitude;
-    private Double dist;
+@Builder
+public class CafeNameAndBrandDto {
+    private String name;
+    private String brandType;
 }

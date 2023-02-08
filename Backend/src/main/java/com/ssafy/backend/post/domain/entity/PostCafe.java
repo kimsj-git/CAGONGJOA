@@ -27,7 +27,7 @@ public class PostCafe {
 
         /** 2. post id를 post 테이블과 조인을 이용하여 사용 - 게시글이 삭제되면 모든 좋아요 삭제  **/
         @Setter
-        @ManyToOne(fetch = LAZY)
+        @ManyToOne(fetch = FetchType.LAZY)
         @JoinColumn(name = "post_id")
         @OnDelete(action = OnDeleteAction.CASCADE)
         private Post post;

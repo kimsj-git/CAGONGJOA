@@ -11,7 +11,7 @@ import javax.persistence.*;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 @Builder
-public class Fortune extends BaseEntity {
+public class Fortune {
 
     //== Column  ==//
 

@@ -25,7 +25,7 @@ public class MemberCoin {
     @ColumnDefault("0")
     private Integer coffeeCount;
 
-    @OneToOne
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")
     private Member member;
 
