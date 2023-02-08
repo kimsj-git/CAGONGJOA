@@ -4,7 +4,7 @@ import StudyDetail from "./StudyDetail"
 const StudyHistory = () => {
   return (
     <>
-      <h1>StudyHistory</h1>
+      <h1>카공 생활</h1>
       <section
         style={{
           display: "flex",

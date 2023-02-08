@@ -136,7 +136,6 @@ const MapDiv = () => {
         {!isFinded && (
           <Button
             className={classes.findCafeBtn}
-            icon
             circular
             onClick={findCafeList}
             color="blue"
@@ -144,12 +143,8 @@ const MapDiv = () => {
             현재 위치에서 카페 찾기
           </Button>
         )}
-        {isMoved && (
-          <>
-            <MapLookFeed lat={center.lat} lng={center.lng} />
-          </>
-        )}
-        <MapCafeFilterCarousel className={classes.filterCorousel}/>
+        <MapLookFeed lat={center.lat} lng={center.lng} />
+        <MapCafeFilterCarousel className={classes.filterCorousel} />
         <MapSpinner />
       </Map>
     </>

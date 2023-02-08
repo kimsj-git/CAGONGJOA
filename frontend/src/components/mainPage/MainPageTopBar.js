@@ -17,7 +17,7 @@ const MainPageTopBar = (props) => {
       history.push("/")
     }
   }
-
+  const feedAddress = sessionStorage.getItem("address")
   const isAuthenticated = sessionStorage.getItem("cafeAuth")
 
   return (
@@ -42,7 +42,7 @@ const MainPageTopBar = (props) => {
             fontSize: "1.3rem",
           }}
         >
-          {sessionStorage.getItem("address")}
+          {feedAddress}
         </p>
       </Menu.Item>
       <Menu.Item

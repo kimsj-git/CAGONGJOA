@@ -1,6 +1,7 @@
+import { useState } from "react"
 import { useHistory } from "react-router-dom"
 import { useSelector, useDispatch } from "react-redux"
-import { Modal, Button, ModalActions } from "semantic-ui-react"
+import { Modal, Button, ModalActions, Icon } from "semantic-ui-react"
 
 import { modalActions } from "../../../store/modal"
 import useFetch from "../../../hooks/useFetch"
@@ -10,11 +11,12 @@ const REST_DEFAULT_URL = process.env.REACT_APP_REST_DEFAULT_URL
 const ConfirmCafe = () => {
   const history = useHistory()
   const dispatch = useDispatch()
-
+  const [isLoading, setIsLoading] = useState(false)
   const open = useSelector((state) => state.modal.openConfirmCafe)
   const cafeData = useSelector((state) => state.modal.selectedCafe)
   const { sendRequest: selectCafe } = useFetch()
   const okBtnHandler = async () => {
+    setIsLoading(true)
     await selectCafe({
       url: `${REST_DEFAULT_URL}/cafe/auth/select`,
       method: "POST",
@@ -34,6 +36,7 @@ const ConfirmCafe = () => {
       lng: cafeData.longitude,
       cafeName: cafeData.name,
     }
+    setIsLoading(false)
     sessionStorage.setItem("location", JSON.stringify(location))
     sessionStorage.setItem("myCafe", JSON.stringify(selectedCafeData))
     dispatch(modalActions.toggleConfirmCafeModal())
@@ -47,21 +50,31 @@ const ConfirmCafe = () => {
         open={open}
         size="mini"
       >
-        <Modal.Content style={{textAlign:"center"}}>
-          <p><b>{cafeData.name}</b> 맞습니까?</p>
-        </Modal.Content>
-        <ModalActions>
-          <Button size="mini" onClick={okBtnHandler} color="blue">
-            확인
-          </Button>
-          <Button
-            size="mini"
-            color="red"
-            onClick={() => dispatch(modalActions.toggleConfirmCafeModal())}
-          >
-            취소
-          </Button>
-        </ModalActions>
+        {isLoading ? (
+          <Modal.Content style={{ textAlign: "center" }}>
+            <Icon name="spinner" loading /> :
+          </Modal.Content>
+        ) : (
+          <>
+            <Modal.Content style={{ textAlign: "center" }}>
+              <p>
+                <b>{cafeData.name}</b> 맞습니까?
+              </p>
+            </Modal.Content>
+            <ModalActions>
+              <Button size="mini" onClick={okBtnHandler} color="blue">
+                확인
+              </Button>
+              <Button
+                size="mini"
+                color="red"
+                onClick={() => dispatch(modalActions.toggleConfirmCafeModal())}
+              >
+                취소
+              </Button>
+            </ModalActions>
+          </>
+        )}
       </Modal>
     )
   }
