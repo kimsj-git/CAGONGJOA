@@ -24,7 +24,7 @@ const MainNavigation = () => {
         </NavLink>
       ),
     },
-    { label: "post", icon: () => <PostForm isNavigation={true}/> },
+    { label: "post", icon: () => <PostForm isMainNavigation="1"/> },
     {
       label: "today-cafe",
       icon: () => (
