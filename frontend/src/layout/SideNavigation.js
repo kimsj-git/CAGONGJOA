@@ -52,13 +52,28 @@ const SideNavigation = () => {
         height: "100vh",
       }}
     >
-      <div
-        className="logo-title"
-        style={{ margin: "3rem 1rem 5rem", fontSize: "2.5rem" }}
-      >
-        <NavLink to="/" style={{ color: "black" }}>
-          <Image src="" />
-          카공조아
+      <div style={{ margin: "0.5rem 0rem 1.5rem" }}>
+        <NavLink
+          to="/"
+          style={{
+            color: "black",
+            display: "flex",
+            // flexDirection: "column",
+            alignItems: "center",
+          }}
+        >
+          {/* <Image
+            src={require("../assets/icons/kagongjoa_logo.png")}
+            style={{ marginBottom: "1rem", width: "50%" }}
+          /> */}
+          <Image
+            src={require("../assets/icons/coffee_location_red.png")}
+            // style={{ height: "72px" }}
+            size="tiny"
+          />
+          <p id="title" style={{ fontSize: "2rem" }}>
+            카공조아
+          </p>
         </NavLink>
       </div>
       <Menu secondary vertical fluid style={{ fontSize: "1.2rem" }}>
