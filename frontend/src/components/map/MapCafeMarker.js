@@ -7,7 +7,7 @@ const MapCafeMarker = (props) => {
   const [isOpen, setIsOpen] = useState(false)
   const [isModalOpen, setIsModalOpen] = useState(false)
 
-  const hoverOpenHandler = () => {
+  const hoverOpenHandler = (e) => {
     setIsOpen(true)
   }
   const hoverCloseHandler = () => {
@@ -30,7 +30,7 @@ const MapCafeMarker = (props) => {
         onMouseOut={hoverCloseHandler}
       >
         {isOpen && (
-          <div style={{ padding: "5px", color: "#000" }}>{props.name}</div>
+          <div className="info" style={{ padding:"5px", fontSize:"10px" }}>{props.name}</div>
         )}
       </MapMarker>
 

@@ -1,10 +1,10 @@
 .detail {
-  padding:30px;
+  padding: 3em;
   display: flex;
   flex-direction: column;
   justify-content: center;
-  width: 200px;
-  height: 200px;
+  width: 20rem;
+  height: 20rem;
 }
 .detail-wrapper {
   background-color: bisque;
