@@ -1,7 +1,7 @@
 import { NavLink, useLocation } from "react-router-dom"
 import { Grid, Icon } from "semantic-ui-react"
 
-import classes from './MainPageItems.module.css'
+import classes from './MyPageItems.module.css'
 
 const MainPageItems = () => {
   const location = useLocation()
@@ -18,14 +18,6 @@ const MainPageItems = () => {
       </Grid.Row>
       <Grid.Row>
         <Grid.Column>
-          <NavLink to={`${defaultURL}/badge`} className={classes.navItem}>
-            <Icon name="star" />
-            나의 뱃지
-          </NavLink>
-        </Grid.Column>
-      </Grid.Row>
-      <Grid.Row>
-        <Grid.Column>
           <NavLink to={`${defaultURL}/cafebadge`} className={classes.navItem}>
             <Icon name="book" />
             방문카페 도감
@@ -34,7 +26,7 @@ const MainPageItems = () => {
       </Grid.Row>
       <Grid.Row>
         <Grid.Column>
-          <NavLink to={`${defaultURL}/mypost`} className={classes.navItem}>
+          <NavLink to={`${defaultURL}/feed/myposts`} className={classes.navItem}>
             <Icon name="pencil alternate" />
             내가 쓴 글/댓글
           </NavLink>

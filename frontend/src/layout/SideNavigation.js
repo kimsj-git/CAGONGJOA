@@ -57,7 +57,7 @@ const SideNavigation = () => {
         style={{ margin: "3rem 1rem 5rem", fontSize: "2.5rem" }}
       >
         <NavLink to="/" style={{ color: "black" }}>
-          <Image src="" size="" />
+          <Image src="" />
           카공조아
         </NavLink>
       </div>

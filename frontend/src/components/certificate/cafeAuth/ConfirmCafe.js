@@ -52,7 +52,7 @@ const ConfirmCafe = () => {
       >
         {isLoading ? (
           <Modal.Content style={{ textAlign: "center" }}>
-            <Icon name="spinner" loading /> :
+            <Icon name="spinner" loading />
           </Modal.Content>
         ) : (
           <>
