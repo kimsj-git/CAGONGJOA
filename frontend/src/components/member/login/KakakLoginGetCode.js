@@ -20,6 +20,7 @@ const KakaoLoginGetCode = () => {
         // DB 저장되어 있는 유저면
         const responseData = await response.json()
         if (responseData.httpStatus === "OK") {
+          console.log("로그인 성공.")
           sessionStorage.setItem("accessToken", responseData.data.jwtTokens.accessToken)
           sessionStorage.setItem("refreshToken", responseData.data.jwtTokens.refreshToken)
           sessionStorage.setItem("nickname", responseData.data.nickname)
@@ -27,12 +28,15 @@ const KakaoLoginGetCode = () => {
         }
         // 첫 로그인 회원일 경우
         else if (responseData.httpStatus === "CREATED") {
+          console.log("처음 로그인 되었을 때..")
           history.push({
             pathname: `/signup`,
             state: { oauthId: responseData.data.kakaoMemberId, oauthType: responseData.data.oauthType },
           })
         }
         else {
+          console.log("else블럭..")
+          console.log(responseData)
           history.push("/error")
         }
       } catch (error) {

@@ -48,15 +48,15 @@ const Signup = () => {
           oauthId,
         }),
       })
-      if (!response.ok) {
-        history.push("/error")
-      }
       const responseData = await response.json()
       if (responseData.httpStatus === "OK") {
         sessionStorage.setItem("accessToken", responseData.data.accessToken)
         sessionStorage.setItem("refreshToken", responseData.data.refreshToken)
         sessionStorage.setItem("nickname", nickname)
         history.push("/")
+      } else {
+        console.log('회원가입 x')
+        console.log(responseData)
       }
     } catch (error) {
       history.push("/error")

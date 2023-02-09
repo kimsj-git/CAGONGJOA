@@ -23,6 +23,7 @@ public class MemberController {
     // 닉네임 중복체크 (회원가입, 유저 정보 수정)
     @GetMapping("/checkDuplicatedNickname")
     public ResponseEntity<ResponseDTO> checkDupNick(@RequestParam String nickname) {
+        System.out.println("12. 닉네임 중복 체크 하러 왔음");
         memberService.checkDuplicatedNickname(nickname);
         ResponseDTO responseDTO = new ResponseDTO("닉네임 중복 체크 완료", "", HttpStatus.OK, null);
         return new ResponseEntity<>(responseDTO, HttpStatus.OK);

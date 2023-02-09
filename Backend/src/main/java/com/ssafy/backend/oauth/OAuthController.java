@@ -52,9 +52,11 @@ public class OAuthController {
         long kakaoMemberId = Long.parseLong(kakaoMemberInfo.get("id"));
         Optional<Member> dbMember = memberService.getMember(kakaoMemberId, OauthType.KAKAO);
 
+        System.out.println("1. dbMember = " + dbMember);
 
         // db에 해당 kakao oAuth의 id를 가진 레코드가 없다면 등록
         if (dbMember.isEmpty()) {
+            System.out.println("2.카카오 auth id가 db에 없음");
             // 신규 회원 등록 - 신규 회원이 등록되면 회원-재화 엔티티도 같이생성
             memberService.saveMember(kakaoMemberId, NicknameType.DEFAULT.toString(), OauthType.KAKAO);
 
@@ -69,11 +71,13 @@ public class OAuthController {
 
             ResponseDTO responseDTO
                     = new ResponseDTO("닉네임 변경 필요!", "", HttpStatus.CREATED, memberInfoDto);
+            System.out.println("3. 닉네임 변경 필요 리턴");
             return new ResponseEntity<>(responseDTO, HttpStatus.OK);
         }
 
         // if 닉네임이 아직도 DEFAULT면 위랑 상태코드 똑같이 해서 닉네임 받는 페이지 가도록
         if (dbMember.get().getNickname().equals(NicknameType.DEFAULT.toString())) {
+            System.out.println("4. 닉네임이 디폴트");
 
             MemberInfoDto memberInfoDto = MemberInfoDto.builder()
                             .nicknameType(NicknameType.DEFAULT.toString())
@@ -83,19 +87,22 @@ public class OAuthController {
 
             ResponseDTO responseDTO
                     = new ResponseDTO("닉네임 변경 필요!", "", HttpStatus.CREATED, memberInfoDto);
+            System.out.println("5. 닉네임 변경 필요 리턴");
             return new ResponseEntity<>(responseDTO, HttpStatus.OK);
         }
 
         // 여까지 왔으면 로그인 할 자격이 있다. 닉네임과 억세스id로 jwt토큰 생성해 클라이언트에 보내주기
-        System.out.println("dbMember = " + dbMember);
+        System.out.println("6.dbMember = " + dbMember);
 
         TokenRespDto jwtTokens = jwtService.createJwt(dbMember.get());
+        System.out.println("7. jwt 토큰 생성");
         LoginRespDto loginRespDto = LoginRespDto.builder()
                         .nickname(dbMember.get().getNickname())
                         .jwtTokens(jwtTokens)
                         .build();
 
         ResponseDTO responseDTO = new ResponseDTO("로그인 완료!", "", HttpStatus.OK, loginRespDto);
+        System.out.println("8. 로그인 완료");
         return new ResponseEntity<>(responseDTO, HttpStatus.OK);
 
 
@@ -103,9 +110,8 @@ public class OAuthController {
 
     // 회원가입 후 DEFAULT 닉네임을 변경
     @PostMapping("/setNickname")
-    public ResponseEntity<ResponseDTO> setMemberNickname(@RequestBody OauthLoginDto oauthLoginDto) throws Exception {
-        System.out.println("여기 왔음");
-        Map<String, Object> resultMap = new HashMap<>();
+    public ResponseEntity<ResponseDTO> setMemberNickname(@RequestBody OauthLoginDto oauthLoginDto) {
+        System.out.println("9. 닉네임 전송버튼 눌러서 서버로 왔음");
         Optional<Member> defaultNicknameMember = memberService.getMember(oauthLoginDto.getOauthId(),
                 OauthType.valueOf(oauthLoginDto.getOauthType()));
         // 서버에서 한번 더 닉네임 중복 체크
@@ -115,6 +121,7 @@ public class OAuthController {
 
         // jwt 토큰 생성
         TokenRespDto jwtTokens = jwtService.createJwt(defaultNicknameMember.get());
+        System.out.println("10. jwt토큰 생성");
 
         LoginRespDto loginRespDto = LoginRespDto.builder()
                             .nickname(changedNickname)
@@ -123,6 +130,7 @@ public class OAuthController {
 
         // 리턴
         ResponseDTO responseDTO = new ResponseDTO("로그인 완료!", "", HttpStatus.OK, loginRespDto);
+        System.out.println("11. 로그인 완료");
         return new ResponseEntity<>(responseDTO, HttpStatus.OK);
     }
 }

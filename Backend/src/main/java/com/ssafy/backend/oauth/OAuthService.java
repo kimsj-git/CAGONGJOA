@@ -47,22 +47,10 @@ public class OAuthService{
             while ((line = br.readLine()) != null) {
                 result += line;
             }
-//            System.out.println("response body : " + result);
 
             //Gson 라이브러리로 JSON파싱
             JsonElement element = JsonParser.parseString(result);
             long id = element.getAsJsonObject().get("id").getAsLong();
-
-//            // email 안받을 꺼면 email 코드 삭제
-//            boolean hasEmail = element.getAsJsonObject().get("kakao_account").getAsJsonObject().get("has_email").getAsBoolean();
-//            String email = "";
-//
-//            if(hasEmail){
-//                email = element.getAsJsonObject().get("kakao_account").getAsJsonObject().get("email").getAsString();
-//            }
-//
-//            System.out.println("id : " + id);
-//            System.out.println("email : " + email);
 
             Map<String, String> returnMap = new HashMap<>();
             returnMap.put("id", String.valueOf(id));
