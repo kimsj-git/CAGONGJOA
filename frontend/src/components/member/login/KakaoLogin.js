@@ -3,7 +3,7 @@ const KakaoLogin = () => {
   const REST_API_KEY = process.env.REACT_APP_KAKAO_REST_API_KEY
   const REDIRECT_URI = process.env.REACT_APP_KAKAO_REDIRECT_URI
 
-  const KAKAO_AUTH_URL = `https://kauth.kakao.com/oauth/authorize?client_id=${REST_API_KEY}&redirect_uri=${REDIRECT_URI}&response_type=code`
+  const KAKAO_AUTH_URL = `https://kauth.kakao.com/oauth/authorize?client_id=204f458585e0229e8443cd7bc1be5c5e&redirect_uri=http://i8a308.p.ssafy.io/oauth/kakao&response_type=code`
 
   return (
     <a href={KAKAO_AUTH_URL}>
