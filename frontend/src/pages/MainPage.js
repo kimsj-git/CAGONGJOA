@@ -1,13 +1,15 @@
-import { useState, useCallback, Fragment, useEffect } from "react";
-import MainPageTopBar from "../components/mainPage/MainPageTopBar";
-import PostList from "../components/mainPage/PostList";
-import useFetch from "../hooks/useFetch.js";
-import CafeAuthFetch from "../components/certificate/cafeAuth/CafeAuthFetch";
-import { Grid } from "semantic-ui-react";
-import JamSurvey from "../components/mainPage/JamSurvey";
-import PostTypeCarousel from "../components/mainPage/PostTypeCarousel";
-const DEFAULT_REST_URL = process.env.REACT_APP_REST_DEFAULT_URL;
-const DIST = 0.5;
+import { useState, useCallback, Fragment, useEffect } from "react"
+import MainPageTopBar from "../components/mainPage/MainPageTopBar"
+import PostList from "../components/mainPage/PostList"
+import useFetch from "../hooks/useFetch.js"
+import CafeAuthFetch from "../components/certificate/cafeAuth/CafeAuthFetch"
+import { useDispatch, useSelector } from "react-redux"
+import { postsActions } from "../store/posts"
+
+import { Grid } from "semantic-ui-react"
+import JamSurvey from "../components/mainPage/JamSurvey"
+const DEFAULT_REST_URL = process.env.REACT_APP_REST_DEFAULT_URL
+const DIST = 0.5
 // API 연결 후 DUMMY_POSTS 삭제
 const DUMMY_POSTS = [
   {
@@ -95,36 +97,40 @@ const DUMMY_POSTS = [
     commentCnt: 25,
     isLoading: true,
   },
-];
+]
 
 const MainPage = () => {
-  const { data: posts, isLoading, sendRequest: getPosts } = useFetch();
-  const isAuthenticated = sessionStorage.getItem("cafeAuth");
+  const dispatch = useDispatch()
+  const posts = useSelector((state) => state.posts)
+  const selectedFilters = useSelector((state) => state.filters)
+  const { data: fetchedPosts, isLoading, sendRequest: getPosts } = useFetch()
+  const isAuthenticated = sessionStorage.getItem("cafeAuth")
   let feed = (
     <div>
       <p>주변 카페 게시물을 찾지 못했습니다...</p>
       <p>위치를 변경해보세요.</p>
     </div>
-  );
+  )
 
-  useEffect(() => {
-    CafeAuthFetch();
+  useEffect(async () => {
+    CafeAuthFetch()
     if (sessionStorage.getItem("location")) {
-      getPosts({
+      await getPosts({
         url: `${DEFAULT_REST_URL}/main/post/feed`,
         headers: {
           Authorization: `Bearer ${sessionStorage.getItem("accessToken")}`,
         },
         body: {
           postId: -1,
-          type: ["free", "qna", "together", "tip", "recommend", "help", "lost"],
+          type: selectedFilters,
           latitude: JSON.parse(sessionStorage.getItem("location")).lat,
           longitude: JSON.parse(sessionStorage.getItem("location")).lng,
           dist: DIST,
         },
-      });
+      })
+      dispatch(postsActions.updatePosts(fetchedPosts))
     }
-  }, []);
+  }, [selectedFilters])
 
   // API 연결 후 활성화
   // useEffect(() => {
@@ -133,7 +139,7 @@ const MainPage = () => {
 
   // API 연결 후 DUMMY_POSTS를 posts로 변경
   if (DUMMY_POSTS.length > 0) {
-    feed = <PostList isLoading={isLoading} posts={DUMMY_POSTS} />;
+    feed = <PostList isLoading={isLoading} posts={DUMMY_POSTS} />
     // if (posts.length) {
     // feed = ;
   }
@@ -163,7 +169,7 @@ const MainPage = () => {
         <Grid.Column width={16}>{feed}</Grid.Column>
       </Grid>
     </Fragment>
-  );
-};
+  )
+}
 
-export default MainPage;
+export default MainPage

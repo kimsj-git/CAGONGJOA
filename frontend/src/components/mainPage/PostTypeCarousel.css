@@ -5,3 +5,8 @@ button span {
 .p-carousel-item button {
   margin: 4px 3px;
 }
+
+#post-types::-webkit-scrollbar {
+  width: 0px !important;
+  height: 0px !important;
+}

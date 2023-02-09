@@ -3,7 +3,7 @@
 import { createSlice } from "@reduxjs/toolkit"
 
 const initialPostsState = {
-    posts: [
+  posts: [
     {
       key: 1,
       id: 1,
@@ -89,39 +89,51 @@ const initialPostsState = {
       commentCnt: 25,
       isLoading: true,
     },
-  ]
+  ],
+  filters: [],
 }
 
 const postsSlice = createSlice({
   name: "posts",
   initialState: initialPostsState,
   reducers: {
-    // 
-    // post 생성
-    addPost(state, action) {
-    state.posts = [...state.posts, action.payload]
+    // posts 업데이트
+    updatePosts(state, action) {
+      state.posts = [...action.payload]
     },
+
+    // post 생성은 fetch 요청으로 대체
+
     // post 삭제
     deletePost(state, action) {
-    const deletedPostId = action.payload
-    state.posts = state.posts.filter((post) => post.id != deletedPostId)
+      const deletedPostId = action.payload
+      state.posts = state.posts.filter((post) => post.id !== deletedPostId)
     },
     // post 수정
-    updatePost(state, action) {
-    const updatedPost = action.payload
-      state.posts.find(post => post.id === updatedPost.id) = updatedPost
+    editPost(state, action) {
+      const editedPost = action.payload
+      const editIdx = state.posts.findIndex((post) => post.id === editedPost.id)
+      state.posts.splice(editIdx, 1, { ...editedPost })
     },
     // post 좋아요
     likePost(state, action) {
-    const likedPost = state.posts.find((post) => post.id === action.payload)
-    likedPost.likeCnt += 1
+      const likedPost = state.posts.find((post) => post.id === action.payload)
+      likedPost.likeCnt += 1
     },
     // post 좋아요 취소
     cancleLikePost(state, action) {
-    const likeCancledPost = state.posts.find((post) => post.id === action.payload)
-    likeCancledPost.likeCnt -= 1
-    }
-
+      const likeCancledPost = state.posts.find(
+        (post) => post.id === action.payload
+      )
+      likeCancledPost.likeCnt -= 1
+    },
+    // filter 변경
+    changeFilter(state, action) {
+      const filterToChange = action.payload.filterToChange
+      action.payload.exist
+        ? (state.filters = state.filters.filter((f) => f !== filterToChange))
+        : (state.filters = [...state.filters, filterToChange])
+    },
   },
 })
 

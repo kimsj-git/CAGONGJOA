@@ -1,10 +1,10 @@
-import React, { useState, useEffect } from "react";
-import { Button } from "semantic-ui-react";
-import "./ToggleButton.css";
-import useFetch from "../../hooks/useFetch.js";
-const DEFAULT_REST_URL = process.env.REACT_APP_REST_DEFAULT_URL;
+import React, { useState, useEffect } from "react"
+import { Button } from "semantic-ui-react"
+import "./ToggleButton.css"
+import useFetch from "../../hooks/useFetch.js"
+const DEFAULT_REST_URL = process.env.REACT_APP_REST_DEFAULT_URL
 const ToggleButton = (props) => {
-  const [btnState, setBtnState] = useState(false);
+  const [btnState, setBtnState] = useState(false)
   const handleClick = () => {
     props.btnType === "like" &&
       props.likeHandler({
@@ -15,9 +15,11 @@ const ToggleButton = (props) => {
         body: {
           isChecked: btnState,
         },
-      });
-    setBtnState(!btnState);
-  };
+      })
+    props.btnType === "type-select" &&
+      props.selectHandler({ filterToChange: props.typeKey, exist: btnState })
+    setBtnState(!btnState)
+  }
 
   const {
     grouped = false,
@@ -27,7 +29,7 @@ const ToggleButton = (props) => {
     compact = false,
     size = "medium",
     icon = "thumbs up",
-  } = props;
+  } = props
   return (
     <Button
       id={
@@ -48,7 +50,7 @@ const ToggleButton = (props) => {
       className={grouped ? "btn-group" : null}
       color={props.color}
     />
-  );
-};
+  )
+}
 
-export default ToggleButton;
+export default ToggleButton
