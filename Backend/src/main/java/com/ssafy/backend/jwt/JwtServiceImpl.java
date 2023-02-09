@@ -2,6 +2,7 @@ package com.ssafy.backend.jwt;
 
 import com.ssafy.backend.common.exception.jwt.JwtException;
 import com.ssafy.backend.common.exception.jwt.JwtExceptionType;
+import com.ssafy.backend.jwt.dto.TokenRespDto;
 import com.ssafy.backend.member.domain.entity.Member;
 import com.ssafy.backend.redis.RefreshToken;
 import com.ssafy.backend.redis.RefreshTokenRepository;
@@ -21,7 +22,7 @@ public class JwtServiceImpl implements JwtService{
     private final RefreshTokenRepository refreshTokenRepository;
 
     @Override
-    public Map<String, Object> createJwt(Member member) {
+    public TokenRespDto createJwt(Member member) {
         // 토큰 발급
         String accessToken = jwtUtil.getAccessToken(member);
         String refreshToken = jwtUtil.getRefreshToken(member);
@@ -45,9 +46,9 @@ public class JwtServiceImpl implements JwtService{
         }
 
         // Access token + refresh token을 리턴
-        Map<String, Object> tokens = new HashMap<>();
-        tokens.put("accessToken", accessToken);
-        tokens.put("refreshToken", refreshToken);
-        return tokens;
+        return TokenRespDto.builder()
+                .AccessToken(accessToken)
+                .RefreshToken(refreshToken)
+                .build();
     }
 }

@@ -1,6 +1,9 @@
 package com.ssafy.backend.oauth;
 
+import com.ssafy.backend.common.dto.ResponseDTO;
 import com.ssafy.backend.jwt.JwtService;
+import com.ssafy.backend.jwt.dto.TokenRespDto;
+import com.ssafy.backend.member.domain.dto.MemberInfoDto;
 import com.ssafy.backend.member.domain.entity.Member;
 import com.ssafy.backend.member.domain.enums.NicknameType;
 import com.ssafy.backend.member.domain.enums.OauthType;
@@ -34,7 +37,7 @@ public class OAuthController {
      * [GET] /oauth/kakao/callback
      */
     @GetMapping("/kakao")
-    public ResponseEntity<Map<String, Object>> kakaoCallback(@RequestParam String code) {
+    public ResponseEntity<ResponseDTO> kakaoCallback(@RequestParam String code) {
         System.out.println(code);
         Map<String, Object> resultMap = new HashMap<>();
 
@@ -53,35 +56,48 @@ public class OAuthController {
             // 신규 회원 등록 - 신규 회원이 등록되면 회원-재화 엔티티도 같이생성
             memberService.saveMember(kakaoMemberId, NicknameType.DEFAULT.toString(), OauthType.KAKAO);
 
-            resultMap.put("memberInfo", new OauthLoginDto(NicknameType.DEFAULT.toString(),
-                    kakaoMemberId, OauthType.KAKAO.toString()));
+            MemberInfoDto memberInfoDto = MemberInfoDto.builder()
+                    .nicknameType(NicknameType.DEFAULT.toString())
+                    .kakaoMemberId(kakaoMemberId)
+                    .oauthType(OauthType.KAKAO.toString())
+                    .build();
 
             // 해당 상태코드를 받고 프론트에서 닉네임 표출하는 화면 주기 201
             // 클라에서 201를 받으면 닉네임 입력 페이지를 띄워줘라!!
-            return new ResponseEntity<>(resultMap, HttpStatus.CREATED);
+
+            ResponseDTO responseDTO
+                    = new ResponseDTO("닉네임 변경 필요!", "", HttpStatus.CREATED, memberInfoDto);
+            return new ResponseEntity<>(responseDTO, HttpStatus.OK);
         }
 
         // if 닉네임이 아직도 DEFAULT면 위랑 상태코드 똑같이 해서 닉네임 받는 페이지 가도록
         if (dbMember.get().getNickname().equals(NicknameType.DEFAULT.toString())) {
-            resultMap.put("memberInfo", new OauthLoginDto(NicknameType.DEFAULT.toString(),
-                    kakaoMemberId, OauthType.KAKAO.toString()));
-            return new ResponseEntity<>(resultMap, HttpStatus.CREATED);
+
+            MemberInfoDto memberInfoDto = MemberInfoDto.builder()
+                            .nicknameType(NicknameType.DEFAULT.toString())
+                            .kakaoMemberId(kakaoMemberId)
+                            .oauthType(OauthType.KAKAO.toString())
+                            .build();
+
+            ResponseDTO responseDTO
+                    = new ResponseDTO("닉네임 변경 필요!", "", HttpStatus.CREATED, memberInfoDto);
+            return new ResponseEntity<>(responseDTO, HttpStatus.OK);
         }
 
         // 여까지 왔으면 로그인 할 자격이 있다. 닉네임과 억세스id로 jwt토큰 생성해 클라이언트에 보내주기
         System.out.println("dbMember = " + dbMember);
 
-        Map<String, Object> jwtTokens = jwtService.createJwt(dbMember.get());
-        // 200 ok + jwt토큰 전송
-        resultMap.put("jwt", jwtTokens);
-        return new ResponseEntity<>(resultMap, HttpStatus.OK);
+        TokenRespDto jwtTokens = jwtService.createJwt(dbMember.get());
+
+        ResponseDTO responseDTO = new ResponseDTO("로그인 완료!", "", HttpStatus.OK, jwtTokens);
+        return new ResponseEntity<>(responseDTO, HttpStatus.OK);
 
 
     }
 
     // 회원가입 후 DEFAULT 닉네임을 변경
     @PostMapping("/setNickname")
-    public ResponseEntity<Map<String, Object>> setMemberNickname(@RequestBody OauthLoginDto oauthLoginDto) throws Exception {
+    public ResponseEntity<ResponseDTO> setMemberNickname(@RequestBody OauthLoginDto oauthLoginDto) throws Exception {
         Map<String, Object> resultMap = new HashMap<>();
         Optional<Member> defaultNicknameMember = memberService.getMember(oauthLoginDto.getOauthId(),
                 OauthType.valueOf(oauthLoginDto.getOauthType()));
@@ -90,9 +106,9 @@ public class OAuthController {
         // 닉네임 변경
         memberService.changeNickname(defaultNicknameMember.get(), oauthLoginDto.getNickname());
         // jwt 토큰 생성
-        Map<String, Object> jwtTokens = jwtService.createJwt(defaultNicknameMember.get());
+        TokenRespDto jwtTokens = jwtService.createJwt(defaultNicknameMember.get());
         // 리턴
-        resultMap.put("jwt", jwtTokens);
-        return new ResponseEntity<>(resultMap, HttpStatus.OK);
+        ResponseDTO responseDTO = new ResponseDTO("로그인 완료!", "", HttpStatus.OK, jwtTokens);
+        return new ResponseEntity<>(responseDTO, HttpStatus.OK);
     }
 }
