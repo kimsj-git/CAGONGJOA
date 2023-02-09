@@ -2,6 +2,7 @@ package com.ssafy.backend.member.controller;
 
 import com.ssafy.backend.common.annotation.Auth;
 import com.ssafy.backend.common.dto.ResponseDTO;
+import com.ssafy.backend.jwt.dto.TokenRespDto;
 import com.ssafy.backend.member.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -30,8 +31,8 @@ public class MemberController {
     // 억세스 토큰 만료시 토큰 리프레쉬
     @GetMapping("/refresh")
     public ResponseEntity<ResponseDTO> refresh() {
-        memberService.tokenRefresh();
-        ResponseDTO responseDTO = new ResponseDTO("Access token refresh!", "", HttpStatus.OK, null);
+        TokenRespDto tokenRespDto = memberService.tokenRefresh();
+        ResponseDTO responseDTO = new ResponseDTO("Access token refresh!", "", HttpStatus.OK, tokenRespDto);
         return new ResponseEntity<>(responseDTO, HttpStatus.OK);
     }
 
