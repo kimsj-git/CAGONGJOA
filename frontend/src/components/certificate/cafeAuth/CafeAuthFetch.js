@@ -15,21 +15,25 @@ const CafeAuthFetch = async () => {
     ) {
       const response = await fetch(`${REST_DEFAULT_URL}/member/refresh`, {
         headers: {
-          Authorization: `Bearer ${sessionStorage.getItem("refreshToken")}`,
+          "Authorization-RefreshToken": `Bearer ${sessionStorage.getItem(
+            "refreshToken"
+          )}`,
         },
       })
-      if (!response.ok) {
-        throw new Error("Auth Failed")
+      const responseData = response.json()
+      if (!responseData.httpStatus === "OK") {
+        sessionStorage.clear()
+      } else {
+        const data = await response.json()
+        sessionStorage.setItem("accessToken", data.jwt.accessToken)
+        CafeAuthFetch()
       }
-      const data = await response.json()
-      sessionStorage.setItem("accessToken", data.jwt.accessToken)
-      CafeAuthFetch()
     } else if (
       responseData.httpStatus === "UNAUTHORIZED" &&
       responseData.data.sign === "CAFE"
     ) {
       sessionStorage.setItem("cafeAuth", 0)
-    } else if (responseData.httpStatus==="OK") {
+    } else if (responseData.httpStatus === "OK") {
       sessionStorage.setItem("cafeAuth", 1)
     } else {
       throw new Error("fetch error")
