@@ -14,6 +14,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -39,9 +41,6 @@ public class MyPageServiceImpl implements MyPageService{
 
         long memberId = memberService.getMemberIdAndNicknameByJwtToken().getId();
 
-        // 운세 포함 특정 회원의 특정 년월에서의 카페 visit 내역 리스트
-//        List<CafeVisitLog> cafeVisitLogsWithFortunes = cafeVisitLogRepository.findCafeVisitLogsWithFortune(memberId, ymDate);
-
         List<CafeVisitLog> cafeVisitLogsWithFortunes
                 = cafeVisitLogRepository.findByVisitedAtLikeAndMemberId(memberId, Integer.toString(ymDate));
 
@@ -61,16 +60,16 @@ public class MyPageServiceImpl implements MyPageService{
             int dateInt = cafeVisitLogsWithFortune.getVisitedAt();
             int accTime = cafeVisitLogsWithFortune.getAccTime(); // 누적 시간
 
-            int todoAchievementRate;
+            double todoAchievementRate;
 
             if (todoCount == 0) {
                 todoAchievementRate = 0;
             } else {
-                todoAchievementRate = (clearCount / todoCount) * 100; // 달성도
+                todoAchievementRate = (clearCount * 1.0 / todoCount) * 100; // 달성도
+                BigDecimal bd = new BigDecimal(todoAchievementRate);
+                bd = bd.setScale(2, RoundingMode.HALF_UP);
+                todoAchievementRate = bd.doubleValue();
             }
-
-
-
 
             Optional<Fortune> optFortune = fortuneRepository.findById(cafeVisitLogsWithFortune.getFortuneId());
 
