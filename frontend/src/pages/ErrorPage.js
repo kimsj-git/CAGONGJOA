@@ -1,5 +1,4 @@
 import { Header, Image } from "semantic-ui-react"
-import { Fragment } from "react"
 
 const ErrorPage = () => {
   return (

@@ -7,10 +7,11 @@ import { imageActions } from "../../../store/image";
 import { Grid, Icon } from "semantic-ui-react";
 
 const StudyDetail = () => {
-  const dispatch = useDispatch();
-  const year = useSelector((state) => state.studyHistory.year);
-  const month = useSelector((state) => state.studyHistory.month);
-  const day = useSelector((state) => state.studyHistory.day);
+  const dispatch = useDispatch()
+  const year = useSelector((state) => state.studyHistory.year)
+  const month = useSelector((state) => state.studyHistory.month)
+  const day = useSelector((state) => state.studyHistory.day)
+  const studyDetail = useSelector((state)=>state.studyHistory.studyDetail)
   const onCaptureHandler = () => {
     const node = document.getElementById("detail");
     domtoimage

@@ -8,7 +8,7 @@
 .myLocationBtn {
     display:flex;
     position: absolute;
-    right:5%;
+    right:3%;
     bottom:2rem;
     height: 3em;
     width: 3em;
@@ -29,3 +29,16 @@
 /* .filterCorousel {
     font-size: auto;
 } */
+@media screen and (max-width: 767px) {
+    .findCafeBtn {
+        border-radius: 10px;
+        display: flex;
+        position: absolute;
+        left: 25%;
+        bottom: 5rem;
+        height: 2em;
+        width: 15rem;
+        z-index: 2;
+    }
+  }
+  

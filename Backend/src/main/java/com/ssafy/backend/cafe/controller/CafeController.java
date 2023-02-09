@@ -39,7 +39,7 @@ public class CafeController {
         return new ResponseEntity<>(responseDTO, HttpStatus.OK);
     }
 
-    @GetMapping("/auth/getResponse")
+    @GetMapping("/auth/data")
     public ResponseEntity<ResponseDTO> AuthResponse() throws Exception {
         cafeService.saveTier();
         AfterCafeAuthResponseDto cafeAuthResponseDto = todayCafeService.saveCafeVisit();

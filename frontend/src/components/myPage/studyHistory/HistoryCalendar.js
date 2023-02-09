@@ -2,6 +2,7 @@ import { useEffect, useState } from "react"
 import Calendar from "react-calendar"
 import { useDispatch } from "react-redux"
 
+import { getStudyDetails } from "../../../store/studyHistory"
 import { studyHistoryActions } from "../../../store/studyHistory"
 import "react-calendar/dist/Calendar.css"
 import "./HistoryCalendar.css"
@@ -9,27 +10,51 @@ import "./HistoryCalendar.css"
 const HistoryCalendar = () => {
   const dispatch = useDispatch()
   const [date, setDate] = useState(new Date())
-  useEffect(()=>{
+
+  useEffect(() => {
+    const year = date.getFullYear()
+    let month = date.getMonth()+1
+    let day = date.getDate()
+    if (month < 10) {
+      month = "0" + month
+    }
+    if (day < 10) {
+      day = "0" + day
+    }
     dispatch(
       studyHistoryActions.selectDay({
-        year: date.getFullYear(),
-        month: date.getMonth(),
-        day: date.getDate(),
+        year,
+        month,
+        day,
       })
     )
-  }, [date,dispatch])
-
-  const changeDateHandler = (value) => {
-    dispatch(studyHistoryActions.selectDay({
-      year: value.getFullYear(),
-      month: value.getMonth(),
-      day: value.getDate(),
-    }))
-  }
+    dispatch(getStudyDetails({year:year, month:month, day:day}))
+  }, [date, dispatch])
   
+  const changeDateHandler = (value) => {
+    const year = value.getFullYear()
+    let month = value.getMonth()+1
+    let day = value.getDate()
+    if (month < 10) {
+      month = "0" + month
+    }
+    if (day < 10) {
+      day = "0" + day
+    }
+    dispatch(
+      studyHistoryActions.selectDay({
+        year,
+        month,
+        day,
+      })
+    )
+    dispatch(getStudyDetails({year:year, month:month, day:day}))
+  }
+
   const formatDay = (locale, date) => {
     return `${date.getDate()}`
   }
+
   const studyDate = [
     { day: "02-02-2023", cafeName: "스타벅스" },
     { day: "02-05-2023", cafeName: "할리스" },
