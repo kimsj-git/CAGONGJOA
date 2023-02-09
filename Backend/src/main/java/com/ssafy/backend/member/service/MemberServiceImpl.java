@@ -122,9 +122,11 @@ public class MemberServiceImpl implements MemberService {
     }
 
     @Override
-    public void logout(String nickname) {
+    public void logout(String nickname1) {
         HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
         String refreshToken = request.getHeader("Authorization-RefreshToken");
+
+        String nickname = getMemberIdAndNicknameByJwtToken().getNickname();
 
         // refresh token 인증
         jwtUtil.isValidForm(refreshToken);
