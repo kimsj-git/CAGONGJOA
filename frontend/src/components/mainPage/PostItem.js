@@ -55,7 +55,7 @@ const PostItem = (props) => {
             btnType="like"
             likeHandler={likePost}
           />
-          <PostDetail post={props} />
+          <PostDetail post={props} likeHandler={likePost} />
         </div>
       </Card.Content>
     </Card>
