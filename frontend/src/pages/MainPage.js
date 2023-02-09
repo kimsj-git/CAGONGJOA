@@ -102,7 +102,7 @@ const DUMMY_POSTS = [
 const MainPage = () => {
   const dispatch = useDispatch()
   const posts = useSelector((state) => state.posts)
-  const selectedFilters = useSelector((state) => state.filters)
+  const filterState = useSelector((state) => state.posts.filterState)
   const { data: fetchedPosts, isLoading, sendRequest: getPosts } = useFetch()
   const isAuthenticated = sessionStorage.getItem("cafeAuth")
   let feed = (
@@ -112,42 +112,35 @@ const MainPage = () => {
     </div>
   )
 
-  useEffect(async () => {
+  useEffect(() => {
     CafeAuthFetch()
-    if (sessionStorage.getItem("location")) {
-      await getPosts({
-        url: `${DEFAULT_REST_URL}/main/post/feed`,
-        headers: {
-          Authorization: `Bearer ${sessionStorage.getItem("accessToken")}`,
-        },
-        body: {
-          postId: -1,
-          type: selectedFilters,
-          latitude: JSON.parse(sessionStorage.getItem("location")).lat,
-          longitude: JSON.parse(sessionStorage.getItem("location")).lng,
-          dist: DIST,
-        },
-      })
-      dispatch(postsActions.updatePosts(fetchedPosts))
+    async function refreshPosts() {
+      if (sessionStorage.getItem("location")) {
+        await getPosts({
+          url: `${DEFAULT_REST_URL}/main/post/feed`,
+          headers: {
+            Authorization: `Bearer ${sessionStorage.getItem("accessToken")}`,
+          },
+          body: {
+            postId: -1,
+            type: Object.entries(filterState)
+              .filter(([key, value]) => value === true)
+              .map(([key, value]) => key),
+            latitude: JSON.parse(sessionStorage.getItem("location")).lat,
+            longitude: JSON.parse(sessionStorage.getItem("location")).lng,
+            dist: DIST,
+          },
+        })
+        dispatch(postsActions.updatePosts(fetchedPosts))
+      }
     }
-  }, [selectedFilters])
-
-  // API 연결 후 활성화
-  // useEffect(() => {
-  //   fetchPostsHandler()
-  // }, [fetchPostsHandler])
+    refreshPosts()
+  }, [filterState])
 
   // API 연결 후 DUMMY_POSTS를 posts로 변경
   if (DUMMY_POSTS.length > 0) {
     feed = <PostList isLoading={isLoading} posts={DUMMY_POSTS} />
-    // if (posts.length) {
-    // feed = ;
   }
-
-  // feed = posts.length ? <PostList isLoading={isLoading} posts={posts.data} /> : <div>
-  //     <p>주변 카페 게시물을 찾지 못했습니다...</p>
-  //     <p>위치를 변경해보세요.</p>
-  //   </div>
 
   // 엑세스 토큰이 없을 때 login화면으로 이동
   // if (!sessionStorage.getItem('accessToken')){
