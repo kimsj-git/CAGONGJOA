@@ -9,36 +9,36 @@ const CafeTimer = () => {
   // 누적시간은 리덕스에서 가져오고, useState로 갱신될때마다 리렌더링하도록 구현해야함
   const dispatch = useDispatch()
   const accTime = useSelector((state) => state.timer.accTime)
-  const addTimeHandler = () => {
-    dispatch(timerActions.update(1))
-  }
+  // const addTimeHandler = () => {
+  //   dispatch(timerActions.update(1))
+  // }
 
-  // 누적 시간 기록
+  // // 누적 시간 기록
   const hours = parseInt(accTime / 3600)
   const minutes = parseInt(accTime / 60) % 60
   const seconds = accTime % 60
 
-  const interval = useRef(null)
+  // const interval = useRef(null)
 
-  // 2시간 경과 체크
+  // // 2시간 경과 체크
   const [isComplete, setIsComplete] = useState(false)
 
-  useEffect(() => {
-    // 1초(1000ms)마다 누적시간(accTime) 업데이트
-    interval.current = setInterval(() => {
-      addTimeHandler() // 리덕스에 저장된 accTime 값을 1초에 1씩 증가시키는 handler
-    }, 1000)
-    return () => clearInterval(interval.current)
-  }, [])
+  // useEffect(() => {
+  //   // 1초(1000ms)마다 누적시간(accTime) 업데이트
+  //   interval.current = setInterval(() => {
+  //     addTimeHandler() // 리덕스에 저장된 accTime 값을 1초에 1씩 증가시키는 handler
+  //   }, 1000)
+  //   return () => clearInterval(interval.current)
+  // }, [])
 
-  // 누적시간(accTime)이 변할 때만 실행되는 useEffect
-  // 누적시간 2시간(= 7200초) 되면 interval을 멈춘다.
-  useEffect(() => {
-    if (accTime >= 7200) {
-      clearInterval(interval.current)
-      setIsComplete(true)
-    }
-  }, [accTime])
+  // // 누적시간(accTime)이 변할 때만 실행되는 useEffect
+  // // 누적시간 2시간(= 7200초) 되면 interval을 멈춘다.
+  // useEffect(() => {
+  //   if (accTime >= 7200) {
+  //     // clearInterval(interval.current)
+  //     setIsComplete(true)
+  //   }
+  // }, [accTime])
 
   return (
     <Fragment>
