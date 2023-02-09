@@ -29,9 +29,9 @@ public class PostFormController {
             @RequestPart(value = "imgFiles", required = false) MultipartFile[] files,
             @RequestPart(value = "writeForm") PostWriteFormRequestDto requestPostDto) throws Exception {
 
-
-        if (postService.writePost(files, requestPostDto)) {
-            responseDTO = new ResponseDTO("글쓰기 완료!", "", HttpStatus.OK, null);
+        Long postId = postService.writePost(files, requestPostDto);
+        if ( postId != -1L) {
+            responseDTO = new ResponseDTO("글쓰기 완료!", "", HttpStatus.OK, postId);
         } else {
             responseDTO = new ResponseDTO("", "code : 404 / 잘못된 카테고리 요청 / 미인증 유저가 2개 카테고리 이외를 시도함 ", HttpStatus.NOT_FOUND, null);
         }
@@ -43,7 +43,7 @@ public class PostFormController {
      * 3-2. 게시글 수정  [이미지 + 글 테스트완료 - 위치인증 값 필요] - 자랑하기까지 요걸로 퉁
      **/
     @Auth
-    @PostMapping("/update")
+    @PutMapping ("/update")
 
     public ResponseEntity<ResponseDTO> postUpdate(
             @RequestPart(value = "imgFiles", required = false) MultipartFile[] files,

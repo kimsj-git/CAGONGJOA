@@ -12,7 +12,7 @@ public interface PostService {
 //    public long userTest() throws Exception;
 
     /** 1. 게시글 등록  **/
-    boolean writePost(MultipartFile[] files, PostWriteFormRequestDto postDto) throws Exception;
+    Long writePost(MultipartFile[] files, PostWriteFormRequestDto postDto) throws Exception;
 
     /** 2. 게시글 수정  요청 **/
 

@@ -8,11 +8,7 @@ import lombok.*;
 @AllArgsConstructor
 @Builder
 public class CommentWriteRequestDTO {
-
     private Long postId;
     private String content;
     private Long group; // 어느 그룹인지 (부모의 pk)
-    private Long step;
-
-    public Long memberId;
 }

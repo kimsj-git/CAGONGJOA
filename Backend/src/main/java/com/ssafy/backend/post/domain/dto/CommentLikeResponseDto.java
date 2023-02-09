@@ -8,11 +8,9 @@ import lombok.*;
 @AllArgsConstructor
 @Builder
 public class CommentLikeResponseDto {
-
     private boolean isChecked;
-
     private Long commentId;
+    private Long groupNo;
     private int likeCount;
-
 
 }

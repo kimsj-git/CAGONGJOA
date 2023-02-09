@@ -50,7 +50,7 @@ public class CafeVisitLog {
         private Long fortuneId;
 
         /**  7. 혼잡도 제출여부 - 0,1   **/
-        @Column(name = "is_survey")
+        @Column(name = "is_survey", columnDefinition = "TINYINT(1)", length = 1)
         private boolean isSurvey;
 
         /**  8. Todo 와 양방향 매핑 **/

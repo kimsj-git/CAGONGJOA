@@ -1,6 +1,7 @@
 package com.ssafy.backend.post.domain.dto;
 
 import com.ssafy.backend.post.domain.entity.Comment;
+import com.ssafy.backend.post.domain.enums.PostType;
 import lombok.*;
 import org.springframework.data.domain.Slice;
 
@@ -13,27 +14,29 @@ import java.util.List;
 @AllArgsConstructor
 @Builder
 public class PostDetailResponseDto {
-    // member
+    private Long postId;
     private String nickname;
-
-//    private Badge badge;
-//    private Tier tier;
-//    private cafeList cafelist;
-
+    private Long exp;
     private boolean isCafeAuthorized;
     private String verifiedCafeName;
-
-    // post
-    private Long postId;
+    private String verifiedCafeBrand;
     private LocalDateTime createdAt;
+    private PostType type;
     private String postContent;
     private List<String> imgPathList;
     //comment
-    private Slice<Comment> commentSlice;
     private int likeCounts;
     private int commentCounts;
+    private List<CommentPagingResponseDto> commentSlice;
 
+    public void updateDto(String verifiedCafeName, String verifiedCafeBrand, Long exp) {
+        this.verifiedCafeBrand = verifiedCafeBrand;
+        this.verifiedCafeName = verifiedCafeName;
+        this.exp = exp;
+    }
 
-
+    public void updateComment(List<CommentPagingResponseDto> dtoList) {
+        this.commentSlice = dtoList;
+    }
 
 }

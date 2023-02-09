@@ -59,11 +59,11 @@ public class Post extends BaseEntity {
     @Column(name = "type")
     private PostType postType;
 
-//    /**
-//     * 5. 카페 인증된 유저인지 미인증된 유저인지 저장
-//     **/
-//    @Column(name = "is_cafe_authorized")
-//    private boolean isCafeAuthorized;
+    /**
+     * 5. 카페 인증된 유저인지 미인증된 유저인지 저장
+     **/
+    @Column(name = "is_cafe_authorized", columnDefinition = "TINYINT(1)", length = 1)
+    private boolean isCafeAuthorized;
 
 
     /**
