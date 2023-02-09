@@ -10,98 +10,10 @@ import { Grid } from "semantic-ui-react"
 import JamSurvey from "../components/mainPage/JamSurvey"
 const DEFAULT_REST_URL = process.env.REACT_APP_REST_DEFAULT_URL
 const DIST = 0.5
-// API 연결 후 DUMMY_POSTS 삭제
-const DUMMY_POSTS = [
-  {
-    key: 1,
-    id: 1,
-    author: "서정",
-    createdAt: "2023-02-06T01:31:06",
-    type: "free",
-    content:
-      "이름을 하나에 별빛이 아직 동경과 아이들의 시와 했던 봅니다. 이름과, 사랑과 무엇인지 이름을 그러나 내일 버리었습니다. 피어나듯이 보고, 어머니, 별 이름을 마리아 내일 별 봅니다.\n\n비둘기, 피어나듯이 나는 이네들은 걱정도 가득 까닭입니다. 별 이제 같이 있습니다. 프랑시스 다하지 남은 이름과, 있습니다.",
-    imgUrlPath: [
-      "https://images.unsplash.com/photo-1501339847302-ac426a4a7cbb?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1178&q=80",
-    ],
-    likeCnt: 4,
-    commentCnt: 1,
-    isLoading: false,
-  },
-  {
-    key: 2,
-    id: 2,
-    author: "경희",
-    content: "게시물222",
-    createdAt: "2023-02-06T01:31:06",
-    type: "together",
-    imgUrlPath: [
-      "https://images.unsplash.com/photo-1501339847302-ac426a4a7cbb?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1178&q=80",
-    ],
-    likeCnt: 6,
-    commentCnt: 10,
-    isLoading: false,
-  },
-  {
-    key: 3,
-    id: 3,
-    author: "현철",
-    content: "게시물333",
-    createdAt: "2023-02-06T01:31:06",
-    type: "qna",
-    imgUrlPath: [
-      "https://images.unsplash.com/photo-1501339847302-ac426a4a7cbb?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1178&q=80",
-    ],
-    likeCnt: 99,
-    commentCnt: 25,
-    isLoading: false,
-  },
-  {
-    key: 4,
-    id: 4,
-    author: "종섭",
-    content: "게시물444",
-    createdAt: "2023-02-06T01:31:06",
-    type: "lost",
-    imgUrlPath: [
-      "https://images.unsplash.com/photo-1501339847302-ac426a4a7cbb?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1178&q=80",
-    ],
-    likeCnt: 99,
-    commentCnt: 25,
-    isLoading: true,
-  },
-  {
-    key: 5,
-    id: 5,
-    author: "준모",
-    content: "게시물555",
-    createdAt: "2023-02-06T01:31:06",
-    type: "tip",
-    imgUrlPath: [
-      "https://images.unsplash.com/photo-1501339847302-ac426a4a7cbb?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1178&q=80",
-    ],
-    likeCnt: 99,
-    commentCnt: 25,
-    isLoading: true,
-  },
-  {
-    key: 6,
-    id: 6,
-    author: "현철",
-    content: "게시물666",
-    createdAt: "2023-02-06T01:31:06",
-    type: "recommend",
-    likeCnt: 99,
-    imgUrlPath: [
-      "https://images.unsplash.com/photo-1501339847302-ac426a4a7cbb?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1178&q=80",
-    ],
-    commentCnt: 25,
-    isLoading: true,
-  },
-]
 
 const MainPage = () => {
   const dispatch = useDispatch()
-  const posts = useSelector((state) => state.posts)
+  const posts = useSelector((state) => state.posts.posts)
   const filterState = useSelector((state) => state.posts.filterState)
   const { data: fetchedPosts, isLoading, sendRequest: getPosts } = useFetch()
   const isAuthenticated = sessionStorage.getItem("cafeAuth")
@@ -138,8 +50,8 @@ const MainPage = () => {
   }, [filterState])
 
   // API 연결 후 DUMMY_POSTS를 posts로 변경
-  if (DUMMY_POSTS.length > 0) {
-    feed = <PostList isLoading={isLoading} posts={DUMMY_POSTS} />
+  if (posts.length > 0) {
+    feed = <PostList isLoading={isLoading} posts={posts} />
   }
 
   // 엑세스 토큰이 없을 때 login화면으로 이동
