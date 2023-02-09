@@ -17,18 +17,25 @@ import java.util.Map;
 @Builder
 public class PostPagingResponseDto {
 
-    // 리턴객체 : 게시물 PK, 유저정보(현재카페, 티어, 닉네임, 뱃지) , 만든시간, 이미지, 글내용 전체, 좋아요 개수, 댓글 개수
+    // 리턴객체 : 닉네임, 게시물 PK, 유저정보(현재카페, 티어) , 만든시간, 이미지, 글내용 전체, 좋아요 개수, 댓글 개수
+    private String postType;
     private Long postId;
-//    private List<Map.Entry<BigInteger, String>> cafeInfos;
     private String writerNickname;
     private Long exp;
     private String cafeName;
+    private String brandType;
     private LocalDateTime createdAt;
     private List<String> imgUrlPath;
     private String content;
     private int postLikeCount;
     private int commentCount;
 
+    public void updateDto(String cafeName, Long exp, String brandType, String postType) {
+        this.cafeName = cafeName;
+        this.exp = exp;
+        this.brandType = brandType;
+        this.postType = postType;
+    }
     // 댓글리스트
 
 }

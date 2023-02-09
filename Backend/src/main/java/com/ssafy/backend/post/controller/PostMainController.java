@@ -6,6 +6,7 @@ import com.ssafy.backend.common.annotation.CafeAuth;
 import com.ssafy.backend.common.dto.ResponseDTO;
 import com.ssafy.backend.post.domain.dto.*;
 import com.ssafy.backend.post.domain.entity.Post;
+import com.ssafy.backend.post.service.CommentService;
 import com.ssafy.backend.post.service.PostService;
 import com.ssafy.backend.post.util.PostUtil;
 import lombok.RequiredArgsConstructor;
@@ -26,6 +27,7 @@ public class PostMainController {
     private final PostService postService;
 
     private ResponseDTO responseDTO;
+    private final CommentService commentService;
 
 
     /**
@@ -57,7 +59,7 @@ public class PostMainController {
      * 1-2. 게시글 좋아요 누르기  [테스트완료]
      **/
     @Auth
-//  @CafeAuth  // 카페인증 되어야 누를수있음
+  @CafeAuth  // 카페인증 되어야 누를수있음
     @PostMapping("/like")
     public ResponseEntity<ResponseDTO> postLike(
             @RequestBody PostLikeRequestDto likeRequestDto) throws Exception {
@@ -85,8 +87,9 @@ public class PostMainController {
     public ResponseEntity<ResponseDTO> postDetail(@RequestParam Long postId) throws Exception {
     PostDetailResponseDto detailResponseDto = postService.findOnePost(postId);
     responseDTO = new ResponseDTO("조회 완료!", "", HttpStatus.OK, detailResponseDto);
-
-        // 유저에게 게시글 내용을 보여주기
+    List<CommentPagingResponseDto> responseDtoList = commentService.feedComment(new CommentPagingRequestDto(detailResponseDto.getPostId(),-1L));
+    detailResponseDto.updateComment(responseDtoList);
+    // 유저에게 게시글 내용을 보여주기
         return new ResponseEntity<>(responseDTO,HttpStatus.OK);
     }
 

@@ -16,4 +16,5 @@ import java.util.Optional;
 public interface PostCafeRepository extends JpaRepository<PostCafe, Long> {
 
 
+    Optional<PostCafe> findByPostId(Long id);
 }

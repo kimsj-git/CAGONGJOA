@@ -5,14 +5,13 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
-import java.net.Inet4Address;
 import java.util.List;
 import java.util.Optional;
 
 public interface CafeVisitLogRepository extends JpaRepository<CafeVisitLog, Long> {
-    Optional<CafeVisitLog> findByMemberIdAndCafeId(Long memberId, Long cafeId);
+    List<CafeVisitLog> findByMemberIdAndCafeId(Long memberId, Long cafeId);
 
-    Optional<CafeVisitLog> findByVisitedAt(Integer visitedAt);
+    Optional<CafeVisitLog> findByVisitedAtAndCafeId(Integer visitedAt, Long cafeId);
 
     // 카페일지 + 운세 가져오기
 //    @Query("SELECT c FROM CafeVisitLog c WHERE c.member.id = :memberId AND CONCAT(c.visitedAt, '') LIKE %:ymDate%")

@@ -45,8 +45,12 @@ public class Comment extends BaseEntity {
         // 5. 댓글 그룹의 pk
         @Column(name = "group_no")
         private Long groupNo;
+
+        // 5. 댓글 그룹의 번호
         @Column(name = "step_no")
         private Long stepNo;
+
+        // 5. 댓글 그룹의 pk
 
         @OneToMany(mappedBy = "comment")
         private List<CommentLike> commentLikeList = new ArrayList<>();
