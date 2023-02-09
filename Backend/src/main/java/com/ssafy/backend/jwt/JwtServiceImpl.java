@@ -27,10 +27,11 @@ public class JwtServiceImpl implements JwtService{
         String accessToken = jwtUtil.getAccessToken(member);
         String refreshToken = jwtUtil.getRefreshToken(member);
 
-        System.out.println("우리의 JWT accessToken = " + accessToken);
+        System.out.println("12. 우리의 JWT accessToken = " + accessToken);
 
         // 리프레쉬 토큰을 redis에 저장
         RefreshToken savedRefreshToken = refreshTokenRepository.save(new RefreshToken(refreshToken, member.getId()));
+        System.out.println("13. savedRefreshToken = " + savedRefreshToken);
 
         // 테스트 코드로..
 //        System.out.println("savedRefreshToken.getRefreshToken() ="+savedRefreshToken.getRefreshToken()); // 제대로 나옴
@@ -44,6 +45,8 @@ public class JwtServiceImpl implements JwtService{
         if (refreshTokenRepository.findById(savedRefreshToken.getRefreshToken()).isEmpty()) {
             throw new JwtException(JwtExceptionType.TOKEN_SAVE_FAIL);
         }
+
+        System.out.println("14. 레디스 리프레쉬 토큰이 정상적으로 저장 됨");
 
         // Access token + refresh token을 리턴
         return TokenRespDto.builder()

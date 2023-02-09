@@ -12,7 +12,7 @@ spring:
         min-idle: 2
 
     port: 6379
-    host: 127.0.0.1
+    host: ${A308_REDIS_HOST}
     password: ${A308_REDIS_PW}
 
   servlet:
