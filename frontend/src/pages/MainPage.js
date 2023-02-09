@@ -3,6 +3,9 @@ import MainPageTopBar from "../components/mainPage/MainPageTopBar"
 import PostList from "../components/mainPage/PostList"
 import useFetch from "../hooks/useFetch.js"
 import CafeAuthFetch from "../components/certificate/cafeAuth/CafeAuthFetch"
+import { useDispatch, useSelector } from "react-redux"
+import { postsActions } from "../store/posts"
+
 import { Grid } from "semantic-ui-react"
 import JamSurvey from "../components/mainPage/JamSurvey"
 const DEFAULT_REST_URL = process.env.REACT_APP_REST_DEFAULT_URL
@@ -97,7 +100,10 @@ const DUMMY_POSTS = [
 ]
 
 const MainPage = () => {
-  const { data: posts, isLoading, sendRequest: getPosts } = useFetch()
+  const dispatch = useDispatch()
+  const posts = useSelector((state) => state.posts)
+  const selectedFilters = useSelector((state) => state.filters)
+  const { data: fetchedPosts, isLoading, sendRequest: getPosts } = useFetch()
   const isAuthenticated = sessionStorage.getItem("cafeAuth")
   let feed = (
     <div>
@@ -106,24 +112,25 @@ const MainPage = () => {
     </div>
   )
 
-  useEffect(() => {
+  useEffect(async () => {
     CafeAuthFetch()
-    if(sessionStorage.getItem("location")){
-      getPosts({
+    if (sessionStorage.getItem("location")) {
+      await getPosts({
         url: `${DEFAULT_REST_URL}/main/post/feed`,
         headers: {
           Authorization: `Bearer ${sessionStorage.getItem("accessToken")}`,
         },
         body: {
           postId: -1,
-          type: ["free", "qna", "together", "tip", "recommend", "help", "lost"],
+          type: selectedFilters,
           latitude: JSON.parse(sessionStorage.getItem("location")).lat,
           longitude: JSON.parse(sessionStorage.getItem("location")).lng,
           dist: DIST,
         },
       })
+      dispatch(postsActions.updatePosts(fetchedPosts))
     }
-  }, [])
+  }, [selectedFilters])
 
   // API 연결 후 활성화
   // useEffect(() => {
@@ -150,13 +157,15 @@ const MainPage = () => {
   return (
     <Fragment>
       <Grid>
-        <Grid.Row>
+        <Grid.Column width={16}>
           <MainPageTopBar isAuthenticated={isAuthenticated} />
-        </Grid.Row>
+        </Grid.Column>
         <Grid.Column width={16}>
           <JamSurvey />
-          {/* <PostTypeCarousel /> */}
         </Grid.Column>
+        {/* <Grid.Column width={16}>
+          <PostTypeCarousel />
+        </Grid.Column> */}
         <Grid.Column width={16}>{feed}</Grid.Column>
       </Grid>
     </Fragment>

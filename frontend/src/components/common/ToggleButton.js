@@ -6,15 +6,18 @@ const DEFAULT_REST_URL = process.env.REACT_APP_REST_DEFAULT_URL
 const ToggleButton = (props) => {
   const [btnState, setBtnState] = useState(false)
   const handleClick = () => {
-    props.likeHandler({
-      url: `${DEFAULT_REST_URL}/main/post/like`,
-      headers: {
-        Authorization: `Bearer ${sessionStorage.getItem("accessToken")}`,
-      },
-      body: {
-        isChecked: btnState,
-      },
-    })
+    props.btnType === "like" &&
+      props.likeHandler({
+        url: `${DEFAULT_REST_URL}/main/post/like`,
+        headers: {
+          Authorization: `Bearer ${sessionStorage.getItem("accessToken")}`,
+        },
+        body: {
+          isChecked: btnState,
+        },
+      })
+    props.btnType === "type-select" &&
+      props.selectHandler({ filterToChange: props.typeKey, exist: btnState })
     setBtnState(!btnState)
   }
 
@@ -45,6 +48,7 @@ const ToggleButton = (props) => {
       content={props.content}
       size={props.size}
       className={grouped ? "btn-group" : null}
+      color={props.color}
     />
   )
 }

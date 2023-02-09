@@ -1,4 +1,4 @@
-import React, { useState } from "react"
+import React, { useState } from "react";
 import {
   Button,
   Icon,
@@ -7,32 +7,32 @@ import {
   Dropdown,
   Header,
   Label,
-} from "semantic-ui-react"
-import { BsPencil, BsPencilFill } from "react-icons/bs"
-import { useDispatch, useSelector } from "react-redux"
-import useFetch from "../../hooks/useFetch.js"
+} from "semantic-ui-react";
+import { BsPencil, BsPencilFill } from "react-icons/bs";
+import { useDispatch, useSelector } from "react-redux";
+import useFetch from "../../hooks/useFetch.js";
 
-import ImageUploadBox from "./ImageUploadBox"
-import { Editor } from "primereact/editor"
-import { postActions } from "../../store/post"
+import ImageUploadBox from "./ImageUploadBox";
+import { Editor } from "primereact/editor";
+import { imageActions } from "../../store/image";
 
-const DEFAULT_REST_URL = process.env.REACT_APP_REST_DEFAULT_URL
+const DEFAULT_REST_URL = process.env.REACT_APP_REST_DEFAULT_URL;
 const PostForm = (props) => {
-  const dispatch = useDispatch()
+  const dispatch = useDispatch();
   // 유저 정보 가져오기
   // const nickname = sessionStorage.getItem('nickname');
   // const currentCafe = JSON.parse(sessionStorage.getItem('myCafe')).cafeName;
-  const { data: newPostId, isLoading, sendRequest: newPost } = useFetch()
-  const currentCafe = "스타벅스 강남R점"
+  const { data: newPostId, isLoading, sendRequest: newPost } = useFetch();
+  const currentCafe = "스타벅스 강남R점";
   // 모달창 상태 관리
-  const [firstOpen, setFirstOpen] = useState(false)
-  const [secondOpen, setSecondOpen] = useState(false)
+  const [firstOpen, setFirstOpen] = useState(false);
+  const [secondOpen, setSecondOpen] = useState(false);
   // post 내용 관리
-  const [postContent, setPostContent] = useState("")
-  const [postType, setPostType] = useState("")
-  const postImages = useSelector((state) => state.post.uploadedImage)
+  const [postContent, setPostContent] = useState("");
+  const [postType, setPostType] = useState("");
+  const postImages = useSelector((state) => state.image.uploadedImage);
   // 자랑하기 여부
-  const isStudyHistory = props.isStudyHistory
+  const isStudyHistory = props.isStudyHistory;
   // post type 종류
   const postTypes = [
     { key: "free", text: "자유", value: "free", icon: "chat" },
@@ -47,7 +47,7 @@ const PostForm = (props) => {
     },
     { key: "help", text: "해주세요", value: "help", icon: "bullhorn" },
     { key: "lost", text: "분실물센터", value: "lost", icon: "box" },
-  ]
+  ];
 
   const submitHandler = async () => {
     await newPost({
@@ -60,22 +60,22 @@ const PostForm = (props) => {
         writeForm: { content: postContent, type: postType },
         imgFiles: postImages,
       },
-    })
-    setSecondOpen(true)
+    });
+    setSecondOpen(true);
     // state 초기화
-    setPostContent("")
-    setPostType("")
-  }
+    setPostContent("");
+    setPostType("");
+  };
 
   return (
     <>
       <Modal
         open={firstOpen}
         onClose={() => {
-          setFirstOpen(false)
-          dispatch(postActions.closeModal())
-          setPostContent("")
-          setPostType("")
+          setFirstOpen(false);
+          dispatch(imageActions.closeModal());
+          setPostContent("");
+          setPostType("");
         }}
         onOpen={() => setFirstOpen(true)}
         trigger={
@@ -117,7 +117,7 @@ const PostForm = (props) => {
               required
               options={postTypes}
               onChange={(event, data) => {
-                setPostType(data.value)
+                setPostType(data.value);
               }}
               style={{ marginBottom: "20px" }}
               defaultValue={"free"}
@@ -161,9 +161,9 @@ const PostForm = (props) => {
               icon="checkmark"
               content="확인"
               onClick={() => {
-                dispatch(postActions.closeModal())
-                setFirstOpen(false)
-                setSecondOpen(false)
+                dispatch(imageActions.closeModal());
+                setFirstOpen(false);
+                setSecondOpen(false);
               }}
             />
           </Modal.Actions>
@@ -172,7 +172,7 @@ const PostForm = (props) => {
 
       <Modal
         onClose={() => {
-          setSecondOpen(false)
+          setSecondOpen(false);
         }}
         open={secondOpen}
         size="small"
@@ -192,15 +192,15 @@ const PostForm = (props) => {
             icon="checkmark"
             content="확인"
             onClick={() => {
-              dispatch(postActions.closeModal())
-              setFirstOpen(false)
-              setSecondOpen(false)
+              dispatch(imageActions.closeModal());
+              setFirstOpen(false);
+              setSecondOpen(false);
             }}
           />
         </Modal.Actions>
       </Modal>
     </>
-  )
-}
+  );
+};
 
-export default PostForm
+export default PostForm;

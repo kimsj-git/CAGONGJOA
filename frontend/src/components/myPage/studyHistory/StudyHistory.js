@@ -11,8 +11,6 @@ const StudyHistory = () => {
           justifyContent: "center",
           alignItems: "center",
           flexDirection: "column",
-          marginLeft: "20%",
-          marginRight: "20%"
         }}
       >
         <HistoryCalendar />
