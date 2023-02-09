@@ -38,9 +38,9 @@ public class MemberController {
 
     @Auth
     @GetMapping("/logout")
-    public ResponseEntity<ResponseDTO> logout(@RequestParam String nickname) { // refresh token 헤더로 가져오기
+    public ResponseEntity<ResponseDTO> logout() { // refresh token 헤더로 가져오기
         // 로그아웃시 1. redis의 refresh 토큰 지우기 2. redis의 위치인증 정보 지우기
-        memberService.logout(nickname);
+        memberService.logout();
         ResponseDTO responseDTO = new ResponseDTO("logout 완료!", "", HttpStatus.OK, null);
         return new ResponseEntity<>(responseDTO, HttpStatus.OK);
     }

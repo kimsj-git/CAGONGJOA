@@ -122,7 +122,7 @@ public class MemberServiceImpl implements MemberService {
     }
 
     @Override
-    public void logout(String nickname1) {
+    public void logout() {
         HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
         String refreshToken = request.getHeader("Authorization-RefreshToken");
 

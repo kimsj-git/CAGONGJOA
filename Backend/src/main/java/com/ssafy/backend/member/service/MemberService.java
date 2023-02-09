@@ -20,7 +20,7 @@ public interface MemberService {
 
     TokenRespDto tokenRefresh();
 
-    void logout(String nickname);
+    void logout();
 
     MemberIdAndNicknameDto getMemberIdAndNicknameByJwtToken();
 
