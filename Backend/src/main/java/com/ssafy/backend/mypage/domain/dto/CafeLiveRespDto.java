@@ -17,7 +17,7 @@ public class CafeLiveRespDto {
 
     private int visitedAt; // 입실 일자 (yyyy-MM-dd)
     private int accTime; // 누적 시간
-    private int todoAchievementRate; // 달성도
+    private Double todoAchievementRate; // 달성도
     private CafeNameAndBrandDto cafeInfo; // name, brand
     private String fortuneMsg;
 
