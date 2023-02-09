@@ -89,7 +89,7 @@ public class MemberServiceImpl implements MemberService {
     public TokenRespDto tokenRefresh() {
         // refresh token 받아오기
         HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
-        String refreshToken = request.getHeader("Authorization");
+        String refreshToken = request.getHeader("Authorization-RefreshToken");
 
         // refresh token 인증
         jwtUtil.isValidForm(refreshToken);
@@ -124,12 +124,12 @@ public class MemberServiceImpl implements MemberService {
     @Override
     public void logout(String nickname) {
         HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
-        String refreshToken = request.getHeader("Authorization");
+        String refreshToken = request.getHeader("Authorization-RefreshToken");
 
-//        // refresh token 인증
-//        jwtUtil.isValidForm(refreshToken);
-//        refreshToken = refreshToken.substring(7);
-//        jwtUtil.isValidToken(refreshToken, "RefreshToken");
+        // refresh token 인증
+        jwtUtil.isValidForm(refreshToken);
+        refreshToken = refreshToken.substring(7);
+        jwtUtil.isValidToken(refreshToken, "RefreshToken");
 
         // redis에 저장된 refresh토큰 삭제하기
         refreshTokenRepository.deleteById(refreshToken);
