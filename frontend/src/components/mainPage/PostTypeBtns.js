@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from "react"
 import { Button } from "semantic-ui-react"
-import "./ToggleButton.css"
-import useFetch from "../../hooks/useFetch.js"
+import "../common/ToggleButton.css"
+import { useDispatch, useSelector } from "react-redux"
+import { postsActions } from "../../store/posts"
+
 const DEFAULT_REST_URL = process.env.REACT_APP_REST_DEFAULT_URL
 const postTypes = [
   { key: "free", text: "자유", value: "free", icon: "chat" },
@@ -17,26 +19,30 @@ const postTypes = [
   { key: "help", text: "해주세요", value: "help", icon: "bullhorn" },
   { key: "lost", text: "분실물센터", value: "lost", icon: "box" },
 ]
-const ToggleButton = (props) => {
-  const [btnState, setBtnState] = useState(false)
-
-  const handleClick = () => {
-    props.selectHandler({ filterToChange: props.typeKey, exist: btnState })
-    setBtnState(!btnState)
-  }
+const PostTypeBtns = (props) => {
+  const dispatch = useDispatch()
+  const filterState = useSelector((state) => state.posts.filterState)
 
   return (
-    <Button
-      id={btnState ? props.btnType : `cancle-${props.btnType}`}
-      basic
-      onClick={grouped ? props.onClick : handleClick}
-      icon={props.icon}
-      content={props.content}
-      size={props.size}
-      className={grouped ? "btn-group" : null}
-      color={props.color}
-    />
+    <>
+      {postTypes.map((type) => {
+        const btnValue = type.value
+        return (
+          <Button
+            key={type.key}
+            onClick={() => {
+              dispatch(postsActions.changeFilter(btnValue))
+            }}
+            id={filterState[btnValue] ? "select" : "cancle-select"}
+            value={btnValue}
+            basic
+            content={type.text}
+            icon={type.icon}
+          />
+        )
+      })}
+    </>
   )
 }
 
-export default ToggleButton
+export default PostTypeBtns

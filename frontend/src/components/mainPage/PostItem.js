@@ -3,10 +3,12 @@ import PostDetail from "./PostDetail"
 import LoadingPost from "./LoadingPost"
 import ToggleButton from "../common/ToggleButton"
 import useFetch from "../../hooks/useFetch.js"
+
 const DEFAULT_REST_URL = process.env.REACT_APP_REST_DEFAULT_URL
 
 const PostItem = (props) => {
   const { data, isLoading, sendRequest: fetchLike } = useFetch()
+
   const likePost = async (btnState) => {
     await fetchLike({
       url: `${DEFAULT_REST_URL}/main/post/like`,

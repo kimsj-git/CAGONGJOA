@@ -12,7 +12,7 @@ const PostList = (props) => {
         {posts.map((post) => (
           <PostItem
             key={post.postId}
-            id={post.postId}
+            // id={post.postId}
             createdAt={post.createdAt}
             type={post.type}
             author={post.author}

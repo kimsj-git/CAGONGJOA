@@ -6,6 +6,7 @@ import { AiOutlineBell } from "react-icons/ai"
 import { IoIosSearch } from "react-icons/io"
 import { RiArrowDropDownLine } from "react-icons/ri"
 import PostTypeCarousel from "./PostTypeCarousel"
+import TypeSelector from "./TypeSelector"
 
 const MainPageTopBar = (props) => {
   const history = useHistory()
@@ -75,7 +76,8 @@ const MainPageTopBar = (props) => {
       </Segment>
 
       <Segment basic>
-        <PostTypeCarousel />
+        {/* <PostTypeCarousel /> */}
+        <TypeSelector />
       </Segment>
     </Segment.Group>
   )

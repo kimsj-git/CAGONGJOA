@@ -16,8 +16,7 @@ const ToggleButton = (props) => {
           isChecked: btnState,
         },
       })
-    props.btnType === "type-select" &&
-      props.selectHandler({ filterToChange: props.typeKey, exist: btnState })
+    props.btnType === "hot" && props.onHotSelect()
     setBtnState(!btnState)
   }
 

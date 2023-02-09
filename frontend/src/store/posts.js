@@ -90,7 +90,16 @@ const initialPostsState = {
       isLoading: true,
     },
   ],
-  filters: [],
+  filterState: {
+    hot: false,
+    free: false,
+    qna: false,
+    together: false,
+    tip: false,
+    recommend: false,
+    help: false,
+    lost: false,
+  },
 }
 
 const postsSlice = createSlice({
@@ -129,10 +138,22 @@ const postsSlice = createSlice({
     },
     // filter 변경
     changeFilter(state, action) {
-      const filterToChange = action.payload.filterToChange
-      action.payload.exist
-        ? (state.filters = state.filters.filter((f) => f !== filterToChange))
-        : (state.filters = [...state.filters, filterToChange])
+      const filterToChange = action.payload
+      state.filterState[filterToChange] = !state.filterState[filterToChange]
+      state.filterState["hot"] = false
+    },
+    // hot 필터 선택
+    filterHot(state, action) {
+      state.filterState = {
+        hot: true,
+        free: false,
+        qna: false,
+        together: false,
+        tip: false,
+        recommend: false,
+        help: false,
+        lost: false,
+      }
     },
   },
 })
