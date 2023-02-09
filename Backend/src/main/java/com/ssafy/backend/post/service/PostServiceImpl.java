@@ -5,8 +5,9 @@ import com.ssafy.backend.cafe.domain.dto.NearByCafeResultDto;
 import com.ssafy.backend.cafe.domain.entity.Cafe;
 import com.ssafy.backend.cafe.repository.CafeRepository;
 import com.ssafy.backend.cafe.service.CafeServiceImpl;
-import com.ssafy.backend.jwt.JwtUtil;
 import com.ssafy.backend.member.domain.entity.Member;
+import com.ssafy.backend.member.domain.entity.MemberCafeTier;
+import com.ssafy.backend.member.repository.MemberCafeTierRepository;
 import com.ssafy.backend.member.repository.MemberRepository;
 import com.ssafy.backend.member.service.MemberServiceImpl;
 import com.ssafy.backend.post.domain.dto.*;
@@ -23,7 +24,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.transaction.Transactional;
-import java.math.BigInteger;
 import java.util.*;
 
 @RequiredArgsConstructor // 얘도 커스텀?
@@ -35,37 +35,27 @@ public class PostServiceImpl implements PostService {
     private final PostLikeRepository postLikeRepository;
     private final MemberRepository memberRepository;
     private final CommentRepository commentRepository;
-    // Entity & Dto
-    private List<PostPagingResponseDto> postResponseDtoList;
-    private ClientPosInfoDto clientPosInfoDto;
-    private Post post;
-    private Slice<Post> postSlice;
-    private PostCafe postCafe;
-    private List<String> imgUrlPaths;
     // Util
     private final PostUtil postUtil;
     private final CafeServiceImpl cafeService;
+    private final MemberServiceImpl memberService;
     private final CafeAuthRepository cafeAuthRepository;
     private final CafeRepository cafeRepository;
+    private final MemberCafeTierRepository memberCafeTierRepository;
+    private final PostCafeRepository postCafeRepository;
 
     /**
      * 1. 글 등록 [ 테스트 완료 ]
      **/
     @Override
-    public boolean writePost(MultipartFile[] files, PostWriteFormRequestDto requestDto) throws Exception {
+    public Long writePost(MultipartFile[] files, PostWriteFormRequestDto requestDto) throws Exception {
 
         //1. 유저 확인
         CheckedResponseDto checked = postUtil.checkMember();
         long memberId = checked.getMemberId(); // 멤버 아이디를 확인한다.
-        Optional<CafeAuth> cafeAuth = cafeAuthRepository.findById(checked.getNickname());
-        if (cafeAuth.isEmpty() || cafeAuth == null) { // 카페 이름이 없으면 - 인증되지 않은 유저
-            if (requestDto.getType() == PostType.QNA || requestDto.getType() == PostType.LOST) { // 카테고리가 둘중 하나면 넘어가기
-            } else { // 그렇지 않다면 false
-                return false;
-            }
-        }
-        Cafe cafe = cafeRepository.findById(cafeAuth.get().getCafeId()).get(); // 카페 닉네임을 확인한다.
-        String cafeNickname = cafe.getName();
+        Double latitude = requestDto.getLatitude();
+        Double longitude = requestDto.getLongitude();
+        Double dist = requestDto.getDist();
 
         // 1-2. 글 저장하기
 
@@ -74,25 +64,8 @@ public class PostServiceImpl implements PostService {
         String content = requestDto.getContent();
         System.out.println("content : " + content);
 
-        // 1-3. 카페위치 저장하기
-
-        Double latitude = requestDto.getLatitude();
-        Double longitude = requestDto.getLongitude();
-        Double dist = requestDto.getDist();
-
-        clientPosInfoDto = new ClientPosInfoDto(latitude, longitude, dist);
-        List<NearByCafeResultDto> nearByCafeResultDtos = cafeService.getNearByCafeLocations(clientPosInfoDto);
-        List<PostCafe> postCafeList = new ArrayList<>();
-        for (NearByCafeResultDto dto : nearByCafeResultDtos) {
-            postCafe = PostCafe.PostCafeBuilder()
-                    .cafeLocationId(dto.getId().longValue())
-                    .build();
-            postCafeList.add(postCafe);
-        }
-
-
-        // 1-4. 이미지 업로드 Build
-
+        // 1-3. 이미지 업로드 Build
+        Post post;
         post = Post.postWriteBuilder()
                 .member(member)
                 .content(content)
@@ -100,51 +73,46 @@ public class PostServiceImpl implements PostService {
                 .build();
 
         if (files != null) {
-            List<PostImage> postImages = postUtil.imageUpload(post, files);
-            for (PostImage postImage : postImages) {
-                post.addPostImage(postImage);
-            }
-        }
-//        if(postCafeList != null) {
-//            post.addPostCafe(postCafeList);
-//        }
-
-        // 1-5. repository 에 저장
-
-        postRepository.save(post);
-        return true;
-    }
-
-
-    /**
-     * 2. 글 업데이트 [ 테스트 완료 ]
-     **/
-    @Override
-    public boolean updatePost(MultipartFile[] files, PostUpdateFormRequestDto updateDto) throws Exception {
-
-        // 1. 글 업데이트
-        Long postId = updateDto.getPostId();
-        String content = updateDto.getContent();
-
-        Optional<Post> updateResult = postRepository.findById(postId);
-        if (updateResult == null || updateResult.isEmpty()) {
-            return false;
-        }
-
-        Post post = updateResult.orElseThrow();
-        post.updateContents(content);
-
-        // 2. 이미지 업데이트s
-        postUtil.imageDeleteAll(post);
-        if (files != null) {
-            List<PostImage> postImages = postUtil.imageUpload(post, files);
+            List<PostImage> postImages = postUtil.imageUpload(files);
             for (PostImage postImage : postImages) {
                 post.addPostImage(postImage);
             }
         }
 
+        // 1-4. 유저 인증여부 확인
+        Optional<CafeAuth> cafeAuth = cafeAuthRepository.findById(checked.getNickname());
+        PostCafe postCafe;
+        if (cafeAuth.isEmpty() || cafeAuth == null) { // 카페 이름이 없으면 - 인증되지 않은 유저
+            if (requestDto.getType() == PostType.qna || requestDto.getType() == PostType.lost) { // 카테고리가 둘중 하나면 넘어가기
+                ClientPosInfoDto clientPosInfoDto = new ClientPosInfoDto(latitude, longitude, dist);
+                List<NearByCafeResultDto> resultDtoList = cafeService.getNearByCafeLocations(clientPosInfoDto);
+                for (NearByCafeResultDto resultDto : resultDtoList) {
+                    postCafe = PostCafe.PostCafeBuilder()
+                            .post(post)
+                            .cafe(cafeRepository.findById(resultDto.getId().longValue()).get())
+                            .build();
+                    post.addPostCafe(postCafe);
+                }
+
+
+            } else { // 그렇지 않다면 false
+                return -1L;
+            }
+        } else { // 카페이름이 있으면 - 인증된 유저
+            Cafe cafe = cafeRepository.findById(cafeAuth.get().getCafeId()).get(); // 카페 닉네임을 확인한다.
+            String cafeNickname = cafe.getName();
+
+            // 1-3. 카페위치 저장하기
+
+            postCafe = PostCafe.PostCafeBuilder()
+                    .post(post)
+                    .cafe(cafe)
+                    .build();
+            post.addPostCafe(postCafe);
+        }
+
         postRepository.save(post);
-        return true;
+        return post.getId();
     }
 
     /**
@@ -164,12 +132,11 @@ public class PostServiceImpl implements PostService {
      **/
     @Override
     public List<PostPagingResponseDto> feedPosts(PostPagingRequestDto requestDto, Pageable pageable) throws Exception {
-
+        String cafeName;
         // 1. 유저 기본사항을 체크한다. OK
         CheckedResponseDto checked = postUtil.checkMember();
         long memberId = checked.getMemberId(); // 멤버 아이디를 확인한다.
-        CafeAuth cafeAuth = cafeAuthRepository.findById(checked.getNickname()).get();
-        String nickName = checked.getNickname(); // 인증되었을 때 유저 닉네임을 가져온다.
+
 
         // 2. request Dto 값들 체크 - OK
         Long postId = requestDto.getPostId();
@@ -180,42 +147,60 @@ public class PostServiceImpl implements PostService {
         System.out.println(latitude + " " + longitude + " " + dist);
 
         // 3. 주변 카페들 정보 알아오기 - 주변 카페에 해당되는 글들만 된다. - Map 객체가 너무 많이 만들어진다. 리팩터링 필요
-        // NearByCafeLocation 안된다. DB에서 point 를 불러오는데서 에러가남.
-        clientPosInfoDto = new ClientPosInfoDto(latitude, longitude, dist);
+        ClientPosInfoDto clientPosInfoDto = new ClientPosInfoDto(latitude, longitude, dist);
         List<NearByCafeResultDto> nearByCafeResultDtos = cafeService.getNearByCafeLocations(clientPosInfoDto);
 
-
-        // cafe id 와 name 만 전달해줄거임
-        List<Map.Entry<BigInteger, String>> cafeInfos = new ArrayList<>();
-        for (NearByCafeResultDto dto : nearByCafeResultDtos) {
-            cafeInfos.add(new AbstractMap.SimpleEntry<>(dto.getId(), dto.getName()));
-        }
-        System.out.println(cafeInfos);
-
-        // 4. Post 로 연관된 값들 가져오기
-
-        // post를 slice 형태로 갖고오기
-        if (postId == -1) {
-            // 처음 요청할때 (refresh)
-            postSlice = postRepository.findAllByMemberIdAndPostTypeIn(memberId, types, pageable);
+        if (nearByCafeResultDtos.isEmpty() || nearByCafeResultDtos == null) {
+            System.out.println("주변 카페가 없음?");
         } else {
-            // 두번째 이상으로 요청할 때 (마지막 글의 pk 를 기준으로 함)
-            postSlice = postRepository.findAllByIdLessThanAndMemberIdAndPostTypeIn(postId, memberId, types, pageable);
-
-            // 갖고올 게시물이 없으면
+            System.out.println(" 총몇개? : " + nearByCafeResultDtos.size() + "개       " + nearByCafeResultDtos);
         }
-        if (postSlice.isEmpty() || postSlice == null) {
+        // cafe id 와 name 만 전달해줄거임
+        List<Long> cafeIdList = new ArrayList<>();
+        for (NearByCafeResultDto dto : nearByCafeResultDtos) {
+            cafeIdList.add(dto.getId().longValue());
+        }
+        Slice<Post> postSlice;
+        if (types.contains(PostType.hot)) { // 핫 게시물을 포함하고 있을 때
+
+            if (postId == -1L) {
+                // 처음 요청할때 (refresh)
+                System.out.println("hot 새로고침");
+                postSlice = postRepository.findHotPost(cafeIdList, pageable);
+            } else {
+                // 두번째 이상으로 요청할 때 (마지막 글의 pk 를 기준으로 함)
+                System.out.println("hot 두번째이상 요청");
+                postSlice = postRepository.findHotPostNext(cafeIdList, postId, pageable);
+                // 갖고올 게시물이 없으면
+            }
+
+        } else { //
+
+            if (postId == -1L) {
+                // 처음 요청할때 (refresh)
+                System.out.println("새로고침");
+                postSlice = postRepository.findAllByPostTypeInAndPostCafeList_CafeIdIn(types, cafeIdList, pageable);
+            } else {
+                // 두번째 이상으로 요청할 때 (마지막 글의 pk 를 기준으로 함)
+                System.out.println("두번째이상 요청");
+                postSlice = postRepository.findAllByIdLessThanAndPostTypeInAndPostCafeList_CafeIdIn(postId, types, cafeIdList, pageable);
+                // 갖고올 게시물이 없으면
+            }
+
+        }
+//         post를 slice 형태로 갖고오기
+
+        if (postSlice.isEmpty() || postSlice == null) { // 불러올 게시물이 있을때
             System.out.println("널이래용");
             return null;
         }
 
         // 5. 리턴값 채워넣기
         List<PostPagingResponseDto> postResponseDtoList = new ArrayList<>();
+        for (Post slice : postSlice) {
 
-        for (Post slicePost : postSlice) {
-
-            Optional<Post> optionalPost = postRepository.findById(slicePost.getId());
-            post = optionalPost.orElseThrow();
+            Optional<Post> optionalPost = postRepository.findById(slice.getId());
+            Post post = optionalPost.get();
             List<PostImage> postImages = post.getPostImageList();
 
             List<String> imgUrlPath = new ArrayList<>();
@@ -226,14 +211,32 @@ public class PostServiceImpl implements PostService {
             int commentCount = post.getCommentList().size();
 
             PostPagingResponseDto postPagingResponseDto = PostPagingResponseDto.builder()
-                    .postId(slicePost.getId())
-//                    .cafeInfos(cafeInfos)
+                    .postType("미인증 유저의 글")
+                    .postId(slice.getId())
                     .imgUrlPath(imgUrlPath)
                     .createdAt(post.getCreatedAt())
                     .content(post.getContent())
                     .commentCount(commentCount)
+                    .writerNickname(post.getMember().getNickname())
                     .postLikeCount(postLikeCount)
                     .build();
+            System.out.println("미인증 유저 글 build 완료");
+                System.out.println("인증된카페? " + post.isCafeAuthorized());
+
+            if (post.isCafeAuthorized()) {
+                // 당연히 없지
+                Optional<PostCafe> postCafeOptional = postCafeRepository.findByPostId(post.getId());
+                PostCafe postCafe = postCafeOptional.get();
+                Cafe cafe = postCafe.getCafe();
+                Long cafeId = cafe.getId();
+                System.out.println("Cafe 객체는 있음");
+                String brandType = cafe.getBrandType();
+                cafeName = cafe.getName();
+                System.out.println("여기까지도 옴");
+                Long exp = memberCafeTierRepository.findByMemberIdAndCafeId(post.getMember().getId(), cafeId).get().getExp();
+                postPagingResponseDto.updateDto(cafeName,exp,brandType,"인증 유저의 글");
+                System.out.println("여긴오냐?");
+            }
             postResponseDtoList.add(postPagingResponseDto);
         }
 
@@ -245,47 +248,44 @@ public class PostServiceImpl implements PostService {
      **/
     @Override
     public PostDetailResponseDto findOnePost(Long postId) throws Exception {
-
         // 1. 로그인된 유저의 정보를 확인한다.
         CheckedResponseDto checked = postUtil.checkMember();
-        long memberId = checked.getMemberId(); // 멤버 아이디를 확인한다.
         String nickname = checked.getNickname();
-        boolean isCafeAuthorized;
-        Optional<CafeAuth> cafeAuth = cafeAuthRepository.findById(nickname);
-        if (cafeAuth.isEmpty() || cafeAuth == null) { // 카페 이름이 없으면 - 인증되지 않은 유저
-            isCafeAuthorized = false;
-        }else{
-        Cafe cafe = cafeRepository.findById(cafeAuth.get().getCafeId()).get(); // 카페 닉네임을 확인한다.
-        String cafeName = cafe.getName();
-            isCafeAuthorized = true;
-        }
 
         Optional<Post> postOptional = postRepository.findById(postId);
+        Post post;
         if (postOptional == null || postOptional.isEmpty()) {
             // 잘못된 postId 형식
             return null;
         }
-        post = postOptional.orElseThrow();
+        post = postOptional.get();
 
-        imgUrlPaths = new ArrayList<>();
+        List<String> imgUrlPaths = new ArrayList<>();
         for (PostImage postImage : post.getPostImageList()) {
             imgUrlPaths.add(postImage.getImgUrl());
         }
 
-        Slice<Comment> commentSlice = commentRepository.findAllByPostId(postId);
-
         PostDetailResponseDto detailResponseDto = PostDetailResponseDto.builder()
-                .nickname(nickname)
-                .isCafeAuthorized(isCafeAuthorized)
                 .postId(postId)
+                .nickname(nickname)
+                .isCafeAuthorized(post.isCafeAuthorized())
                 .createdAt(post.getCreatedAt())
+                .type(post.getPostType())
                 .postContent(post.getContent())
                 .imgPathList(imgUrlPaths)
-                .commentSlice(commentSlice)
                 .likeCounts(post.getPostLikeList().size())
                 .commentCounts(post.getCommentList().size())
                 .build();
 
+        System.out.println("postDetail : 미인증 빌드 완료");
+
+        if(detailResponseDto.isCafeAuthorized()) {
+            PostCafe postCafe = postCafeRepository.findByPostId(postId).get();
+            Cafe cafe = postCafe.getCafe();
+            MemberCafeTier memberCafeTier = memberCafeTierRepository.findByMemberIdAndCafeId(post.getMember().getId(),cafe.getId()).get();
+            detailResponseDto.updateDto(cafe.getName(), cafe.getBrandType(),memberCafeTier.getExp());
+            System.out.println("인증 빌드 완료");
+        }
         return detailResponseDto;
     }
 
@@ -305,7 +305,7 @@ public class PostServiceImpl implements PostService {
         Boolean responseIsChecked;
 
         Optional<Post> postOptional = postRepository.findById(postId);
-
+        Post post;
         post = postOptional.orElseThrow();
 
         System.out.println("isChecked : " + likeRequestDto.getIsChecked());
@@ -340,5 +340,53 @@ public class PostServiceImpl implements PostService {
         return response;
     }
 
+    @Override
+    public PostUpdateResponseDto updatePost(Long postId) {
+        Post post;
+        post = postRepository.findById(postId).get();
+        List<PostImage> postImageList = post.getPostImageList();
+        List<Map.Entry<String, String>> imgList = new ArrayList<>();
+        for (PostImage postImage : postImageList) {
+            imgList.add(new AbstractMap.SimpleEntry<>(postImage.getAccessKey(), postImage.getImgUrl()));
+        }
+        PostUpdateResponseDto postUpdateResponseDto = PostUpdateResponseDto.builder()
+                .postId(postId)
+                .imgPathList(imgList)
+                .type(post.getPostType())
+                .Content(post.getContent())
+                .build();
 
+        return postUpdateResponseDto;
+
+    }
+
+    /**
+     * 2. 글 업데이트 [ 테스트 완료 ]
+     **/
+    @Override
+    public boolean updatePostForm(MultipartFile[] files, PostUpdateFormRequestDto updateDto) throws Exception {
+
+        // 1. 글 업데이트
+        Long postId = updateDto.getPostId();
+        String content = updateDto.getContent();
+        List<String> keyNameList = updateDto.getKeyNameList();
+
+        Optional<Post> updateResult = postRepository.findById(postId);
+        if (updateResult == null || updateResult.isEmpty()) {
+            return false;
+        }
+        Post post = updateResult.orElseThrow();
+        post.updateContents(content);
+
+        // 2. 이미지 업데이트
+        postUtil.imageDelete(post, keyNameList);
+        if (files != null) {
+            List<PostImage> postImages = postUtil.imageUpload(files);
+            for (PostImage postImage : postImages) {
+                post.addPostImage(postImage);
+            }
+        }
+        postRepository.save(post);
+        return true;
+    }
 }

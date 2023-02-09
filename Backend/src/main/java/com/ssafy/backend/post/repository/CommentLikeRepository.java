@@ -8,6 +8,6 @@ public interface CommentLikeRepository extends JpaRepository<CommentLike, Long> 
 
     void deleteByCommentIdAndMemberId(long commentId, long memberId);
 
-    Long countCommentLikeByCommentId(long commentId);
+    Integer countCommentLikeByCommentId(long commentId);
 
 }

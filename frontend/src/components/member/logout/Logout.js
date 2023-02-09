@@ -9,11 +9,15 @@ const Logout = () => {
     {
       method: "GET",
       headers: {
-        Authorization : `Bearer ${sessionStorage.getItem('refreshToken')}`
+        "Authorization" : `Bearer ${sessionStorage.getItem('accessToken')}`,
+        "Authorization-RefreshToken" : `Bearer ${sessionStorage.getItem('refreshToken')}`
       }
     })
-    const data = await response.json()
-    console.log(data)
+    const responseData = await response.json()
+    console.log(responseData)
+    if (responseData.httpStatus === "BAD_REQUEST" && responseData.data.sign === "JWT"){
+      history.push('/error')
+    }
     sessionStorage.clear()
     history.push('/login')
   }

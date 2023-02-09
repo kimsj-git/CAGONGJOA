@@ -39,7 +39,7 @@ public class CafeController {
         return new ResponseEntity<>(responseDTO, HttpStatus.OK);
     }
 
-    @GetMapping("/auth/getResponse")
+    @GetMapping("/auth/data")
     public ResponseEntity<ResponseDTO> AuthResponse() throws Exception {
         cafeService.saveTier();
         AfterCafeAuthResponseDto cafeAuthResponseDto = todayCafeService.saveCafeVisit();
@@ -57,7 +57,8 @@ public class CafeController {
     @PostMapping("/auth")
     public ResponseEntity<ResponseDTO> cafeAuth(@RequestBody LocationDto locationDto) {
         System.out.println("locationDto = " + locationDto);
-        final double DIST = 0.05; // 50m 반경에 해당하는 근거리 카페만 가져온다
+//        final double DIST = 0.05; // 50m 반경에 해당하는 근거리 카페만 가져온다
+        final double DIST = 0.5; // 50m 반경에 해당하는 근거리 카페만 가져온다
         ClientPosInfoDto clientPosInfoDto
                 = new ClientPosInfoDto(locationDto.getLatitude(), locationDto.getLongitude(), DIST);
         List<NearByCafeResultDto> nearByCafeLocations = cafeService.getNearByCafeLocations(clientPosInfoDto);

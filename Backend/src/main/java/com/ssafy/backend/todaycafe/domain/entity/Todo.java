@@ -11,7 +11,7 @@ import javax.persistence.*;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 @Builder
-public class Todo extends BaseEntity {
+public class Todo {
 
     //== Column  ==//
 
@@ -25,5 +25,17 @@ public class Todo extends BaseEntity {
         @Column
         private String content;
 
+        /**
+         * 3. 완료 여부
+         */
+        @Column(name = "is_complete")
+        private boolean isComplete;
+
+        /**
+         * 4. 카페 방문일지 pk
+         */
+        @ManyToOne(fetch = FetchType.LAZY)
+        @JoinColumn(name = "cafe_visit_log_id")
+        private CafeVisitLog cafeVisitLog;
 
 }

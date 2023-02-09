@@ -28,13 +28,13 @@ public class Comment extends BaseEntity {
         private Long id;
 
         //2. postid 를 조인으로 하여 사용
-        @ManyToOne
+        @ManyToOne(fetch = FetchType.LAZY)
         @JoinColumn(name = "post_id")
         @OnDelete(action = OnDeleteAction.CASCADE)
         private Post post;
 
 //      3. memberId를 조인으로 하여 사용
-        @ManyToOne
+        @ManyToOne(fetch = FetchType.LAZY)
         @JoinColumn(name = "member_id")
         @OnDelete(action = OnDeleteAction.CASCADE)
         private Member member;
@@ -45,8 +45,12 @@ public class Comment extends BaseEntity {
         // 5. 댓글 그룹의 pk
         @Column(name = "group_no")
         private Long groupNo;
+
+        // 5. 댓글 그룹의 번호
         @Column(name = "step_no")
         private Long stepNo;
+
+        // 5. 댓글 그룹의 pk
 
         @OneToMany(mappedBy = "comment")
         private List<CommentLike> commentLikeList = new ArrayList<>();

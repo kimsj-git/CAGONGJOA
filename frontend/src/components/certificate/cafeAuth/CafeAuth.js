@@ -51,7 +51,7 @@ const CafeAuth = (props) => {
       >
         <Modal.Header>카페 방문 인증</Modal.Header>
         <Modal.Content>
-          <Grid divided centered="true" verticalAlign="middle">
+          <Grid divided centered verticalAlign="middle">
             <Grid.Row>
               <GridColumn
                 onClick={nextPageHander}

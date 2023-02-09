@@ -19,9 +19,9 @@ const Layout = (props) => {
           </Grid.Column>
 
           <Grid.Column
-            only="computer largeScreen wideScreen"
+            only="computer"
             computer={3}
-            largeScreen={2}
+            largeScreen={3}
             widescreen={2}
           />
           <Grid.Column

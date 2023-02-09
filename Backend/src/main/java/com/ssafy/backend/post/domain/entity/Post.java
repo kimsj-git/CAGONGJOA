@@ -38,7 +38,7 @@ public class Post extends BaseEntity {
     /**
      * 2. 멤버 id를 멤버 테이블과 조인을 이용하여 사용 - 멤버가 삭제되면 모든 글이 삭제
      **/
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")
     @OnDelete(action = OnDeleteAction.CASCADE)
     private Member member;
@@ -60,7 +60,14 @@ public class Post extends BaseEntity {
     private PostType postType;
 
     /**
-     * 5. 양방향 매핑
+     * 5. 카페 인증된 유저인지 미인증된 유저인지 저장
+     **/
+    @Column(name = "is_cafe_authorized", columnDefinition = "TINYINT(1)", length = 1)
+    private boolean isCafeAuthorized;
+
+
+    /**
+     * 6. 양방향 매핑
      **/
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL)
     List<Comment> commentList = new ArrayList<>();
@@ -91,6 +98,10 @@ public class Post extends BaseEntity {
     public void addPostImage(PostImage postImage) {
         this.postImageList.add(postImage);
         postImage.setPost(this);
+    }
+
+    public void updatePostImage(List<PostImage> postImageList) {
+        this.postImageList = postImageList;
     }
 
     public void addPostCafe(PostCafe postCafe) {

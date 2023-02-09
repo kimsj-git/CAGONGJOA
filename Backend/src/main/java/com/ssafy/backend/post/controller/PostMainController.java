@@ -6,6 +6,7 @@ import com.ssafy.backend.common.annotation.CafeAuth;
 import com.ssafy.backend.common.dto.ResponseDTO;
 import com.ssafy.backend.post.domain.dto.*;
 import com.ssafy.backend.post.domain.entity.Post;
+import com.ssafy.backend.post.service.CommentService;
 import com.ssafy.backend.post.service.PostService;
 import com.ssafy.backend.post.util.PostUtil;
 import lombok.RequiredArgsConstructor;
@@ -24,9 +25,9 @@ import java.util.Map;
 
 public class PostMainController {
     private final PostService postService;
-    private final PostUtil postUtil;
 
     private ResponseDTO responseDTO;
+    private final CommentService commentService;
 
 
     /**
@@ -58,7 +59,7 @@ public class PostMainController {
      * 1-2. 게시글 좋아요 누르기  [테스트완료]
      **/
     @Auth
-//  @CafeAuth  // 카페인증 되어야 누를수있음
+  @CafeAuth  // 카페인증 되어야 누를수있음
     @PostMapping("/like")
     public ResponseEntity<ResponseDTO> postLike(
             @RequestBody PostLikeRequestDto likeRequestDto) throws Exception {
@@ -86,8 +87,9 @@ public class PostMainController {
     public ResponseEntity<ResponseDTO> postDetail(@RequestParam Long postId) throws Exception {
     PostDetailResponseDto detailResponseDto = postService.findOnePost(postId);
     responseDTO = new ResponseDTO("조회 완료!", "", HttpStatus.OK, detailResponseDto);
-
-        // 유저에게 게시글 내용을 보여주기
+    List<CommentPagingResponseDto> responseDtoList = commentService.feedComment(new CommentPagingRequestDto(detailResponseDto.getPostId(),-1L));
+    detailResponseDto.updateComment(responseDtoList);
+    // 유저에게 게시글 내용을 보여주기
         return new ResponseEntity<>(responseDTO,HttpStatus.OK);
     }
 
@@ -96,15 +98,28 @@ public class PostMainController {
      * 1-4. 글쓰기 클릭  [테스트완료]
      **/
     @Auth
-//    @CafeAuth
+    @CafeAuth
     @PostMapping("/write")
-    public ResponseEntity<ResponseDTO> postWrite() throws Exception {
+    public ResponseEntity<ResponseDTO> postWrite() {
 
-        responseDTO = new ResponseDTO("유저 인증됨!", "", HttpStatus.OK, null);
+        responseDTO = new ResponseDTO("카페 인증된 유저!", "", HttpStatus.OK, null);
 
         return new ResponseEntity<>(responseDTO, HttpStatus.OK);
 
     }
 
+    /**
+     * 1-5. 업데이트 하러가기
+     **/
+    @Auth
+//    @CafeAuth
+    @PutMapping("/update")
+    public ResponseEntity<ResponseDTO> updatePost(@RequestParam Long postId) {
+
+        PostUpdateResponseDto postUpdateResponseDto = postService.updatePost(postId);
+        responseDTO = new ResponseDTO("글 불러오기 완료!", "", HttpStatus.OK, postUpdateResponseDto);
+
+        return new ResponseEntity<>(responseDTO, HttpStatus.OK);
+    }
 
 }

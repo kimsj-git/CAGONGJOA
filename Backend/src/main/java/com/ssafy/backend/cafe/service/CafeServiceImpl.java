@@ -53,6 +53,9 @@ public class CafeServiceImpl implements CafeService {
 
         // 존재한다면 삭제후 갱신
         long cafeId = cafeAuthOptional.get().getCafeId();
+        System.out.println("cafeId = " + cafeId);
+        System.out.println("nickname = " + nickname);
+
         cafeAuthRepository.deleteById(nickname);
 
         CafeAuth cafeAuth = CafeAuth.builder()
@@ -71,7 +74,7 @@ public class CafeServiceImpl implements CafeService {
         // 현 위치와 cafeId가 정말로 일치하는지 먼저 체크
         List<NearByCafeResultDto> nearByCafeLocations
                 = this.getNearByCafeLocations(new ClientPosInfoDto(selectCafeRequestDto.getLatitude(),
-                selectCafeRequestDto.getLongitude(), 0.05));
+                selectCafeRequestDto.getLongitude(), 1.0)); // 테스트용
 
         ArrayList<Long> cafeIdLstForValid = new ArrayList<>();
         for (NearByCafeResultDto nearByCafeLocation : nearByCafeLocations) {
@@ -91,11 +94,13 @@ public class CafeServiceImpl implements CafeService {
                                 .build();
 
         cafeAuthRepository.save(cafeAuth);
+
         Optional<CafeAuth> cafeAuthOptional = cafeAuthRepository.findById(nickname); // key = nickname
 
         if (cafeAuthOptional.isEmpty()) {
             throw new CafeException(CafeExceptionType.CAFE_AUTH_SAVE_FAIL);
         }
+
     }
 
 
@@ -158,10 +163,12 @@ public class CafeServiceImpl implements CafeService {
         Optional<MemberCafeTier> optionalMemberCafeTier = memberCafeTierRepository.findByMemberIdAndCafeId(memberId, cafeId);
         
         // 없을 때만 넣기
+        MemberCafeTier memberCafeTier;
         if(optionalMemberCafeTier.isEmpty() || optionalMemberCafeTier == null) {
-            MemberCafeTier memberCafeTier = MemberCafeTier.TierBuilder()
+            memberCafeTier  = MemberCafeTier.TierBuilder()
                     .cafe(cafeRepository.findById(cafeId).get())
                     .member(memberRepository.findById(memberId).get())
+                    .exp(100L)
                     .build();
             memberCafeTierRepository.save(memberCafeTier);
         }

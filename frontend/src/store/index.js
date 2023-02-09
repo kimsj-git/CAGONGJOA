@@ -8,7 +8,8 @@ import timerReducer from "./timer"
 import cafeReducer from "./cafe"
 import todoReducer from "./todo"
 import studyHistoryReducer from "./studyHistory"
-import postReducer from "./post"
+import imageReducer from "./image"
+import postsReducer from "./posts"
 
 const store = configureStore({
   reducer: {
@@ -18,8 +19,10 @@ const store = configureStore({
     todo: todoReducer,
     cafe: cafeReducer,
     studyHistory: studyHistoryReducer,
-    post: postReducer,
+    image: imageReducer,
+    posts: postsReducer,
   },
+  devTools: process.env.NODE_ENV !== "production",
 })
 
 export default store

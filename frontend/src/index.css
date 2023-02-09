@@ -31,6 +31,13 @@
   transform: scale(1.1);
 }
 
+#login-wrapper {
+  padding-block: 5rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
 @font-face {
   font-family: "KyoboHand";
   src: url("https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_20-04@1.0/KyoboHand.woff")
@@ -64,22 +71,6 @@
 }
 
 @font-face {
-  font-family: "Humanbumsuk";
-  src: url("https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2210-2@1.0/Humanbumsuk.woff2")
-    format("woff2");
-  font-weight: normal;
-  font-style: normal;
-}
-
-@font-face {
-  font-family: "KOTRAHOPE";
-  src: url("https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2110@1.0/KOTRAHOPE.woff2")
-    format("woff2");
-  font-weight: normal;
-  font-style: normal;
-}
-
-@font-face {
   font-family: "Dovemayo-Medium";
   src: url("https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_four@1.0/Dovemayo-Medium.woff")
     format("woff");
@@ -99,6 +90,11 @@
     format("woff");
   font-weight: normal;
   font-style: normal;
+}
+#title {
+  font-family: "IM_Hyemin-Bold" !important;
+  color: sienna;
+  font-size: 5rem;
 }
 .side-bar * {
   font-family: "IM_Hyemin-Bold" !important;

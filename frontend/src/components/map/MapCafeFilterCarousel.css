@@ -4,5 +4,9 @@
     width:100%;
     top:2rem;
     z-index: 2;
-    
 }
+
+.p-carousel-content ul{
+    display: none;
+}
+

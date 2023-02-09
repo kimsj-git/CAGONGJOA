@@ -3,10 +3,10 @@ import { Item, Button, Icon, Grid } from "semantic-ui-react"
 const Profile = () => {
   return (
     <Grid.Row columns={2}>
-      <Grid.Column width={5}>
-        <Item.Image size="tiny" src="/images/wireframe/image.png" />
+      <Grid.Column width={3} verticalAlign="middle">
+        <Item.Image size="tiny" src = {require(`../../assets/cafe_logos/starbucks.png`)} />
       </Grid.Column>
-      <Grid.Column width={2}>
+      <Grid.Column width={5}>
         <Item.Content>
           <Item.Header>닉네임 칭호</Item.Header>
           <Item.Meta>

@@ -1,9 +1,21 @@
 .btn {
-  display:flex;
+  display: flex;
+  position: absolute;
+  left: 30%;
+  bottom: 2rem;
+  height: 2em;
+  width: 15rem;
+  z-index: 2;
+}
+
+@media screen and (max-width: 767px) {
+  .btn {
+    display: flex;
     position: absolute;
-    left:30%;
-    bottom:2rem;
+    left: 25%;
+    bottom: 2rem;
     height: 2em;
     width: 15rem;
     z-index: 2;
+  }
 }

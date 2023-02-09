@@ -11,12 +11,15 @@ const PostList = (props) => {
       <Feed>
         {posts.map((post) => (
           <PostItem
-            key={post.id}
-            id={post.id}
+            key={post.postId}
+            // id={post.postId}
+            createdAt={post.createdAt}
+            type={post.type}
             author={post.author}
             content={post.content}
-            post_likes={post.post_likes}
-            comments_cnt={post.comments_cnt}
+            images={post.imgUrlPath}
+            likeCnt={post.postLikeCount}
+            commentCnt={post.commentCount}
             isLoading={props.isLoading}
           />
         ))}

@@ -11,14 +11,11 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import javax.annotation.PostConstruct;
 
-import com.ssafy.backend.common.exception.BaseException;
 import com.ssafy.backend.common.exception.jwt.JwtException;
 import com.ssafy.backend.common.exception.jwt.JwtExceptionType;
-import com.ssafy.backend.member.domain.dto.MemberDto;
 import com.ssafy.backend.member.domain.entity.Member;
 import lombok.Getter;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 
 @Component

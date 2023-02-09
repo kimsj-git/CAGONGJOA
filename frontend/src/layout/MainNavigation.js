@@ -11,7 +11,7 @@ const MainNavigation = () => {
     {
       label: "home",
       icon: () => (
-        <NavLink to="/">
+        <NavLink to="/" className={classes.navItem}>
           <Icon name="home" size="big" />
         </NavLink>
       ),
@@ -19,16 +19,16 @@ const MainNavigation = () => {
     {
       label: "chat",
       icon: () => (
-        <NavLink to="/chat">
+        <NavLink to="/chat" className={classes.navItem}>
           <Icon name="talk" size="big" />
         </NavLink>
       ),
     },
-    { label: "post", icon: () => <PostForm /> },
+    { label: "post", icon: () => <PostForm isMainNavigation="1"/> },
     {
       label: "today-cafe",
       icon: () => (
-        <NavLink to="/today-cafe">
+        <NavLink to="/today-cafe" className={classes.navItem}>
           <Icon name="coffee" size="big" />
         </NavLink>
       ),
@@ -36,7 +36,7 @@ const MainNavigation = () => {
     {
       label: "mypage",
       icon: () => (
-        <NavLink to="/mypage">
+        <NavLink to="/mypage" className={classes.navItem}>
           <Icon name="user" size="big" />
         </NavLink>
       ),

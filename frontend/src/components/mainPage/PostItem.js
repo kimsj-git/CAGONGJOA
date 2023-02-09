@@ -2,8 +2,24 @@ import { Card, Button, Image, Label } from "semantic-ui-react"
 import PostDetail from "./PostDetail"
 import LoadingPost from "./LoadingPost"
 import ToggleButton from "../common/ToggleButton"
+import useFetch from "../../hooks/useFetch.js"
+
+const DEFAULT_REST_URL = process.env.REACT_APP_REST_DEFAULT_URL
 
 const PostItem = (props) => {
+  const { data, isLoading, sendRequest: fetchLike } = useFetch()
+
+  const likePost = async (btnState) => {
+    await fetchLike({
+      url: `${DEFAULT_REST_URL}/main/post/like`,
+      headers: {
+        Authorization: `Bearer ${sessionStorage.getItem("accessToken")}`,
+      },
+      body: {
+        isChecked: btnState,
+      },
+    })
+  }
   return props.isLoading ? (
     <LoadingPost />
   ) : (
@@ -18,10 +34,9 @@ const PostItem = (props) => {
         />
         <Card.Header>{props.author}</Card.Header>
         <Card.Meta>스타벅스 강남R점</Card.Meta>
-        <Card.Meta textAlign="right">13분</Card.Meta>
+        <Card.Meta textAlign="right">{props.createdAt}</Card.Meta>
         <Image
-          src="https://images.unsplash.com/photo-1501339847302-ac426a4a7cbb?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1178&q=80"
-          // src={props.images[0]}
+          src={props.images[0]}
           wrapped
           ui={true}
           style={{ marginBlock: "0.5rem" }}
@@ -33,8 +48,14 @@ const PostItem = (props) => {
       </Card.Content>
       <Card.Content extra>
         <div style={{ display: "flex" }}>
-          <ToggleButton fluid inverted content="12" btnType="like" />
-          <PostDetail post={props} />
+          <ToggleButton
+            fluid
+            inverted
+            content={props.likeCnt}
+            btnType="like"
+            likeHandler={likePost}
+          />
+          <PostDetail post={props} likeHandler={likePost} />
         </div>
       </Card.Content>
     </Card>

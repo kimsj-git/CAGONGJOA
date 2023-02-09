@@ -3,6 +3,7 @@ package com.ssafy.backend.member.domain.entity;
 import com.ssafy.backend.common.entity.BaseEntity;
 import com.ssafy.backend.member.domain.enums.OauthType;
 import lombok.*;
+import org.hibernate.annotations.ColumnDefault;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import org.springframework.util.Assert;
 
@@ -18,11 +19,13 @@ public class MemberCoin {
     private Long id;
 
     @Column(name = "coffee_bean_cnt")
+    @ColumnDefault("0")
     private Integer coffeeBeanCount;
     @Column(name = "coffee_cnt")
+    @ColumnDefault("0")
     private Integer coffeeCount;
 
-    @OneToOne
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")
     private Member member;
 
@@ -36,6 +39,10 @@ public class MemberCoin {
     public void updateCoin(Integer coffeeBeanCount, Integer coffeeCount){
         this.coffeeBeanCount = coffeeBeanCount;
         this.coffeeCount = coffeeCount;
+    }
+
+    public void useOneCoffee(){
+        this.coffeeCount -= 1;
     }
 
 

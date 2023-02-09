@@ -49,15 +49,17 @@ const Signup = () => {
         }),
       })
       if (!response.ok) {
-        throw new Error("오류")
+        history.push("/error")
       }
       const responseData = await response.json()
-      sessionStorage.setItem("accessToken", responseData.jwt.accessToken)
-      sessionStorage.setItem("refreshToken", responseData.jwt.refreshToken)
-      sessionStorage.setItem("nickname", nickname)
-      history.push("/")
+      if (responseData.httpStatus === "OK") {
+        sessionStorage.setItem("accessToken", responseData.data.accessToken)
+        sessionStorage.setItem("refreshToken", responseData.data.refreshToken)
+        sessionStorage.setItem("nickname", nickname)
+        history.push("/")
+      }
     } catch (error) {
-      console.log(error)
+      history.push("/error")
     }
   }
   useEffect(() => {
@@ -85,11 +87,7 @@ const Signup = () => {
           placeholder="닉네임"
         />
       ) : isLoading ? (
-        <Input
-          onChange={nicknameChangeHandler}
-          value={nickname}
-          loading
-        />
+        <Input onChange={nicknameChangeHandler} value={nickname} loading />
       ) : isFormValid ? (
         <Input
           onChange={nicknameChangeHandler}
@@ -104,18 +102,18 @@ const Signup = () => {
         />
       )}
 
-      {!isNicknameValid && isChecked && isTyped && (
-        <p style={{ color: "red" }}>중복된 닉네임입니다.</p>
-      )}
-      {isChecked && isTyped && !isNicknameLengthValid &&(
-        <p style={{color:"red"}}>5글자 이상 10글자 이하만 가능합니다. </p>
-      )}
       {isFormValid ? (
         <Button onClick={giveSignupData}>제출</Button>
       ) : (
         <Button onClick={giveSignupData} disabled={true}>
           제출
         </Button>
+      )}
+      {!isNicknameValid && isChecked && isTyped && (
+        <p style={{ color: "red" }}>중복된 닉네임입니다.</p>
+      )}
+      {isChecked && isTyped && !isNicknameLengthValid && (
+        <p style={{ color: "red" }}>5글자 이상 10글자 이하만 가능합니다. </p>
       )}
     </form>
   )

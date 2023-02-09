@@ -7,7 +7,11 @@ import com.ssafy.backend.common.exception.jwt.JwtExceptionType;
 import com.ssafy.backend.common.exception.member.MemberException;
 import com.ssafy.backend.common.exception.member.MemberExceptionType;
 import com.ssafy.backend.jwt.JwtUtil;
+import com.ssafy.backend.jwt.dto.TokenRespDto;
 import com.ssafy.backend.member.domain.dto.MemberIdAndNicknameDto;
+import com.ssafy.backend.member.domain.entity.MemberCoin;
+import com.ssafy.backend.member.repository.MemberCoinRepository;
+import com.ssafy.backend.redis.CafeAuthRepository;
 import com.ssafy.backend.redis.RefreshTokenRepository;
 import com.ssafy.backend.member.domain.entity.Member;
 import com.ssafy.backend.member.domain.enums.OauthType;
@@ -26,22 +30,24 @@ import java.util.Optional;
 @Service
 @Transactional
 @RequiredArgsConstructor
-public class MemberServiceImpl implements MemberService{
+public class MemberServiceImpl implements MemberService {
 
     private final MemberRepository memberRepository;
     private final RefreshTokenRepository refreshTokenRepository;
     private final JwtUtil jwtUtil;
+    private final MemberCoinRepository memberCoinRepository;
+    private final CafeAuthRepository cafeAuthRepository;
 
     @Override
     public void checkDuplicatedNickname(String nickName) {
         // 닉네임 조회 후 존재하면 에러 발생 시킴
-        memberRepository.findByNickname(nickName).ifPresent(x->{
+        memberRepository.findByNickname(nickName).ifPresent(x -> {
             throw new MemberException(MemberExceptionType.ALREADY_EXIST_NICKNAME);
         });
     }
 
     @Override
-    public void changeNickname(Member member, String newNickname) {
+    public String changeNickname(Member member, String newNickname) {
 
         // 닉네임 유효성 체크 = 받는 dto에서!
 
@@ -50,6 +56,8 @@ public class MemberServiceImpl implements MemberService{
         }
 
         member.setNickname(newNickname);
+
+        return newNickname;
     }
 
     @Override
@@ -59,18 +67,29 @@ public class MemberServiceImpl implements MemberService{
 
     @Override
     public void saveMember(long oAuthId, String nickname, OauthType oauthType) {
-        memberRepository.save(Member.oAuthBuilder()
+        Member member = Member.oAuthBuilder()
                 .nickname(nickname)
                 .oAuthId(oAuthId)
                 .oAuthType(oauthType)
-                .build());
+                .build();
+        Member savedMember = memberRepository.save(member);
+        System.out.println("MemberServiceImpl : 멤버 저장 완료");
+
+        MemberCoin memberCoin = MemberCoin.coinBuilder()
+                .member(savedMember)
+                .coffeeBeanCount(0)
+                .coffeeCount(0)
+                .build();
+        memberCoinRepository.save(memberCoin);
+        System.out.println("MemberServiceImpl : MemberCoin 저장완료");
+        member.updateMemberCoin(memberCoin);
     }
 
     @Override
-    public Map<String, Object> tokenRefresh() {
+    public TokenRespDto tokenRefresh() {
         // refresh token 받아오기
         HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
-        String refreshToken = request.getHeader("Authorization");
+        String refreshToken = request.getHeader("Authorization-RefreshToken");
 
         // refresh token 인증
         jwtUtil.isValidForm(refreshToken);
@@ -86,10 +105,9 @@ public class MemberServiceImpl implements MemberService{
             throw new JwtException(JwtExceptionType.TOKEN_EXPIRED);
         }
 
-        HashMap<String, Object> tokens = new HashMap<>();
-
-        // 리프레쉬 토큰이 redis에 존재
-        refreshTokenRepository.findById(refreshToken).ifPresent(a->{
+        TokenRespDto tokenRespDto = new TokenRespDto();
+        // 리프레쉬 토큰이 redis에 존재 하는 상황
+        refreshTokenRepository.findById(refreshToken).ifPresent(a -> {
             System.out.println("억세스 발급");
             Optional<Member> dbMemberOpt = memberRepository.findById(memberId);
             if (dbMemberOpt.isEmpty()) {
@@ -98,16 +116,17 @@ public class MemberServiceImpl implements MemberService{
             Member dbMember = dbMemberOpt.get();
             String accessToken = jwtUtil.getAccessToken(dbMember);
 
-            tokens.put("accessToken", accessToken);
-
+            tokenRespDto.setAccessToken(accessToken);
         });
-        return tokens;
+        return tokenRespDto;
     }
 
     @Override
     public void logout() {
         HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
-        String refreshToken = request.getHeader("Authorization");
+        String refreshToken = request.getHeader("Authorization-RefreshToken");
+
+        String nickname = getMemberIdAndNicknameByJwtToken().getNickname();
 
         // refresh token 인증
         jwtUtil.isValidForm(refreshToken);
@@ -117,9 +136,12 @@ public class MemberServiceImpl implements MemberService{
         // redis에 저장된 refresh토큰 삭제하기
         refreshTokenRepository.deleteById(refreshToken);
 
-        refreshTokenRepository.findById(refreshToken).ifPresent(a ->{
+        refreshTokenRepository.findById(refreshToken).ifPresent(a -> {
             throw new MemberException(MemberExceptionType.NOT_DELETE_REFRESH_TOKEN);
         });
+
+        // 사용자 위치 인증 정보 삭제하기
+        cafeAuthRepository.deleteById(nickname);
     }
 
     @Override

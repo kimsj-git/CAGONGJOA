@@ -17,23 +17,23 @@ const KakaoLoginGetCode = () => {
         const response = await fetch(`${DEFAULT_REST_URL}/oauth/kakao?code=${KAKAO_CODE}`, {
           method: "GET",
         })
-        if (!response.ok) {
-          throw new Error("오류")
-        }
         // DB 저장되어 있는 유저면
         const responseData = await response.json()
-        if (response.status === 200) {
-          sessionStorage.setItem("accessToken", responseData.jwt.accessToken)
-          sessionStorage.setItem("refreshToken", responseData.jwt.refreshToken)
-          // nickname도 받아와서 sessionStorage에 담기
+        if (responseData.httpStatus === "OK") {
+          sessionStorage.setItem("accessToken", responseData.data.jwtTokens.accessToken)
+          sessionStorage.setItem("refreshToken", responseData.data.jwtTokens.refreshToken)
+          sessionStorage.setItem("nickname", responseData.data.nickname)
           history.push("/")
         }
         // 첫 로그인 회원일 경우
-        if (response.status === 201) {
+        else if (responseData.httpStatus === "CREATED") {
           history.push({
             pathname: `/signup`,
-            state: { oauthId: responseData.memberInfo.oauthId, oauthType: responseData.memberInfo.oauthType },
+            state: { oauthId: responseData.data.kakaoMemberId, oauthType: responseData.data.oauthType },
           })
+        }
+        else {
+          history.push("/error")
         }
       } catch (error) {
         console.log(error)

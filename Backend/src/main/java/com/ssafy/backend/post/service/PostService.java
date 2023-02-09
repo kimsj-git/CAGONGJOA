@@ -1,13 +1,10 @@
 package com.ssafy.backend.post.service;
 
 import com.ssafy.backend.post.domain.dto.*;
-import com.ssafy.backend.post.domain.entity.Post;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Slice;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
-import java.util.Map;
 
 public interface PostService {
 
@@ -15,10 +12,13 @@ public interface PostService {
 //    public long userTest() throws Exception;
 
     /** 1. 게시글 등록  **/
-    boolean writePost(MultipartFile[] files, PostWriteFormRequestDto postDto) throws Exception;
+    Long writePost(MultipartFile[] files, PostWriteFormRequestDto postDto) throws Exception;
 
-    /** 2. 게시글 수정 **/
-    boolean updatePost(MultipartFile[] files,PostUpdateFormRequestDto postDto) throws Exception;
+    /** 2. 게시글 수정  요청 **/
+
+
+    /** 3. 게시글 수정  **/
+    boolean updatePostForm(MultipartFile[] files, PostUpdateFormRequestDto postDto) throws Exception;
 
     /** 3. 게시글 삭제  **/
     void deletePost(Long postId) throws Exception;
@@ -33,5 +33,5 @@ public interface PostService {
     PostLikeResponseDto likePost(PostLikeRequestDto likeRequestDto) throws Exception;
 
 
-
+    PostUpdateResponseDto updatePost(Long postId);
 }

@@ -1,8 +1,9 @@
 import { useCallback, useState } from "react"
-
+import { useHistory } from "react-router-dom"
 const REST_DEFAULT_URL = process.env.REACT_APP_REST_DEFAULT_URL
 
 const useFetch = () => {
+  const history = useHistory()
   const [data, setData] = useState([])
   const [isLoading, setIsLoading] = useState(false)
 
@@ -14,32 +15,32 @@ const useFetch = () => {
         headers: requestConfig.headers ? requestConfig.headers : {},
         body: requestConfig.body ? JSON.stringify(requestConfig.body) : null,
       })
-
-      if (response.status === 401) {
+      const responseData = await response.json()
+      if (responseData.httpStatus === "BAD_REQUEST" && responseData.data.sign==="JWT") {
         //리프레쉬 토큰 보내주기
         const response = await fetch(`${REST_DEFAULT_URL}/member/refresh`,{
           method: "GET",
           headers: {
-            "Authorization" : `Bearer ${sessionStorage.getItem('refreshToken')}`
+            "Authorization-RefreshToken" : `Bearer ${sessionStorage.getItem('refreshToken')}`
           }
         })
-        if (!response.ok){
-          throw new Error('Failed refresh')
+        const responseData = await response.json()
+        if (!responseData.httpStatus==="OK"){
+          sessionStorage.clear()
+          history.push('/login')
         }
-        const data = await response.json()
-        sessionStorage.setItem('accessToken', data.jwt.accessToken)
+        sessionStorage.setItem('accessToken', responseData.data.accessToken)
         sendRequest(requestConfig)
-      } else if (!response.ok) {
-        throw new Error("Request failed")
+      } else if (responseData.httpStatus === "OK") {
+        setData(responseData.data)
       } else {
-        const data = await response.json()
-        setData(data)
+        // history.push('/error')
       }
     } catch (err) {
       console.log(err.message)
     }
     setIsLoading(false)
-  }, [])
+  }, [history])
   return { data, isLoading, sendRequest }
 }
 

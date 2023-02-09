@@ -3,33 +3,18 @@ package com.ssafy.backend.post.util;
 
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.*;
-import com.ssafy.backend.cafe.domain.dto.ClientPosInfoDto;
-import com.ssafy.backend.cafe.domain.dto.LocationDto;
-import com.ssafy.backend.cafe.domain.dto.NearByCafeResultDto;
-import com.ssafy.backend.cafe.domain.entity.Cafe;
-import com.ssafy.backend.cafe.domain.enums.Direction;
-import com.ssafy.backend.cafe.repository.CafeRepository;
-import com.ssafy.backend.cafe.service.CafeServiceImpl;
-import com.ssafy.backend.cafe.util.GeometryUtil;
-import com.ssafy.backend.jwt.JwtUtil;
 import com.ssafy.backend.member.domain.dto.MemberIdAndNicknameDto;
 import com.ssafy.backend.member.service.MemberServiceImpl;
 import com.ssafy.backend.post.domain.dto.CheckedResponseDto;
 import com.ssafy.backend.post.domain.entity.Post;
 import com.ssafy.backend.post.domain.entity.PostImage;
 import com.ssafy.backend.post.repository.ImageRepository;
-import com.ssafy.backend.redis.CafeAuth;
-import com.ssafy.backend.redis.CafeAuthRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.persistence.EntityManager;
-import javax.persistence.Query;
 import javax.transaction.Transactional;
-import java.math.BigDecimal;
-import java.math.BigInteger;
 import java.util.*;
 
 @RequiredArgsConstructor // 얘도 커스텀?
@@ -62,8 +47,7 @@ public class PostUtil {
 
 
 
-    public List<PostImage> imageUpload(Post post, MultipartFile[] multipartFiles) throws Exception {
-        List<String> imagePathList = new ArrayList<>();
+    public List<PostImage> imageUpload(MultipartFile[] multipartFiles) throws Exception {
         ObjectMetadata objectMetaData = new ObjectMetadata();
         List<PostImage> postImages = new ArrayList<>();
 
@@ -105,11 +89,12 @@ public class PostUtil {
         return postImages;
     }
 
-    public void imageDeleteAll(Post post) {
+    public void imageDelete(Post post, List<String> keyNameList) {
 
-        List<PostImage> postImages = imageRepository.findAllByPostId(post.getId());
-
+        List<PostImage> postImages = imageRepository.findAllByPostIdAndAccessKeyNotIn(post.getId(), keyNameList);
         // null 이면 이미지를 삭제하지 않고 바로 리턴하여 돌아간다.
+        System.out.println("keynameList : " + keyNameList.toString());
+        System.out.println("postImages : " + postImages.toString() );
         if(postImages.isEmpty() || postImages == null) {
             System.out.println("img empty!");
             return;

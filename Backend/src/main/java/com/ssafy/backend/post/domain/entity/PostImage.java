@@ -15,6 +15,7 @@ import static javax.persistence.FetchType.LAZY;
 @AllArgsConstructor
 @Builder
 @Setter
+@ToString (of={"accessKey", "imgUrl"})
 public class PostImage {
 
     //== Column  ==//
@@ -28,7 +29,7 @@ public class PostImage {
 
         /** 2. post id를 post 테이블과 조인을 이용하여 사용 - 게시글이 삭제되면 모든 이미지 삭제   **/
         @Setter
-        @ManyToOne
+        @ManyToOne(fetch = FetchType.LAZY)
         @JoinColumn(name = "post_id")
         private Post post;
 

@@ -69,3 +69,20 @@
   box-shadow: 0 0 0 2px #2cc71b inset !important;
   color: #2cc71b; */
 }
+
+#select,
+#hot {
+  color: white !important;
+  background-color: rgb(255, 123, 165) !important;
+  border-radius: 2rem;
+  border: none !important;
+  box-shadow: 0 0 0 1px rgb(34 36 38 / 10%) inset !important;
+}
+
+#cancle-select,
+#cancle-hot {
+  box-shadow: 0 0 0 1px #767676 inset !important;
+  color: #767676 !important;
+  background: transparent none !important;
+  border-radius: 2rem;
+}

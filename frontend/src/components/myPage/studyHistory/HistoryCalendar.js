@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react"
 import Calendar from "react-calendar"
-import { useDispatch } from "react-redux"
+import { useDispatch, useSelector } from "react-redux"
 
+import { getMonthStudyHistory } from "../../../store/studyHistory"
 import { studyHistoryActions } from "../../../store/studyHistory"
 import "react-calendar/dist/Calendar.css"
 import "./HistoryCalendar.css"
@@ -9,40 +10,70 @@ import "./HistoryCalendar.css"
 const HistoryCalendar = () => {
   const dispatch = useDispatch()
   const [date, setDate] = useState(new Date())
-  useEffect(()=>{
+
+  useEffect(() => {
+    const year = date.getFullYear()
+    let month = date.getMonth() + 1
+    let day = date.getDate()
+    if (month < 10) {
+      month = "0" + month
+    }
+    if (day < 10) {
+      day = "0" + day
+    }
     dispatch(
       studyHistoryActions.selectDay({
-        year: date.getFullYear(),
-        month: date.getMonth(),
-        day: date.getDate(),
+        year,
+        month,
+        day,
       })
     )
-  }, [date,dispatch])
+    dispatch(getMonthStudyHistory({ year: year, month: month, day: day }))
+  }, [date, dispatch])
 
   const changeDateHandler = (value) => {
-    dispatch(studyHistoryActions.selectDay({
-      year: value.getFullYear(),
-      month: value.getMonth(),
-      day: value.getDate(),
-    }))
+    const year = value.getFullYear()
+    let month = value.getMonth() + 1
+    let day = value.getDate()
+    if (month < 10) {
+      month = "0" + month
+    }
+    if (day < 10) {
+      day = "0" + day
+    }
+    dispatch(
+      studyHistoryActions.selectDay({
+        year,
+        month,
+        day,
+      })
+    )
   }
-  
+
   const formatDay = (locale, date) => {
     return `${date.getDate()}`
   }
-  const studyDate = [
-    { day: "02-02-2023", cafeName: "스타벅스" },
-    { day: "02-05-2023", cafeName: "할리스" },
-    { day: "02-07-2023", cafeName: "할리스" },
-    { day: "02-08-2023", cafeName: "할리스" },
-    { day: "02-12-2023", cafeName: "할리스" },
-    { day: "02-15-2023", cafeName: "파스쿠찌" },
-  ]
+
+  const studyDate = useSelector((state) => state.studyHistory.monthStudyHistory)
 
   return (
     <Calendar
+      next2Label={null}
+      prev2Label={null}
       value={date}
       onClickDay={changeDateHandler}
+      onActiveStartDateChange={({ activeStartDate }) => {
+        const year = activeStartDate.getFullYear()
+        let month = activeStartDate.getMonth() + 1
+        let day = activeStartDate.getDate()
+        if (month < 10) {
+          month = "0" + month
+        }
+        if (day < 10) {
+          day = "0" + day
+        }
+        dispatch(getMonthStudyHistory({ year: year, month: month, day: day }))
+      }}
       formatDay={formatDay}
       minDetail="year"
       tileContent={({ date }) => {
@@ -54,10 +85,11 @@ const HistoryCalendar = () => {
         if (date.getDate() < 10) {
           day = "0" + day
         }
-        const realDate = month + "-" + day + "-" + date.getFullYear()
-        const dateData = studyDate.find((val) => val.day === realDate)
+        const realDate = `${date.getFullYear()}${month}${day}`
+
+        const dateData = studyDate.find((val) => `${val.visitedAt}` === realDate)
         if (dateData) {
-          return dateData.cafeName
+          return dateData.cafeInfo.brandType
         }
       }}
     />

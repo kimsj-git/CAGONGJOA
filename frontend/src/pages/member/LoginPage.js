@@ -1,6 +1,7 @@
 // 로그인 페이지
 import { useEffect } from "react"
 import KakaoLogin from "../../components/member/login/KakaoLogin"
+import { Image } from "semantic-ui-react"
 
 const LoginPage = () => {
   useEffect(() => {
@@ -30,7 +31,24 @@ const LoginPage = () => {
 
   return (
     <div id="login-wrapper">
-      <h1>카공조아</h1>
+      <div style={{ display: "flex", alignItems: "center" }}>
+        {/* <Image
+          src={require("../../assets/icons/coffee_location_red.png")}
+          size="small"
+        /> */}
+        <Image
+          src={require("../../assets/icons/chat_bubble.png")}
+          size="tiny"
+        />
+        <Image src={require("../../assets/icons/bean.png")} size="tiny" />
+      </div>
+
+      <Image
+        src={require("../../assets/icons/kagongjoa_logo.png")}
+        size="medium"
+      />
+      <h1 id="title">카공조아</h1>
+
       <KakaoLogin />
     </div>
   )
