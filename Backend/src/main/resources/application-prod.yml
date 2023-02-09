@@ -31,7 +31,7 @@ spring:
 #    database-platform: org.hibernate.spatial.dialect.mysql.MySQL56InnoDBSpatialDialect
     open-in-view: true
     hibernate:
-      ddl-auto: none
+      ddl-auto: update
       naming:
         physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
       use-new-id-generator-mappings: false
