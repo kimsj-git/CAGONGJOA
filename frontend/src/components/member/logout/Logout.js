@@ -5,7 +5,7 @@ const DEFAULT_REST_URL = process.env.REACT_APP_REST_DEFAULT_URL
 const Logout = () => {
   const history = useHistory()
   const logout = async () => {
-    const response = await fetch(`${DEFAULT_REST_URL}/member/logout?nickname=${sessionStorage.getItem('nickname')}`,
+    const response = await fetch(`${DEFAULT_REST_URL}/member/logout`,
     {
       method: "GET",
       headers: {

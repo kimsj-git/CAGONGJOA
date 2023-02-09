@@ -34,7 +34,7 @@ const useFetch = () => {
       } else if (responseData.httpStatus === "OK") {
         setData(responseData.data)
       } else {
-        history.push('/error')
+        // history.push('/error')
       }
     } catch (err) {
       console.log(err.message)
