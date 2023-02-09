@@ -51,7 +51,7 @@ const cafeSlice = createSlice({
     },
   },
 })
-
+//refresh 토큰 보내는 로직 구현 추가해야함
 export const findNearCafeData = () => {
   return async (dispatch) => {
     dispatch(cafeActions.cafeListLoading())
@@ -67,12 +67,31 @@ export const findNearCafeData = () => {
           longitude: JSON.parse(sessionStorage.getItem("location")).lng,
         }),
       })
-      console.log(response)
-      if (!response.ok) {
-        throw new Error("fetch error")
+      const responseData = await response.json()
+      console.log(responseData)
+      if (responseData.httpStatus === "OK") {
+        return responseData.data
+      } else if (
+        responseData.httpStatus === "BAD_REQUEST" &&
+        responseData.data.sign === "JWT"
+      ) {
+        const response = await fetch(`${REST_DEFAULT_URL}/member/refresh`, {
+          method: "GET",
+          headers: {
+            "Authorization-RefreshToken": `Bearer ${sessionStorage.getItem(
+              "refreshToken"
+            )}`,
+          },
+        })
+        const responseData = await response.json()
+        if (!responseData.httpStatus === "OK") {
+          sessionStorage.clear()
+          sessionStorage.setItem("accessToken", responseData.data.accessToken)
+          sendRequest()
+        } else {
+          sessionStorage.clear()
+        }
       }
-      const data = await response.json()
-      return data.data
     }
     try {
       const cafeData = await sendRequest()
@@ -100,12 +119,11 @@ export const findMapCafeList = (dataSet) => {
           dist: dataSet.distance,
         }),
       })
-
-      if (!response.ok) {
-        throw new Error("fetch error")
+      const responseData = await response.json()
+      console.log(responseData)
+      if (responseData.httpStatus==="OK") {
+        return responseData.data
       }
-      const data = await response.json()
-      return data.data
     }
     try {
       const cafeData = await sendRequest()

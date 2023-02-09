@@ -12,7 +12,7 @@ const SignupPage = () => {
         marginTop: "5rem",
       }}
     >
-      <Image src={require("../../assets/icons/kagongjoa_logo.png")} />
+      <Image src={require("../../assets/icons/kagongjoa_logo.png")} style={{width:"20rem", height:"20rem"}} />
       <h1 id="title">카공조아</h1>
       <Signup />
     </div>
