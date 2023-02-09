@@ -21,15 +21,18 @@ public class MemberController {
 
     // 닉네임 중복체크 (회원가입, 유저 정보 수정)
     @GetMapping("/checkDuplicatedNickname")
-    public ResponseEntity<Void> checkDupNick(@RequestParam String nickname) {
+    public ResponseEntity<ResponseDTO> checkDupNick(@RequestParam String nickname) {
         memberService.checkDuplicatedNickname(nickname);
-        return new ResponseEntity<>(HttpStatus.OK);
+        ResponseDTO responseDTO = new ResponseDTO("닉네임 중복 체크 완료", "", HttpStatus.OK, null);
+        return new ResponseEntity<>(responseDTO, HttpStatus.OK);
     }
 
     // 억세스 토큰 만료시 토큰 리프레쉬
     @GetMapping("/refresh")
-    public ResponseEntity<Map<String, Object>> refresh() {
-        return new ResponseEntity<>(memberService.tokenRefresh(), HttpStatus.OK);
+    public ResponseEntity<ResponseDTO> refresh() {
+        memberService.tokenRefresh();
+        ResponseDTO responseDTO = new ResponseDTO("Access token refresh!", "", HttpStatus.OK, null);
+        return new ResponseEntity<>(responseDTO, HttpStatus.OK);
     }
 
     @Auth
