@@ -9,6 +9,7 @@ import com.ssafy.backend.member.domain.enums.NicknameType;
 import com.ssafy.backend.member.domain.enums.OauthType;
 import com.ssafy.backend.member.repository.MemberRepository;
 import com.ssafy.backend.member.service.MemberService;
+import com.ssafy.backend.oauth.dto.LoginRespDto;
 import com.ssafy.backend.oauth.dto.OauthLoginDto;
 import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
@@ -31,6 +32,7 @@ public class OAuthController {
     private final OAuthService oAuthService;
     private final MemberService memberService;
     private final JwtService jwtService;
+    private final MemberRepository memberRepository;
 
     /**
      * 카카오 callback
@@ -88,8 +90,12 @@ public class OAuthController {
         System.out.println("dbMember = " + dbMember);
 
         TokenRespDto jwtTokens = jwtService.createJwt(dbMember.get());
+        LoginRespDto loginRespDto = LoginRespDto.builder()
+                        .nickname(dbMember.get().getNickname())
+                        .jwtTokens(jwtTokens)
+                        .build();
 
-        ResponseDTO responseDTO = new ResponseDTO("로그인 완료!", "", HttpStatus.OK, jwtTokens);
+        ResponseDTO responseDTO = new ResponseDTO("로그인 완료!", "", HttpStatus.OK, loginRespDto);
         return new ResponseEntity<>(responseDTO, HttpStatus.OK);
 
 
@@ -104,11 +110,18 @@ public class OAuthController {
         // 서버에서 한번 더 닉네임 중복 체크
         memberService.checkDuplicatedNickname(oauthLoginDto.getNickname());
         // 닉네임 변경
-        memberService.changeNickname(defaultNicknameMember.get(), oauthLoginDto.getNickname());
+        String changedNickname = memberService.changeNickname(defaultNicknameMember.get(), oauthLoginDto.getNickname());
+
         // jwt 토큰 생성
         TokenRespDto jwtTokens = jwtService.createJwt(defaultNicknameMember.get());
+
+        LoginRespDto loginRespDto = LoginRespDto.builder()
+                            .nickname(changedNickname)
+                            .jwtTokens(jwtTokens)
+                            .build();
+
         // 리턴
-        ResponseDTO responseDTO = new ResponseDTO("로그인 완료!", "", HttpStatus.OK, jwtTokens);
+        ResponseDTO responseDTO = new ResponseDTO("로그인 완료!", "", HttpStatus.OK, loginRespDto);
         return new ResponseEntity<>(responseDTO, HttpStatus.OK);
     }
 }
