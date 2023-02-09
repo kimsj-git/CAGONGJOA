@@ -13,6 +13,7 @@ import javax.persistence.*;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @EntityListeners(AuditingEntityListener.class)
 @ToString(of={"id", "nickname", "oauthId", "oauthType"}) // 엔티티는 하면 안됨!
+@Table(name = "member")
 public class Member extends BaseEntity {
 
     @Id @GeneratedValue
