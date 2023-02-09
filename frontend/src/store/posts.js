@@ -108,7 +108,7 @@ const postsSlice = createSlice({
   reducers: {
     // posts 업데이트
     updatePosts(state, action) {
-      state.posts = [...action.payload]
+      action.payload ? (state.posts = [...action.payload]) : (state.posts = [])
     },
 
     // post 생성은 fetch 요청으로 대체

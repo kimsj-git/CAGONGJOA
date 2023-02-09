@@ -11,6 +11,7 @@ const Layout = (props) => {
         <Grid>
           <Grid.Column
             id="side-col"
+            className="main-column"
             only="computer"
             largeScreen={3}
             widescreen={3}
@@ -19,19 +20,21 @@ const Layout = (props) => {
           </Grid.Column>
 
           <Grid.Column
+            className="main-column"
             only="computer"
             computer={3}
             largeScreen={3}
             widescreen={2}
           />
           <Grid.Column
+            className="main-column"
             mobile={16}
             tablet={16}
             computer={8}
             largeScreen={6}
             widescreen={6}
           >
-            <main style={{ paddingBottom: "5rem" }}>{props.children}</main>
+            <main>{props.children}</main>
           </Grid.Column>
         </Grid>
       </Container>

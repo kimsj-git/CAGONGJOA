@@ -26,24 +26,29 @@ const MainPage = () => {
 
   useEffect(() => {
     CafeAuthFetch()
+    const filters = Object.entries(filterState)
+      .filter(([key, value]) => value === true)
+      .map(([key, value]) => key)
     async function refreshPosts() {
-      if (sessionStorage.getItem("location")) {
+      if (!sessionStorage.getItem("location")) {
         await getPosts({
           url: `${DEFAULT_REST_URL}/main/post/feed`,
+          method: "POST",
           headers: {
             Authorization: `Bearer ${sessionStorage.getItem("accessToken")}`,
           },
           body: {
             postId: -1,
-            type: Object.entries(filterState)
-              .filter(([key, value]) => value === true)
-              .map(([key, value]) => key),
+            types: filters
+              ? filters
+              : ["free", "qna", "together", "tip", "recommend", "help", "lost"],
             latitude: JSON.parse(sessionStorage.getItem("location")).lat,
             longitude: JSON.parse(sessionStorage.getItem("location")).lng,
             dist: DIST,
           },
         })
-        dispatch(postsActions.updatePosts(fetchedPosts))
+        await dispatch(postsActions.updatePosts(fetchedPosts))
+        console.log(fetchedPosts)
       }
     }
     refreshPosts()
