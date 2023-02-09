@@ -11,6 +11,7 @@ import com.ssafy.backend.jwt.dto.TokenRespDto;
 import com.ssafy.backend.member.domain.dto.MemberIdAndNicknameDto;
 import com.ssafy.backend.member.domain.entity.MemberCoin;
 import com.ssafy.backend.member.repository.MemberCoinRepository;
+import com.ssafy.backend.redis.CafeAuthRepository;
 import com.ssafy.backend.redis.RefreshTokenRepository;
 import com.ssafy.backend.member.domain.entity.Member;
 import com.ssafy.backend.member.domain.enums.OauthType;
@@ -35,6 +36,7 @@ public class MemberServiceImpl implements MemberService {
     private final RefreshTokenRepository refreshTokenRepository;
     private final JwtUtil jwtUtil;
     private final MemberCoinRepository memberCoinRepository;
+    private final CafeAuthRepository cafeAuthRepository;
 
     @Override
     public void checkDuplicatedNickname(String nickName) {
@@ -45,7 +47,7 @@ public class MemberServiceImpl implements MemberService {
     }
 
     @Override
-    public void changeNickname(Member member, String newNickname) {
+    public String changeNickname(Member member, String newNickname) {
 
         // 닉네임 유효성 체크 = 받는 dto에서!
 
@@ -54,6 +56,8 @@ public class MemberServiceImpl implements MemberService {
         }
 
         member.setNickname(newNickname);
+
+        return newNickname;
     }
 
     @Override
@@ -118,14 +122,14 @@ public class MemberServiceImpl implements MemberService {
     }
 
     @Override
-    public void logout() {
+    public void logout(String nickname) {
         HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
         String refreshToken = request.getHeader("Authorization");
 
-        // refresh token 인증
-        jwtUtil.isValidForm(refreshToken);
-        refreshToken = refreshToken.substring(7);
-        jwtUtil.isValidToken(refreshToken, "RefreshToken");
+//        // refresh token 인증
+//        jwtUtil.isValidForm(refreshToken);
+//        refreshToken = refreshToken.substring(7);
+//        jwtUtil.isValidToken(refreshToken, "RefreshToken");
 
         // redis에 저장된 refresh토큰 삭제하기
         refreshTokenRepository.deleteById(refreshToken);
@@ -133,6 +137,9 @@ public class MemberServiceImpl implements MemberService {
         refreshTokenRepository.findById(refreshToken).ifPresent(a -> {
             throw new MemberException(MemberExceptionType.NOT_DELETE_REFRESH_TOKEN);
         });
+
+        // 사용자 위치 인증 정보 삭제하기
+        cafeAuthRepository.deleteById(nickname);
     }
 
     @Override
