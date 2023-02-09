@@ -19,6 +19,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 class CafeServiceImplTest {
+
     @Autowired
     CafeAuthRepository cafeAuthRepository;
 
@@ -33,15 +34,18 @@ class CafeServiceImplTest {
         CafeAuth cafeAuth = CafeAuth.builder()
                 .cafeId(cafeId)
                 .nickname(nickname)
-                .expiration(60) // 60초
+                .expiration(600) // 600초
                 .build();
 
         cafeAuthRepository.save(cafeAuth); // 인증된 상태 세팅
 
         Optional<CafeAuth> cafeAuthOptional = cafeAuthRepository.findById(nickname); // key = nickname
+        System.out.println("cafeAuthOptional.get() = " + cafeAuthOptional.get());
 
         String getNickname = cafeAuthOptional.get().getNickname();
+        System.out.println("getNickname = " + getNickname);
         long getCafeId = cafeAuthOptional.get().getCafeId();
+        System.out.println("getCafeId = " + getCafeId);
 
         // 존재한다면 삭제후 갱신
         assertThat(cafeAuthOptional.get().getCafeId()).isEqualTo(cafeId);
@@ -49,6 +53,9 @@ class CafeServiceImplTest {
         cafeAuthRepository.deleteById(nickname);
         // 삭제 확인
         Optional<CafeAuth> cafeAuthOptional2 = cafeAuthRepository.findById(nickname);
+        System.out.println("cafeAuthOptional2 = " + cafeAuthOptional2);
+//        System.out.println("cafeAuthOptional2.get() = " + cafeAuthOptional2.get());
+
         assertThat(cafeAuthOptional2.isEmpty()).isTrue();
 
         // 재생성
@@ -59,6 +66,9 @@ class CafeServiceImplTest {
                 .build();
 
         CafeAuth saveAuth2 = cafeAuthRepository.save(cafeAuth2);
+        Optional<CafeAuth> cafeAuthOptional3 = cafeAuthRepository.findById(nickname);
+        System.out.println("cafeAuthOptional3 = " + cafeAuthOptional3);
+        System.out.println("cafeAuthOptional3.get() = " + cafeAuthOptional3.get());
         assertThat(saveAuth2.getNickname()).isEqualTo(nickname);
     }
 
