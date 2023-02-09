@@ -161,19 +161,18 @@ public class PostServiceImpl implements PostService {
             cafeIdList.add(dto.getId().longValue());
         }
         
-        if(types.contains("hot")) { // 핫 게시물을 포함하고 있을 때
+        if(types.contains(PostType.hot)) { // 핫 게시물을 포함하고 있을 때
 
             if (postId == -1L) {
                 // 처음 요청할때 (refresh)
                 System.out.println("hot 새로고침");
-                postSlice = postRepository.findAllByPostTypeInAndPostCafeList_CafeIdIn(types, cafeIdList, pageable);
+                postSlice = postRepository.findHotPost(cafeIdList, pageable);
             } else {
                 // 두번째 이상으로 요청할 때 (마지막 글의 pk 를 기준으로 함)
                 System.out.println("hot 두번째이상 요청");
-                postSlice = postRepository.findAllByIdLessThanAndPostTypeInAndPostCafeList_CafeIdIn(postId,types,cafeIdList,pageable);
+                postSlice = postRepository.findHotPostNext(cafeIdList,postId,pageable);
                 // 갖고올 게시물이 없으면
             }
-
 
         } else { //
 

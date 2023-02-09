@@ -59,8 +59,15 @@ public class Post extends BaseEntity {
     @Column(name = "type")
     private PostType postType;
 
+//    /**
+//     * 5. 카페 인증된 유저인지 미인증된 유저인지 저장
+//     **/
+//    @Column(name = "is_cafe_authorized")
+//    private boolean isCafeAuthorized;
+
+
     /**
-     * 5. 양방향 매핑
+     * 6. 양방향 매핑
      **/
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL)
     List<Comment> commentList = new ArrayList<>();
