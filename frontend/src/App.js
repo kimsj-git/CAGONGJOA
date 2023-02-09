@@ -25,14 +25,14 @@ import BlockList from "./components/myPage/settingsPage/BlockList"
 
 function App() {
   // 바로 로그인 화면으로
-  // const history = useHistory()
-  // const Authenticated = sessionStorage.getItem("accessToken")
+  const history = useHistory()
+  const Authenticated = sessionStorage.getItem("accessToken")
   
-  // useEffect(()=>{
-  //   if (!Authenticated){
-  //     history.push('/login')
-  //   }
-  // }, [])
+  useEffect(()=>{
+    if (!Authenticated){
+      history.push('/login')
+    }
+  }, [])
 
   return (
     <Layout>

@@ -8,7 +8,7 @@ const initialStudyHistoryState = {
   month: 0,
   day: 0,
   isLoading: false,
-  studyDetail: [],
+  monthStudyHistory: [],
 }
 
 const studyHistorySlice = createSlice({
@@ -20,16 +20,16 @@ const studyHistorySlice = createSlice({
       state.month = actions.payload.month
       state.day = actions.payload.day
     },
-    getStudyDetail(state, actions){
-      state.studyDetail = actions.payload
+    getMonthStudyHistory(state, actions) {
+      state.monthStudyHistory = actions.payload
     },
-    toggleLoading(state){
+    toggleLoading(state) {
       state.isLoading = !state.isLoading
-    }
+    },
   },
 })
 
-export const getStudyDetails = (dataSet) => {
+export const getMonthStudyHistory = (dataSet) => {
   return async (dispatch) => {
     dispatch(studyHistoryActions.toggleLoading())
     const sendRequest = async () => {
@@ -41,27 +41,35 @@ export const getStudyDetails = (dataSet) => {
           },
         }
       )
-      if (response.status === 401){
-        const response = await fetch(`${REST_DEFAULT_URL}/member/refresh`,{
+      const responseData = await response.json()
+      if (
+        responseData.httpStatus === "BAD_REQUEST" &&
+        responseData.data.sign === "JWT"
+      ) {
+        const response = await fetch(`${REST_DEFAULT_URL}/member/refresh`, {
           method: "GET",
           headers: {
-            "Authorization" : `Bearer ${sessionStorage.getItem('refreshToken')}`
-          }
+            "Authorization-RefreshToken": `Bearer ${sessionStorage.getItem(
+              "refreshToken"
+            )}`,
+          },
         })
-        if (!response.ok){
-          throw new Error('Failed refresh')
+        const responseData = await response.json()
+        if (!responseData.httpStatus === "OK") {
+          sessionStorage.clear()
+        }else{
+          sessionStorage.setItem("accessToken", responseData.data.accessToken)
+          sendRequest(dataSet)
         }
-        const data = await response.json()
-        sessionStorage.setItem('accessToken', data.jwt.accessToken)
-        sendRequest(dataSet)
+      }else if (responseData.httpStatus === "OK"){
+        console.log(responseData.data)
+        return responseData.data
       }
-      const data = await response.json()
-      return data.data
     }
     try {
       const studyData = await sendRequest()
-      dispatch(studyHistoryActions.getStudyDetail(studyData))
-      }catch (error) {
+      dispatch(studyHistoryActions.getMonthStudyHistory(studyData))
+    } catch (error) {
       console.error(error)
     }
     dispatch(studyHistoryActions.toggleLoading())

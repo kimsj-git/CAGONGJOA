@@ -120,7 +120,6 @@ export const findMapCafeList = (dataSet) => {
         }),
       })
       const responseData = await response.json()
-      console.log(responseData)
       if (responseData.httpStatus==="OK") {
         return responseData.data
       }

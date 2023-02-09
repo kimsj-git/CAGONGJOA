@@ -1,6 +1,6 @@
 .react-calendar {
   width: 100%;
-  height: 30rem;
+  height: 35rem;
   border: none;
 
 }
@@ -47,7 +47,7 @@
 }
 
 .react-calendar__month-view__days button{
-  height:4rem;
+  height:4.5rem;
   display: flex;
   flex-direction: column;
   align-items: center;
