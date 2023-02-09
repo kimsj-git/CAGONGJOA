@@ -2,7 +2,7 @@ import MapDiv from "../components/map/MapDiv"
 
 const MapPage = () => {
   return (
-    <div style={{width:"30rem", height:"30rem"}}>
+    <div style={{width:"90vw%", height:"50vh"}}>
       <MapDiv />
     </div>
   )

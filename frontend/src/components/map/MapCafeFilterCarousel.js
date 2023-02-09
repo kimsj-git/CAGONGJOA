@@ -29,20 +29,31 @@ const MapCafeFilterCarousel = () => {
           whiteSpace: "nowrap"
           
         }}
-        className=""
       >
         {type}
       </Button>
     )
   }
+  const responsiveOptions = [
+    {
+      breakpoint: "1444px",
+      numVisible: 4,
+      numScroll: 2,
+    },
+    {
+      breakpoint: "768px",
+      numVisible: 3,
+      numScroll: 1,
+    },
+  ]
   return (
     <>
     {cafeBrandList.length>1 && 
       <Carousel
       value={cafeBrandList}
-      // responsiveOptions={responsiveOptions}
-      numVisible={4}
-      numScroll={1}
+      responsiveOptions={responsiveOptions}
+      // numVisible={4}
+      // numScroll={1}
       itemTemplate={carouselTemplate}
       />
     }
