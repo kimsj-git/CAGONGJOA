@@ -7,6 +7,7 @@ import com.ssafy.backend.common.exception.jwt.JwtExceptionType;
 import com.ssafy.backend.common.exception.member.MemberException;
 import com.ssafy.backend.common.exception.member.MemberExceptionType;
 import com.ssafy.backend.jwt.JwtUtil;
+import com.ssafy.backend.jwt.dto.TokenRespDto;
 import com.ssafy.backend.member.domain.dto.MemberIdAndNicknameDto;
 import com.ssafy.backend.member.domain.entity.MemberCoin;
 import com.ssafy.backend.member.repository.MemberCoinRepository;
@@ -81,7 +82,7 @@ public class MemberServiceImpl implements MemberService {
     }
 
     @Override
-    public Map<String, Object> tokenRefresh() {
+    public TokenRespDto tokenRefresh() {
         // refresh token 받아오기
         HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
         String refreshToken = request.getHeader("Authorization");
@@ -100,9 +101,8 @@ public class MemberServiceImpl implements MemberService {
             throw new JwtException(JwtExceptionType.TOKEN_EXPIRED);
         }
 
-        HashMap<String, Object> tokens = new HashMap<>();
-
-        // 리프레쉬 토큰이 redis에 존재
+        TokenRespDto tokenRespDto = new TokenRespDto();
+        // 리프레쉬 토큰이 redis에 존재 하는 상황
         refreshTokenRepository.findById(refreshToken).ifPresent(a -> {
             System.out.println("억세스 발급");
             Optional<Member> dbMemberOpt = memberRepository.findById(memberId);
@@ -112,10 +112,9 @@ public class MemberServiceImpl implements MemberService {
             Member dbMember = dbMemberOpt.get();
             String accessToken = jwtUtil.getAccessToken(dbMember);
 
-            tokens.put("accessToken", accessToken);
-
+            tokenRespDto.setAccessToken(accessToken);
         });
-        return tokens;
+        return tokenRespDto;
     }
 
     @Override
