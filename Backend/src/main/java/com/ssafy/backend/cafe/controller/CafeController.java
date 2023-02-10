@@ -24,6 +24,7 @@ public class CafeController {
     private final CafeService cafeService;
     private final TodayCafeService todayCafeService;
 
+
     @GetMapping("/auth")
     public ResponseEntity<ResponseDTO> checkCafeAuth() {
         // 15분 마다 클라이언트로부터 비동기로 레디스 체크 -> 인증된 상태라면 레디스 데이터 삭제 후 재생성 (time out 시간 초기화)
@@ -75,13 +76,39 @@ public class CafeController {
 
     /**
      * 현위치와 거리를 클라이언트에게 받아 해당 범위의 카페를 제공
-     * @param clientPosInfo
      */
     @PostMapping
     public ResponseEntity<ResponseDTO> getNearByCafes(@RequestBody ClientPosInfoDto clientPosInfo) {
         List<NearByCafeResultDto> nearByCafeLocations = cafeService.getNearByCafeLocations(clientPosInfo);
+
         ResponseDTO responseDTO
                 = new ResponseDTO("주변 카페 목록 출력", "", HttpStatus.OK, nearByCafeLocations);
+        return new ResponseEntity<>(responseDTO, HttpStatus.OK);
+    }
+
+    /**
+     * 혼잡도 설문 실시 여부 체크
+     */
+    @GetMapping("/crowd/check")
+    public ResponseEntity<ResponseDTO> checkCrowdSurvey() {
+//        cafeService.checkCrowdSurvey();
+        ResponseDTO responseDTO = new ResponseDTO("혼잡도 설문 여부 체크 완료!", "", HttpStatus.OK, null);
+        return new ResponseEntity<>(responseDTO, HttpStatus.OK);
+    }
+
+    /**
+     * 현 위치 + 거리 + 현재 시간을 받아 클라이언트에게 해당 범위의 카페 + 혼잡도 정보 제공
+     */
+    @PostMapping("/crowd")
+    public ResponseEntity<ResponseDTO> getNearByCafesWithCrowd(@RequestBody ClientPosInfoDto clientPosInfo,
+                                                               @RequestBody CurTimeReqDto curTimeReqDto) {
+        List<NearByCafeResultDto> nearByCafeLocations = cafeService.getNearByCafeLocations(clientPosInfo);
+        List<NearByCafeWithCrowdResultDto> nearByCafeWithCrowdResultDtoList
+                = cafeService.addCrowdInfoToNearByCafes(nearByCafeLocations, curTimeReqDto);
+
+        ResponseDTO responseDTO
+                = new ResponseDTO("주변 카페 목록을 혼잡도와 함께 출력", "",
+                HttpStatus.OK, nearByCafeWithCrowdResultDtoList);
         return new ResponseEntity<>(responseDTO, HttpStatus.OK);
     }
 }

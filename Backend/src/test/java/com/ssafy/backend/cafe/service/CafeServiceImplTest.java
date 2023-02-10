@@ -1,5 +1,7 @@
 package com.ssafy.backend.cafe.service;
 
+import com.ssafy.backend.cafe.domain.entity.CafeCrowd;
+import com.ssafy.backend.cafe.repository.CafeCrowdRepository;
 import com.ssafy.backend.cafe.repository.CafeRepository;
 import com.ssafy.backend.jwt.JwtUtil;
 import com.ssafy.backend.member.service.MemberService;
@@ -12,6 +14,12 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
+import java.math.BigInteger;
+import java.time.Duration;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.Month;
+import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.*;
@@ -23,6 +31,38 @@ class CafeServiceImplTest {
     @Autowired
     CafeAuthRepository cafeAuthRepository;
 
+    @Autowired
+    CafeCrowdRepository cafeCrowdRepository;
+
+    @Test
+    void 시간뺄셈() {
+        LocalDateTime start = LocalDateTime.of(2022, Month.JANUARY, 1, 10, 0);
+        LocalDateTime end = LocalDateTime.of(2022, Month.JANUARY, 1, 12, 30);
+
+        Duration duration = Duration.between(start, end);
+        long minutes = duration.toMinutes();
+        System.out.println("minutes = " + minutes);
+
+        Duration duration2 = Duration.between(end, start);
+        long minutes2 = duration2.toMinutes();
+        System.out.println("minutes = " + minutes2);
+    }
+
+    @Test
+    @Transactional
+    void 특정_시간_범위_혼잡도_데이터_가져오기() {
+        LocalDateTime now = LocalDateTime.now();
+        LocalDateTime threeHoursAgo = now.minusHours(3);
+        System.out.println("threeHoursAgo = " + threeHoursAgo);
+        LocalDate localDate = threeHoursAgo.toLocalDate();
+        System.out.println("localDate = " + localDate);
+
+        List<CafeCrowd> crowdList = cafeCrowdRepository
+                .findAllByCreatedAtBetweenAndCafeId(threeHoursAgo, now, 1);
+        for (CafeCrowd cafeCrowd : crowdList) {
+            System.out.println("cafeCrowd = " + cafeCrowd);
+        }
+    }
 
     @Test
     @Transactional
