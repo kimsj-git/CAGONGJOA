@@ -3,6 +3,7 @@ package com.ssafy.backend.cafe.controller;
 import com.ssafy.backend.cafe.domain.dto.*;
 import com.ssafy.backend.cafe.service.CafeService;
 import com.ssafy.backend.common.dto.ResponseDTO;
+import com.ssafy.backend.todaycafe.domain.dto.TodoResponseDto;
 import com.ssafy.backend.todaycafe.service.TodayCafeService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -10,6 +11,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 @RestController
@@ -43,6 +46,9 @@ public class CafeController {
     public ResponseEntity<ResponseDTO> AuthResponse() throws Exception {
         cafeService.saveTier();
         AfterCafeAuthResponseDto cafeAuthResponseDto = todayCafeService.saveCafeVisit();
+        int visitedAtValue = Integer.parseInt(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd")));
+        List<TodoResponseDto> todoResponseDtoList = todayCafeService.findTodo(visitedAtValue);
+        cafeAuthResponseDto.updateTodoList(todoResponseDtoList);
         // 위치인증 완료되었을 때, 기존 공부했던 시간 return 해줘야함
         ResponseDTO responseDTO = new ResponseDTO("위치 인증 reponse 전달완료!", "", HttpStatus.OK, cafeAuthResponseDto);
 

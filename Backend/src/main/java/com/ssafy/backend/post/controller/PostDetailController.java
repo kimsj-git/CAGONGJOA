@@ -26,6 +26,7 @@ public class PostDetailController {
 
     private final CommentService commentService;
     private ResponseDTO responseDTO;
+    private final PostService postService;
 
     /**  2-1. 댓글 더보기  **/
 
@@ -119,5 +120,21 @@ public class PostDetailController {
         }
         return new ResponseEntity<>(responseDTO,HttpStatus.OK);
     }
+    /**  2-6. 글 삭제   **/
+
+    @Auth
+    @DeleteMapping("/delete")
+
+    public ResponseEntity<ResponseDTO> deletePost(@RequestParam Long postId) throws Exception {
+
+        boolean isDeleted = postService.deletePost(postId);
+        if(isDeleted) {
+            responseDTO = new ResponseDTO("게시글 삭제 완료!", "", HttpStatus.OK, null);
+        }else {
+            responseDTO = new ResponseDTO("", "잘못된 postId", HttpStatus.BAD_REQUEST, null);
+        }
+        return new ResponseEntity<>(responseDTO,HttpStatus.OK);
+    }
+
 
 }

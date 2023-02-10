@@ -121,8 +121,13 @@ public class PostServiceImpl implements PostService {
 
     // 3-1 게시글 하나 삭제
     @Override
-    public void deletePost(Long postId) {
+    public boolean deletePost(Long postId) throws Exception {
+        Optional<Post> postOptional = postRepository.findById(postId);
+        if(postOptional.isEmpty() || postOptional == null) {
+            return false;
+        }
         postRepository.deleteById(postId);
+        return true;
     }
 
     // 3-2 회원탈퇴 시 게시글 모두 삭제

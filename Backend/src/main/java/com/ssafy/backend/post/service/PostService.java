@@ -21,7 +21,7 @@ public interface PostService {
     boolean updatePostForm(MultipartFile[] files, PostUpdateFormRequestDto postDto) throws Exception;
 
     /** 3. 게시글 삭제  **/
-    void deletePost(Long postId) throws Exception;
+    boolean deletePost(Long postId) throws Exception;
 
     /** 4. 게시글 1개 조회  **/
     PostDetailResponseDto findOnePost(Long postId) throws Exception;

@@ -131,8 +131,8 @@ public class CommentServiceImpl implements CommentService {
         }
 
         // 4. 글 저장하기
-        Comment comment = Comment.CommentWriteBuilder()
-                .group(groupNo)
+        Comment comment = Comment.builder()
+                .groupNo(groupNo)
                 .member(member)
                 .post(post)
                 .content(content)
@@ -221,6 +221,8 @@ public class CommentServiceImpl implements CommentService {
                 .build();
         return commentLikeResponseDto;
     }
+
+
 
     /**
      * 4. 댓글 삭제 - 삭제되면 대댓글도 같이삭제?
