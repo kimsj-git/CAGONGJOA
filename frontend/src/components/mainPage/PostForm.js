@@ -21,10 +21,10 @@ const PostForm = (props) => {
   const dispatch = useDispatch()
   // 현재 카페 정보 가져오기
   const isAuthenticated = sessionStorage.getItem("cafeAuth")
-
-  const currentCafe = isAuthenticated
-    ? JSON.parse(sessionStorage.getItem("myCafe")).cafeName
-    : null
+  let currentCafe = ''
+  isAuthenticated 
+    ? currentCafe = JSON.parse(sessionStorage.getItem("myCafe"))?.cafeName
+    : currentCafe = null
 
   const { data: newPostId, isLoading, sendRequest: newPost } = useFetch()
   // 모달창 상태 관리

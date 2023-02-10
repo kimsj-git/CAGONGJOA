@@ -21,24 +21,26 @@ const PostList = (props) => {
   const { data: fetchedPosts, isLoading, sendRequest: getPosts } = useFetch()
   const [ref, inView] = useInView({
     threshold: 0.5,
-    triggerOnce: true,
+    // triggerOnce: true,
   })
 
   const filters = Object.entries(filterState)
     .filter(([key, value]) => value === true)
     .map(([key, value]) => key)
 
-  async function refreshPosts(postId = -1) {
-    if (!sessionStorage.getItem("location")) {
+  const refreshPosts = async (postId = -1) => {
+    // console.log(filters)
+    if (sessionStorage.getItem("location")) {
       await getPosts({
         url: `${DEFAULT_REST_URL}/main/post/feed`,
         method: "POST",
         headers: {
           Authorization: `Bearer ${sessionStorage.getItem("accessToken")}`,
+          "Content-Type": "application/json",
         },
         body: {
           postId: postId,
-          types: filters
+          types: filters.length
             ? filters
             : ["free", "qna", "together", "tip", "recommend", "help", "lost"],
           latitude: JSON.parse(sessionStorage.getItem("location")).lat,
@@ -46,8 +48,9 @@ const PostList = (props) => {
           dist: DIST,
         },
       })
-      dispatch(postsActions.updatePosts(fetchedPosts, postId))
-      // console.log(fetchedPosts)
+      dispatch(postsActions.updatePosts({fetchedPosts: fetchedPosts, lastPostId: postId}))
+      console.log(fetchedPosts.length)
+      console.log(posts)
     }
   }
   useEffect(() => {
@@ -68,7 +71,10 @@ const PostList = (props) => {
   }, [inView])
 
   useEffect(() => {
-    setLastPostRef(posts[posts.length - 1].id)
+    if (posts.length) {
+
+      setLastPostRef(posts[posts.length-1].postId)
+    }
   }, [posts])
 
   return (
