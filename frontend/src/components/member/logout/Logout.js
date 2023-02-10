@@ -16,8 +16,10 @@ const Logout = () => {
     const responseData = await response.json()
     console.log(responseData)
     if (responseData.httpStatus === "BAD_REQUEST" && responseData.data.sign === "JWT"){
+      console.log('logout, 1.유효하지 않은 토큰')
       history.push('/error')
     }
+    
     sessionStorage.clear()
     history.push('/login')
   }
