@@ -58,7 +58,6 @@ function App() {
 
   return (
     <Layout>
-      <p>{seconds}</p>
       <Switch>
         {/* Navigation 관련 ROUTE*/}
         <Route path="/chat" exact>

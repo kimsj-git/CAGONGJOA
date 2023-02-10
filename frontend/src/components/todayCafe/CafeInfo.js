@@ -1,23 +1,36 @@
 import CafeReport from "./CafeReport"
-import { Grid, Container, Button } from "semantic-ui-react"
+import { Grid, Container } from "semantic-ui-react"
+import { BsFillPatchQuestionFill } from "react-icons/bs"
 
 import CafeTimer from "./CafeTimer"
 
 const CafeInfo = () => {
-  const logo_url = 'starbucks.png'
+  const cafeAuth = sessionStorage.getItem("cafeAuth")
+  const logo_url = "starbucks.png"
+
+  const cafeName = cafeAuth ? '스타벅스 강남논현점' : '카페가 인증되지 않았습니다.'
 
   return (
-    <Container style={{backgroundColor: "#f9f9f9"}}>
+    <Container style={{ backgroundColor: "#f9f9f9" }}>
       <Grid>
         {/* 모바일 태블릿 화면 카페 정보 */}
         <Grid.Row only="mobile tablet">
           <Grid.Column mobile={3} tablet={5} computer={1} />
           <Grid.Column mobile={10} tablet={6} computer={5}>
-            <img
-              src={require(`../../assets/cafe_logos/${logo_url}`)}
-              style={{ border: "3vw solid #fbbc05", borderRadius: '70%'}}
-              alt="#"
-            />
+            {!cafeAuth && (
+              <BsFillPatchQuestionFill
+                style={{ marginInline: "0.5rem 0.8rem" }}
+                size="100%"
+                color="grey"
+              />
+            )}
+            {cafeAuth && (
+              <img
+                src={require(`../../assets/cafe_logos/${logo_url}`)}
+                style={{ border: "3vw solid #fbbc05", borderRadius: "70%" }}
+                alt="#"
+              />
+            )}
           </Grid.Column>
           <Grid.Column only="tablet computer" tablet={5} computer={10}>
             <Grid style={{ textAlign: "center" }}>
@@ -35,11 +48,24 @@ const CafeInfo = () => {
         <Grid.Row style={{ width: "100%" }} centered>
           <Grid columns={2}>
             <Grid.Column only="computer" computer={5}>
-              <img
-                src={require(`../../assets/cafe_logos/${logo_url}`)}
-                style={{ width: '100%', border: "1vw solid #fbbc05", borderRadius: '70%'}}
-                alt="#"
-              />
+              {!cafeAuth && (
+                <BsFillPatchQuestionFill
+                  style={{ marginInline: "0.5rem 0.8rem" }}
+                  size="100%"
+                  color="grey"
+                />
+              )}
+              {cafeAuth && (
+                <img
+                  src={require(`../../assets/cafe_logos/${logo_url}`)}
+                  style={{
+                    width: "100%",
+                    border: "1vw solid #fbbc05",
+                    borderRadius: "70%",
+                  }}
+                  alt="#"
+                />
+              )}
             </Grid.Column>
             <Grid.Column
               mobile={16}
@@ -49,9 +75,24 @@ const CafeInfo = () => {
             >
               <Grid style={{ display: "flex", alignItems: "center" }}>
                 <Grid.Row columns={2}>
-                  <Grid.Column mobile={16} tablet={16} computer={11} style={{display: 'flex', justifyContent: 'center', alignItems: 'center'}}>
-                    <p style={{ fontSize: 'large', textAlign: "center", color: "#1E3932" }}>
-                      스타벅스 강남논현점
+                  <Grid.Column
+                    mobile={16}
+                    tablet={16}
+                    computer={11}
+                    style={{
+                      display: "flex",
+                      justifyContent: "center",
+                      alignItems: "center",
+                    }}
+                  >
+                    <p
+                      style={{
+                        fontSize: "large",
+                        textAlign: "center",
+                        color: "#1E3932",
+                      }}
+                    >
+                      {cafeName}
                     </p>
                   </Grid.Column>
                   <Grid.Column only="computer" computer={5}>
