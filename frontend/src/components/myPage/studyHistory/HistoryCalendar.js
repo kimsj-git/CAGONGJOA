@@ -87,7 +87,7 @@ const HistoryCalendar = () => {
         }
         const realDate = `${date.getFullYear()}${month}${day}`
 
-        const dateData = studyDate.find((val) => `${val.visitedAt}` === realDate)
+        const dateData = studyDate ? studyDate.find((val) => `${val.visitedAt}` === realDate) : ''
         if (dateData) {
           return dateData.cafeInfo.brandType
         }

@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react"
 import { Map, MapMarker } from "react-kakao-maps-sdk"
-import { Button, Icon } from "semantic-ui-react"
+import { Button, Image } from "semantic-ui-react"
 import { useDispatch, useSelector } from "react-redux"
 
 import classes from "./MapDiv.module.css"
@@ -95,7 +95,19 @@ const MapDiv = () => {
         onDragEnd={dragHandler}
         className={classes.map}
       >
-        <MapMarker position={{ lat: center.lat, lng: center.lng }} />
+        <MapMarker
+          position={{ lat: center.lat, lng: center.lng }}
+          image={{
+            src: require("../../assets/icons/mylocation.png"),
+            size: { width: 40, height: 50 },
+            options:{
+              offset:{
+                x:10,
+                y:40,
+              }
+            }
+          }}
+        />
         {isFiltered &&
           cafeFilterList.length > 0 &&
           cafeFilterList.map((cafe, index) => {
@@ -131,7 +143,7 @@ const MapDiv = () => {
           circular
           onClick={goToMyPosition}
         >
-          <Icon name="map marker alternate" color="red" />
+          <Image src={require("../../assets/icons/kagongjoa_logo.png")} />
         </Button>
         {!isFinded && (
           <Button

@@ -14,7 +14,7 @@ const MyFeedPage = () => {
 
   return (
     <>
-      <Menu color="blue" widths={3}>
+      <Menu color="blue" widths={3} style={{mairginTop:"3rem"}}>
         <Menu.Item
           name="내 게시글"
           dir="myposts"
