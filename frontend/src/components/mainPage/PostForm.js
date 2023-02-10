@@ -54,15 +54,15 @@ const PostForm = (props) => {
 
   const submitHandler = async () => {
     // post 내용이 없을 경우
-    if (!postContent & !postImages) {
+    if (!postContent) {
       alert("글 내용을 입력해주세요!")
       return
     }
 
     await newPost({
       url: `${DEFAULT_REST_URL}/writeForm/write`,
+      method: "POST",
       headers: {
-        method: "POST",
         Authorization: `Bearer ${sessionStorage.getItem("accessToken")}`,
       },
       body: {
