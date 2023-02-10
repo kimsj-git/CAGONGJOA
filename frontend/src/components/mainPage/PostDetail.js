@@ -77,25 +77,29 @@ const PostDetail = (props) => {
                 </Card>
               </ScrollPanel>
               <div style={{ display: "flex", marginTop: "1rem" }}>
-                <Button
-                  fluid
-                  // inverted
-                  color="orange"
-                  icon="edit"
-                  content="수정"
-                ></Button>
-                <Button
-                  fluid
-                  toggle
-                  // inverted
-                  color="grey"
-                  icon="delete"
-                  content="삭제"
-                  onClick={() => {
-                    dispatch(postsActions.deletePost(props.post.id))
-                    setOpen(false)
-                  }}
-                ></Button>
+                {sessionStorage.getItem("nickname") === props.writer && (
+                  <Button
+                    fluid
+                    // inverted
+                    color="orange"
+                    icon="edit"
+                    content="수정"
+                  ></Button>
+                )}
+                {sessionStorage.getItem("nickname") === props.writer && (
+                  <Button
+                    fluid
+                    toggle
+                    // inverted
+                    color="grey"
+                    icon="delete"
+                    content="삭제"
+                    onClick={() => {
+                      dispatch(postsActions.deletePost(props.post.id))
+                      setOpen(false)
+                    }}
+                  ></Button>
+                )}
                 <ToggleButton
                   btnType="like"
                   fluid

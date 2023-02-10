@@ -76,10 +76,14 @@ const PostList = (props) => {
       <Feed>
         {posts.map((post, index) => (
           <PostItem
-            key={post.id}
+            key={post.postId}
             createdAt={post.createdAt}
-            type={post.type}
-            author={post.author}
+            type={post.postType}
+            writer={post.writerNickname}
+            userType={post.userType}
+            tier={post.tier}
+            cafeName={post.cafeName}
+            cafeBrand={post.brandType}
             content={post.content}
             images={post.imgUrlPath}
             likeCnt={post.postLikeCount}

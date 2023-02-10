@@ -3,15 +3,21 @@ import PostDetail from "./PostDetail"
 import LoadingPost from "./LoadingPost"
 import ToggleButton from "../common/ToggleButton"
 import useFetch from "../../hooks/useFetch.js"
+import { BsFillPatchQuestionFill } from "react-icons/bs"
+import { postsActions } from "../../store/posts"
+import { useSelector, useDispatch } from "react-redux"
 
 const DEFAULT_REST_URL = process.env.REACT_APP_REST_DEFAULT_URL
 
 const PostItem = (props) => {
   const { data, isLoading, sendRequest: fetchLike } = useFetch()
+  const dispatch = useDispatch()
 
   const likePost = async (btnState) => {
+    dispatch(postsActions.likePost(props.postId))
     await fetchLike({
       url: `${DEFAULT_REST_URL}/main/post/like`,
+      method: "POST",
       headers: {
         Authorization: `Bearer ${sessionStorage.getItem("accessToken")}`,
       },
@@ -26,17 +32,32 @@ const PostItem = (props) => {
     <Card raised fluid>
       <Label corner="right" icon={{ name: "lightbulb", color: "orange" }} />
       <Card.Content>
-        <Image
-          avatar
-          floated="left"
-          size="huge"
-          src="https://www.freepnglogos.com/uploads/starbucks-logo-png-transparent-0.png"
-        />
-        <Card.Header>{props.author}</Card.Header>
-        <Card.Meta>스타벅스 강남R점</Card.Meta>
+        {props.userType ? (
+          <Image
+            avatar
+            floated="left"
+            size="huge"
+            src="https://www.freepnglogos.com/uploads/starbucks-logo-png-transparent-0.png"
+            style={{
+              border: `5px solid ${
+                ["#8B6331", "#C0C0C0", "#FF9614", "#3DFF92"][
+                  parseInt(props.exp / 1000)
+                ]
+              }`,
+            }}
+          />
+        ) : (
+          <BsFillPatchQuestionFill
+            style={{ marginInline: "0.5rem 0.8rem" }}
+            size="36"
+            color="grey"
+          />
+        )}
+        <Card.Header>{props.writer}</Card.Header>
+        <Card.Meta>{props.userType ? props.cafeName : null}</Card.Meta>
         <Card.Meta textAlign="right">{props.createdAt}</Card.Meta>
         <Image
-          src={props.images[0]}
+          src={props.images.length ? props.images[0] : null}
           wrapped
           ui={true}
           style={{ marginBlock: "0.5rem" }}
@@ -55,6 +76,7 @@ const PostItem = (props) => {
             btnType="like"
             likeHandler={likePost}
           />
+
           <PostDetail post={props} likeHandler={likePost} />
         </div>
       </Card.Content>
