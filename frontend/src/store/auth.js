@@ -37,7 +37,7 @@ export const checkNickname = (nickname) => {
         console.log("auth.js, 중복된 닉네임X, 제출하세요")
         return true
       } else if (result.httpStatus==="BAD_REQUEST" && result.data.sign==="MEMBER"){
-        comsole.log("auth.js, 중복된 닉네임입니다.")
+        console.log("auth.js, 중복된 닉네임입니다.")
         return false
       }
     }
