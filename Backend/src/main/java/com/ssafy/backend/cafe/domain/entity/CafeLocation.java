@@ -10,6 +10,7 @@ import javax.persistence.*;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @ToString(of={"id"})
+@Table(name = "cafe_location")
 public class CafeLocation {
     @Id
     @GeneratedValue
