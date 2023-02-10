@@ -1,4 +1,4 @@
-import { Route, useLocation } from "react-router-dom"
+import { useLocation } from "react-router-dom"
 import { NavLink } from "react-router-dom"
 import { Icon, Grid } from "semantic-ui-react"
 
@@ -10,8 +10,8 @@ const Settings = () => {
 
   return (
     <>
-      <Grid.Row>
-        <Grid.Column>설정</Grid.Column>
+      <Grid.Row style={{marginTop:"10%"}}>
+        <Grid.Column as="h1"><Icon name="setting"/>설정</Grid.Column>
       </Grid.Row>
       <Grid.Row>
         <Grid.Column>

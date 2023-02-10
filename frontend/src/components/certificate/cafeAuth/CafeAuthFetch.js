@@ -9,6 +9,7 @@ const CafeAuthFetch = async () => {
       },
     })
     const responseData = await response.json()
+    // jwt access 토큰 만료된 경우
     if (
       responseData.httpStatus === "UNAUTHORIZED" &&
       responseData.data.sign === "JWT"
@@ -29,12 +30,16 @@ const CafeAuthFetch = async () => {
         CafeAuthFetch()
       }
     } else if (
+      // 미인증 상태인 경우
       responseData.httpStatus === "UNAUTHORIZED" &&
       responseData.data.sign === "CAFE"
     ) {
       sessionStorage.setItem("cafeAuth", 0)
     } else if (responseData.httpStatus === "OK") {
+      // 인증된 경우
       sessionStorage.setItem("cafeAuth", 1)
+      // const response = await fetch(`${REST_DEFAULT_URL}/`)
+      // const responseData = await response.json()
     } else {
       throw new Error("fetch error")
     }

@@ -15,9 +15,9 @@ const StudyDetail = () => {
     (state) => state.studyHistory.monthStudyHistory
   )
   const isLoading = useSelector((state) => state.studyHistory.isLoading)
-  const studyDetailList = monthStudyHistory.filter(
-    (detail) => `${detail.visitedAt}` === `${year}${month}${day}`
-  )
+    const studyDetailList = monthStudyHistory ? monthStudyHistory.filter(
+      (detail) => `${detail.visitedAt}` === `${year}${month}${day}`
+    ) : []
 
   const onCaptureHandler = () => {
     const node = document.getElementById("detail")
@@ -64,7 +64,7 @@ const StudyDetail = () => {
                     <span>
                       {studyDetailList[0].accTime / 60 !== 0
                         ? `${parseInt(studyDetailList[0].accTime / 60)}시간 `
-                        : " "} 
+                        : " "}
                       {studyDetailList[0].accTime % 60}분
                     </span>
                   </Grid.Column>
@@ -99,7 +99,7 @@ const StudyDetail = () => {
           )}
         </div>
       </div>
-      {monthStudyHistory.length > 0 && (
+      {studyDetailList && studyDetailList.length > 0 && (
         <PostForm isStudyHistory={true} onCaptureHandler={onCaptureHandler} />
       )}
     </>
