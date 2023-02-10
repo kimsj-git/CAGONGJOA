@@ -1,9 +1,14 @@
 import { useState } from "react"
 import { Modal, Button, Form} from "semantic-ui-react"
 
+import useFetch from "../../hooks/useFetch.js"
+const DEFAULT_REST_URL = process.env.REACT_APP_REST_DEFAULT_URL
+
 const CafeReport = (props) => {
-  const isAuthenticated = sessionStorage.getItem("cafeAuth")
+  const cafeAuth = sessionStorage.getItem("cafeAuth")
   const [open, setOpen] = useState(false)
+
+  const { data, isLoading, sendRequest: newReply } = useFetch()
   
   const initialValues ={
     power: '',
@@ -20,6 +25,22 @@ const CafeReport = (props) => {
     setInputValues({...inputValues, [type]: value})
   }
 
+  const submitHandler = async () => {
+    await newReply({
+      url: `${DEFAULT_REST_URL}/todaycafe/main/survey`,
+      headers: {
+        method: "POST",
+        Authorization: `Bearer ${sessionStorage.getItem("accessToken")}`,
+      },
+      body: {
+        replyWifi : power,
+        replyPower : wifi,
+        replyToilet : toilet,
+        replyTime : timeRestrict,
+      },
+    })
+  }
+
   return (
     <Modal
       closeIcon
@@ -27,7 +48,7 @@ const CafeReport = (props) => {
       onOpen={() => setOpen(true)}
       open={open}
       size="mini"
-      trigger={<Button icon={props.icon} size={props.size} disabled={!isAuthenticated} style={{float: 'right'}}>{props.content? props.content : null}</Button>}
+      trigger={<Button icon={props.icon} size={props.size} disabled={!cafeAuth} style={{float: 'right'}}>{props.content? props.content : null}</Button>}
     >
       <Modal.Header style={{display: 'flex', justifyContent: 'center'}}>카페 정보 제공하기</Modal.Header>
       <Modal.Content>
@@ -56,7 +77,7 @@ const CafeReport = (props) => {
             <Form.Radio label='없음' value='NO' checked={timeRestrict === 'NO'} onChange={(e) => handleChange({type: 'timeRestrict', value: 'NO'})}/>
           </Form.Group>
           <Form.Group style={{display: 'flex', justifyContent: 'center'}}>
-            <Form.Button color="blue">제출하기</Form.Button>
+            <Form.Button onClick={submitHandler} color="blue">제출하기</Form.Button>
             <Form.Button onClick={() => setOpen(false)}>취소하기</Form.Button>
           </Form.Group>
         </Form>
