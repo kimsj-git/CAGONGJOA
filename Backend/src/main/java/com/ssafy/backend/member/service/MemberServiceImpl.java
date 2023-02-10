@@ -82,7 +82,6 @@ public class MemberServiceImpl implements MemberService {
                 .build();
         memberCoinRepository.save(memberCoin);
         System.out.println("MemberServiceImpl : MemberCoin 저장완료");
-        member.updateMemberCoin(memberCoin);
     }
 
     @Override
