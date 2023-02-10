@@ -19,11 +19,14 @@ import { imageActions } from "../../store/image"
 const DEFAULT_REST_URL = process.env.REACT_APP_REST_DEFAULT_URL
 const PostForm = (props) => {
   const dispatch = useDispatch()
-  // 유저 정보 가져오기
-  // const nickname = sessionStorage.getItem('nickname');
-  // const currentCafe = JSON.parse(sessionStorage.getItem('myCafe')).cafeName;
+  // 현재 카페 정보 가져오기
+  const isAuthenticated = sessionStorage.getItem("cafeAuth")
+
+  const currentCafe = isAuthenticated
+    ? JSON.parse(sessionStorage.getItem("myCafe")).cafeName
+    : null
+
   const { data: newPostId, isLoading, sendRequest: newPost } = useFetch()
-  const currentCafe = "스타벅스 강남R점"
   // 모달창 상태 관리
   const [firstOpen, setFirstOpen] = useState(false)
   const [secondOpen, setSecondOpen] = useState(false)
@@ -50,6 +53,12 @@ const PostForm = (props) => {
   ]
 
   const submitHandler = async () => {
+    // post 내용이 없을 경우
+    if (!postContent & !postImages) {
+      alert("글 내용을 입력해주세요!")
+      return
+    }
+
     await newPost({
       url: `${DEFAULT_REST_URL}/writeForm/write`,
       headers: {
@@ -83,16 +92,17 @@ const PostForm = (props) => {
             <Button
               onClick={props.onCaptureHandler}
               style={{
-                marginTop:"1rem",
+                marginTop: "1rem",
                 backgroundColor: "#FFD700",
                 opacity: "36%",
                 border: "1.5px dashed black",
                 color: "black",
                 borderRadius: "10px",
-                boxShadow: "0px 4px 4px rgba(0,0,0,0.25)"
+                boxShadow: "0px 4px 4px rgba(0,0,0,0.25)",
               }}
             >
-              <Icon name="star" color="orange" style={{opacity:"100%"}}/>자랑하기
+              <Icon name="star" color="orange" style={{ opacity: "100%" }} />
+              자랑하기
             </Button>
           ) : (
             <div
@@ -112,7 +122,12 @@ const PostForm = (props) => {
           )
         }
       >
-        <Modal.Header>{currentCafe + "의 이야기를 들려주세요!"}</Modal.Header>
+        <Modal.Header>
+          {currentCafe
+            ? currentCafe + "의 이야기를 들려주세요!"
+            : sessionStorage.getItem("address") +
+              "근처 유저들에게 질문을 남겨보세요!"}
+        </Modal.Header>
 
         {/* <Image size="medium" src="/images/wireframe/image.png" wrapped /> */}
         <Modal.Content scrolling>

@@ -31,17 +31,17 @@ const LoginPage = () => {
 
   return (
     <div id="login-wrapper">
-      <div style={{ display: "flex", alignItems: "center" }}>
-        {/* <Image
+      {/* <div style={{ display: "flex", alignItems: "center" }}> */}
+      {/* <Image
           src={require("../../assets/icons/coffee_location_red.png")}
           size="small"
         /> */}
-        <Image
+      {/* <Image
           src={require("../../assets/icons/chat_bubble.png")}
           size="tiny"
         />
         <Image src={require("../../assets/icons/bean.png")} size="tiny" />
-      </div>
+      </div> */}
 
       <Image
         src={require("../../assets/icons/kagongjoa_logo.png")}
