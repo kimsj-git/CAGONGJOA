@@ -71,6 +71,10 @@ public class CafeVisitLog {
                 this.cafe = cafe;
         }
 
+        public void updateIsSurvey() {
+                this.isSurvey = true;
+        }
+
 
 
 }
