@@ -9,6 +9,7 @@ import { useDispatch, useSelector } from "react-redux"
 import { postsActions } from "../../store/posts.js"
 import useFetch from "../../hooks/useFetch.js"
 import CafeAuthFetch from "../certificate/cafeAuth/CafeAuthFetch"
+import { getPosts } from "../../store/posts.js"
 
 const DEFAULT_REST_URL = process.env.REACT_APP_REST_DEFAULT_URL
 const DIST = 0.5
@@ -18,7 +19,8 @@ const PostList = (props) => {
   const posts = useSelector((state) => state.posts.posts)
   const filterState = useSelector((state) => state.posts.filterState)
   const [lastPostRef, setLastPostRef] = useState(-1)
-  const { data: fetchedPosts, isLoading, sendRequest: getPosts } = useFetch()
+  const isLoading = useSelector((state)=>state.posts.isLoading)
+  // const { data: fetchedPosts, isLoading, sendRequest: getPosts } = useFetch()
   const [ref, inView] = useInView({
     threshold: 0.5,
     // triggerOnce: true,
@@ -28,30 +30,30 @@ const PostList = (props) => {
     .filter(([key, value]) => value === true)
     .map(([key, value]) => key)
 
-  const refreshPosts = async (postId = -1) => {
-    // console.log(filters)
-    if (sessionStorage.getItem("location")) {
-      await getPosts({
-        url: `${DEFAULT_REST_URL}/main/post/feed`,
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${sessionStorage.getItem("accessToken")}`,
-          "Content-Type": "application/json",
-        },
-        body: {
-          postId: postId,
-          types: filters.length
-            ? filters
-            : ["free", "qna", "together", "tip", "recommend", "help", "lost"],
-          latitude: JSON.parse(sessionStorage.getItem("location")).lat,
-          longitude: JSON.parse(sessionStorage.getItem("location")).lng,
-          dist: DIST,
-        },
-      })
-      dispatch(postsActions.updatePosts({fetchedPosts: fetchedPosts, lastPostId: postId}))
-      console.log(fetchedPosts.length)
-      console.log(posts)
-    }
+  const refreshPosts = (postId = -1) => {
+    dispatch(getPosts({postId:postId, filters: filters }))
+    // // console.log(filters)
+    //   await getPosts({
+    //     url: `${DEFAULT_REST_URL}/main/post/feed`,
+    //     method: "POST",
+    //     headers: {
+    //       Authorization: `Bearer ${sessionStorage.getItem("accessToken")}`,
+    //       "Content-Type": "application/json",
+    //     },
+    //     body: {
+    //       postId: postId,
+    //       types: filters.length
+    //         ? filters
+    //         : ["free", "qna", "together", "tip", "recommend", "help", "lost"],
+    //       latitude: JSON.parse(sessionStorage.getItem("location")).lat,
+    //       longitude: JSON.parse(sessionStorage.getItem("location")).lng,
+    //       dist: DIST,
+    //     },
+    //   })
+    //   console.log(fetchedPosts)
+    //   dispatch(postsActions.updatePosts({fetchedPosts: fetchedPosts, lastPostId: postId}))
+    //   console.log(fetchedPosts.length)
+    //   console.log(posts)
   }
   useEffect(() => {
     CafeAuthFetch()
@@ -72,11 +74,10 @@ const PostList = (props) => {
 
   useEffect(() => {
     if (posts.length) {
-
       setLastPostRef(posts[posts.length-1].postId)
     }
   }, [posts])
-
+  console.log(posts)
   return (
     <Fragment>
       <Feed>
