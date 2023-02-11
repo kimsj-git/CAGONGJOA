@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { Button } from "semantic-ui-react"
 import useFetch from "../../hooks/useFetch"
 
@@ -18,9 +18,14 @@ const Fortune = () => {
         Authorization: `Bearer ${sessionStorage.getItem("accessToken")}`,
       },
     })
+    // sessionStorage.setItem('fortune', fetchedFortune.content)
+    // setTodayFortune(fetchedFortune.content)
+  }
+  
+  useEffect(() => {
     sessionStorage.setItem('fortune', fetchedFortune.content)
     setTodayFortune(fetchedFortune.content)
-  }
+  }, [fetchedFortune])
 
   return (
     <TodayCafePage>

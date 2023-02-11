@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from "react"
+import { useState, useMemo, useRef, useEffect } from "react"
 import { useHistory } from "react-router-dom"
 import { Route, Switch } from "react-router-dom"
 import { useSelector, useDispatch } from "react-redux"
@@ -31,7 +31,7 @@ function App() {
   const Authenticated = sessionStorage.getItem("accessToken")
   
   useEffect(()=>{
-    if (!Authenticated){
+    if (!Authenticated || Authenticated === undefined){
       history.push('/login')
     }
   }, [])
@@ -39,22 +39,25 @@ function App() {
 
   // 위치인증 되면 오늘의 카페 타이머 시작
   const cafeAuth = sessionStorage.getItem("cafeAuth")
-
   const dispatch = useDispatch()
   const accTime = useSelector((state) => state.timer.accTime)
   const addTimeHandler = () => {
     dispatch(timerActions.update(1))
   }
-  const seconds = accTime
-  const interval = useRef(null)
+
+  const time = useRef(0)
   useEffect(() => {
-    // if (cafeAuth === 1) {
-      interval.current = setInterval(() => {
-        addTimeHandler()
+    if (cafeAuth === 1) {
+      const intervalId = setInterval(() => {
+        time.current += 1
+        if (time.current % 60 === 0) {
+          // 1분마다 시간 업데이트..
+          addTimeHandler()
+        }
       }, 1000)
-      return () => clearInterval(interval.current)
-    // }
-  }, [accTime, cafeAuth])
+      return () => clearInterval(intervalId)
+    }
+  }, [time, cafeAuth])
 
   return (
     <Layout>
