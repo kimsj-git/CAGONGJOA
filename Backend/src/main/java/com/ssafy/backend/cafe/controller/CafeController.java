@@ -98,16 +98,18 @@ public class CafeController {
 
 
     /**
-     * 현재 인증된 카페에 대해 혼잡도 받아오기 (1, 2, 3)
+     * 현재 인증된 카페에서 날아오는 혼잡도 저장 하기 (1, 2, 3)
      * 인증 카페 정보는 레디스 조회
+     * 클라이언트로부터 혼잡도 레벨과 오늘 날짜 정수형으로 yyyyMMdd 받기 (ex. 20230211)
      */
     @PostMapping("/crowd/save")
-    public ResponseEntity<ResponseDTO> saveCafeCrowd(@RequestParam int crowdLevel) {
+    public ResponseEntity<ResponseDTO> saveCafeCrowd(@RequestBody CrowdCheckReqDto crowdCheckReqDto) {
 
+        cafeService.saveCrowdLevel(crowdCheckReqDto);
 
         ResponseDTO responseDTO
-                = new ResponseDTO("주변 카페 목록을 혼잡도와 함께 출력", "",
-                HttpStatus.OK, null);
+                = new ResponseDTO("혼잡도 저장 완료", "",
+                HttpStatus.CREATED, null);
         return new ResponseEntity<>(responseDTO, HttpStatus.OK);
     }
 
