@@ -10,16 +10,20 @@ import {
   Form,
   Divider,
   Label,
+  Confirm,
 } from "semantic-ui-react"
 import { ScrollPanel } from "primereact/scrollpanel"
-import CommentItem from "./CommentItem"
+import CommentList from "./CommentList"
 import ToggleButton from "../common/ToggleButton"
 import { useDispatch, useSelector } from "react-redux"
 import { postsActions } from "../../store/posts"
+import PostForm from "./PostForm"
+const DEFAULT_REST_URL = process.env.REACT_APP_REST_DEFAULT_URL
 
 const PostDetail = (props) => {
   const dispatch = useDispatch()
   const [open, setOpen] = useState(false)
+  const [confirmOpen, setConfirmOpen] = useState(false)
 
   return (
     <Modal
@@ -56,7 +60,7 @@ const PostDetail = (props) => {
                       size="huge"
                       src="https://www.freepnglogos.com/uploads/starbucks-logo-png-transparent-0.png"
                     />
-                    <Card.Header>{props.post.author}</Card.Header>
+                    <Card.Header>{props.post.writer}</Card.Header>
                     <Card.Meta>스타벅스 강남R점</Card.Meta>
                     <Card.Meta textAlign="right">
                       {props.post.createdAt}
@@ -69,34 +73,25 @@ const PostDetail = (props) => {
                       style={{ marginBlock: "0.5rem" }}
                     />
                     <Card.Description
+                      dangerouslySetInnerHTML={{ __html: props.post.content }}
                       style={{ fontSize: "1.2rem", lineHeight: "1.8" }}
-                    >
-                      {props.post.content}
-                    </Card.Description>
+                    />
                   </Card.Content>
                 </Card>
               </ScrollPanel>
               <div style={{ display: "flex", marginTop: "1rem" }}>
-                {sessionStorage.getItem("nickname") === props.writer && (
-                  <Button
-                    fluid
-                    // inverted
-                    color="orange"
-                    icon="edit"
-                    content="수정"
-                  ></Button>
+                {sessionStorage.getItem("nickname") !== props.post.writer && (
+                  <PostForm isEditing postToEdit={props.post} />
                 )}
-                {sessionStorage.getItem("nickname") === props.writer && (
+                {sessionStorage.getItem("nickname") !== props.post.writer && (
                   <Button
                     fluid
                     toggle
-                    // inverted
                     color="grey"
                     icon="delete"
                     content="삭제"
                     onClick={() => {
-                      dispatch(postsActions.deletePost(props.post.id))
-                      setOpen(false)
+                      setConfirmOpen(true)
                     }}
                   ></Button>
                 )}
@@ -108,34 +103,28 @@ const PostDetail = (props) => {
                   likeHandler={props.likeHandler}
                 />
               </div>
+              <Confirm
+                open={confirmOpen}
+                content="정말 삭제할까요?"
+                cancelButton="취소"
+                confirmButton="삭제"
+                onCancel={() => {
+                  setConfirmOpen(false)
+                }}
+                onConfirm={() => {
+                  setConfirmOpen(false)
+                  dispatch(postsActions.deletePost(props.post.id))
+                  fetch(
+                    `${DEFAULT_REST_URL}/main/postDetail/delete?postId=${props.post.id}`,
+                    {
+                      method: "DELETE",
+                    }
+                  )
+                  setOpen(false)
+                }}
+              />
             </Grid.Column>
-            <Grid.Column mobile={16} tablet={8} computer={8}>
-              <Header>{`댓글 ${props.post.commentCnt}`}</Header>
-              <Divider />
-              <ScrollPanel style={{ width: "100%", height: "70vh" }}>
-                <Comment.Group>
-                  <CommentItem />
-                  <CommentItem />
-                  <CommentItem />
-                  <CommentItem />
-                  <CommentItem />
-                  <CommentItem />
-                  <CommentItem />
-                </Comment.Group>
-              </ScrollPanel>
-              <Divider />
-              <Form reply>
-                <Form.Input
-                  fluid
-                  placeholder="댓글을 입력하세요."
-                  action={{
-                    color: "brown",
-                    icon: "paper plane",
-                  }}
-                  size="tiny"
-                />
-              </Form>
-            </Grid.Column>
+            <CommentList post={props.post} />
           </Grid>
         </div>
       </Modal.Content>

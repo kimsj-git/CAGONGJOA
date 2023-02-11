@@ -1,4 +1,4 @@
-import { Card, Button, Image, Label } from "semantic-ui-react"
+import { Card, CardHeader, Header, Image, Label } from "semantic-ui-react"
 import PostDetail from "./PostDetail"
 import LoadingPost from "./LoadingPost"
 import ToggleButton from "../common/ToggleButton"
@@ -12,17 +12,25 @@ const DEFAULT_REST_URL = process.env.REACT_APP_REST_DEFAULT_URL
 const PostItem = (props) => {
   const { data, isLoading, sendRequest: fetchLike } = useFetch()
   const dispatch = useDispatch()
+  const tierColor = ["#8B6331", "#C0C0C0", "#FF9614", "#3DFF92"][
+    parseInt(props.tier / 1000)
+  ]
 
-  const likePost = async (btnState) => {
-    dispatch(postsActions.likePost(props.postId))
+  const likePost = async (isLiked) => {
+    console.log(props.id)
+    isLiked
+      ? dispatch(postsActions.cancleLikePost(props.id))
+      : dispatch(postsActions.likePost(props.id))
     await fetchLike({
       url: `${DEFAULT_REST_URL}/main/post/like`,
       method: "POST",
       headers: {
         Authorization: `Bearer ${sessionStorage.getItem("accessToken")}`,
+        "Content-Type": "application/json",
       },
       body: {
-        isChecked: btnState,
+        postId: props.id,
+        isChecked: isLiked,
       },
     })
   }
@@ -30,41 +38,65 @@ const PostItem = (props) => {
     <LoadingPost />
   ) : (
     <Card raised fluid>
-      <Label corner="right" icon={{ name: "lightbulb", color: "orange" }} />
+      <Label
+        corner="right"
+        color="orange"
+        icon={{ name: "lightbulb", color: "white" }}
+      />
       <Card.Content>
-        {props.userType ? (
+        {props.images.length ? (
           <Image
-            avatar
-            floated="left"
-            size="huge"
-            src="https://www.freepnglogos.com/uploads/starbucks-logo-png-transparent-0.png"
-            style={{
-              border: `5px solid ${
-                ["#8B6331", "#C0C0C0", "#FF9614", "#3DFF92"][
-                  parseInt(props.exp / 1000)
-                ]
-              }`,
-            }}
+            src={props.images.length ? props.images[0] : null}
+            wrapped
+            ui={true}
           />
-        ) : (
-          <BsFillPatchQuestionFill
-            style={{ marginInline: "0.5rem 0.8rem" }}
-            size="36"
-            color="grey"
-          />
-        )}
-        <Card.Header>{props.writer}</Card.Header>
-        <Card.Meta>{props.userType ? props.cafeName : null}</Card.Meta>
-        <Card.Meta textAlign="right">{props.createdAt}</Card.Meta>
-        <Image
-          src={props.images.length ? props.images[0] : null}
-          wrapped
-          ui={true}
-          style={{ marginBlock: "0.5rem" }}
+        ) : null}
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "space-between",
+            marginTop: "1rem",
+          }}
+        >
+          <div style={{ whiteSpace: "nowrap" }}>
+            {props.userType ? (
+              <Image
+                avatar
+                floated="left"
+                size="massive"
+                src="https://www.freepnglogos.com/uploads/starbucks-logo-png-transparent-0.png"
+                style={{
+                  marginLeft: "0.5rem",
+                  border: `5px solid ${tierColor}`,
+                }}
+              />
+            ) : (
+              <Image avatar floated="left">
+                <BsFillPatchQuestionFill
+                  style={{ marginInline: "0.5rem 0.8rem" }}
+                  size="36"
+                  color="grey"
+                />
+              </Image>
+            )}
+            <Card.Header
+              style={{
+                fontWeight: "bold",
+                fontSize: "1.2rem",
+                marginBlock: "0.15rem 0.5rem",
+              }}
+            >
+              {props.writer}
+            </Card.Header>
+            <Card.Meta>{props.userType ? props.cafeName : null}</Card.Meta>
+          </div>
+
+          <Card.Meta textAlign="right">{props.createdAt}</Card.Meta>
+        </div>
+        <Card.Description
+          dangerouslySetInnerHTML={{ __html: props.content }}
+          style={{ fontSize: "1.2rem", lineHeight: "1.8" }}
         />
-        <Card.Description style={{ fontSize: "1.2rem", lineHeight: "1.8" }}>
-          {props.content}
-        </Card.Description>
         <Card.Meta textAlign="right">더보기</Card.Meta>
       </Card.Content>
       <Card.Content extra>
