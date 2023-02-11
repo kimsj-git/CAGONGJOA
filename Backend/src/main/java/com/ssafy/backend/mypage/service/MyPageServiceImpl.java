@@ -3,7 +3,6 @@ package com.ssafy.backend.mypage.service;
 import com.ssafy.backend.cafe.domain.dto.CafeNameAndBrandDto;
 import com.ssafy.backend.member.service.MemberService;
 import com.ssafy.backend.mypage.domain.dto.CafeLiveRespDto;
-import com.ssafy.backend.mypage.domain.dto.GetTimeReqDto;
 import com.ssafy.backend.todaycafe.domain.entity.CafeVisitLog;
 import com.ssafy.backend.todaycafe.domain.entity.Fortune;
 import com.ssafy.backend.todaycafe.domain.entity.Todo;
@@ -16,8 +15,6 @@ import org.springframework.stereotype.Service;
 import javax.transaction.Transactional;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -46,7 +43,7 @@ public class MyPageServiceImpl implements MyPageService{
 
         for (CafeVisitLog cafeVisitLogsWithFortune : cafeVisitLogsWithFortunes) {
             Long cafeVisLogId = cafeVisitLogsWithFortune.getId();
-            List<Todo> todos = todoRepository.findTodoByIdCafeVisitId(cafeVisLogId);
+            List<Todo> todos = todoRepository.findAllByCafeVisitLogId(cafeVisLogId);
 
             int todoCount = todos.size();
             int clearCount = 0;

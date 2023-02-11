@@ -5,7 +5,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
-import java.net.Inet4Address;
 import java.util.List;
 import java.util.Optional;
 
@@ -20,5 +19,5 @@ public interface CafeVisitLogRepository extends JpaRepository<CafeVisitLog, Long
     @Query("SELECT c FROM CafeVisitLog c WHERE CONCAT(c.visitedAt, '') LIKE %:ymDate% AND c.member.id = :memberId")
     List<CafeVisitLog> findByVisitedAtLikeAndMemberId(@Param("memberId") long memberId, @Param("ymDate") String ymDate);
 
-    List<CafeVisitLog> findByVisitedAtAndMemberId(int visitedAt, Long memberId);
+    List<CafeVisitLog> findAllByVisitedAtAndMemberId(int visitedAt, Long memberId);
 }

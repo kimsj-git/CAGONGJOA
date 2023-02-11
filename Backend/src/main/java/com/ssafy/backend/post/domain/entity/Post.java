@@ -61,21 +61,20 @@ public class Post extends BaseEntity {
     @Column(name = "is_cafe_authorized", columnDefinition = "TINYINT(1)", length = 1)
     private boolean isCafeAuthorized;
 
-
     /**
      * 6. 양방향 매핑
      **/
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL)
-    List<Comment> commentList = new ArrayList<>();
+    List<Comment> commentList;
 
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL)
-    List<PostImage> postImageList = new ArrayList<>();
+    List<PostImage> postImageList;
 
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL)
-    List<PostLike> postLikeList = new ArrayList<>();
+    List<PostLike> postLikeList;
 
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL)
-    List<PostCafe> postCafeList = new ArrayList<>();
+    List<PostCafe> postCafeList;
 
     /**
      * 생성자 : content, member, 카테고리, 이미지(나중추가)
@@ -85,9 +84,8 @@ public class Post extends BaseEntity {
         this.content = content;
     }
 
-    public void addPostImage(PostImage postImage) {
-        this.postImageList.add(postImage);
-        postImage.setPost(this);
+    public void updatePostImage(List<PostImage> postImageList) {
+        this.postImageList = postImageList;
     }
 
     public void updateAuthorized(){

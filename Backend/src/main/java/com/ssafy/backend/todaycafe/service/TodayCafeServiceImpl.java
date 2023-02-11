@@ -391,19 +391,20 @@ public class TodayCafeServiceImpl implements TodayCafeService {
     public List<TodoResponseDto> findTodo(int visitedAt) {
         Long memberId = postUtil.checkMember().getMemberId();
 
-        List<CafeVisitLog> cafeVisitLogList = cafeVisitLogRepository.findByVisitedAtAndMemberId(visitedAt, memberId);
+        List<CafeVisitLog> cafeVisitLogList = cafeVisitLogRepository.findAllByVisitedAtAndMemberId(visitedAt, memberId);
         if (cafeVisitLogList.isEmpty() || cafeVisitLogList == null) {
-            throw new TodayCafeException(TodayCafeExceptionType.VISITED_AT_ERROR);
+            System.out.println("todoList 불러오기 - visitLog 없음!");
+            return null;
         }
+        System.out.println("cafeVisitLogList : " + cafeVisitLogList);
 
         List<TodoResponseDto> todoResponseDtoList = new ArrayList<>();
-        for (CafeVisitLog cafeVisitLog : cafeVisitLogList) {
-            List<Todo> todoList = todoRepository.findTodoByIdCafeVisitId(cafeVisitLog.getId());
-            if(todoList.isEmpty() || todoList == null) {
-                return null;
-            }
-            for (Todo todo : todoList) {
 
+        for (CafeVisitLog cafeVisitLog : cafeVisitLogList) {
+            List<Todo> todoList = todoRepository.findAllByCafeVisitLogId(cafeVisitLog.getId());
+            if(todoList == null || todoList.isEmpty()) continue;
+            System.out.println("cafeVisitLogId : " + cafeVisitLog.getId());
+            for (Todo todo : todoList) {
                 todoResponseDtoList.add(TodoResponseDto.builder()
                         .id(todo.getId())
                         .responseType(0)

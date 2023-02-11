@@ -35,7 +35,7 @@ public class PostDetailController {
     @Auth
     @GetMapping("/comment/feed")
     public ResponseEntity<ResponseDTO> feedComment(
-            @RequestBody CommentPagingRequestDto requestDto) throws Exception {
+            @RequestBody CommentPagingRequestDto requestDto) {
 
         List<CommentPagingResponseDto> comments = commentService.feedComment(requestDto);
 

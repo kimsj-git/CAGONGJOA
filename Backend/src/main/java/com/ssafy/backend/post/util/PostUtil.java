@@ -35,12 +35,14 @@ public class PostUtil {
     private final MemberServiceImpl memberService;
 
 
-    /**    0. 유저 확인   **/
+    /**
+     * 0. 유저 확인
+     **/
     public CheckedResponseDto checkMember() {
 
         // 1. accessToken 을 해독하여, payload 에서 memberId 와 nickname 을 가져온다.
         MemberIdAndNicknameDto memberIdAndNicknameDto = memberService.getMemberIdAndNicknameByJwtToken();
-        if(memberIdAndNicknameDto == null) throw new JwtException(JWT_VERIFICATION_EXCEPTION); // JWT 유효성 체크
+        if (memberIdAndNicknameDto == null) throw new JwtException(JWT_VERIFICATION_EXCEPTION); // JWT 유효성 체크
         Long memberId = memberIdAndNicknameDto.getId();
         String nickname = memberIdAndNicknameDto.getNickname();
 
@@ -52,13 +54,20 @@ public class PostUtil {
         return checkedResponseDto;
     }
 
-    public List<PostImage> imageUpload(MultipartFile[] multipartFiles) {
+    public List<PostImage>  imageUpload(Post post, MultipartFile[] multipartFiles){
         ObjectMetadata objectMetaData = new ObjectMetadata();
-        List<PostImage> postImages = new ArrayList<>();
+        List<PostImage> postImages = imageRepository.findAllByPostId(post.getId());
 
+        if (postImages == null || postImages.isEmpty()) {
+            postImages = new ArrayList<>();
+        }
+        System.out.println("postImageList : " + postImages);
         for (MultipartFile multipartFile : multipartFiles) {
             long size = multipartFile.getSize(); // 파일 크기
             System.out.println("파일 사이즈 : " + size);
+            if(size == 0) {
+                continue;
+            }
             String originalName = multipartFile.getOriginalFilename(); // 파일 원래이름 (xxx.jpg) 갖고오기
             String randomName = UUID.randomUUID().toString().concat("-").concat(originalName);
 
@@ -66,9 +75,9 @@ public class PostUtil {
             String contentType = multipartFile.getContentType().toString();
 
             //확장자 검사
-            if(contentType.equals("image/jpeg") || contentType.equals("image/jpg") || contentType.equals("image/png") || contentType.equals("image/jfif") || contentType.equals("image/gif") || contentType.equals("image/bmp") ) {
+            if (contentType.equals("image/jpeg") || contentType.equals("image/jpg") || contentType.equals("image/png") || contentType.equals("image/jfif") || contentType.equals("image/gif") || contentType.equals("image/bmp")) {
 
-            }else {
+            } else {
                 throw new PostException(PostExceptionType.NOT_ALLOWED_IMAGE_TYPE);
             }
 
@@ -88,28 +97,33 @@ public class PostUtil {
 
             postImage = PostImage.builder()
                     .imgUrl(imagePath)
+                    .post(post)
                     .accessKey(randomName)
                     .build();
 
             postImages.add(postImage);
         }
-        return postImages;
+        List<PostImage> postImageList = imageRepository.saveAll(postImages);
+        System.out.println("이미지 저장완료!");
+        System.out.println("이미지 : " + postImageList);
+        return postImageList;
     }
 
     public void imageDelete(Post post, List<Long> imageIdList) {
 
-        List<PostImage> postImages = imageRepository.findAllByPostIdIn(imageIdList);
+        List<PostImage> postImages = imageRepository.findAllByPostIdAndIdNotIn(post.getId(), imageIdList);
         // null 이면 이미지를 삭제하지 않고 바로 리턴하여 돌아간다.
-        if(postImages.isEmpty() || postImages == null) {
+        if (postImages.isEmpty() || postImages == null) {
             System.out.println("img empty!");
             return;
         }
-        for(PostImage data : postImages) {
+        List<Long> deleteIdList = new ArrayList<>();
+        for (PostImage data : postImages) {
             // acess key를 가져와서 S3 데이터를 삭제한다.
             amazonS3.deleteObject(bucket, data.getAccessKey());
+            deleteIdList.add(data.getId());
         }
-        post.deleteImages();
-        imageRepository.deleteAllByPostId(post.getId());
+        imageRepository.deleteAllByIdIn(deleteIdList);
 
     }
 
