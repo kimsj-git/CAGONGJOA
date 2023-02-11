@@ -19,8 +19,10 @@ const PostList = (props) => {
   const posts = useSelector((state) => state.posts.posts)
   const filterState = useSelector((state) => state.posts.filterState)
   const [lastPostRef, setLastPostRef] = useState(-1)
-  const isLoading = useSelector((state)=>state.posts.isLoading)
+  const isLoading = useSelector((state) => state.posts.isLoading)
   // const { data: fetchedPosts, isLoading, sendRequest: getPosts } = useFetch()
+
+  const isMounted = useRef(false)
   const [ref, inView] = useInView({
     threshold: 0.5,
     // triggerOnce: true,
@@ -31,29 +33,7 @@ const PostList = (props) => {
     .map(([key, value]) => key)
 
   const refreshPosts = (postId = -1) => {
-    dispatch(getPosts({postId:postId, filters: filters }))
-    // // console.log(filters)
-    //   await getPosts({
-    //     url: `${DEFAULT_REST_URL}/main/post/feed`,
-    //     method: "POST",
-    //     headers: {
-    //       Authorization: `Bearer ${sessionStorage.getItem("accessToken")}`,
-    //       "Content-Type": "application/json",
-    //     },
-    //     body: {
-    //       postId: postId,
-    //       types: filters.length
-    //         ? filters
-    //         : ["free", "qna", "together", "tip", "recommend", "help", "lost"],
-    //       latitude: JSON.parse(sessionStorage.getItem("location")).lat,
-    //       longitude: JSON.parse(sessionStorage.getItem("location")).lng,
-    //       dist: DIST,
-    //     },
-    //   })
-    //   console.log(fetchedPosts)
-    //   dispatch(postsActions.updatePosts({fetchedPosts: fetchedPosts, lastPostId: postId}))
-    //   console.log(fetchedPosts.length)
-    //   console.log(posts)
+    dispatch(getPosts({ postId: postId, filters: filters }))
   }
   useEffect(() => {
     CafeAuthFetch()
@@ -64,7 +44,7 @@ const PostList = (props) => {
   }, [filterState])
 
   useEffect(() => {
-    if (inView) {
+    if (isMounted.current && inView) {
       refreshPosts(lastPostRef)
       console.log("포스트 더보기 요청")
       console.log(inView)
@@ -73,22 +53,27 @@ const PostList = (props) => {
   }, [inView])
 
   useEffect(() => {
-    if (posts.length) {
-      setLastPostRef(posts[posts.length-1].postId)
+    if (isMounted.current) {
+      if (posts.length) {
+        setLastPostRef(posts[posts.length - 1].postId)
+      }
+    } else {
+      isMounted.current = true
     }
   }, [posts])
-  console.log(posts)
+
   return (
     <Fragment>
       <Feed>
         {posts.map((post, index) => (
           <PostItem
             key={post.postId}
+            id={post.postId}
             createdAt={post.createdAt}
             type={post.postType}
             writer={post.writerNickname}
             userType={post.userType}
-            tier={post.tier}
+            tier={post.exp}
             cafeName={post.cafeName}
             cafeBrand={post.brandType}
             content={post.content}

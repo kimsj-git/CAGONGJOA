@@ -15,16 +15,18 @@ import useFetch from "../../hooks/useFetch.js"
 import ImageUploadBox from "./ImageUploadBox"
 import { Editor } from "primereact/editor"
 import { imageActions } from "../../store/image"
+import { postsActions } from "../../store/posts.js"
+import { ReactMarkdown } from "react-markdown/lib/react-markdown.js"
 
 const DEFAULT_REST_URL = process.env.REACT_APP_REST_DEFAULT_URL
 const PostForm = (props) => {
   const dispatch = useDispatch()
   // 현재 카페 정보 가져오기
   const isAuthenticated = sessionStorage.getItem("cafeAuth")
-  let currentCafe = ''
-  isAuthenticated 
-    ? currentCafe = JSON.parse(sessionStorage.getItem("myCafe"))?.cafeName
-    : currentCafe = null
+  let currentCafe = ""
+  isAuthenticated
+    ? (currentCafe = JSON.parse(sessionStorage.getItem("myCafe"))?.cafeName)
+    : (currentCafe = null)
 
   const { data: newPostId, isLoading, sendRequest: newPost } = useFetch()
   // 모달창 상태 관리
@@ -54,22 +56,32 @@ const PostForm = (props) => {
 
   const submitHandler = async () => {
     // post 내용이 없을 경우
-    if (!postContent) {
+    if (!postContent && !postImages) {
       alert("글 내용을 입력해주세요!")
       return
     }
 
-    await newPost({
-      url: `${DEFAULT_REST_URL}/writeForm/write`,
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${sessionStorage.getItem("accessToken")}`,
-      },
-      body: {
-        writeForm: { content: postContent, type: postType },
-        imgFiles: postImages,
-      },
-    })
+    props.isEditing
+      ? dispatch(
+          postsActions.editPost({
+            id: props.postToEdit.id,
+            content: postContent,
+            type: postType,
+            images: postImages,
+          })
+        )
+      : await newPost({
+          url: `${DEFAULT_REST_URL}/writeForm/write`,
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${sessionStorage.getItem("accessToken")}`,
+            "Content-Type": "multipart/form-data",
+          },
+          body: {
+            writeForm: { content: postContent, type: postType },
+            imgFiles: postImages,
+          },
+        })
     setSecondOpen(true)
     // state 초기화
     setPostContent("")
@@ -86,7 +98,12 @@ const PostForm = (props) => {
           setPostContent("")
           setPostType("")
         }}
-        onOpen={() => setFirstOpen(true)}
+        onOpen={() => {
+          setFirstOpen(true)
+          setPostContent(props.isEditing ? props.postToEdit.content : "")
+          setPostType(props.isEditing ? props.postToEdit.type : "")
+          dispatch(imageActions.uploadImage(...props.postToEdit.images))
+        }}
         trigger={
           isStudyHistory ? (
             <Button
@@ -104,6 +121,8 @@ const PostForm = (props) => {
               <Icon name="star" color="orange" style={{ opacity: "100%" }} />
               자랑하기
             </Button>
+          ) : props.isEditing ? (
+            <Button fluid color="orange" icon="edit" content="수정"></Button>
           ) : (
             <div
               style={{
@@ -123,10 +142,12 @@ const PostForm = (props) => {
         }
       >
         <Modal.Header>
-          {currentCafe
+          {props.isEditing
+            ? props.postToEdit.cafeName + "의 이야기를 들려주세요!"
+            : currentCafe
             ? currentCafe + "의 이야기를 들려주세요!"
-            : sessionStorage.getItem("address") +
-              "근처 유저들에게 질문을 남겨보세요!"}
+            : sessionStorage.getItem("address")?.split(" ").at(-1) +
+              " 근처 유저들에게 질문을 남겨보세요!"}
         </Modal.Header>
 
         {/* <Image size="medium" src="/images/wireframe/image.png" wrapped /> */}
@@ -143,17 +164,30 @@ const PostForm = (props) => {
               selection
               floating
               required
+              disabled={
+                props.isEditing
+                  ? props.postToEdit.userType
+                    ? true
+                    : false
+                  : currentCafe
+                  ? false
+                  : true
+              }
               options={postTypes}
               onChange={(event, data) => {
                 setPostType(data.value)
               }}
               style={{ marginBottom: "20px" }}
-              defaultValue={"free"}
+              defaultValue={
+                props.isEditing ? postType : currentCafe ? "free" : "qna"
+              }
             />
             <div className="card">
               <Editor
                 value={postContent}
-                onTextChange={(e) => setPostContent(e.htmlValue)}
+                onTextChange={(e) => {
+                  setPostContent(e.htmlValue)
+                }}
                 style={{ height: "100px" }}
               />
             </div>
@@ -208,7 +242,8 @@ const PostForm = (props) => {
         closeOnDimmerClick={false}
       >
         <Header icon>
-          <Icon name="check circle" />글 작성이 완료되었습니다!
+          <Icon name="check circle" />
+          {`글 ${props.isEditing ? "수정" : "작성"}이 완료되었습니다!`}
         </Header>
         {/* <Modal.Content>
           <p></p>
