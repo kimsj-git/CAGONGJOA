@@ -15,4 +15,6 @@ public interface CafeService {
 
     List<NearByCafeWithCrowdResultDto> addCrowdInfoToNearByCafes(List<NearByCafeResultDto> nearByCafeLocations,
                                                                  CurTimeReqDto curTimeReqDto);
+
+    void saveCrowdLevel(CrowdCheckReqDto crowdCheckReqDto);
 }

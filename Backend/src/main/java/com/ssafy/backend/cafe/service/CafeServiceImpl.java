@@ -9,6 +9,7 @@ import com.ssafy.backend.cafe.repository.CafeRepository;
 import com.ssafy.backend.cafe.util.GeometryUtil;
 import com.ssafy.backend.common.exception.cafe.CafeException;
 import com.ssafy.backend.common.exception.cafe.CafeExceptionType;
+import com.ssafy.backend.member.domain.dto.MemberIdAndNicknameDto;
 import com.ssafy.backend.member.domain.entity.MemberCafeTier;
 import com.ssafy.backend.member.repository.MemberCafeTierRepository;
 import com.ssafy.backend.member.repository.MemberRepository;
@@ -16,6 +17,8 @@ import com.ssafy.backend.member.service.MemberService;
 import com.ssafy.backend.post.util.PostUtil;
 import com.ssafy.backend.redis.CafeAuth;
 import com.ssafy.backend.redis.CafeAuthRepository;
+import com.ssafy.backend.todaycafe.domain.entity.CafeVisitLog;
+import com.ssafy.backend.todaycafe.repository.CafeVisitLogRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
@@ -44,7 +47,38 @@ public class CafeServiceImpl implements CafeService {
     private final PostUtil postUtil;
     private final CafeCrowdRepository cafeCrowdRepository;
     private final int THREE_HOURS_AGO = 3;
+    private final CafeVisitLogRepository cafeVisitLogRepository;
 
+
+    @Override
+    public void saveCrowdLevel(CrowdCheckReqDto crowdCheckReqDto) {
+        // 닉네임 가져오기
+        MemberIdAndNicknameDto memberIdAndNick = memberService.getMemberIdAndNicknameByJwtToken();
+        long memberId = memberIdAndNick.getId();
+        String nickname = memberIdAndNick.getNickname();
+
+        // 레디스 체크 - 위치인증 확인 및 카페 id 가져오기
+        Optional<CafeAuth> cafeAuthOptional = cafeAuthRepository.findById(nickname); // key = nickname
+        if (cafeAuthOptional.isEmpty()) {
+            throw new CafeException(CafeExceptionType.CAFE_AUTH_EXPIRED);
+        }
+
+        long cafeId = cafeAuthOptional.get().getCafeId();
+
+        // 오늘의 카페 정보 가져오기
+        Optional<CafeVisitLog> optionalCafeVisitLog = cafeVisitLogRepository
+                .findByVisitedAtAndMemberIdAndCafeId(crowdCheckReqDto.getTodayDate(), memberId, cafeId);
+
+        if (optionalCafeVisitLog.isEmpty()) {
+            throw new CafeException(CafeExceptionType.CAFE_AUTH_MISMATCH);
+        }
+
+        if (optionalCafeVisitLog.get().isSurvey()) {
+            throw new CafeException(CafeExceptionType.ALREADY_SUBMIT_CROWD_SURVEY);
+        }
+
+        optionalCafeVisitLog.get().setSurvey(true);
+    }
 
     @Override
     public List<NearByCafeWithCrowdResultDto> addCrowdInfoToNearByCafes(List<NearByCafeResultDto> nearByCafeLocations,
