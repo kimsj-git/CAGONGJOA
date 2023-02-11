@@ -81,6 +81,32 @@ public class CafeServiceImpl implements CafeService {
     }
 
     @Override
+    public boolean checkCrowdSurvey(int todayDate) {
+        // 닉네임 가져오기
+        MemberIdAndNicknameDto memberIdAndNick = memberService.getMemberIdAndNicknameByJwtToken();
+        long memberId = memberIdAndNick.getId();
+        String nickname = memberIdAndNick.getNickname();
+
+        // 레디스 체크 - 위치인증 확인 및 카페 id 가져오기
+        Optional<CafeAuth> cafeAuthOptional = cafeAuthRepository.findById(nickname); // key = nickname
+        if (cafeAuthOptional.isEmpty()) {
+            throw new CafeException(CafeExceptionType.CAFE_AUTH_EXPIRED);
+        }
+
+        long cafeId = cafeAuthOptional.get().getCafeId();
+
+        // 오늘의 카페 정보 가져오기
+        Optional<CafeVisitLog> optionalCafeVisitLog = cafeVisitLogRepository
+                .findByVisitedAtAndMemberIdAndCafeId(todayDate, memberId, cafeId);
+
+        if (optionalCafeVisitLog.isEmpty()) {
+            throw new CafeException(CafeExceptionType.CAFE_AUTH_MISMATCH);
+        }
+
+        return optionalCafeVisitLog.get().isSurvey();
+    }
+
+    @Override
     public List<NearByCafeWithCrowdResultDto> addCrowdInfoToNearByCafes(List<NearByCafeResultDto> nearByCafeLocations,
                                                                         CurTimeReqDto curTimeReqDto) {
 
