@@ -1,5 +1,6 @@
 package com.ssafy.backend.cafe.domain.entity;
 
+import com.ssafy.backend.common.entity.CreateAtEntity;
 import com.ssafy.backend.member.domain.enums.OauthType;
 import lombok.*;
 import org.springframework.util.Assert;
@@ -10,9 +11,9 @@ import java.time.LocalDateTime;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@ToString(of={"id", "crowdValue", "createdAt"})
+@ToString(of={"id", "crowdValue"})
 @Table(name = "cafe_crowd")
-public class CafeCrowd {
+public class CafeCrowd extends CreateAtEntity {
     @Id
     @GeneratedValue
     private Long id;
@@ -24,15 +25,10 @@ public class CafeCrowd {
     @Column(name = "crowd_value")
     private int crowdValue;
 
-    @Column(name = "created_at", updatable = false)
-    private LocalDateTime createdAt;
-
-    @Builder(builderClassName = "cafeCrowdBuilder", builderMethodName = "cafeCrowdBuilder")
+    @Builder(builderClassName = "cafeCrowdSaveBuilder", builderMethodName = "cafeCrowdSaveBuilder")
     public CafeCrowd(Cafe cafe, int crowdValue) {
         Assert.notNull(cafe, "cafe must not be null");
-
         this.cafe = cafe;
         this.crowdValue = crowdValue;
     }
-
 }
