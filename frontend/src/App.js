@@ -29,6 +29,7 @@ function App() {
   // 바로 로그인 화면으로
   const history = useHistory()
   const Authenticated = sessionStorage.getItem("accessToken")
+  const [isCafeAuth, setIsCafeAuth] = useState(sessionStorage.getItem("cafeAuth"))
   
   useEffect(()=>{
     if (!Authenticated || Authenticated === undefined){

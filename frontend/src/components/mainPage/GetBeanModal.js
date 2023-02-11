@@ -31,6 +31,7 @@ const GetBeanModal = (props) => {
         }),
       })
       const responseData = await response.json()
+      console.log(responseData)
       if (responseData.httpStatus === "UNAUTHORIZED" && responseData.data.sign ==="CAFE"){
         setOpen(false)
         alert("카페 인증이 필요합니다.")
@@ -55,7 +56,7 @@ const GetBeanModal = (props) => {
           setOpen(false)
           alert('다시 시도해주세요.')
         }
-      } else{
+      } else if(responseData.httpStatus === "CREATED"){
           sessionStorage.setItem('jamSurvey', 1)
       }
   }

@@ -4,7 +4,6 @@ import { useSelector, useDispatch } from "react-redux"
 import { Modal, Button, ModalActions, Icon } from "semantic-ui-react"
 
 import { modalActions } from "../../../store/modal"
-import useFetch from "../../../hooks/useFetch"
 
 const REST_DEFAULT_URL = process.env.REACT_APP_REST_DEFAULT_URL
 
