@@ -17,4 +17,6 @@ public interface CafeService {
                                                                  CurTimeReqDto curTimeReqDto);
 
     void saveCrowdLevel(CrowdCheckReqDto crowdCheckReqDto);
+
+    boolean checkCrowdSurvey(int todayDate);
 }

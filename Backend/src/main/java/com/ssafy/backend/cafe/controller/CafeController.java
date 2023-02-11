@@ -90,9 +90,11 @@ public class CafeController {
      * 혼잡도 설문 실시 여부 체크
      */
     @GetMapping("/crowd/check")
-    public ResponseEntity<ResponseDTO> checkCrowdSurvey() {
-//        cafeService.checkCrowdSurvey();
-        ResponseDTO responseDTO = new ResponseDTO("혼잡도 설문 여부 체크 완료!", "", HttpStatus.OK, null);
+    public ResponseEntity<ResponseDTO> checkCrowdSurvey(@RequestParam int todayDate) {
+        boolean checkVal = cafeService.checkCrowdSurvey(todayDate);
+        CrowdCheckRespDto crowdCheckRespDto = new CrowdCheckRespDto(checkVal);
+        ResponseDTO responseDTO = new ResponseDTO("혼잡도 설문 여부 체크 완료!", "",
+                                                        HttpStatus.OK, crowdCheckRespDto);
         return new ResponseEntity<>(responseDTO, HttpStatus.OK);
     }
 
