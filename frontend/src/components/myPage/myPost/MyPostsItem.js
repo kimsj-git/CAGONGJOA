@@ -1,5 +1,5 @@
 import { Item } from "semantic-ui-react"
-
+import MyPostDetail from './MyPostDetail'
 const MyPostsItem = ({ post }) => {
   const content = `${post.postContent.substr(0, 50)}...`
   return (
@@ -7,8 +7,8 @@ const MyPostsItem = ({ post }) => {
       <Item.Image
         size="tiny"
         src={
-          post.postImg
-            ? require(`../../../assets/icons/${post.postImg}`)
+          post.images.length>0
+            ? require(`../../../assets/icons/${post.images[0]}`)
             : require("../../../assets/icons/kagongjoa_logo.png")
         }
         alt="#"
@@ -19,7 +19,9 @@ const MyPostsItem = ({ post }) => {
         <Item.Meta>
           <span>{content}</span>
         </Item.Meta>
-        <Item.Extra>{post.postType}</Item.Extra>
+        <Item.Extra>{post.postType}
+        <MyPostDetail post={post}/>
+        </Item.Extra>
       </Item.Content>
     </Item>
   )
