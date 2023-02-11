@@ -26,6 +26,7 @@ import java.math.BigInteger;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.*;
+import java.util.stream.Collectors;
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
 
@@ -49,23 +50,50 @@ public class CafeServiceImpl implements CafeService {
     public List<NearByCafeWithCrowdResultDto> addCrowdInfoToNearByCafes(List<NearByCafeResultDto> nearByCafeLocations,
                                                                         CurTimeReqDto curTimeReqDto) {
 
+        // 리턴할 리스트 선언
         List<NearByCafeWithCrowdResultDto> nearByCafeWithCrowdResultDtos = new ArrayList<>();
 
-        // 1. foreach로 가져온 카페들 순회
+        // 근처 카페 위치정보 리스트
+        List<Long> cafeIdList = new ArrayList<>();
+
         for (NearByCafeResultDto nearByCafeLocation : nearByCafeLocations) {
-            // 2.특정 카페 & 현재로부터 세시간에 해당하는 혼잡도 데이터 가져오기
-            long id = nearByCafeLocation.getId().longValue();
-            LocalDateTime todayTime = curTimeReqDto.getTodayTime();
+            cafeIdList.add(nearByCafeLocation.getId().longValue());
+        }
 
-            LocalDateTime threeHoursAgo = todayTime.minusHours(THREE_HOURS_AGO);
-            // 특정 카페에 대해 세시간 혼잡도 데이터 가져오기
-            List<CafeCrowd> crowdList = cafeCrowdRepository
-                    .findAllByCreatedAtBetweenAndCafeId(threeHoursAgo, todayTime, id);
+        LocalDateTime todayTime = curTimeReqDto.getTodayTime();
+        LocalDateTime threeHoursAgo = todayTime.minusHours(THREE_HOURS_AGO);
 
-            CrowdLevel crowdLevel = calcCrowdLevel(crowdList, todayTime);
+        List<CafeCrowd> cafeCrowds = cafeCrowdRepository.fineByCafeIds(cafeIdList, threeHoursAgo, todayTime);
+
+        ArrayList<Long> curCafeIds = new ArrayList<>();
+
+        for (CafeCrowd cafeCrowd : cafeCrowds) {
+            curCafeIds.add(cafeCrowd.getCafe().getId());
+        }
+
+        List<Long> distinctCurCafeIds = curCafeIds.stream().distinct().collect(Collectors.toList());
+
+        // [ {cafeID: [(time, value), (time, value), ...]}, {}, ... {}]
+        Map<Long, ArrayList<TimeCrowdDto>> cafeCrowdMap = new HashMap();
+
+        // map 초기화
+        for (Long distinctCurCafeId : distinctCurCafeIds) {
+            cafeCrowdMap.put(distinctCurCafeId, new ArrayList<TimeCrowdDto>());
+        }
+
+        // map에 값 채우기
+        for (CafeCrowd cafeCrowd : cafeCrowds) {
+            long curCafeId = cafeCrowd.getCafe().getId();
+            cafeCrowdMap.get(curCafeId).add(new TimeCrowdDto(cafeCrowd.getCreatedAt(), cafeCrowd.getCrowdValue()));
+        }
+
+        // {cafeId : "L"}, {cafeId2 : "M"}, {cafeId3 : "H"} ...
+        Map<Long, CrowdLevel> cafeIdsWithCrowdMap = calcCrowdLevel(cafeCrowdMap, todayTime);
+
+        for (NearByCafeResultDto nearByCafeLocation : nearByCafeLocations) {
 
             NearByCafeWithCrowdResultDto nearByCafeWithCrowdResultDto = new NearByCafeWithCrowdResultDto();
-            nearByCafeWithCrowdResultDto.setCrowdLevel(crowdLevel);
+            nearByCafeWithCrowdResultDto.setCrowdLevel(cafeIdsWithCrowdMap.get(nearByCafeLocation.getId().longValue()));
 
             // 혼잡도 포함 dto에 기존 카페 dto 복사
             BeanUtils.copyProperties(nearByCafeLocation, nearByCafeWithCrowdResultDto);
@@ -81,38 +109,51 @@ public class CafeServiceImpl implements CafeService {
      *  ~ 2시간 - * 0.7
      *  ~ 3시간 - * 0.5
      */
-    private CrowdLevel calcCrowdLevel(List<CafeCrowd> crowdList, LocalDateTime todayTime) {
+    private Map<Long, CrowdLevel> calcCrowdLevel(Map<Long, ArrayList<TimeCrowdDto>> cafeCrowdMap,
+                                                 LocalDateTime todayTime) {
 
-        int lstSize = crowdList.size();
-        double totalCrowdVal = 0.0;
+        // {cafeId : "L"}, {cafeId2 : "M"}, {cafeId3 : "H"} ...
+        Map<Long, CrowdLevel> results = new HashMap<>();
 
-        for (CafeCrowd cafeCrowd : crowdList) {
-            int crowdValue = cafeCrowd.getCrowdValue();
-            Duration duration = Duration.between(cafeCrowd.getCreatedAt(), todayTime);
-            int minutes = (int) duration.toMinutes();
+        for (Long cafeId : cafeCrowdMap.keySet()) {
+            ArrayList<TimeCrowdDto> timeCrowdDtos = cafeCrowdMap.get(cafeId);
+            int crowdListSize = timeCrowdDtos.size();
+            double sumCrowdVal = 0.0;
 
-            if (minutes <= 10) {
-                totalCrowdVal += crowdValue * 2; // ~ 10분 2배
-            } else if (minutes <= 30) {
-                totalCrowdVal += crowdValue; // ~ 30분 1배
-            } else if (minutes <= 120) {
-                totalCrowdVal += crowdValue * 0.6; // ~ 120분 0.7배
+
+            for (TimeCrowdDto timeCrowdDto : timeCrowdDtos) {
+                int crowdValue = timeCrowdDto.getVal();
+
+                Duration duration = Duration.between(timeCrowdDto.getTime(), todayTime);
+                int minutes = (int) duration.toMinutes();
+
+                if (minutes <= 10) {
+                    sumCrowdVal += crowdValue * 2; // ~ 10분 2배
+                } else if (minutes <= 30) {
+                    sumCrowdVal += crowdValue; // ~ 30분 1배
+                } else if (minutes <= 120) {
+                    sumCrowdVal += crowdValue * 0.6; // ~ 120분 0.7배
+                } else {
+                    sumCrowdVal += crowdValue * 0.3; // ~ 180분 0.5배
+                }
+            }
+
+            double meanVal = sumCrowdVal / crowdListSize;
+
+            // 첫째자리에서 반올림 코드
+            double roundedMeanVal = (double) Math.round(meanVal * 10) / 10;
+
+//            System.out.println("roundedMeanVal = " + roundedMeanVal + "cafeId = " +cafeId);
+
+            if (roundedMeanVal < 2) {
+                results.put(cafeId, CrowdLevel.L);
+            } else if (roundedMeanVal < 3) {
+                results.put(cafeId, CrowdLevel.M);
             } else {
-                totalCrowdVal += crowdValue * 0.3; // ~ 180분 0.5배
+                results.put(cafeId, CrowdLevel.H);
             }
         }
-        double meanVal = totalCrowdVal / lstSize;
-
-        // 첫째자리에서 반올림 코드
-        double roundedMeanVal = (double) Math.round(meanVal * 10) / 10;
-
-        if (roundedMeanVal < 2) {
-            return CrowdLevel.L;
-        } else if (roundedMeanVal < 3) {
-            return CrowdLevel.M;
-        } else {
-            return CrowdLevel.H;
-        }
+        return results;
     }
 
     @Override

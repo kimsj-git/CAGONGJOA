@@ -11,7 +11,7 @@ import java.time.LocalDateTime;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@ToString(of={"id"})
+@ToString(of={"id", "crowdValue", "createdAt"})
 @Table(name = "cafe_crowd")
 public class CafeCrowd {
     @Id
