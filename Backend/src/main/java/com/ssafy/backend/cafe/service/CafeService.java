@@ -1,9 +1,6 @@
 package com.ssafy.backend.cafe.service;
 
-import com.ssafy.backend.cafe.domain.dto.ClientPosInfoDto;
-import com.ssafy.backend.cafe.domain.dto.NearByCafeResultDto;
-import com.ssafy.backend.cafe.domain.dto.SelectCafeRequestDto;
-import com.ssafy.backend.cafe.domain.entity.CafeLocation;
+import com.ssafy.backend.cafe.domain.dto.*;
 
 import java.util.List;
 
@@ -15,4 +12,7 @@ public interface CafeService {
     void checkCafeAuth();
 
     void saveTier() throws Exception;
+
+    List<NearByCafeWithCrowdResultDto> addCrowdInfoToNearByCafes(List<NearByCafeResultDto> nearByCafeLocations,
+                                                                 CurTimeReqDto curTimeReqDto);
 }

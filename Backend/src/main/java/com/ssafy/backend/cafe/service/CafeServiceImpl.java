@@ -1,10 +1,10 @@
 package com.ssafy.backend.cafe.service;
 
-import com.ssafy.backend.cafe.domain.dto.ClientPosInfoDto;
-import com.ssafy.backend.cafe.domain.dto.LocationDto;
-import com.ssafy.backend.cafe.domain.dto.NearByCafeResultDto;
-import com.ssafy.backend.cafe.domain.dto.SelectCafeRequestDto;
+import com.ssafy.backend.cafe.domain.dto.*;
+import com.ssafy.backend.cafe.domain.entity.CafeCrowd;
+import com.ssafy.backend.cafe.domain.enums.CrowdLevel;
 import com.ssafy.backend.cafe.domain.enums.Direction;
+import com.ssafy.backend.cafe.repository.CafeCrowdRepository;
 import com.ssafy.backend.cafe.repository.CafeRepository;
 import com.ssafy.backend.cafe.util.GeometryUtil;
 import com.ssafy.backend.common.exception.cafe.CafeException;
@@ -17,12 +17,16 @@ import com.ssafy.backend.post.util.PostUtil;
 import com.ssafy.backend.redis.CafeAuth;
 import com.ssafy.backend.redis.CafeAuthRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.*;
+import java.util.stream.Collectors;
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
 
@@ -38,7 +42,119 @@ public class CafeServiceImpl implements CafeService {
     private final MemberRepository memberRepository;
     private final MemberCafeTierRepository memberCafeTierRepository;
     private final PostUtil postUtil;
+    private final CafeCrowdRepository cafeCrowdRepository;
+    private final int THREE_HOURS_AGO = 3;
 
+
+    @Override
+    public List<NearByCafeWithCrowdResultDto> addCrowdInfoToNearByCafes(List<NearByCafeResultDto> nearByCafeLocations,
+                                                                        CurTimeReqDto curTimeReqDto) {
+
+        // 리턴할 리스트 선언
+        List<NearByCafeWithCrowdResultDto> nearByCafeWithCrowdResultDtos = new ArrayList<>();
+
+        // 근처 카페 위치정보 리스트
+        List<Long> cafeIdList = new ArrayList<>();
+
+        for (NearByCafeResultDto nearByCafeLocation : nearByCafeLocations) {
+            cafeIdList.add(nearByCafeLocation.getId().longValue());
+        }
+
+        LocalDateTime todayTime = curTimeReqDto.getTodayTime();
+        LocalDateTime threeHoursAgo = todayTime.minusHours(THREE_HOURS_AGO);
+
+        List<CafeCrowd> cafeCrowds = cafeCrowdRepository.fineByCafeIds(cafeIdList, threeHoursAgo, todayTime);
+
+        ArrayList<Long> curCafeIds = new ArrayList<>();
+
+        for (CafeCrowd cafeCrowd : cafeCrowds) {
+            curCafeIds.add(cafeCrowd.getCafe().getId());
+        }
+
+        List<Long> distinctCurCafeIds = curCafeIds.stream().distinct().collect(Collectors.toList());
+
+        // [ {cafeID: [(time, value), (time, value), ...]}, {}, ... {}]
+        Map<Long, ArrayList<TimeCrowdDto>> cafeCrowdMap = new HashMap();
+
+        // map 초기화
+        for (Long distinctCurCafeId : distinctCurCafeIds) {
+            cafeCrowdMap.put(distinctCurCafeId, new ArrayList<TimeCrowdDto>());
+        }
+
+        // map에 값 채우기
+        for (CafeCrowd cafeCrowd : cafeCrowds) {
+            long curCafeId = cafeCrowd.getCafe().getId();
+            cafeCrowdMap.get(curCafeId).add(new TimeCrowdDto(cafeCrowd.getCreatedAt(), cafeCrowd.getCrowdValue()));
+        }
+
+        // {cafeId : "L"}, {cafeId2 : "M"}, {cafeId3 : "H"} ...
+        Map<Long, CrowdLevel> cafeIdsWithCrowdMap = calcCrowdLevel(cafeCrowdMap, todayTime);
+
+        for (NearByCafeResultDto nearByCafeLocation : nearByCafeLocations) {
+
+            NearByCafeWithCrowdResultDto nearByCafeWithCrowdResultDto = new NearByCafeWithCrowdResultDto();
+            nearByCafeWithCrowdResultDto.setCrowdLevel(cafeIdsWithCrowdMap.get(nearByCafeLocation.getId().longValue()));
+
+            // 혼잡도 포함 dto에 기존 카페 dto 복사
+            BeanUtils.copyProperties(nearByCafeLocation, nearByCafeWithCrowdResultDto);
+            nearByCafeWithCrowdResultDtos.add(nearByCafeWithCrowdResultDto);
+        }
+        return nearByCafeWithCrowdResultDtos;
+    }
+
+    /**
+     *  시간마다 가중치 다르게
+     *  ~ 10분 - * 2
+     *  ~ 30분 - * 1
+     *  ~ 2시간 - * 0.7
+     *  ~ 3시간 - * 0.5
+     */
+    private Map<Long, CrowdLevel> calcCrowdLevel(Map<Long, ArrayList<TimeCrowdDto>> cafeCrowdMap,
+                                                 LocalDateTime todayTime) {
+
+        // {cafeId : "L"}, {cafeId2 : "M"}, {cafeId3 : "H"} ...
+        Map<Long, CrowdLevel> results = new HashMap<>();
+
+        for (Long cafeId : cafeCrowdMap.keySet()) {
+            ArrayList<TimeCrowdDto> timeCrowdDtos = cafeCrowdMap.get(cafeId);
+            int crowdListSize = timeCrowdDtos.size();
+            double sumCrowdVal = 0.0;
+
+
+            for (TimeCrowdDto timeCrowdDto : timeCrowdDtos) {
+                int crowdValue = timeCrowdDto.getVal();
+
+                Duration duration = Duration.between(timeCrowdDto.getTime(), todayTime);
+                int minutes = (int) duration.toMinutes();
+
+                if (minutes <= 10) {
+                    sumCrowdVal += crowdValue * 2; // ~ 10분 2배
+                } else if (minutes <= 30) {
+                    sumCrowdVal += crowdValue; // ~ 30분 1배
+                } else if (minutes <= 120) {
+                    sumCrowdVal += crowdValue * 0.6; // ~ 120분 0.7배
+                } else {
+                    sumCrowdVal += crowdValue * 0.3; // ~ 180분 0.5배
+                }
+            }
+
+            double meanVal = sumCrowdVal / crowdListSize;
+
+            // 첫째자리에서 반올림 코드
+            double roundedMeanVal = (double) Math.round(meanVal * 10) / 10;
+
+//            System.out.println("roundedMeanVal = " + roundedMeanVal + "cafeId = " +cafeId);
+
+            if (roundedMeanVal < 2) {
+                results.put(cafeId, CrowdLevel.L);
+            } else if (roundedMeanVal < 3) {
+                results.put(cafeId, CrowdLevel.M);
+            } else {
+                results.put(cafeId, CrowdLevel.H);
+            }
+        }
+        return results;
+    }
 
     @Override
     public void checkCafeAuth() {
@@ -173,5 +289,4 @@ public class CafeServiceImpl implements CafeService {
             memberCafeTierRepository.save(memberCafeTier);
         }
     }
-
 }
