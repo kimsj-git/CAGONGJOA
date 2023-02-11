@@ -28,9 +28,10 @@ const CafeReport = (props) => {
   const submitHandler = async () => {
     await newReply({
       url: `${DEFAULT_REST_URL}/todaycafe/main/survey`,
+      method: "POST",
       headers: {
-        method: "POST",
         Authorization: `Bearer ${sessionStorage.getItem("accessToken")}`,
+        'Content-Type': 'application/json'
       },
       body: {
         replyWifi : power,
@@ -73,8 +74,8 @@ const CafeReport = (props) => {
           </Form.Group>
           <Form.Group inline>
             <label><p style={{width: '6rem'}}>카공 시간제한</p></label>
-            <Form.Radio label='있음' value='YES' checked={timeRestrict === 'YES'} onChange={(e) => handleChange({type: 'timeRestrict', value: 'YES'})}/>
-            <Form.Radio label='없음' value='NO' checked={timeRestrict === 'NO'} onChange={(e) => handleChange({type: 'timeRestrict', value: 'NO'})}/>
+            <Form.Radio label='있음' value='YES' checked={timeRestrict === true} onChange={(e) => handleChange({type: 'timeRestrict', value: true})}/>
+            <Form.Radio label='없음' value='NO' checked={timeRestrict === false} onChange={(e) => handleChange({type: 'timeRestrict', value: false})}/>
           </Form.Group>
           <Form.Group style={{display: 'flex', justifyContent: 'center'}}>
             <Form.Button onClick={submitHandler} color="blue">제출하기</Form.Button>
