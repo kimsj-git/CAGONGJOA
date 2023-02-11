@@ -86,7 +86,7 @@ public class CafeServiceImpl implements CafeService {
             throw new CafeException(CafeExceptionType.CAFE_NOT_EXIST);
         }
 
-        CafeCrowd cafeCrowd = CafeCrowd.cafeCrowdBuilder()
+        CafeCrowd cafeCrowd = CafeCrowd.cafeCrowdSaveBuilder()
                 .cafe(optionalCafe.get())
                 .crowdValue(crowdCheckReqDto.getCrowdLevel())
                 .build();
