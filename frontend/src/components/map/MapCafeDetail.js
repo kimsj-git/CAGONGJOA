@@ -1,6 +1,8 @@
 import { useState } from "react"
 import { Modal, ModalHeader, Icon } from "semantic-ui-react"
 
+const JAMLIST = {"H":"혼잡", "M":"보통", "L":"여유"}
+
 const MapCafeDetial = (props) => {
   const [isShowMore, setIsShowMore] = useState(false)
   const detailHandler = () => {
@@ -15,7 +17,7 @@ const MapCafeDetial = (props) => {
       dimmer="blurring"
     >
       <ModalHeader>
-        {props.name} {/*카페이름*/} {props.crowdValue} {/*혼잡도*/}
+        {props.name} {/*카페이름*/} {JAMLIST[props.crowdLevel]} {/*혼잡도*/}
       </ModalHeader>
       <Modal.Content>
         <p>

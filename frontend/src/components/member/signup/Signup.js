@@ -51,9 +51,9 @@ const Signup = () => {
       const responseData = await response.json()
       if (responseData.httpStatus === "OK") {
         console.log("1. 회원가입 완료, 세션 스토리지 확인")
-        sessionStorage.setItem("accessToken", responseData.data.accessToken)
-        sessionStorage.setItem("refreshToken", responseData.data.refreshToken)
-        sessionStorage.setItem("nickname", nickname)
+        sessionStorage.setItem("accessToken", responseData.data.jwtToken.accessToken)
+        sessionStorage.setItem("refreshToken", responseData.data.jwtToken.refreshToken)
+        sessionStorage.setItem("nickname", responseData.data.nickname)
         history.push("/")
       } else{
         console.log("2.회원가입 실패")

@@ -26,9 +26,9 @@ const MainPage = () => {
         <Grid.Column width={16}>
           <MainPageTopBar isAuthenticated={isAuthenticated} />
         </Grid.Column>
-        {/* <Grid.Column width={16}>
+        <Grid.Column width={16}>
           <JamSurvey />
-        </Grid.Column> */}
+        </Grid.Column>
         {/* <Grid.Column width={16}>
           <PostTypeCarousel />
         </Grid.Column> */}

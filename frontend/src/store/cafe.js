@@ -68,7 +68,6 @@ export const findNearCafeData = () => {
         }),
       })
       const responseData = await response.json()
-      console.log(responseData)
       if (responseData.httpStatus === "OK") {
         return responseData.data
       } else if (
@@ -103,7 +102,8 @@ export const findNearCafeData = () => {
   }
 }
 
-export const findMapCafeList = (dataSet) => {
+
+export const findCafeList = (dataSet) => {
   return async (dispatch) => {
     dispatch(cafeActions.cafeListLoading())
     const sendRequest = async () => {
@@ -120,6 +120,44 @@ export const findMapCafeList = (dataSet) => {
         }),
       })
       const responseData = await response.json()
+      if (responseData.httpStatus==="OK") {
+        return responseData.data
+      }
+    }
+    try {
+      const cafeData = await sendRequest()
+      dispatch(cafeActions.replaceNearCafe(cafeData))
+    } catch (error) {
+      console.error(error)
+    }
+    dispatch(cafeActions.cafeListLoading())
+  }
+}
+
+export const findMapCafeList = (dataSet) => {
+  const date = new Date()
+  const TIME_ZONE = 3240 * 10000
+  const sendDate = new Date(+date + TIME_ZONE).toISOString().substr(0,19)
+
+  return async (dispatch) => {
+    dispatch(cafeActions.cafeListLoading())
+    const sendRequest = async () => {
+      const response = await fetch(`${REST_DEFAULT_URL}/cafe/crowd`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${sessionStorage.getItem("accessToken")}`,
+        },
+        body: JSON.stringify({
+          latitude: dataSet.lat,
+          longitude: dataSet.lng,
+          dist: dataSet.distance,
+          todayTime: sendDate
+        }),
+      })
+      console.log(response)
+      const responseData = await response.json()
+      console.log(responseData)
       if (responseData.httpStatus==="OK") {
         return responseData.data
       }

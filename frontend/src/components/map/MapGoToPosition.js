@@ -17,8 +17,9 @@ const MapGoToPosition = async () => {
           Authorization: `Bearer ${sessionStorage.getItem("refreshToken")}`,
         },
       })
-      if (!responseData.httpStatus === "OK") {
+      if (responseData.httpStatus !== "OK") {
         sessionStorage.clear()
+        alert("세션 만료되었습니다.")
       } else {
         const data = await response.json()
         sessionStorage.setItem("accessToken", data.jwt.accessToken)

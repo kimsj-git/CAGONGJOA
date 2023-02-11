@@ -25,12 +25,13 @@ const useFetch = () => {
           }
         })
         const responseData = await response.json()
-        if (!responseData.httpStatus==="OK"){
+        if (responseData.httpStatus!=="OK"){
           sessionStorage.clear()
           history.push('/login')
+        }else if(responseData.httpStatus === "OK"){
+          sessionStorage.setItem('accessToken', responseData.data.accessToken)
+          sendRequest(requestConfig)
         }
-        sessionStorage.setItem('accessToken', responseData.data.accessToken)
-        sendRequest(requestConfig)
       } else if (responseData.httpStatus === "OK") {
         setData(responseData.data)
       } else {
