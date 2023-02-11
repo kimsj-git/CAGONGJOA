@@ -3,6 +3,9 @@ package com.ssafy.backend.post.util;
 
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.*;
+import com.ssafy.backend.common.exception.jwt.JwtException;
+import com.ssafy.backend.common.exception.post.PostException;
+import com.ssafy.backend.common.exception.post.PostExceptionType;
 import com.ssafy.backend.member.domain.dto.MemberIdAndNicknameDto;
 import com.ssafy.backend.member.service.MemberServiceImpl;
 import com.ssafy.backend.post.domain.dto.CheckedResponseDto;
@@ -15,7 +18,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.transaction.Transactional;
+import java.io.IOException;
 import java.util.*;
+
+import static com.ssafy.backend.common.exception.jwt.JwtExceptionType.JWT_VERIFICATION_EXCEPTION;
 
 @RequiredArgsConstructor // 얘도 커스텀?
 @Transactional
@@ -30,13 +36,14 @@ public class PostUtil {
 
 
     /**    0. 유저 확인   **/
-    public CheckedResponseDto checkMember() throws Exception {
+    public CheckedResponseDto checkMember() {
 
         // 1. accessToken 을 해독하여, payload 에서 memberId 와 nickname 을 가져온다.
         MemberIdAndNicknameDto memberIdAndNicknameDto = memberService.getMemberIdAndNicknameByJwtToken();
+        if(memberIdAndNicknameDto == null) throw new JwtException(JWT_VERIFICATION_EXCEPTION); // JWT 유효성 체크
         Long memberId = memberIdAndNicknameDto.getId();
         String nickname = memberIdAndNicknameDto.getNickname();
-        // 2. 카페 인증된 회원인지 확인하며, 인증되었다면 카페의 이름을 가져온다. KEY : 닉네임
+
         CheckedResponseDto checkedResponseDto = CheckedResponseDto.builder()
                 .nickname(nickname)
                 .memberId(memberId)
@@ -45,36 +52,36 @@ public class PostUtil {
         return checkedResponseDto;
     }
 
-
-
-    public List<PostImage> imageUpload(MultipartFile[] multipartFiles) throws Exception {
+    public List<PostImage> imageUpload(MultipartFile[] multipartFiles) {
         ObjectMetadata objectMetaData = new ObjectMetadata();
         List<PostImage> postImages = new ArrayList<>();
 
         for (MultipartFile multipartFile : multipartFiles) {
             long size = multipartFile.getSize(); // 파일 크기
+            System.out.println("파일 사이즈 : " + size);
             String originalName = multipartFile.getOriginalFilename(); // 파일 원래이름 (xxx.jpg) 갖고오기
             String randomName = UUID.randomUUID().toString().concat("-").concat(originalName);
 
             // 파일 형식 구하기
             String contentType = multipartFile.getContentType().toString();
-            System.out.println("파일 확장자명 : " + contentType);
 
             //확장자 검사
-//            assert contentType != null;
             if(contentType.equals("image/jpeg") || contentType.equals("image/jpg") || contentType.equals("image/png") || contentType.equals("image/jfif") || contentType.equals("image/gif") || contentType.equals("image/bmp") ) {
 
             }else {
-                System.out.println("Exception 발생");
-                return null;
+                throw new PostException(PostExceptionType.NOT_ALLOWED_IMAGE_TYPE);
             }
 
             objectMetaData.setContentType(multipartFile.getContentType()); // 이미지 타입 설정
             objectMetaData.setContentLength(size); // 사이즈 설정
 
             // S3에 업로드
-            amazonS3.putObject(new PutObjectRequest(bucket, randomName, multipartFile.getInputStream(), objectMetaData)
-                    .withCannedAcl(CannedAccessControlList.PublicRead));
+            try {
+                amazonS3.putObject(new PutObjectRequest(bucket, randomName, multipartFile.getInputStream(), objectMetaData)
+                        .withCannedAcl(CannedAccessControlList.PublicRead));
+            } catch (IOException e) {
+                throw new PostException(PostExceptionType.IMAGE_IO_EXCEPTION);
+            }
 
             // S3 서버에서 변환된 URL 가져오기
             String imagePath = amazonS3.getUrl(bucket, randomName).toString();
@@ -89,12 +96,10 @@ public class PostUtil {
         return postImages;
     }
 
-    public void imageDelete(Post post, List<String> keyNameList) {
+    public void imageDelete(Post post, List<Long> imageIdList) {
 
-        List<PostImage> postImages = imageRepository.findAllByPostIdAndAccessKeyNotIn(post.getId(), keyNameList);
+        List<PostImage> postImages = imageRepository.findAllByPostIdIn(imageIdList);
         // null 이면 이미지를 삭제하지 않고 바로 리턴하여 돌아간다.
-        System.out.println("keynameList : " + keyNameList.toString());
-        System.out.println("postImages : " + postImages.toString() );
         if(postImages.isEmpty() || postImages == null) {
             System.out.println("img empty!");
             return;

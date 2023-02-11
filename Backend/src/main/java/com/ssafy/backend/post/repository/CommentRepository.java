@@ -13,4 +13,6 @@ public interface CommentRepository extends JpaRepository<Comment, Long> {
     Optional<Comment> findTopByPostIdOrderByIdDesc(Long postId);
 
     Slice<Comment> findAllByGroupNoInAndPostId(Set<Long> groupSet, Long postId);
+
+    void deleteAllByGroupNo(Long groupNo);
 }

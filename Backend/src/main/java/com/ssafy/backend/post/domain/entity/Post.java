@@ -1,6 +1,5 @@
 package com.ssafy.backend.post.domain.entity;
 
-import com.ssafy.backend.cafe.domain.entity.Cafe;
 import com.ssafy.backend.common.entity.BaseEntity;
 import com.ssafy.backend.member.domain.entity.Member;
 import com.ssafy.backend.post.domain.enums.PostType;
@@ -14,15 +13,12 @@ import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
 
-import static javax.persistence.FetchType.LAZY;
-
 @Table(name = "post")
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
-@Builder
-@ToString(of = {"id", "memberId", "type", "content"})
+@Builder(builderClassName = "postWriteBuilder", builderMethodName = "postWriteBuilder")
 public class Post extends BaseEntity {
 
     //== Column  ==//
@@ -84,14 +80,8 @@ public class Post extends BaseEntity {
     /**
      * 생성자 : content, member, 카테고리, 이미지(나중추가)
      **/
-    @Builder(builderClassName = "postWriteBuilder", builderMethodName = "postWriteBuilder")
-    public Post(String content, Member member, PostType postType) {
-        this.member = member;
-        this.content = content;
-        this.postType = postType;
-    }
 
-    public void updateContents(String content) {
+    public void updateContent(String content) {
         this.content = content;
     }
 
@@ -100,8 +90,8 @@ public class Post extends BaseEntity {
         postImage.setPost(this);
     }
 
-    public void updatePostImage(List<PostImage> postImageList) {
-        this.postImageList = postImageList;
+    public void updateAuthorized(){
+        this.isCafeAuthorized = true;
     }
 
     public void addPostCafe(PostCafe postCafe) {
@@ -112,6 +102,5 @@ public class Post extends BaseEntity {
     public void deleteImages() {
         this.postImageList = new ArrayList<>();
     }
-
 
 }

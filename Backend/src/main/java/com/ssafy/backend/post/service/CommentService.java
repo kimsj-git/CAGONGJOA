@@ -15,19 +15,19 @@ public interface CommentService {
 
     /** 1. 댓글 불러오기 **/
 
-    List<CommentPagingResponseDto> feedComment(CommentPagingRequestDto requestDto) throws Exception;
+    List<CommentPagingResponseDto> feedComment(CommentPagingRequestDto requestDto);
 
 
-    int writeComment(CommentWriteRequestDTO commentWriteDto) throws Exception;
+    Long writeComment(CommentWriteRequestDTO commentWriteDto);
 
     /** 2. 댓글 수정 **/
-    int updateComment(CommentUpdateRequestDTO commentUpdateDto) throws Exception;
+    void updateComment(CommentUpdateRequestDTO commentUpdateDto);
     /** 3. 댓글 페이징 조회 **/
 
     /** 4. 댓글 삭제 **/
-    int deleteComment(Long commentId) throws Exception;
+    void deleteComment(Long commentId);
 
     /** 5. 댓글 좋아요 **/
-    CommentLikeResponseDto likeComment(CommentLikeRequestDto requestDto) throws Exception;
+    CommentLikeResponseDto likeComment(CommentLikeRequestDto requestDto);
 
 }

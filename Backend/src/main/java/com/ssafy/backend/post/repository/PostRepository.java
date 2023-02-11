@@ -2,7 +2,6 @@ package com.ssafy.backend.post.repository;
 
 
 import com.ssafy.backend.post.domain.entity.Post;
-import com.ssafy.backend.post.domain.entity.PostLike;
 import com.ssafy.backend.post.domain.enums.PostType;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
@@ -15,9 +14,15 @@ import java.util.List;
 public interface PostRepository extends JpaRepository<Post, Long> {
 //    Optional<Post> findByMemberId(Long memberId);
 
-    Slice<Post> findAllByIdLessThanAndPostTypeInAndPostCafeList_CafeIdIn(Long id, List<PostType> types, List<Long> cafeIdList, Pageable pageable);
+    @Query("SELECT p from Post p left join p.postCafeList pc where p.id < :id and p.postType in :types and pc.id in :cafeIdList")
+    Slice<Post> findAllByIdLessThanAndPostTypeInAndPostCafeList_CafeIdIn(@Param("id") Long id, @Param("types")List<PostType> types, @Param("cafeIdList")List<Long> cafeIdList, Pageable pageable);
 
-    Slice<Post> findAllByPostTypeInAndPostCafeList_CafeIdIn(List<PostType> types, List<Long> cafeIdList, Pageable pageable);
+    @Query("SELECT p from Post p left join p.postCafeList pc where p.postType in :types and pc.id in :cafeIdList")
+    Slice<Post> findAllByPostTypeInAndPostCafeList_CafeIdIn(@Param("types")List<PostType> types, @Param("cafeIdList")List<Long> cafeIdList, Pageable pageable);
+
+//    Slice<Post> findAllByIdLessThanAndPostTypeInAndPostCafeList_CafeIdIn(Long id, List<PostType> types, List<Long> cafeIdList, Pageable pageable);
+//
+//    Slice<Post> findAllByPostTypeInAndPostCafeList_CafeIdIn(List<PostType> types, List<Long> cafeIdList, Pageable pageable);
 
     @Query("SELECT distinct p FROM Post p left join p.postLikeList pl left join p.postCafeList pc where pl.size > 10 and pc.cafe.id in :cafeIdList")
     Slice<Post> findHotPost(@Param("cafeIdList")List<Long> cafeIdList, Pageable pageable);

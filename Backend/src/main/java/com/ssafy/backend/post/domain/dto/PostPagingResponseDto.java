@@ -18,7 +18,7 @@ import java.util.Map;
 public class PostPagingResponseDto {
 
     // 리턴객체 : 닉네임, 게시물 PK, 유저정보(현재카페, 티어) , 만든시간, 이미지, 글내용 전체, 좋아요 개수, 댓글 개수
-    private String postType;
+    private boolean isCafeAuthorized;
     private Long postId;
     private String writerNickname;
     private Long exp;
@@ -30,11 +30,10 @@ public class PostPagingResponseDto {
     private int postLikeCount;
     private int commentCount;
 
-    public void updateDto(String cafeName, Long exp, String brandType, String postType) {
+    public void updateDto(String cafeName, Long exp, String brandType) {
         this.cafeName = cafeName;
         this.exp = exp;
         this.brandType = brandType;
-        this.postType = postType;
     }
     // 댓글리스트
 

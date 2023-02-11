@@ -16,7 +16,7 @@ public class PostUpdateResponseDto {
 
     private Long postId;
     private String Content;
-    private List<Map.Entry<String,String>> imgPathList;
+    private List<Map.Entry<Long,String>> imgPathList;
     private PostType type;
 
 }

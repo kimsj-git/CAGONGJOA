@@ -13,7 +13,7 @@ import static javax.persistence.FetchType.LAZY;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
-@Builder
+@Builder(builderClassName = "PostLikeBuilder", builderMethodName = "PostLikeBuilder")
 public class PostLike {
 
     //== Column  ==//
@@ -35,11 +35,5 @@ public class PostLike {
         // 멤버가 삭제되면 Post 가 전부삭제 - 따라서 likes 도 전부삭제
         @Column(name = "member_id")
         private Long memberId;
-
-        @Builder(builderClassName = "PostLikeBuilder", builderMethodName = "PostLikeBuilder")
-        public PostLike (Post post, Long memberId) {
-                this.post = post;
-                this.memberId = memberId;
-        }
 
 }
