@@ -1,6 +1,7 @@
 package com.ssafy.backend.cafe.service;
 
 import com.ssafy.backend.cafe.domain.dto.*;
+import com.ssafy.backend.cafe.domain.entity.Cafe;
 import com.ssafy.backend.cafe.domain.entity.CafeCrowd;
 import com.ssafy.backend.cafe.domain.enums.CrowdLevel;
 import com.ssafy.backend.cafe.domain.enums.Direction;
@@ -78,6 +79,18 @@ public class CafeServiceImpl implements CafeService {
         }
 
         optionalCafeVisitLog.get().setSurvey(true);
+
+        // 혼잡도 설문 저장
+        Optional<Cafe> optionalCafe = cafeRepository.findById(cafeId);
+        if (optionalCafe.isEmpty()) {
+            throw new CafeException(CafeExceptionType.CAFE_NOT_EXIST);
+        }
+
+        CafeCrowd cafeCrowd = CafeCrowd.cafeCrowdBuilder()
+                .cafe(optionalCafe.get())
+                .crowdValue(crowdCheckReqDto.getCrowdLevel())
+                .build();
+        cafeCrowdRepository.save(cafeCrowd);
     }
 
     @Override
