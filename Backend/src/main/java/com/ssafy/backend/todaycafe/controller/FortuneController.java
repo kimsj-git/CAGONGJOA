@@ -22,15 +22,11 @@ public class FortuneController {
     @CafeAuth
     @GetMapping ("/{fortuneType}")
     public ResponseEntity<ResponseDTO> giveFortune(@PathVariable int fortuneType) throws Exception {
-        System.out.println("fortuneType : " + fortuneType);
         FortuneResponseDto fortuneResponseDto = todayCafeService.randomFortune(fortuneType);
 
         switch (fortuneResponseDto.getResponseType()) {
-            case 1: responseDTO = new ResponseDTO("","[responseType 1] [NOT_IMPLEMENTED]ERR CafeVisit 이 없음",HttpStatus.BAD_REQUEST,null); break;
-            case 2: responseDTO = new ResponseDTO("[responseType 2] 처음뽑기 완료","",HttpStatus.OK,fortuneResponseDto); break;
-            case 3: responseDTO = new ResponseDTO("[responseType 3] 다시뽑기 완료","",HttpStatus.OK,fortuneResponseDto); break;
-            case 4: responseDTO = new ResponseDTO("","[responseType 4] ERR [NOT_IMPLEMENTED] 1 커피가 없어요",HttpStatus.NOT_IMPLEMENTED,fortuneResponseDto); break;
-            case 5: responseDTO = new ResponseDTO("","[responseType 5] ERR [NOT_IMPLEMENTED] parameter 오류",HttpStatus.NOT_IMPLEMENTED,null); break;
+            case 1: responseDTO = new ResponseDTO("[responseType 1] 처음뽑기 완료","",HttpStatus.OK,fortuneResponseDto); break;
+            case 2: responseDTO = new ResponseDTO("[responseType 2] 다시뽑기 완료","",HttpStatus.OK,fortuneResponseDto); break;
         }
 
         return new ResponseEntity<>(responseDTO, HttpStatus.OK);
