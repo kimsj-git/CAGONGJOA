@@ -40,6 +40,7 @@ const CafeReport = (props) => {
         replyTime : timeRestrict,
       },
     })
+    setOpen(false)
   }
 
   return (
