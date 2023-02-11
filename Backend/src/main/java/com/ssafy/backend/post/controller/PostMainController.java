@@ -38,16 +38,12 @@ public class PostMainController {
     @PostMapping("/feed")
     public ResponseEntity<ResponseDTO> postMain(
             @RequestBody PostPagingRequestDto requestDto,
-            @PageableDefault(size = 10, sort = "id", direction = Sort.Direction.DESC) Pageable pageable) throws Exception {
+            @PageableDefault(size = 10, sort = "id", direction = Sort.Direction.DESC) Pageable pageable) {
 
         List<PostPagingResponseDto> postSlice = postService.feedPosts(requestDto, pageable);
-        if(postSlice == null || postSlice.isEmpty()) {
-            responseDTO
-                    = new ResponseDTO("해당하는 게시물이 없음", "", HttpStatus.OK, postSlice);
-        }else {
-            responseDTO
-                    = new ResponseDTO("feed 생성 성공!", "", HttpStatus.OK, postSlice);
-        }
+        responseDTO
+                = new ResponseDTO("feed 생성 성공!", "", HttpStatus.OK, postSlice);
+
 
         // 리턴객체 : 유저정보(카페로고, 닉네임, 칭호, 카페이름), 만든시간, 이미지, 글내용 전체, 좋아요 개수, 댓글 개수, 게시물 PK
 
@@ -59,22 +55,15 @@ public class PostMainController {
      * 1-2. 게시글 좋아요 누르기  [테스트완료]
      **/
     @Auth
-  @CafeAuth  // 카페인증 되어야 누를수있음
+    @CafeAuth  // 카페인증 되어야 누를수있음
     @PostMapping("/like")
     public ResponseEntity<ResponseDTO> postLike(
-            @RequestBody PostLikeRequestDto likeRequestDto) throws Exception {
+            @RequestBody PostLikeRequestDto likeRequestDto) {
 
         PostLikeResponseDto likeResponseDto = postService.likePost(likeRequestDto);
 
-        if(likeResponseDto != null ){
-            responseDTO = new ResponseDTO("게시글 좋아요 반영 완료", "", HttpStatus.OK, likeResponseDto);
-            return new ResponseEntity<>(responseDTO, HttpStatus.OK);
-        }
-        else {
-            responseDTO = new ResponseDTO("", "400에러(잘못된요청) : 중복 좋아요 에러, 처리 X", HttpStatus.BAD_REQUEST, null);
-            return new ResponseEntity<>(responseDTO, HttpStatus.BAD_REQUEST);
-        }
-
+        responseDTO = new ResponseDTO("게시글 좋아요 반영 완료", "", HttpStatus.OK, likeResponseDto);
+        return new ResponseEntity<>(responseDTO, HttpStatus.OK);
 
     }
 
@@ -82,15 +71,15 @@ public class PostMainController {
      * 1-3. 선택한 게시글 (상세페이지) 조회
      **/
 
-  @Auth
+    @Auth
     @PostMapping("/detail")
-    public ResponseEntity<ResponseDTO> postDetail(@RequestParam Long postId) throws Exception {
-    PostDetailResponseDto detailResponseDto = postService.findOnePost(postId);
-    responseDTO = new ResponseDTO("조회 완료!", "", HttpStatus.OK, detailResponseDto);
-    List<CommentPagingResponseDto> responseDtoList = commentService.feedComment(new CommentPagingRequestDto(detailResponseDto.getPostId(),-1L));
-    detailResponseDto.updateComment(responseDtoList);
-    // 유저에게 게시글 내용을 보여주기
-        return new ResponseEntity<>(responseDTO,HttpStatus.OK);
+    public ResponseEntity<ResponseDTO> postDetail(@RequestParam Long postId) {
+        PostDetailResponseDto detailResponseDto = postService.findOnePost(postId);
+        responseDTO = new ResponseDTO("조회 완료!", "", HttpStatus.OK, detailResponseDto);
+        List<CommentPagingResponseDto> responseDtoList = commentService.feedComment(new CommentPagingRequestDto(detailResponseDto.getPostId(), -1L));
+        detailResponseDto.updateComment(responseDtoList);
+        // 유저에게 게시글 내용을 보여주기
+        return new ResponseEntity<>(responseDTO, HttpStatus.OK);
     }
 
 

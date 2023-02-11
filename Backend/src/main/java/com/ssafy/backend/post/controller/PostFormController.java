@@ -27,7 +27,7 @@ public class PostFormController {
     @PostMapping("/write")
     public ResponseEntity<ResponseDTO> postSave(
             @RequestPart(value = "imgFiles", required = false) MultipartFile[] files,
-            @RequestPart(value = "writeForm") PostWriteFormRequestDto requestPostDto) throws Exception {
+            @RequestPart(value = "writeForm") PostWriteFormRequestDto requestPostDto){
 
         Long postId = postService.writePost(files, requestPostDto);
         if ( postId != -1L) {

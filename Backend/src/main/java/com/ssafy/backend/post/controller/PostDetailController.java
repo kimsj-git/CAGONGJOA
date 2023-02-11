@@ -28,7 +28,9 @@ public class PostDetailController {
     private ResponseDTO responseDTO;
     private final PostService postService;
 
-    /**  2-1. 댓글 더보기  **/
+    /**
+     * 2-1. 댓글 더보기
+     **/
 
     @Auth
     @GetMapping("/comment/feed")
@@ -42,98 +44,88 @@ public class PostDetailController {
         return new ResponseEntity<>(responseDTO, HttpStatus.OK);
     }
 
-    /**  2-2. 댓글 작성 (완료) **/
+    /**
+     * 2-2. 댓글 작성 (완료)
+     **/
 
     @Auth
     @CafeAuth
     @PostMapping("/comment/write")
     public ResponseEntity<ResponseDTO> commentWrite(
-            @RequestBody CommentWriteRequestDTO commentWriteDto) throws Exception {
+            @RequestBody CommentWriteRequestDTO commentWriteDto) {
 
-        int result = commentService.writeComment(commentWriteDto);
-        if(result == 1) {
-            responseDTO = new ResponseDTO("", "글쓰는 도중 post 가 사라짐", HttpStatus.OK, null);
-        }else if(result == 2) {
-            responseDTO = new ResponseDTO("댓글 생성 완료!", "", HttpStatus.OK, null);
-        }else {
-            responseDTO = new ResponseDTO("", "의문의 에러 발생", HttpStatus.OK, null);
-        }
+        Long commetId = commentService.writeComment(commentWriteDto);
+
+        responseDTO = new ResponseDTO("댓글 생성 완료!", "", HttpStatus.OK, null);
 
         return new ResponseEntity<>(responseDTO, HttpStatus.OK);
     }
 
 
-    /**  2-3. 댓글 좋아요 누르기 (완료) **/
+    /**
+     * 2-3. 댓글 좋아요 누르기 (완료)
+     **/
+    @Auth
+    @CafeAuth
     @PutMapping("/comment/like")
-    public ResponseEntity<ResponseDTO> commentLike(@RequestBody CommentLikeRequestDto requestDto) throws Exception {
+    public ResponseEntity<ResponseDTO> commentLike(@RequestBody CommentLikeRequestDto requestDto) {
 
         CommentLikeResponseDto commentLikeResponseDto = commentService.likeComment(requestDto);
-        if(commentLikeResponseDto.isChecked()) {
+        if (commentLikeResponseDto.isChecked()) {
             responseDTO = new ResponseDTO("댓글 좋아요처리 생성 완료!", "", HttpStatus.OK, commentLikeResponseDto);
-        }else {
+        } else {
             responseDTO = new ResponseDTO("댓글 좋아요처리 삭제 완료!", "", HttpStatus.OK, commentLikeResponseDto);
         }
-
-        return new ResponseEntity<>(responseDTO,HttpStatus.OK);
+        return new ResponseEntity<>(responseDTO, HttpStatus.OK);
     }
 
-    /**  2-4. 댓글 수정 **/
+    /**
+     * 2-4. 댓글 수정
+     **/
 
     @Auth
     @CafeAuth
     @PutMapping("/comment/update")
-    public ResponseEntity<ResponseDTO> commentUpdate(@RequestBody CommentUpdateRequestDTO commentUpdateDto) throws Exception {
+    public ResponseEntity<ResponseDTO> commentUpdate(@RequestBody CommentUpdateRequestDTO commentUpdateDto) {
 
-        int result = commentService.updateComment(commentUpdateDto);
+        commentService.updateComment(commentUpdateDto);
 
-        if(result == 1) {
-            responseDTO = new ResponseDTO("", "잘못된 comment Id!", HttpStatus.OK, null);
-        }else if(result == 2) {
-            responseDTO = new ResponseDTO("", "user 정보가 글쓴이 정보와 맞지않음", HttpStatus.OK, null);
-        }else if(result == 3){
-            responseDTO = new ResponseDTO("", "컨텐트값은 null이면 안됨!", HttpStatus.OK, null);
-        }else if(result == 4){
-            responseDTO = new ResponseDTO("댓글 수정 완료!", "", HttpStatus.OK, null);
-        }else {
-            responseDTO = new ResponseDTO("", "unKnown Error", HttpStatus.OK, null);
-        }
+        responseDTO = new ResponseDTO("댓글 수정 완료!", "", HttpStatus.OK, null);
+
         return new ResponseEntity<>(responseDTO, HttpStatus.OK);
     }
 
-    /**  2-5. 댓글 삭제   **/
+    /**
+     * 2-5. 댓글 삭제
+     **/
 
     @Auth
     @CafeAuth
     @DeleteMapping("/comment/delete")
 
-    public ResponseEntity<ResponseDTO> deleteComment(@RequestParam Long commentId) throws Exception {
+    public ResponseEntity<ResponseDTO> deleteComment(@RequestParam Long commentId) {
 
-        int result = commentService.deleteComment(commentId);
-        if(result == 1) {
-            responseDTO = new ResponseDTO("", "댓글 id를 잘못줬어", HttpStatus.BAD_REQUEST, null);
-        }else if(result == 2){
-            responseDTO = new ResponseDTO("댓글 삭제 완료!", "", HttpStatus.OK, null);
-        }else if (result == 3){
-            responseDTO = new ResponseDTO("", "401 error 유저 <> 글쓴이 확인필요", HttpStatus.UNAUTHORIZED, null);
-        }else {
-            responseDTO = new ResponseDTO("", "Unknown Error", HttpStatus.UNAUTHORIZED, null);
-        }
-        return new ResponseEntity<>(responseDTO,HttpStatus.OK);
+        commentService.deleteComment(commentId);
+
+        responseDTO = new ResponseDTO("댓글 삭제 완료!", "", HttpStatus.OK, null);
+
+        return new ResponseEntity<>(responseDTO, HttpStatus.OK);
     }
-    /**  2-6. 글 삭제   **/
+
+    /**
+     * 2-6. 글 삭제
+     **/
 
     @Auth
+    @CafeAuth
     @DeleteMapping("/delete")
 
-    public ResponseEntity<ResponseDTO> deletePost(@RequestParam Long postId) throws Exception {
+    public ResponseEntity<ResponseDTO> deletePost(@RequestParam Long postId) {
 
-        boolean isDeleted = postService.deletePost(postId);
-        if(isDeleted) {
-            responseDTO = new ResponseDTO("게시글 삭제 완료!", "", HttpStatus.OK, null);
-        }else {
-            responseDTO = new ResponseDTO("", "잘못된 postId", HttpStatus.BAD_REQUEST, null);
-        }
-        return new ResponseEntity<>(responseDTO,HttpStatus.OK);
+        postService.deletePost(postId);
+        responseDTO = new ResponseDTO("게시글 삭제 완료!", "", HttpStatus.OK, null);
+
+        return new ResponseEntity<>(responseDTO, HttpStatus.OK);
     }
 
 

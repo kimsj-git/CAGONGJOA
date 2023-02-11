@@ -20,6 +20,6 @@ public class PostUpdateFormRequestDto {
     private Long postId;
     private String content;
     private PostType type;
-    private List<String> keyNameList;
+    private List<Long> imageIdList;
 
 }
