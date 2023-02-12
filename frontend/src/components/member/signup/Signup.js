@@ -8,11 +8,11 @@ import { authActions } from "../../../store/auth"
 
 const DEFAULT_REST_URL = process.env.REACT_APP_REST_DEFAULT_URL
 
-const Signup = () => {
+const Signup = ({ setIsAuthenticated }) => {
   const history = useHistory()
   const location = useLocation()
   const dispatch = useDispatch()
-
+  const hangelcheck = /^[가-힣a-zA-Z]+$/
   // props로 받아옴
   const oauthType = location.state.oauthType
   const oauthId = location.state.oauthId
@@ -22,6 +22,17 @@ const Signup = () => {
   const isLoading = useSelector((state) => state.auth.checkLoading)
   const [isChecked, setIsChecked] = useState(false)
   const [isTyped, setIsTyped] = useState(false)
+
+  let nicklength = 0
+  for (var i = 0; i < nickname.length; i++) {
+    //한글은 2, 영문은 1로 치환
+    const nick = nickname.charAt(i)
+    if (escape(nick).length > 4) {
+      nicklength += 2
+    } else {
+      nicklength += 1
+    }
+  }
 
   const formSubmissionHandler = (event) => {
     event.preventDefault()
@@ -34,7 +45,7 @@ const Signup = () => {
     dispatch(authActions.nowLoading())
   }
 
-  const giveSignupData = async ({setIsAuthenticated}) => {
+  const giveSignupData = async () => {
     // 제출 버튼 클릭시 nickname post api 호출
     try {
       const response = await fetch(`${DEFAULT_REST_URL}/oauth/setNickname`, {
@@ -49,19 +60,27 @@ const Signup = () => {
         }),
       })
       const responseData = await response.json()
+      console.log(responseData)
       if (responseData.httpStatus === "OK") {
         console.log("1. 회원가입 완료, 세션 스토리지 확인")
-        setIsAuthenticated(true)
-        sessionStorage.setItem("accessToken", responseData.data.jwtToken.accessToken)
-        sessionStorage.setItem("refreshToken", responseData.data.jwtToken.refreshToken)
+        sessionStorage.setItem(
+          "accessToken",
+          responseData.data.jwtTokens.accessToken
+        )
+        sessionStorage.setItem(
+          "refreshToken",
+          responseData.data.jwtTokens.refreshToken
+        )
         sessionStorage.setItem("nickname", responseData.data.nickname)
+        setIsAuthenticated(true)
         history.push("/")
-      } else{
+      } else {
         console.log("2.회원가입 실패")
         console.log(responseData)
       }
     } catch (error) {
-      history.push("/error")
+      console.log(error)
+      alert("에러 발생")
     }
   }
   useEffect(() => {
@@ -73,12 +92,16 @@ const Signup = () => {
       clearTimeout(identifier)
     }
   }, [nickname, dispatch])
-  const isNicknameLengthValid = nickname.length > 4 && nickname.length < 10
+  const isNicknameLengthValid =
+    nicklength > 3 && nicklength < 11 && nickname !== "" && nickname !== null
   const isFormValid =
     isNicknameValid &&
     nickname.trim() !== "" &&
     isChecked &&
-    isNicknameLengthValid
+    isNicknameLengthValid &&
+    hangelcheck.test(nickname)
+
+  console.log(hangelcheck.test(nickname))
 
   return (
     <form onSubmit={formSubmissionHandler}>
@@ -111,11 +134,20 @@ const Signup = () => {
           제출
         </Button>
       )}
-      {!isNicknameValid && isChecked && isTyped && (
-        <p style={{ color: "red" }}>중복된 닉네임입니다.</p>
-      )}
-      {isChecked && isTyped && !isNicknameLengthValid && (
-        <p style={{ color: "red" }}>5글자 이상 10글자 이하만 가능합니다. </p>
+      {!isLoading && !isNicknameValid && isChecked && isTyped ? (
+        <p style={{ color: "red" }}>사용할 수 없는 닉네임 입니다.</p>
+      ) : !isLoading && nickname.search(/\s/) !== -1 ? (
+        <p style={{ color: "red" }}>닉네임은 공백을 포함할 수 없습니다. </p>
+      ) : !isLoading && !hangelcheck.test(nickname) && isTyped && isChecked ? (
+        <p style={{ color: "red" }}>닉네임을 확인해주세요. </p>
+      ) : !isLoading && isChecked && isTyped && !isNicknameLengthValid ? (
+        <p style={{ color: "red" }}>
+          영어 4~10글자 한글 2~5글자만 가능합니다.{" "}
+        </p>
+      ) : (
+        !isLoading &&
+        isTyped &&
+        isChecked && <p style={{ color: "green" }}>사용 가능한 닉네임입니다!</p>
       )}
     </form>
   )

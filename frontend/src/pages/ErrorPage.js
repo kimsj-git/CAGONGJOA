@@ -5,9 +5,9 @@ const ErrorPage = () => {
     <div style={{display:"flex", flexDirection:"column", justifyContent:"center", alignItems:"center" ,marginTop:"5rem"}}>
       <Image src={require("../assets/icons/kagongjoa_logo.png")} style={{width:"30rem", height:"30rem"}}/>
       <Header as="h1" textAlign="center">
-        Error(500)
+        Error
         <Header.Subheader>
-          죄송합니다. 서버에 접속할 수 없습니다.
+          죄송합니다. 오류가 발생했습니다.
         </Header.Subheader>
       </Header>
     </div>

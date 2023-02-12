@@ -1,7 +1,7 @@
 import Signup from "../../components/member/signup/Signup"
 import { Image } from "semantic-ui-react"
 
-const SignupPage = () => {
+const SignupPage = ({setIsAuthenticated}) => {
   return (
     <div
       style={{
@@ -14,7 +14,7 @@ const SignupPage = () => {
     >
       <Image src={require("../../assets/icons/kagongjoa_logo.png")} style={{width:"20rem", height:"20rem"}} />
       <h1 id="title">카공조아</h1>
-      <Signup />
+      <Signup setIsAuthenticated={setIsAuthenticated}/>
     </div>
   )
 }
