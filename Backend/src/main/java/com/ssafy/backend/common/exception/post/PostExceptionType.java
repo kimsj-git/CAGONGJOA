@@ -10,7 +10,7 @@ public enum PostExceptionType implements BaseExceptionType {
 
     /**  POST  **/
     NO_CONTENT_POST_FORM(HttpStatus.NO_CONTENT, "글쓰기 컨텐츠(이미지) 가 없습니다.", SignType.POST),
-    NOT_ALLOWED_POST_TYPE(HttpStatus.UNAUTHORIZED, "미인증 유저는 두개의 카테고리 이외 사용할 수 없습니다.", SignType.POST),
+    NOT_ALLOWED_TYPE(HttpStatus.UNAUTHORIZED, "미인증 유저는 두개의 카테고리 이외 사용할 수 없습니다.", SignType.POST),
     BAD_POST_ID(HttpStatus.BAD_GATEWAY, "잘못된 게시글 id 입니다.", SignType.POST),
     USER_IS_NOT_WRITER(HttpStatus.UNAUTHORIZED, "사용자가 해당 컨텐츠를 수정/삭제할 권한이 없습니다.", SignType.POST),
     NO_CAFE_AROUND(HttpStatus.NO_CONTENT, "주변에 이용 가능한 카페가 없습니다.", SignType.POST),
