@@ -48,7 +48,7 @@ public class PostServiceImpl implements PostService {
     private final PostUtil postUtil;
     private final CafeServiceImpl cafeService;
     private final MemberServiceImpl memberService;
-    private final ImageRepository imageRepository;
+    private final PostImageRepository imageRepository;
 
     /**
      * 1. 글 등록 [ 테스트 완료 ]

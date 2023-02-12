@@ -4,10 +4,14 @@ import com.ssafy.backend.common.annotation.Auth;
 import com.ssafy.backend.common.dto.ResponseDTO;
 import com.ssafy.backend.mypage.domain.dto.CafeLiveRespDto;
 import com.ssafy.backend.mypage.domain.dto.GetTimeReqDto;
+import com.ssafy.backend.mypage.domain.dto.MyFeedResponseDto;
 import com.ssafy.backend.mypage.domain.dto.VisitCafeListResponseDto;
 import com.ssafy.backend.mypage.service.MyPageService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -24,6 +28,7 @@ public class MyPageController {
 
     /**
      * 사용자에게 Date type을 받고 한달치 카공 생활 데이터를 준다
+     *
      * @return
      */
     @GetMapping("/cafeLive")
@@ -34,17 +39,34 @@ public class MyPageController {
         ResponseDTO responseDTO = new ResponseDTO("회원의 한달치 카공조아 이용 내역", "", HttpStatus.OK, cafeLives);
         return new ResponseEntity<>(responseDTO, HttpStatus.OK);
     }
+
+    /**
+     * 2. 사용자가 방문한 모든 카페의 리스트(w 경험치) 를 불러온다
+     */
     @Auth
     @GetMapping("/cafeList")
     public ResponseEntity<ResponseDTO> getCafeList() {
 
-        List<VisitCafeListResponseDto> cafeLives = myPageService.getCafeVisitList();
+        List<VisitCafeListResponseDto> cafeVisitList = myPageService.getCafeVisitList();
 
-        ResponseDTO responseDTO = new ResponseDTO("카페 티어 리스트 불러오기 완료!", "", HttpStatus.OK, cafeLives);
+        ResponseDTO responseDTO = new ResponseDTO("카페 티어 리스트 불러오기 완료!", "", HttpStatus.OK, cafeVisitList);
         return new ResponseEntity<>(responseDTO, HttpStatus.OK);
     }
 
+    /**
+     * 3. 내가쓴 글 조회하기
+     */
 
+    @Auth
+    @GetMapping("/myFeed")
+    public ResponseEntity<ResponseDTO> getMyFeed(@RequestParam Long postId,
+                                                 @PageableDefault(size = 10, sort = "id", direction = Sort.Direction.DESC) Pageable pageable) {
+
+        List<MyFeedResponseDto> myFeedList = myPageService.getMyFeed(postId, pageable);
+
+        ResponseDTO responseDTO = new ResponseDTO("내 글목록 불러오기 완료!", "", HttpStatus.OK, myFeedList);
+        return new ResponseEntity<>(responseDTO, HttpStatus.OK);
+    }
 
 
 }
