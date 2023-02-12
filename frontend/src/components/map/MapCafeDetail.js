@@ -8,7 +8,6 @@ const MapCafeDetial = (props) => {
   const detailHandler = () => {
     setIsShowMore(!isShowMore)
   }
-
   return (
     <Modal
       onClose={props.closeHandler}

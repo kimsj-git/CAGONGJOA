@@ -18,7 +18,7 @@ const Settings = () => {
           설정
         </Grid.Column>
       </Grid.Row>
-      <Grid.Row>
+      {/* <Grid.Row>
         <Grid.Column>
           <NavLink to={`${defaultURL}/blocklist`} className={classes.navItem}>
             <Icon.Group>
@@ -28,7 +28,7 @@ const Settings = () => {
             차단 목록
           </NavLink>
         </Grid.Column>
-      </Grid.Row>
+      </Grid.Row> */}
       <Grid.Row>
         <Grid.Column>
           <DeleteMember open={open} setOpen={setOpen}>회원 탈퇴</DeleteMember>

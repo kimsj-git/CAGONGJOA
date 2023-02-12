@@ -105,13 +105,6 @@ const MyPostDetail = (props) => {
               <Divider />
               <ScrollPanel style={{ width: "100%", height: "70vh" }}>
                 <Comment.Group>
-                  <CommentItem />
-                  <CommentItem />
-                  <CommentItem />
-                  <CommentItem />
-                  <CommentItem />
-                  <CommentItem />
-                  <CommentItem />
                 </Comment.Group>
               </ScrollPanel>
               <Divider />
