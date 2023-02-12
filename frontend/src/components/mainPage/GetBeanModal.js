@@ -37,6 +37,7 @@ const GetBeanModal = (props) => {
         alert("카페 인증이 필요합니다.")
       } else if (responseData.httpStatus === "BAD_REQUEST" && responseData.data.sign ==="CAFE"){
         setOpen(false)
+        props.setIsJamSurvey(true)
         alert("이미 혼잡도 설문을 제출 했습니다.")
       } else if (responseData.httpStatus === "BAD_REQUEST" && responseData.data.sign==="JWT"){
         const response = await fetch(`${REST_DEFAULT_URL}/member/refresh`,{
@@ -58,6 +59,7 @@ const GetBeanModal = (props) => {
         }
       } else if(responseData.httpStatus === "CREATED"){
           setOpen(true)
+          setTimeout(()=>{props.setIsJamSurvey(true)},1500) 
           sessionStorage.setItem('jamSurvey', 1)
       }
   }

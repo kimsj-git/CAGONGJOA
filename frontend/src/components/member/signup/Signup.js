@@ -34,7 +34,7 @@ const Signup = () => {
     dispatch(authActions.nowLoading())
   }
 
-  const giveSignupData = async () => {
+  const giveSignupData = async ({setIsAuthenticated}) => {
     // 제출 버튼 클릭시 nickname post api 호출
     try {
       const response = await fetch(`${DEFAULT_REST_URL}/oauth/setNickname`, {
@@ -51,6 +51,7 @@ const Signup = () => {
       const responseData = await response.json()
       if (responseData.httpStatus === "OK") {
         console.log("1. 회원가입 완료, 세션 스토리지 확인")
+        setIsAuthenticated(true)
         sessionStorage.setItem("accessToken", responseData.data.jwtToken.accessToken)
         sessionStorage.setItem("refreshToken", responseData.data.jwtToken.refreshToken)
         sessionStorage.setItem("nickname", responseData.data.nickname)

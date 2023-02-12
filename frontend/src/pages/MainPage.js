@@ -1,23 +1,31 @@
 import { Fragment } from "react"
 import { Grid } from "semantic-ui-react"
-
+import { useState } from "react"
 import MainPageTopBar from "../components/mainPage/MainPageTopBar"
 import PostList from "../components/mainPage/PostList"
 import JamSurvey from "../components/mainPage/JamSurvey"
 
-const MainPage = () => {
-  const isAuthenticated = sessionStorage.getItem("cafeAuth")
-
-  let isJamSurvey = sessionStorage.getItem("jamSurvey")
-  console.log(1)
+const MainPage = ({
+  isAuthenticated,
+  isCafeAuth,
+  isJamSurvey,
+  setIsJamSurvey,
+}) => {
   return (
     <Fragment>
       <Grid>
         <Grid.Column width={16}>
-          <MainPageTopBar isAuthenticated={isAuthenticated} />
+          <MainPageTopBar
+            isAuthenticated={isAuthenticated}
+            isCafeAuth={isCafeAuth}
+          />
         </Grid.Column>
         <Grid.Column width={16}>
-          {isJamSurvey !== 1 && isAuthenticated !==undefined && <JamSurvey />}
+          {!isJamSurvey &&
+            isAuthenticated !== undefined &&
+            isCafeAuth !== undefined && (
+              <JamSurvey setIsJamSurvey={setIsJamSurvey} />
+            )}
         </Grid.Column>
         {/* <Grid.Column width={16}>
           <PostTypeCarousel />

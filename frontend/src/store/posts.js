@@ -177,7 +177,7 @@ const postsSlice = createSlice({
 const DEFAULT_REST_URL = process.env.REACT_APP_REST_DEFAULT_URL
 
 export const getPosts = (dataSet) => {
-  return async (dispatch) => {
+  return async (dispatch, history) => {
     dispatch(postsActions.isLoading())
     const sendRequest = async () => {
       const response = await fetch(`${DEFAULT_REST_URL}/main/post/feed`, {
@@ -211,11 +211,13 @@ export const getPosts = (dataSet) => {
           },
         })
         const responseData = await response.json()
-        if (!responseData.httpStatus === "OK") {
+        if (responseData.httpStatus !== "OK") {
           sessionStorage.clear()
+          window.location.href = "/login"
+        }else{
+          sessionStorage.setItem("accessToken", responseData.data.accessToken)
+          sendRequest(dataSet)
         }
-        sessionStorage.setItem("accessToken", responseData.data.accessToken)
-        sendRequest(dataSet)
       }
       if (responseData.httpStatus === "OK") {
         return responseData.data

@@ -16,7 +16,11 @@ const Layout = (props) => {
             largeScreen={3}
             widescreen={3}
           >
-            <SideNavigation />
+            <SideNavigation
+              setIsCafeAuth={props.setIsCafeAuth}
+              setIsJamSurvey={props.setIsJamSurvey}
+              isCafeAuth={props.isCafeAuth}
+            />
           </Grid.Column>
 
           <Grid.Column

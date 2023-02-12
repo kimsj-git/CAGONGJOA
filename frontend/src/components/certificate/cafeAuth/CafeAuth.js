@@ -82,7 +82,7 @@ const CafeAuth = (props) => {
           </Grid>
         </Modal.Content>
       </Modal>
-      <NearCafeList closeNearCafeList={closeNearCafeList}/>
+      <NearCafeList closeNearCafeList={closeNearCafeList} setIsCafeAuth={props.setIsCafeAuth} setIsJamSurvey={props.setIsJamSurvey}/>
     </>
   )
 }

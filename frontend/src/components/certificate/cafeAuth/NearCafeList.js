@@ -52,7 +52,7 @@ const NearCafeList = (props) => {
           </>
         )}
       </Modal.Content>
-      <ConfirmCafe />
+      <ConfirmCafe setIsCafeAuth={props.setIsCafeAuth} setIsJamSurvey={props.setIsJamSurvey}/>
     </Modal>
   )
 }
