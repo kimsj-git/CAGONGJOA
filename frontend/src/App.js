@@ -24,14 +24,22 @@ import MyCafeBadge from "./components/myPage/myCafeBadge/MyCafeBadge"
 import MyFeedPage from "./components/myPage/myPost/MyFeedPage"
 import Settings from "./components/myPage/settingsPage/Settings"
 import BlockList from "./components/myPage/settingsPage/BlockList"
+import useFetch from "./hooks/useFetch"
+const DEFAULT_REST_URL = process.env.REACT_APP_REST_DEFAULT_URL
 
 function App() {
   // 바로 로그인 화면으로
   const history = useHistory()
   const Authenticated = sessionStorage.getItem("accessToken")
-  const [isAuthenticated, setIsAuthenticated] = useState(sessionStorage.getItem('accessToken'))
-  const [isCafeAuth, setIsCafeAuth] = useState(sessionStorage.getItem('cafeAuth'))
-  const [isJamSurvey, setIsJamSurvey] = useState(sessionStorage.getItem('jamSurvey'))
+  const [isAuthenticated, setIsAuthenticated] = useState(
+    sessionStorage.getItem("accessToken")
+  )
+  const [isCafeAuth, setIsCafeAuth] = useState(
+    sessionStorage.getItem("cafeAuth")
+  )
+  const [isJamSurvey, setIsJamSurvey] = useState(
+    sessionStorage.getItem("jamSurvey")
+  )
 
   useEffect(() => {
     if (!Authenticated || Authenticated === undefined) {
@@ -39,30 +47,49 @@ function App() {
     }
   }, [Authenticated])
 
-  // 위치인증 되면 오늘의 카페 타이머 시작
-  const cafeAuth = sessionStorage.getItem("cafeAuth")
-  const dispatch = useDispatch()
-  const accTime = useSelector((state) => state.timer.accTime)
-  const addTimeHandler = () => {
-    dispatch(timerActions.update(1))
-  }
-
+  // 위치 인증되면 최초 1회 누적시간 가져오기
+  const { sendRequest: getAccTime } = useFetch()
   const time = useRef(0)
   useEffect(() => {
-    if (cafeAuth === 1) {
-      const intervalId = setInterval(() => {
-        time.current += 1
-        if (time.current % 60 === 0) {
-          // 1분마다 시간 업데이트..
-          addTimeHandler()
-        }
-      }, 1000)
+    if (isCafeAuth === 1) {
+      const fetchData = async () => {
+        const { data } = await getAccTime({
+          url: `${DEFAULT_REST_URL}/cafe/auth/data`,
+          headers: {
+            Authorization: `Bearer ${sessionStorage.getItem("accessToken")}`,
+          },
+        })
+        time.current = data.accTime
+      }
+      fetchData()
+    }
+  }, [isCafeAuth])
+
+  // 1분마다 시간경과 요청 보내기
+  const { sendRequest: sendTime } = useFetch()
+  useEffect(() => {
+    if (isCafeAuth === 1) {
+      const intervalId = setInterval(async () => {
+        const { data } = await sendTime({
+          url: `${DEFAULT_REST_URL}/todaycafe/main/addtime`,
+          method: "PUT",
+          headers: {
+            Authorization: `Bearer ${sessionStorage.getItem("accessToken")}`,
+            "Content-Type": "application/json",
+          },
+        })
+        time.current = data.accTime
+      }, 60000) // 1 minute
       return () => clearInterval(intervalId)
     }
-  }, [time, cafeAuth])
+  }, [isCafeAuth, time.current])
 
   return (
-    <Layout isCafeAuth={isCafeAuth} setIsCafeAuth={setIsCafeAuth} setIsJamSurvey={setIsJamSurvey}>
+    <Layout
+      isCafeAuth={isCafeAuth}
+      setIsCafeAuth={setIsCafeAuth}
+      setIsJamSurvey={setIsJamSurvey}
+    >
       <Switch>
         {/* Navigation 관련 ROUTE*/}
         <Route path="/chat" exact>
