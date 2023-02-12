@@ -48,6 +48,7 @@ public class PostServiceImpl implements PostService {
     private final PostUtil postUtil;
     private final CafeServiceImpl cafeService;
     private final MemberServiceImpl memberService;
+    private final ImageRepository imageRepository;
 
     /**
      * 1. 글 등록 [ 테스트 완료 ]
@@ -108,7 +109,7 @@ public class PostServiceImpl implements PostService {
                 }
 
             } else { // 그렇지 않다면 false
-                throw new PostException(PostExceptionType.NOT_ALLOWED_POST_TYPE);
+                throw new PostException(PostExceptionType.NOT_ALLOWED_TYPE);
             }
         } else { // 카페이름이 있으면 - 인증된 유저
             System.out.println("글생성 : 여기까지 옴");
@@ -377,6 +378,120 @@ public class PostServiceImpl implements PostService {
                 .build();
 
         return postUpdateResponseDto;
+    }
+
+    @Override
+    public List<PostSearchResponseDto> searchPost(PostSearchRequestDto requestDto, Pageable pageable) {
+
+        String cafeName;
+        List<Post> postList;
+        // 1. 유저 기본사항을 체크한다. OK
+        CheckedResponseDto checked = postUtil.checkMember();
+        Long memberId = checked.getMemberId();
+
+        // 2. request Dto 값들 체크 - OK
+        Long postId = requestDto.getPostId();
+        int searchType = requestDto.getSearchType();
+        Double latitude = requestDto.getLatitude();
+        Double longitude = requestDto.getLongitude();
+        Double dist = requestDto.getDist();
+        String searchKeyword = requestDto.getSearchKey();
+
+        // 3. 주변 카페들 정보 알아오기 - 주변 카페에 해당되는 글들만 된다.
+        ClientPosInfoDto clientPosInfoDto = new ClientPosInfoDto(latitude, longitude, dist);
+        List<NearByCafeResultDto> nearByCafeResultDtos = cafeService.getNearByCafeLocations(clientPosInfoDto);
+
+        if (nearByCafeResultDtos.isEmpty() || nearByCafeResultDtos == null) {
+            throw new PostException(PostExceptionType.NO_CAFE_AROUND);
+        } else {
+            System.out.println(" 글 불러오기 - 주변 카페 개수 : " + nearByCafeResultDtos.size() + "개       " + nearByCafeResultDtos);
+        }
+        // cafe id 만 전달해줄거임
+        List<Long> cafeIdList = new ArrayList<>();
+        for (NearByCafeResultDto dto : nearByCafeResultDtos) {
+            cafeIdList.add(dto.getId().longValue());
+        }
+
+        if (searchType == 1) { // 글 내용으로 찾기
+
+            if (postId == -1L) {
+                // 처음 요청할때 (refresh)
+                System.out.println("글내용으로 찾기 첫번째 요청");
+                postList = postRepository.findBySearchContentFirst(cafeIdList, searchKeyword, pageable);
+
+            } else {
+                // 두번째 이상으로 요청할 때 (마지막 글의 pk 를 기준으로 함)
+                System.out.println("글내용으로 찾기 다음 요청");
+                postList = postRepository.findBySearchContentNext(cafeIdList, searchKeyword, postId, pageable);
+                // 갖고올 게시물이 없으면
+            }
+
+        } else if (searchType == 2) { // 유저 이름으로 찾기
+
+            if (postId == -1L) {
+                // 처음 요청할때 (refresh)
+                System.out.println("유저 이름으로 찾기 첫번째 요청");
+                postList = postRepository.findBySearchNicknameFirst(cafeIdList,searchKeyword, pageable);
+            } else {
+                // 두번째 이상으로 요청할 때 (마지막 글의 pk 를 기준으로 함)
+                System.out.println("유저 이름으로 찾기 다음 요청");
+                postList = postRepository.findBySearchNicknameNext(cafeIdList,searchKeyword,postId, pageable);
+                // 갖고올 게시물이 없으면
+            }
+
+        } else {
+            throw new PostException(PostExceptionType.NOT_ALLOWED_TYPE);
+        }
+//         post를 slice 형태로 갖고오기
+
+        if (postList.isEmpty() || postList == null) { // 불러올 게시물이 있을때
+            throw new PostException(PostExceptionType.NO_POST_FEED);
+        }
+
+        // 5. 리턴값 채워넣기
+        List<PostSearchResponseDto> responseDtoList = new ArrayList<>();
+        for (Post slice : postList) {
+            Optional<Post> optionalPost = postRepository.findById(slice.getId());
+            Post post = optionalPost.get();
+            List<PostImage> postImages = imageRepository.findAllByPostId(postId);
+
+            List<String> imgUrlPath = new ArrayList<>();
+            for (PostImage postImage : postImages) {
+                imgUrlPath.add(postImage.getImgUrl());
+            }
+            int postLikeCount = post.getPostLikeList().size();
+            int commentCount = post.getCommentList().size();
+
+
+            PostSearchResponseDto postSearchResponseDto = PostSearchResponseDto.builder()
+                    .isCafeAuthorized(post.isCafeAuthorized())
+                    .postId(slice.getId())
+                    .imgUrlPath(imgUrlPath)
+                    .createdAt(post.getCreatedAt())
+                    .searchType(searchType)
+                    .content(post.getContent())
+                    .commentCount(commentCount)
+                    .writerNickname(post.getMember().getNickname())
+                    .postLikeCount(postLikeCount)
+                    .build();
+
+            if (post.isCafeAuthorized()) {
+                if (post.getPostCafeList() == null || post.getPostCafeList().isEmpty()) {
+                    throw new PostException(PostExceptionType.NO_POST_CAFE);
+                }
+                // 당연히 없지
+                PostCafe postCafe = post.getPostCafeList().get(0); // 인증된 유저의 글쓰기 경우, postCafe 객체를 하나만 가지고있음
+                Cafe cafe = postCafe.getCafe();
+                Long cafeId = cafe.getId();
+                String brandType = cafe.getBrandType();
+                cafeName = cafe.getName();
+                Long exp = memberCafeTierRepository.findByMemberIdAndCafeId(post.getMember().getId(), cafeId).get().getExp();
+                postSearchResponseDto.updateDto(cafeName, exp, brandType);
+            }
+            responseDtoList.add(postSearchResponseDto);
+        }
+        return responseDtoList;
+
     }
 
     /**

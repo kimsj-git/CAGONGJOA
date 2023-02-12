@@ -32,6 +32,8 @@ public interface PostService {
     /** 6. 게시글 좋아요  **/
     PostLikeResponseDto likePost(PostLikeRequestDto likeRequestDto);
 
-
+    /** 7. 게시글 업데이트  **/
     PostUpdateResponseDto updatePost(Long postId);
+    /** 8. 게시글 검색  **/
+    List<PostSearchResponseDto> searchPost(PostSearchRequestDto requestDto, Pageable pageable);
 }

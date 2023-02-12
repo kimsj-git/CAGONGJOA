@@ -111,4 +111,21 @@ public class PostMainController {
         return new ResponseEntity<>(responseDTO, HttpStatus.OK);
     }
 
+    @Auth
+    @PostMapping("/search")
+    public ResponseEntity<ResponseDTO> searchPost(
+            @RequestBody PostSearchRequestDto requestDto,
+            @PageableDefault(size = 10, sort = "id", direction = Sort.Direction.DESC) Pageable pageable) {
+
+        List<PostSearchResponseDto> responseDtoList = postService.searchPost(requestDto, pageable);
+        responseDTO
+                = new ResponseDTO("search feed 생성 성공!", "", HttpStatus.OK, responseDtoList);
+
+        // 리턴객체 : 유저정보(카페로고, 닉네임, 칭호, 카페이름), 만든시간, 이미지, 글내용 전체, 좋아요 개수, 댓글 개수, 게시물 PK
+
+        return new ResponseEntity<>(responseDTO, HttpStatus.OK);
+    }
+
 }
+
+
