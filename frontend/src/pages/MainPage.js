@@ -23,7 +23,7 @@ const MainPage = ({
         <Grid.Column width={16}>
           {!isJamSurvey &&
             isAuthenticated !== undefined &&
-            isCafeAuth !== undefined && (
+            isCafeAuth === '1' && (
               <JamSurvey setIsJamSurvey={setIsJamSurvey} />
             )}
         </Grid.Column>

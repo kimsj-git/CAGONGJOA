@@ -14,13 +14,12 @@ const Logout = ({setIsAuthenticated, setIsCafeAuth}) => {
       }
     })
     const responseData = await response.json()
-    console.log(responseData)
     if (responseData.httpStatus === "BAD_REQUEST" && responseData.data.sign === "JWT"){
       console.log('logout, 1.유효하지 않은 토큰')
     }
     else if (responseData.httpStatus==="OK"){
-      setIsAuthenticated(false)
-      setIsCafeAuth(false)
+      setIsAuthenticated(undefined)
+      setIsCafeAuth('0')
       sessionStorage.clear()
       history.push('/login')
     } else{

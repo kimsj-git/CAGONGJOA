@@ -25,17 +25,16 @@ const SideNavigation = ({ isCafeAuth, setIsCafeAuth, setIsJamSurvey }) => {
     "/mypage": "mypage",
     "/search": "search",
   }
+  console.log(isCafeAuth)
   const [activeItem, setActiveItem] = useState(directory[location.pathname])
   const [prevItem, setPrevItem] = useState("")
   const menuClickHandler = (e, { name }) => {
     setActiveItem(name)
     if (activeItem !== name) {
       setPrevItem(activeItem)
-      console.log(name)
     }
   }
   const closeModal = () => {
-    console.log(prevItem)
     setActiveItem(prevItem)
   }
 
@@ -101,7 +100,7 @@ const SideNavigation = ({ isCafeAuth, setIsCafeAuth, setIsJamSurvey }) => {
           </NavLink>
         </Menu.Item>
         
-        {!isCafeAuth && <Menu.Item
+        {(isCafeAuth === null || isCafeAuth === '0') && <Menu.Item
           name="location"
           link
           onClick={menuClickHandler}
