@@ -1,33 +1,31 @@
-import { Fragment, useEffect } from "react"
-
-import useFetch from "../hooks/useFetch.js"
-import CafeAuthFetch from "../components/certificate/cafeAuth/CafeAuthFetch"
-
-import { useDispatch, useSelector } from "react-redux"
-import { postsActions } from "../store/posts"
-
+import { Fragment } from "react"
 import { Grid } from "semantic-ui-react"
-
+import { useState } from "react"
 import MainPageTopBar from "../components/mainPage/MainPageTopBar"
 import PostList from "../components/mainPage/PostList"
 import JamSurvey from "../components/mainPage/JamSurvey"
 
-const MainPage = () => {
-  const isAuthenticated = sessionStorage.getItem("cafeAuth")
-
-  // 엑세스 토큰이 없을 때 login화면으로 이동
-  // if (!sessionStorage.getItem('accessToken')){
-  //   history.push('/login')
-  // }
-
+const MainPage = ({
+  isAuthenticated,
+  isCafeAuth,
+  isJamSurvey,
+  setIsJamSurvey,
+}) => {
   return (
     <Fragment>
       <Grid>
         <Grid.Column width={16}>
-          <MainPageTopBar isAuthenticated={isAuthenticated} />
+          <MainPageTopBar
+            isAuthenticated={isAuthenticated}
+            isCafeAuth={isCafeAuth}
+          />
         </Grid.Column>
         <Grid.Column width={16}>
-          <JamSurvey />
+          {!isJamSurvey &&
+            isAuthenticated !== undefined &&
+            isCafeAuth !== undefined && (
+              <JamSurvey setIsJamSurvey={setIsJamSurvey} />
+            )}
         </Grid.Column>
         {/* <Grid.Column width={16}>
           <PostTypeCarousel />

@@ -16,7 +16,7 @@ import { IoSearch } from "react-icons/io5"
 import CafeAuth from "../components/certificate/cafeAuth/CafeAuth"
 import "./SideNavigation.css"
 
-const SideNavigation = () => {
+const SideNavigation = ({ isCafeAuth, setIsCafeAuth, setIsJamSurvey }) => {
   const location = useLocation()
   const directory = {
     "/": "home",
@@ -100,15 +100,21 @@ const SideNavigation = () => {
             </div>
           </NavLink>
         </Menu.Item>
-        <Menu.Item
+        
+        {!isCafeAuth && <Menu.Item
           name="location"
           link
           onClick={menuClickHandler}
           active={activeItem === "location"}
         >
           {/* 위치인증 모달 창 */}
-          <CafeAuth activeItem={activeItem} closeModal={closeModal} />
-        </Menu.Item>
+          <CafeAuth
+            activeItem={activeItem}
+            closeModal={closeModal}
+            setIsCafeAuth={setIsCafeAuth}
+            setIsJamSurvey={setIsJamSurvey}
+          />
+        </Menu.Item>}
         <Menu.Item
           name="post"
           link

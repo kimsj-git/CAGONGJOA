@@ -3,7 +3,7 @@ import { Segment, Image, Button, Modal, Header, Icon } from "semantic-ui-react"
 import ToggleButton from "../common/ToggleButton"
 import GetBeanModal from "./GetBeanModal"
 
-const JamSurvey = () => {
+const JamSurvey = ({setIsJamSurvey}) => {
   const [selectedBtn, setSelectedBtn] = useState(null)
   const handleChoice = (choice) => {
     setSelectedBtn(choice)
@@ -56,7 +56,7 @@ const JamSurvey = () => {
           />
         </div>
         <div style={{ paddingInline: "1rem" }}>
-          {selectedBtn !== null && <GetBeanModal selectedBtn={selectedBtn} open={openModal} />}
+          {selectedBtn !== null && <GetBeanModal selectedBtn={selectedBtn} open={openModal} setIsJamSurvey={setIsJamSurvey}/>}
         </div>
       </Segment>
     )

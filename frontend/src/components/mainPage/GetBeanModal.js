@@ -26,16 +26,18 @@ const GetBeanModal = (props) => {
           Authorization: `Bearer ${sessionStorage.getItem("accessToken")}`,
         },
         body: JSON.stringify({
-          crowdlevel: props.selectedBtn + 1,
+          crowdLevel: props.selectedBtn + 1,
           todayDate: `${year}${month}${day}`
         }),
       })
       const responseData = await response.json()
+      console.log(responseData)
       if (responseData.httpStatus === "UNAUTHORIZED" && responseData.data.sign ==="CAFE"){
         setOpen(false)
         alert("카페 인증이 필요합니다.")
       } else if (responseData.httpStatus === "BAD_REQUEST" && responseData.data.sign ==="CAFE"){
         setOpen(false)
+        props.setIsJamSurvey(true)
         alert("이미 혼잡도 설문을 제출 했습니다.")
       } else if (responseData.httpStatus === "BAD_REQUEST" && responseData.data.sign==="JWT"){
         const response = await fetch(`${REST_DEFAULT_URL}/member/refresh`,{
@@ -55,7 +57,9 @@ const GetBeanModal = (props) => {
           setOpen(false)
           alert('다시 시도해주세요.')
         }
-      } else{
+      } else if(responseData.httpStatus === "CREATED"){
+          setOpen(true)
+          setTimeout(()=>{props.setIsJamSurvey(true)},1500) 
           sessionStorage.setItem('jamSurvey', 1)
       }
   }
@@ -63,6 +67,9 @@ const GetBeanModal = (props) => {
     <Modal
       open={open}
       basic
+      onOpen={()=>{setTimeout(()=>{
+        setOpen(false)
+      }, 1500)}}
       closeOnDimmerClick={true}
       closeOnDocumentClick={true}
       trigger={

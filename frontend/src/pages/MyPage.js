@@ -6,14 +6,14 @@ import Logout from "../components/member/logout/Logout"
 
 import classes from "./MyPage.module.css"
 
-const MyPage = () => {
+const MyPage = ({setIsAuthenticated, setIsCafeAuth}) => {
   return (
     <div className={classes.wrapper}>
         <>
           <Grid divided="vertically" textAlign="center">
             <Profile />
             <MyPageItems />
-            <Logout />
+            <Logout setIsAuthenticated={setIsAuthenticated} setIsCafeAuth={setIsCafeAuth}/>
           </Grid>
         </>
     </div>

@@ -4,11 +4,10 @@ import { useSelector, useDispatch } from "react-redux"
 import { Modal, Button, ModalActions, Icon } from "semantic-ui-react"
 
 import { modalActions } from "../../../store/modal"
-import useFetch from "../../../hooks/useFetch"
 
 const REST_DEFAULT_URL = process.env.REACT_APP_REST_DEFAULT_URL
 
-const ConfirmCafe = () => {
+const ConfirmCafe = ({setIsCafeAuth, setIsJamSurvey}) => {
   const history = useHistory()
   const dispatch = useDispatch()
   const [isLoading, setIsLoading] = useState(false)
@@ -63,6 +62,7 @@ const ConfirmCafe = () => {
           brandType: responseData.data.brandType
         }
         sessionStorage.setItem("todayCafe", JSON.stringify(todayCafe))
+        setIsCafeAuth(true)
       } else if (responseData.httpStatus === "BAD_REQUEST" && responseData.data.sign ==="JWT"){
         const response = await fetch(`${REST_DEFAULT_URL}/member/refresh`,{
           method: "GET",

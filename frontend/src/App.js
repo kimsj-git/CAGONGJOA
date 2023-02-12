@@ -29,13 +29,15 @@ function App() {
   // 바로 로그인 화면으로
   const history = useHistory()
   const Authenticated = sessionStorage.getItem("accessToken")
-  
-  useEffect(()=>{
-    if (!Authenticated || Authenticated === undefined){
-      history.push('/login')
-    }
-  }, [])
+  const [isAuthenticated, setIsAuthenticated] = useState(sessionStorage.getItem('accessToken'))
+  const [isCafeAuth, setIsCafeAuth] = useState(sessionStorage.getItem('cafeAuth'))
+  const [isJamSurvey, setIsJamSurvey] = useState(sessionStorage.getItem('jamSurvey'))
 
+  useEffect(() => {
+    if (!Authenticated || Authenticated === undefined) {
+      history.push("/login")
+    }
+  }, [Authenticated])
 
   // 위치인증 되면 오늘의 카페 타이머 시작
   const cafeAuth = sessionStorage.getItem("cafeAuth")
@@ -60,7 +62,7 @@ function App() {
   }, [time, cafeAuth])
 
   return (
-    <Layout>
+    <Layout isCafeAuth={isCafeAuth} setIsCafeAuth={setIsCafeAuth} setIsJamSurvey={setIsJamSurvey}>
       <Switch>
         {/* Navigation 관련 ROUTE*/}
         <Route path="/chat" exact>
@@ -70,7 +72,11 @@ function App() {
           <TodayCafe />
         </Route>
         <Route path="/mypage" exact>
-          <MyPage />
+          <MyPage
+            setIsAuthenticated={setIsAuthenticated}
+            setIsCafeAuth={setIsCafeAuth}
+            isCafeAuth={isCafeAuth}
+          />
         </Route>
         <Route path="/search" exact>
           <SearchPage />
@@ -81,10 +87,10 @@ function App() {
           <LoginPage />
         </Route>
         <Route path="/oauth/kakao">
-          <KakaoLoginGetCode />
+          <KakaoLoginGetCode setIsAuthenticated={setIsAuthenticated} />
         </Route>
         <Route path="/signup" exact>
-          <SignupPage />
+          <SignupPage setIsAuthenticated={setIsAuthenticated} />
         </Route>
 
         {/* TodayCafe 관련 ROUTE */}
@@ -121,10 +127,15 @@ function App() {
 
         {/* MainPage Route */}
         <Route path="/" exact>
-          <MainPage />
+          <MainPage
+            isAuthenticated={isAuthenticated}
+            isCafeAuth={isCafeAuth}
+            isJamSurvey={isJamSurvey}
+            setIsJamSurvey={setIsJamSurvey}
+          />
         </Route>
         <Route path="/map" exact>
-          <MapPage/>
+          <MapPage />
         </Route>
 
         {/* NotFound 페이지*/}
