@@ -10,7 +10,7 @@ const initialPostsState = {
       exp: 2000,
       cafeName: "스타벅스 강남R점",
       brandType: "스타벅스",
-      createdAt: "2023-02-06T01:31:06",
+      createdAt: "2023-02-12T01:31:06",
       postType: "free",
       imgUrlPath: [
         "https://images.unsplash.com/photo-1501339847302-ac426a4a7cbb?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1178&q=80",
@@ -27,7 +27,7 @@ const initialPostsState = {
       exp: 1000,
       cafeName: "바나프레소 테헤란로점",
       brandType: "바나프레소",
-      createdAt: "2023-02-06T01:31:06",
+      createdAt: "2023-01-06T01:31:06",
       postType: "together",
       imgUrlPath: [
         "https://images.unsplash.com/photo-1501339847302-ac426a4a7cbb?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1178&q=80",
@@ -159,7 +159,7 @@ const postsSlice = createSlice({
     // hot 필터 선택
     filterHot(state, action) {
       state.filterState = {
-        hot: true,
+        hot: action.payload,
         free: false,
         qna: false,
         together: false,
@@ -177,7 +177,7 @@ const postsSlice = createSlice({
 const DEFAULT_REST_URL = process.env.REACT_APP_REST_DEFAULT_URL
 
 export const getPosts = (dataSet) => {
-  return async (dispatch, history) => {
+  return async (dispatch) => {
     dispatch(postsActions.isLoading())
     const sendRequest = async () => {
       const response = await fetch(`${DEFAULT_REST_URL}/main/post/feed`, {
@@ -214,7 +214,7 @@ export const getPosts = (dataSet) => {
         if (responseData.httpStatus !== "OK") {
           sessionStorage.clear()
           window.location.href = "/login"
-        }else{
+        } else {
           sessionStorage.setItem("accessToken", responseData.data.accessToken)
           sendRequest(dataSet)
         }
