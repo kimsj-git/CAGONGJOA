@@ -14,8 +14,8 @@ const TypeSelector = (props) => {
     >
       <Button
         key="hot"
-        onClick={() => {
-          dispatch(postsActions.filterHot())
+        onClick={(e) => {
+          dispatch(postsActions.filterHot(e.target.id === "hot" ? false : true))
         }}
         id={filterState["hot"] ? "hot" : "cancle-hot"}
         basic

@@ -11,6 +11,7 @@ import studyHistoryReducer from "./studyHistory"
 import imageReducer from "./image"
 import postsReducer from "./posts"
 import commentsReducer from "./comments"
+import searchReducer from "./search"
 
 const store = configureStore({
   reducer: {
@@ -23,6 +24,7 @@ const store = configureStore({
     image: imageReducer,
     posts: postsReducer,
     comments: commentsReducer,
+    search: searchReducer,
   },
   devTools: process.env.NODE_ENV !== "production",
 })
