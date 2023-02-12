@@ -16,7 +16,6 @@ import ImageUploadBox from "./ImageUploadBox"
 import { Editor } from "primereact/editor"
 import { imageActions } from "../../store/image"
 import { postsActions } from "../../store/posts.js"
-import { ReactMarkdown } from "react-markdown/lib/react-markdown.js"
 
 const DEFAULT_REST_URL = process.env.REACT_APP_REST_DEFAULT_URL
 const PostForm = (props) => {
