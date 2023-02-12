@@ -97,9 +97,11 @@ public class CafeController {
     /**
      * 카페 마커를 눌렀을 때 설문조사 내용을 기반으로 사용자에게 제공
      */
-    @PostMapping("/survey")
-    public ResponseEntity<ResponseDTO> cafeSurvey(@RequestBody LocationAndDateDto locationAndDateDto) {
-
+    @GetMapping("/survey")
+    public ResponseEntity<ResponseDTO> cafeSurvey(@RequestParam Double latitude,
+                                                  @RequestParam Double longitude,
+                                                  @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss") LocalDateTime todayTime) {
+        LocationAndDateDto locationAndDateDto = new LocationAndDateDto(latitude, longitude, todayTime);
         CafeSurveyRespDto cafeSurveyRespDto = cafeService.getCafeSurvey(locationAndDateDto);
 
         ResponseDTO responseDTO = new ResponseDTO("카페 설문 데이터 전달 완료!", "",
