@@ -62,7 +62,6 @@ export const getMonthStudyHistory = (dataSet) => {
           sendRequest(dataSet)
         }
       }else if (responseData.httpStatus === "OK"){
-        console.log(responseData.data)
         return responseData.data
       }
     }

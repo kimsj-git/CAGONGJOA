@@ -13,6 +13,7 @@ const StudyHistory = () => {
           marginTop: "3rem",
         }}
       >
+        <h1>카공 생활</h1>
         <HistoryCalendar />
         <StudyDetail />
       </section>

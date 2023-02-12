@@ -1,4 +1,6 @@
+import { useInView } from "react-intersection-observer"
 import { Item } from "semantic-ui-react"
+
 import MyCommentsItem from "./MyCommentsItem"
 
 const DUMMY_DATA = [
@@ -73,6 +75,18 @@ const DUMMY_DATA = [
   },
 ]
 const MyComments = () => {
+  const [ref, inView] = useInView({
+    threshold: 1,
+  })
+  console.log(inView)
+  
+  const getMoreComments = () => {
+    console.log("get")
+  }
+  if (inView === true){
+    getMoreComments()
+  }
+
   return (
     <>
       <Item.Group style={{ width: "100%" }} divided>
@@ -80,6 +94,7 @@ const MyComments = () => {
           return <MyCommentsItem comment={comment} key={comment.id}/>
         })}
       </Item.Group>
+      <div ref={ref}></div>
     </>
   )
 }
