@@ -77,47 +77,89 @@ public class CafeServiceImpl implements CafeService {
         List<Survey> surveys = surveyRepository.findByCafeIdsAndTimeRange(cafeId, twoMonthAgo, todayTime);
         System.out.println("surveys = " + surveys);
 
-        CafeSurveyRespDto cafeSurveyRespDto = new CafeSurveyRespDto();
-
         /**
          * 설문조사 빈도 데이터를 map으로 저장
          * "power": [3, 4, 1] <- G,N,B 순
          */
         Map<String, ArrayList<Integer>> gnbCntMap = new HashMap<>();
-        gnbCntMap.put("power", new ArrayList<>());
-        gnbCntMap.put("wifi", new ArrayList<>());
-        gnbCntMap.put("toilet", new ArrayList<>());
+        gnbCntMap.put("power", new ArrayList<>(Collections.nCopies(3, 0)));
+        gnbCntMap.put("wifi", new ArrayList<>(Collections.nCopies(3, 0)));
+        gnbCntMap.put("toilet", new ArrayList<>(Collections.nCopies(3, 0)));
+        gnbCntMap.put("time", new ArrayList<>(Collections.nCopies(2, 0)));
 
         // surveys 내용 빈도수 뽑아내서 resp dto 내용 채우기
         for (Survey survey : surveys) {
             if (survey.getReplyPower().equals("G")) {
+                int curVal = gnbCntMap.get("power").get(0);
+                gnbCntMap.get("power").set(0, curVal + 1);
 
             } else if (survey.getReplyPower().equals("N")) {
+                int curVal = gnbCntMap.get("power").get(1);
+                gnbCntMap.get("power").set(1, curVal + 1);
 
             } else if (survey.getReplyPower().equals("B")) {
-
+                int curVal = gnbCntMap.get("power").get(2);
+                gnbCntMap.get("power").set(2, curVal + 1);
             }
 
             if (survey.getReplyWifi().equals("G")) {
+                int curVal = gnbCntMap.get("wifi").get(0);
+                gnbCntMap.get("wifi").set(0, curVal + 1);
 
             } else if (survey.getReplyWifi().equals("N")) {
+                int curVal = gnbCntMap.get("wifi").get(1);
+                gnbCntMap.get("wifi").set(1, curVal + 1);
 
             } else if (survey.getReplyWifi().equals("B")) {
-
+                int curVal = gnbCntMap.get("wifi").get(2);
+                gnbCntMap.get("wifi").set(2, curVal + 1);
             }
 
             if (survey.getReplyToilet().equals("G")) {
+                int curVal = gnbCntMap.get("toilet").get(0);
+                gnbCntMap.get("toilet").set(0, curVal + 1);
 
             } else if (survey.getReplyToilet().equals("N")) {
+                int curVal = gnbCntMap.get("toilet").get(1);
+                gnbCntMap.get("toilet").set(1, curVal + 1);
 
             } else if (survey.getReplyToilet().equals("B")) {
+                int curVal = gnbCntMap.get("toilet").get(2);
+                gnbCntMap.get("toilet").set(2, curVal + 1);
+            }
 
+            if (survey.isReplyTime()) {
+                int curVal = gnbCntMap.get("time").get(0);
+                gnbCntMap.get("time").set(0, curVal + 1); // 0번 = 이용시간 제한 있음
+            } else {
+                int curVal = gnbCntMap.get("time").get(1);
+                gnbCntMap.get("time").set(1, curVal + 1); // 1번 = 이용시간 제한 없음
             }
         }
 
-        // 현재 카페 id에 해당하는 redis 정보 가져오기 -> count를 구하면 이용중 유저 수 get 가능
+        CafeSurveyRespDto cafeSurveyRespDto = new CafeSurveyRespDto();
 
-        return null;
+        cafeSurveyRespDto.setReplyPower_high(gnbCntMap.get("power").get(0));
+        cafeSurveyRespDto.setReplyPower_mid(gnbCntMap.get("power").get(1));
+        cafeSurveyRespDto.setReplyPower_low(gnbCntMap.get("power").get(2));
+
+        cafeSurveyRespDto.setReplyWifi_high(gnbCntMap.get("wifi").get(0));
+        cafeSurveyRespDto.setReplyWifi_mid(gnbCntMap.get("wifi").get(1));
+        cafeSurveyRespDto.setReplyWifi_low(gnbCntMap.get("wifi").get(2));
+
+        cafeSurveyRespDto.setReplyToilet_high(gnbCntMap.get("toilet").get(0));
+        cafeSurveyRespDto.setReplyToilet_mid(gnbCntMap.get("toilet").get(1));
+        cafeSurveyRespDto.setReplyToilet_low(gnbCntMap.get("toilet").get(2));
+
+        if (gnbCntMap.get("time").get(0) >= gnbCntMap.get("time").get(1)) {
+            // 이용시간 제한 있음
+            cafeSurveyRespDto.setReplyTime(true);
+        } else {
+            // 이용시간 제한 없음
+            cafeSurveyRespDto.setReplyTime(false);
+        }
+
+        return cafeSurveyRespDto;
     }
 
 

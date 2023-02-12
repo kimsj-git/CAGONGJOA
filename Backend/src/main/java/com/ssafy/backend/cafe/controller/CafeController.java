@@ -102,7 +102,7 @@ public class CafeController {
         CafeSurveyRespDto cafeSurveyRespDto = cafeService.getCafeSurvey(locationAndDateDto);
 
         ResponseDTO responseDTO = new ResponseDTO("카페 설문 데이터 전달 완료!", "",
-                HttpStatus.OK, null);
+                HttpStatus.OK, cafeSurveyRespDto);
         return new ResponseEntity<>(responseDTO, HttpStatus.OK);
     }
 

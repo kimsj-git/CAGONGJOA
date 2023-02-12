@@ -23,5 +23,4 @@ public class CafeSurveyRespDto {
     private int replyToilet_low;
 
     private boolean replyTime;
-    private int useMemberCount;
 }

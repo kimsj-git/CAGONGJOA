@@ -17,6 +17,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 @Builder
+@ToString(of={"id", "replyWifi", "replyPower", "replyToilet", "replyTime", "createdAt"})
 public class Survey{
 
     //== Column  ==//
@@ -49,7 +50,7 @@ public class Survey{
         private String replyPower;
         @Column(name="reply_toilet")
         private String replyToilet;
-        @Column(name="reply_Time")
+        @Column(name="reply_time")
         private boolean replyTime;
 
         /**
