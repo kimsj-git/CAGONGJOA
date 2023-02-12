@@ -58,13 +58,21 @@ public class CafeVisitLog {
     private Long fortuneId;
 
     /**
-     * 7. 혼잡도 제출여부 - 0,1
+     * 7. 만족도 설문 제출여부 - 0,1
      **/
     @Column(name = "is_survey", columnDefinition = "TINYINT(1)", length = 1)
     private boolean isSurvey;
 
+
     /**
-     * 8. Todo 와 양방향 매핑
+     * 8. 혼잡도 설문 제출여부 - 0,1
+     **/
+    @Column(name = "is_crowd_survey", columnDefinition = "TINYINT(1)", length = 1)
+    private boolean isCrowdSurvey;
+
+
+    /**
+     * 9. Todo 와 양방향 매핑
      **/
     @OneToMany(mappedBy = "cafeVisitLog")
     private List<Todo> todoList;
