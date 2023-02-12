@@ -29,6 +29,7 @@ const ConfirmCafe = ({setIsCafeAuth, setIsJamSurvey}) => {
     })
     setIsLoading(false)
     const responseData = await response.json()
+    console.log(responseData)
     if (responseData.httpStatus==="CREATED") {
       const response = await fetch(`${REST_DEFAULT_URL}/cafe/auth/data`,{
         method: "GET",
@@ -62,7 +63,7 @@ const ConfirmCafe = ({setIsCafeAuth, setIsJamSurvey}) => {
           brandType: responseData.data.brandType
         }
         sessionStorage.setItem("todayCafe", JSON.stringify(todayCafe))
-        setIsCafeAuth(true)
+        setIsCafeAuth('1')
       } else if (responseData.httpStatus === "BAD_REQUEST" && responseData.data.sign ==="JWT"){
         const response = await fetch(`${REST_DEFAULT_URL}/member/refresh`,{
           method: "GET",
@@ -77,19 +78,22 @@ const ConfirmCafe = ({setIsCafeAuth, setIsJamSurvey}) => {
           history.push('/login')
         }else if(responseData.httpStatus === "OK"){
           sessionStorage.setItem('accessToken', responseData.data.accessToken)
+          console.log(2)
           alert("카페 인증에 실패했습니다.")
         }
-      }
-      else{
+      }else{
+        console.log(3)
         alert("카페 인증에 실패했습니다.")
       }
     }
     else{
+      console.log(1)
       alert("카페 인증에 실패했습니다.")
     }
     dispatch(modalActions.toggleConfirmCafeModal())
     dispatch(modalActions.toggleNearCafeListModal())
   }
+
   if (cafeData) {
     return (
       <Modal
