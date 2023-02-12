@@ -84,24 +84,24 @@ public class PostServiceImpl implements PostService {
             post.updateContent(content);
         }
 
-        if (files != null) {
-            List<PostImage> postImages = postUtil.imageUpload(files);
-            for (PostImage postImage : postImages) {
-                post.addPostImage(postImage);
-            }
-        }
+        Post savedPost = postRepository.save(post);
 
+        if (files != null) {
+            List<PostImage> postImages = postUtil.imageUpload(savedPost, files);
+//            System.out.println(postImages);
+            savedPost.updatePostImage(postImages);
+            System.out.println("이미지도 첨부 완료");
+
+        }
         // 1-4. 유저 인증여부 확인
         Optional<CafeAuth> cafeAuth = cafeAuthRepository.findById(checked.getNickname());
-
-        PostCafe postCafe;
         if (cafeAuth.isEmpty() || cafeAuth == null) { // 카페 이름이 없으면 - 인증되지 않은 유저
             if (requestDto.getType() == PostType.qna || requestDto.getType() == PostType.lost) { // 카테고리가 둘중 하나면 넘어가기
                 ClientPosInfoDto clientPosInfoDto = new ClientPosInfoDto(latitude, longitude, dist);
                 List<NearByCafeResultDto> resultDtoList = cafeService.getNearByCafeLocations(clientPosInfoDto);
                 for (NearByCafeResultDto resultDto : resultDtoList) {
-                    postCafe = PostCafe.PostCafeBuilder()
-                            .post(post)
+                    PostCafe postCafe = PostCafe.builder()
+                            .post(savedPost)
                             .cafe(cafeRepository.findById(resultDto.getId().longValue()).get())
                             .build();
                     postCafeRepository.save(postCafe); // Post 가 너무 뚱뚱해지는걸 막기위해
@@ -111,16 +111,18 @@ public class PostServiceImpl implements PostService {
                 throw new PostException(PostExceptionType.NOT_ALLOWED_POST_TYPE);
             }
         } else { // 카페이름이 있으면 - 인증된 유저
+            System.out.println("글생성 : 여기까지 옴");
             Cafe cafe = cafeRepository.findById(cafeAuth.get().getCafeId()).get(); // 카페 닉네임을 확인한다.
-            post.updateAuthorized();
+            System.out.println("cafe 이름 : " + cafe.getName());
+            savedPost.updateAuthorized();
             // 1-3. 카페위치 저장하기
-            postCafe = PostCafe.PostCafeBuilder()
-                    .post(post)
+            PostCafe postCafe = PostCafe.builder()
+                    .post(savedPost)
                     .cafe(cafe)
                     .build();
-            post.addPostCafe(postCafe); // 인증된 카페의 경우, post 에 postCafe 저장해주기
+            savedPost.addPostCafe(postCafe); // 인증된 카페의 경우, post 에 postCafe 저장해주기
         }
-        postRepository.save(post);
+
         return post.getId();
     }
 
@@ -388,29 +390,28 @@ public class PostServiceImpl implements PostService {
         String content = updateDto.getContent();
         List<Long> imageIdList = updateDto.getImageIdList();
 
-        if (imageIdList != null || content != null || files != null) {
+        if (imageIdList != null ||imageIdList.isEmpty() ||  content != null || files != null) {
 
         } else {
             throw new PostException(NO_CONTENT_POST_FORM);
         }
 
-        Optional<Post> updateResult = postRepository.findById(postId);
-        if (updateResult == null || updateResult.isEmpty()) {
+        Optional<Post> postOptional = postRepository.findById(postId);
+        if (postOptional == null || postOptional.isEmpty()) {
             throw new PostException(PostExceptionType.BAD_POST_ID);
         }
-        Post post = updateResult.get();
+        Post post = postOptional.get();
         if (content != null || !content.isEmpty()) {
             post.updateContent(content);
 
         }
+        System.out.println(files);
 
         // 2. 이미지 업데이트
         postUtil.imageDelete(post, imageIdList);
         if (files != null) {
-            List<PostImage> postImages = postUtil.imageUpload(files);
-            for (PostImage postImage : postImages) {
-                post.addPostImage(postImage);
-            }
+            List<PostImage> postImages = postUtil.imageUpload(post, files);
+            post.updatePostImage(postImages);
         }
         postRepository.save(post);
         return true;

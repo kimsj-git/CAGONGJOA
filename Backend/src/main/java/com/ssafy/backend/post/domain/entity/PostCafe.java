@@ -38,10 +38,8 @@ public class PostCafe {
         @JoinColumn(name = "cafe_location_id")
         private Cafe cafe;
 
-        @Builder(builderClassName = "PostCafeBuilder", builderMethodName = "PostCafeBuilder")
-        public PostCafe(Post post, Cafe cafe) {
+        public void updatePost(Post post){
                 this.post = post;
-                this.cafe = cafe;
         }
 
 }
