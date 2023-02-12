@@ -11,7 +11,7 @@ public interface CafeService {
 
     void checkCafeAuth();
 
-    void saveTier() throws Exception;
+    void saveTier();
 
     List<NearByCafeWithCrowdResultDto> addCrowdInfoToNearByCafes(List<NearByCafeResultDto> nearByCafeLocations,
                                                                  CurTimeReqDto curTimeReqDto);

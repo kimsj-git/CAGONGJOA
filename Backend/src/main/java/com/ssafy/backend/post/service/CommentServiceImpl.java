@@ -49,85 +49,81 @@ public class CommentServiceImpl implements CommentService {
         List<CommentPagingResponseDto> commentResponseList = new ArrayList<>();
         Long commentId = requestDto.getCommentId();
         Long postId = requestDto.getPostId();
-        Post post = postRepository.findById(postId).get();
-        Long group;
+        Long groupNo;
         if (commentId == -1L) {
-            group = 0L;
+            groupNo = 1L;
         } else {
-            group = commentRepository.findById(commentId).get().getGroupNo();
+            groupNo = commentRepository.findById(commentId).get().getGroupNo();
         }
 
         // 2.
         Set<Long> groupSet = new HashSet<>();
-        List<Comment> commentList = post.getCommentList();
+        List<Comment> commentList = commentRepository.findAllByPostId(postId);
         if (commentList == null || commentList.isEmpty()) {
-            return null;
+            throw new PostException(PostExceptionType.NO_COMMENT_FEED);
         }
         for (Comment comment : commentList) {
-            if (comment.getGroupNo() > group) groupSet.add(comment.getGroupNo());
+            if (comment.getGroupNo() > groupNo) groupSet.add(comment.getGroupNo());
             if (groupSet.size() == 5) break;
         }
         System.out.println(groupSet);
         if (groupSet.isEmpty() || groupSet == null) { // 불러올 그게 없다.
-            return null;
+            throw new PostException(PostExceptionType.NO_COMMENT_FEED);
         }
         Slice<Comment> commentSlice = commentRepository.findAllByGroupNoInAndPostId(groupSet, postId);
         if (commentSlice == null || commentSlice.isEmpty()) {
-            return null;
+            throw new PostException(PostExceptionType.NO_COMMENT_FEED);
         }
-
 
         for (Comment comment : commentSlice) {
             CommentPagingResponseDto commentPagingResponseDto = CommentPagingResponseDto.CommentResponseBuilder()
                     .writerId(comment.getMember().getId())
+                    .writerNickname(comment.getMember().getNickname())
                     .content(comment.getContent())
                     .createdAt(comment.getCreatedAt())
                     .commentLikeCnt(comment.getCommentLikeList().size())
                     .build();
-            commentResponseList.add(commentPagingResponseDto);
             System.out.println("미인증 유저 댓글쓰기 불러오기 완료");
             Optional<CafeAuth> cafeAuth = cafeAuthRepository.findById(comment.getMember().getNickname());
             if (cafeAuth.isPresent()) {
                 Cafe cafe = cafeRepository.findById(cafeAuth.get().getCafeId()).get();
                 MemberCafeTier memberCafeTier = memberCafeTierRepository.findByMemberIdAndCafeId(comment.getMember().getId(), cafe.getId()).get();
-                commentPagingResponseDto.updateCommentVerifiedUser(cafe.getId(), cafe.getName(), memberCafeTier.getExp());
+                commentPagingResponseDto.updateCommentVerifiedUser(cafe.getId(), cafe.getName(), memberCafeTier.getExp(), cafe.getBrandType());
                 System.out.println("인증유저 댓글 업데이트 완료");
             }
+            commentResponseList.add(commentPagingResponseDto);
         }
-
         return commentResponseList;
     }
 
     /**
-     * 2-2. 댓글 쓰기 [테스트 완료 - step_no 랑 group_no 알고리즘만 경희랑 이야기해서 짜면될듯]
+     * 2-2. 댓글 쓰기 [테스트 완료]
      **/
     @Override
     public Long writeComment(CommentWriteRequestDTO commentWriteDto) {
-        Member member;
-        Post post;
         //1. 유저 확인
         CheckedResponseDto checked = postUtil.checkMember();
-        long memberId = checked.getMemberId(); // 멤버 아이디를 확인한다.
+        Long memberId = checked.getMemberId(); // 멤버 아이디를 확인한다.
         // 2. 값 확인
+        Long commentId = commentWriteDto.getCommentId();
         Long postId = commentWriteDto.getPostId();
         String content = commentWriteDto.getContent();
-        Optional<Member> memberOptional = memberRepository.findById(memberId);
-        member = memberOptional.get();
+        Member member = memberRepository.findById(memberId).get();
 
         Optional<Post> postOptional = postRepository.findById(postId);
         if (postOptional.isEmpty() || postOptional == null) {
             throw new PostException(PostExceptionType.BAD_POST_ID);
         }
-        post = postOptional.get();
+        Post post = postOptional.get();
 
         // 3. 댓글 대댓글 구분
-        Long groupNo = commentWriteDto.getGroup();
-        if (groupNo == -1L) { // 댓글
-            Optional<Comment> commentOptional = commentRepository.findTopByPostIdOrderByIdDesc(postId);
+        Long groupNo;
+        Optional<Comment> commentOptional = commentRepository.findTopByPostIdOrderByIdDesc(postId);
+        if (commentId == -1L) { // 댓글
             if (commentOptional.isEmpty() || commentOptional == null) {
                 groupNo = 1L;
-            } else groupNo = commentOptional.get().getGroupNo() + 1L;
-        }
+            }else groupNo = commentOptional.get().getGroupNo() + 1L;
+        }else groupNo = commentRepository.findById(commentId).get().getGroupNo();
 
         // 4. 글 저장하기
         Comment comment = Comment.builder()
@@ -211,7 +207,7 @@ public class CommentServiceImpl implements CommentService {
         }
         // True 라면 삭제
         else {
-            if(commentLikeOptional == null || commentLikeOptional.isEmpty()) {
+            if (commentLikeOptional == null || commentLikeOptional.isEmpty()) {
                 throw new PostException(PostExceptionType.COMMENT_LIKE_CHECK_FAIL);
             }
             commentLikeRepository.deleteById(commentId);

@@ -46,12 +46,14 @@ public class CafeController {
 
 
     @GetMapping("/auth/data")
-    public ResponseEntity<ResponseDTO> AuthResponse() throws Exception {
+    public ResponseEntity<ResponseDTO> AuthResponse() {
         cafeService.saveTier();
+        System.out.println("cafeController : 1차 무사통과");
         AfterCafeAuthResponseDto cafeAuthResponseDto = todayCafeService.saveCafeVisit();
+        System.out.println("cafeController : 2차 무사통과");
         int visitedAtValue = Integer.parseInt(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd")));
         List<TodoResponseDto> todoResponseDtoList = todayCafeService.findTodo(visitedAtValue);
-        cafeAuthResponseDto.updateTodoList(todoResponseDtoList);
+        if(!todoResponseDtoList.isEmpty()) cafeAuthResponseDto.updateTodoList(todoResponseDtoList);
         // 위치인증 완료되었을 때, 기존 공부했던 시간 return 해줘야함
         ResponseDTO responseDTO = new ResponseDTO("위치 인증 reponse 전달완료!", "", HttpStatus.OK, cafeAuthResponseDto);
 

@@ -16,15 +16,21 @@ public class AfterCafeAuthResponseDto {
     private String cafeName;
     private Long exp;
     private String brandType;
-    private int accTime;
-    private int coffeeBeanCnt;
-    private int coffeeCnt;
+    private Integer accTime;
+    private Integer coffeeBeanCnt;
+    private Integer coffeeCnt;
     private String fortune;
-    private boolean isSurveySubmitted;
-
+    private Boolean isSurveySubmitted;
+    private Boolean isCrowdSubmitted;
     private List<TodoResponseDto> todoList;
     public void updateFortune(String fortune) {
         this.fortune = fortune;
+    }
+    public void updateSurvey(Boolean isSurveySubmitted){
+        this.isSurveySubmitted = isSurveySubmitted;
+    }
+    public void updateCrowd(Boolean isCrowdSubmitted){
+        this.isCrowdSubmitted = isCrowdSubmitted;
     }
 
     public void updateTodoList(List<TodoResponseDto> todoResponseDtoList) {

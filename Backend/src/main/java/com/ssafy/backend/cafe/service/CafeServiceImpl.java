@@ -342,16 +342,14 @@ public class CafeServiceImpl implements CafeService {
     }
 
     @Override
-    public void saveTier() throws Exception {
+    public void saveTier() {
         String nickname = postUtil.checkMember().getNickname();
         Long memberId = postUtil.checkMember().getMemberId();
-        System.out.println(memberId + " " + nickname);
         CafeAuth cafeAuth = cafeAuthRepository.findById(nickname).get();
-        System.out.println(cafeAuth);
         Long cafeId = cafeAuth.getCafeId();
         Optional<MemberCafeTier> optionalMemberCafeTier = memberCafeTierRepository.findByMemberIdAndCafeId(memberId, cafeId);
         
-        // 없을 때만 넣기
+        // 없다면 - 첫방문
         MemberCafeTier memberCafeTier;
         if(optionalMemberCafeTier.isEmpty() || optionalMemberCafeTier == null) {
             memberCafeTier  = MemberCafeTier.TierBuilder()
@@ -359,7 +357,7 @@ public class CafeServiceImpl implements CafeService {
                     .member(memberRepository.findById(memberId).get())
                     .exp(100L)
                     .build();
-            memberCafeTierRepository.save(memberCafeTier);
+            memberCafeTierRepository.saveAndFlush(memberCafeTier);
         }
     }
 }

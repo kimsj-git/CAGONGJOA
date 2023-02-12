@@ -2,6 +2,8 @@ package com.ssafy.backend.todaycafe.service;
 
 import com.ssafy.backend.cafe.domain.dto.AfterCafeAuthResponseDto;
 import com.ssafy.backend.cafe.domain.entity.Cafe;
+import com.ssafy.backend.cafe.domain.entity.CafeCrowd;
+import com.ssafy.backend.cafe.repository.CafeCrowdRepository;
 import com.ssafy.backend.cafe.repository.CafeRepository;
 import com.ssafy.backend.common.exception.todaycafe.TodayCafeException;
 import com.ssafy.backend.common.exception.todaycafe.TodayCafeExceptionType;
@@ -45,6 +47,7 @@ public class TodayCafeServiceImpl implements TodayCafeService {
     private final TodoRepository todoRepository;
     private final MemberCafeTierRepository memberCafeTierRepository;
     private final CafeAuthRepository cafeAuthRepository;
+    private final CafeCrowdRepository cafeCrowdRepository;
 
 
     // 1. 커피 갖고오기
@@ -206,11 +209,13 @@ public class TodayCafeServiceImpl implements TodayCafeService {
         String nickname = postUtil.checkMember().getNickname();
         CafeAuth cafeAuth = cafeAuthRepository.findById(nickname).get();
         Long cafeId = cafeAuth.getCafeId();
+        System.out.println("CAFEAuth 가 있나요?" + cafeAuth);
         int visitedAtValue = Integer.parseInt(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd")));
         System.out.println("TodayCafeServiceImpl : " + visitedAtValue);
         Optional<CafeVisitLog> optionalCafeVisitLog = cafeVisitLogRepository.findByVisitedAtAndMemberIdAndCafeId(visitedAtValue, memberId, cafeId);
         // 2. cafeVisitLog 생성
         // 2-1. 이전 방문이력이 없을 때
+        CafeVisitLog savedCafeVisitLog;
         if (optionalCafeVisitLog.isEmpty() || optionalCafeVisitLog == null) {
             cafeVisitLog = CafeVisitLog.builder()
                     .cafe(cafeRepository.findById(cafeId).get())
@@ -221,10 +226,10 @@ public class TodayCafeServiceImpl implements TodayCafeService {
                     .visitedAt(visitedAtValue)
                     .build();
             System.out.println(cafeVisitLog);
-            cafeVisitLogRepository.save(cafeVisitLog);
+            savedCafeVisitLog = cafeVisitLogRepository.save(cafeVisitLog);
             System.out.println("방문이력 없음 - 새로생성");
         } else {// 기존 방문이력이 있음
-            cafeVisitLog = optionalCafeVisitLog.get();
+            savedCafeVisitLog = optionalCafeVisitLog.get();
             // 2-2. 오늘 방문이력이 있을 때
             if (cafeVisitLogRepository.findByVisitedAtAndMemberIdAndCafeId(visitedAtValue, memberId, cafeId).isPresent())
                 System.out.println("오늘 방문이력 있음 - 미생성");
@@ -233,8 +238,12 @@ public class TodayCafeServiceImpl implements TodayCafeService {
                 cafeVisitLog = CafeVisitLog.builder()
                         .cafe(cafeRepository.findById(cafeId).get())
                         .member(memberRepository.findById(memberId).get())
+                        .accTime(0)
+                        .fortuneId(0L)
+                        .isSurvey(false)
+                        .visitedAt(visitedAtValue)
                         .build();
-                cafeVisitLogRepository.save(cafeVisitLog);
+                savedCafeVisitLog = cafeVisitLogRepository.save(cafeVisitLog);
                 memberCafeTierRepository.findByMemberIdAndCafeId(memberId, cafeId).get().plusExp(100L);
                 System.out.println("오늘은 아니고 방문이력 있음 - 새로생성");
             }
@@ -246,19 +255,24 @@ public class TodayCafeServiceImpl implements TodayCafeService {
         AfterCafeAuthResponseDto cafeAuthResponseDto = AfterCafeAuthResponseDto.builder()
                 .cafeName(cafeRepository.findById(cafeId).get().getName())
                 .exp(tier.getExp())
-                .brandType(cafeVisitLog.getCafe().getBrandType())
-                .accTime(cafeVisitLog.getAccTime())
+                .brandType(savedCafeVisitLog.getCafe().getBrandType())
+                .accTime(savedCafeVisitLog.getAccTime())
+                .isSurveySubmitted(savedCafeVisitLog.isSurvey())
                 .coffeeBeanCnt(memberCoin.getCoffeeBeanCount())
                 .coffeeCnt(memberCoin.getCoffeeCount())
                 .build();
 
-        System.out.println("여기까지옴 4트");
-        Optional<Fortune> fortuneOptional = fortuneRepository.findById(cafeVisitLog.getFortuneId());
+        Optional<Fortune> fortuneOptional = fortuneRepository.findById(savedCafeVisitLog.getFortuneId());
         if (fortuneOptional.isPresent()) {
             String fortuneContent = fortuneOptional.get().getContent();
             cafeAuthResponseDto.updateFortune(fortuneContent);
         }
-        System.out.println("여기까지옴 5트");
+//        Optional<CafeCrowd> cafeCrowdOptional = cafeCrowdRepository.findByCafeVisitLogId(cafeVisitLog.getId());
+//        if(cafeCrowdOptional.isPresent()){
+//            cafeAuthResponseDto.updateCrowd(true);
+//        }
+
+        System.out.println("카페생성 성공!");
         return cafeAuthResponseDto;
     }
 
