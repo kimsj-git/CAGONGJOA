@@ -33,6 +33,7 @@ public class CafeController {
         return new ResponseEntity<>(responseDTO, HttpStatus.OK);
     }
 
+
     /*
         사용자 위치의 카페 + 위경도 정보를 클라이언트로부터 제공받은 후, cafe id와 닉네임으로 redis에 위치 정보 등록
     */
@@ -42,6 +43,7 @@ public class CafeController {
         ResponseDTO responseDTO = new ResponseDTO("위치 인증 완료!", "", HttpStatus.CREATED, null);
         return new ResponseEntity<>(responseDTO, HttpStatus.OK);
     }
+
 
     @GetMapping("/auth/data")
     public ResponseEntity<ResponseDTO> AuthResponse() throws Exception {
@@ -55,6 +57,7 @@ public class CafeController {
 
         return new ResponseEntity<>(responseDTO, HttpStatus.OK);
     }
+
 
     /**
      * 위치인증 버튼을 눌렀을 때 반경 50m에 해당하는 근거리 카페만 제공
@@ -74,6 +77,7 @@ public class CafeController {
         return new ResponseEntity<>(responseDTO, HttpStatus.OK);
     }
 
+
     /**
      * 현위치와 거리를 클라이언트에게 받아 해당 범위의 카페를 제공
      */
@@ -85,6 +89,20 @@ public class CafeController {
                 = new ResponseDTO("주변 카페 목록 출력", "", HttpStatus.OK, nearByCafeLocations);
         return new ResponseEntity<>(responseDTO, HttpStatus.OK);
     }
+
+
+    /**
+     * 카페 마커를 눌렀을 때 설문조사 내용을 기반으로 사용자에게 제공
+     */
+    @GetMapping("/survey")
+    public ResponseEntity<ResponseDTO> cafeSurvey(@RequestParam LocationDto locationDto) {
+
+
+        ResponseDTO responseDTO = new ResponseDTO("카페 설문 데이터 전달 완료!", "",
+                HttpStatus.OK, null);
+        return new ResponseEntity<>(responseDTO, HttpStatus.OK);
+    }
+
 
     /**
      * 혼잡도 설문 실시 여부 체크
