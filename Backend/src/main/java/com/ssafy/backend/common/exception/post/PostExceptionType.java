@@ -26,7 +26,8 @@ public enum PostExceptionType implements BaseExceptionType {
     /**  Comment  **/
     BAD_COMMENT_ID(HttpStatus.BAD_GATEWAY, "잘못된 댓글 id 입니다.", SignType.POST),
     NO_CONTENT_COMMENT_FORM(HttpStatus.NO_CONTENT, "댓글 글쓰기가 없습니다.", SignType.POST),
-    COMMENT_LIKE_CHECK_FAIL(HttpStatus.BAD_REQUEST, "댓글 좋아요 여부를 다시 확인해주세요", SignType.POST);
+    COMMENT_LIKE_CHECK_FAIL(HttpStatus.BAD_REQUEST, "댓글 좋아요 여부를 다시 확인해주세요", SignType.POST),
+    NO_COMMENT_FEED(HttpStatus.NO_CONTENT, "불러오기 가능한 댓글이 없습니다.", SignType.POST);
 
 
     private final HttpStatus httpStatus;

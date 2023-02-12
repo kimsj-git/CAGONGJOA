@@ -23,10 +23,11 @@ public class CommentPagingResponseDto {
     private int commentLikeCnt;
 
 
-    public void updateCommentVerifiedUser(Long verifiedCafeId, String verifiedCafeName, Long exp) {
+    public void updateCommentVerifiedUser(Long verifiedCafeId, String verifiedCafeName, Long exp, String cafeBrandType) {
         this.verifiedCafeId = verifiedCafeId;
         this.verifiedCafeName = verifiedCafeName;
         this.exp = exp;
+        this.cafeBrandType = cafeBrandType;
 
     }
 }
