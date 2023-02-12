@@ -26,7 +26,7 @@ const GetBeanModal = (props) => {
           Authorization: `Bearer ${sessionStorage.getItem("accessToken")}`,
         },
         body: JSON.stringify({
-          crowdlevel: props.selectedBtn + 1,
+          crowdLevel: props.selectedBtn + 1,
           todayDate: `${year}${month}${day}`
         }),
       })
@@ -57,6 +57,7 @@ const GetBeanModal = (props) => {
           alert('다시 시도해주세요.')
         }
       } else if(responseData.httpStatus === "CREATED"){
+          setOpen(true)
           sessionStorage.setItem('jamSurvey', 1)
       }
   }
@@ -64,6 +65,9 @@ const GetBeanModal = (props) => {
     <Modal
       open={open}
       basic
+      onOpen={()=>{setTimeout(()=>{
+        setOpen(false)
+      }, 1500)}}
       closeOnDimmerClick={true}
       closeOnDocumentClick={true}
       trigger={
