@@ -8,7 +8,7 @@ import { RiArrowDropDownLine } from "react-icons/ri"
 import PostTypeCarousel from "./PostTypeCarousel"
 import TypeSelector from "./TypeSelector"
 
-const MainPageTopBar = (props, {isCafeAuth}) => {
+const MainPageTopBar = (props) => {
   const history = useHistory()
   const location = useLocation()
 
