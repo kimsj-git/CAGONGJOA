@@ -19,4 +19,7 @@ public interface CafeService {
     void saveCrowdLevel(CrowdCheckReqDto crowdCheckReqDto);
 
     boolean checkCrowdSurvey(int todayDate);
+
+    CafeSurveyRespDto getCafeSurvey(LocationAndDateDto locationDto);
+
 }

@@ -3,9 +3,11 @@ package com.ssafy.backend.cafe.service;
 import com.ssafy.backend.cafe.domain.dto.*;
 import com.ssafy.backend.cafe.domain.entity.Cafe;
 import com.ssafy.backend.cafe.domain.entity.CafeCrowd;
+import com.ssafy.backend.cafe.domain.entity.CafeLocation;
 import com.ssafy.backend.cafe.domain.enums.CrowdLevel;
 import com.ssafy.backend.cafe.domain.enums.Direction;
 import com.ssafy.backend.cafe.repository.CafeCrowdRepository;
+import com.ssafy.backend.cafe.repository.CafeLocationRepository;
 import com.ssafy.backend.cafe.repository.CafeRepository;
 import com.ssafy.backend.cafe.util.GeometryUtil;
 import com.ssafy.backend.common.exception.cafe.CafeException;
@@ -19,7 +21,9 @@ import com.ssafy.backend.post.util.PostUtil;
 import com.ssafy.backend.redis.CafeAuth;
 import com.ssafy.backend.redis.CafeAuthRepository;
 import com.ssafy.backend.todaycafe.domain.entity.CafeVisitLog;
+import com.ssafy.backend.todaycafe.domain.entity.Survey;
 import com.ssafy.backend.todaycafe.repository.CafeVisitLogRepository;
+import com.ssafy.backend.todaycafe.repository.SurveyRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
@@ -39,6 +43,8 @@ import javax.persistence.Query;
 @Transactional
 public class CafeServiceImpl implements CafeService {
 
+    private final int THREE_HOURS_AGO = 3;
+    private final int TWO_MONTH_AGO = 2;
     private final EntityManager em;
     private final MemberService memberService;
     private final CafeAuthRepository cafeAuthRepository;
@@ -47,8 +53,114 @@ public class CafeServiceImpl implements CafeService {
     private final MemberCafeTierRepository memberCafeTierRepository;
     private final PostUtil postUtil;
     private final CafeCrowdRepository cafeCrowdRepository;
-    private final int THREE_HOURS_AGO = 3;
     private final CafeVisitLogRepository cafeVisitLogRepository;
+    private final CafeLocationRepository cafeLocationRepository;
+    private final SurveyRepository surveyRepository;
+
+
+    @Override
+    public CafeSurveyRespDto getCafeSurvey(LocationAndDateDto locationAndDateDto) {
+
+        // location으로 cafe id 가져오기
+        Optional<CafeLocation> optionalCafeLocation = cafeLocationRepository
+                                                                .findByLatAndLng(locationAndDateDto.getLatitude(),
+                                                                                locationAndDateDto.getLongitude());
+        if (optionalCafeLocation.isEmpty()) {
+            throw new CafeException(CafeExceptionType.CAFE_NOT_EXIST);
+        }
+
+        long cafeId = optionalCafeLocation.get().getCafe().getId();
+
+        // 해당 카페의 설문을 현재 날짜로 부터 2달 전 데이터 가져오기
+        LocalDateTime todayTime = locationAndDateDto.getTodayTime();
+        LocalDateTime twoMonthAgo = todayTime.minusMonths(TWO_MONTH_AGO);
+        List<Survey> surveys = surveyRepository.findByCafeIdsAndTimeRange(cafeId, twoMonthAgo, todayTime);
+        System.out.println("surveys = " + surveys);
+
+        /**
+         * 설문조사 빈도 데이터를 map으로 저장
+         * "power": [3, 4, 1] <- G,N,B 순
+         */
+        Map<String, ArrayList<Integer>> gnbCntMap = new HashMap<>();
+        gnbCntMap.put("power", new ArrayList<>(Collections.nCopies(3, 0)));
+        gnbCntMap.put("wifi", new ArrayList<>(Collections.nCopies(3, 0)));
+        gnbCntMap.put("toilet", new ArrayList<>(Collections.nCopies(3, 0)));
+        gnbCntMap.put("time", new ArrayList<>(Collections.nCopies(2, 0)));
+
+        // surveys 내용 빈도수 뽑아내서 resp dto 내용 채우기
+        for (Survey survey : surveys) {
+            if (survey.getReplyPower().equals("G")) {
+                int curVal = gnbCntMap.get("power").get(0);
+                gnbCntMap.get("power").set(0, curVal + 1);
+
+            } else if (survey.getReplyPower().equals("N")) {
+                int curVal = gnbCntMap.get("power").get(1);
+                gnbCntMap.get("power").set(1, curVal + 1);
+
+            } else if (survey.getReplyPower().equals("B")) {
+                int curVal = gnbCntMap.get("power").get(2);
+                gnbCntMap.get("power").set(2, curVal + 1);
+            }
+
+            if (survey.getReplyWifi().equals("G")) {
+                int curVal = gnbCntMap.get("wifi").get(0);
+                gnbCntMap.get("wifi").set(0, curVal + 1);
+
+            } else if (survey.getReplyWifi().equals("N")) {
+                int curVal = gnbCntMap.get("wifi").get(1);
+                gnbCntMap.get("wifi").set(1, curVal + 1);
+
+            } else if (survey.getReplyWifi().equals("B")) {
+                int curVal = gnbCntMap.get("wifi").get(2);
+                gnbCntMap.get("wifi").set(2, curVal + 1);
+            }
+
+            if (survey.getReplyToilet().equals("G")) {
+                int curVal = gnbCntMap.get("toilet").get(0);
+                gnbCntMap.get("toilet").set(0, curVal + 1);
+
+            } else if (survey.getReplyToilet().equals("N")) {
+                int curVal = gnbCntMap.get("toilet").get(1);
+                gnbCntMap.get("toilet").set(1, curVal + 1);
+
+            } else if (survey.getReplyToilet().equals("B")) {
+                int curVal = gnbCntMap.get("toilet").get(2);
+                gnbCntMap.get("toilet").set(2, curVal + 1);
+            }
+
+            if (survey.isReplyTime()) {
+                int curVal = gnbCntMap.get("time").get(0);
+                gnbCntMap.get("time").set(0, curVal + 1); // 0번 = 이용시간 제한 있음
+            } else {
+                int curVal = gnbCntMap.get("time").get(1);
+                gnbCntMap.get("time").set(1, curVal + 1); // 1번 = 이용시간 제한 없음
+            }
+        }
+
+        CafeSurveyRespDto cafeSurveyRespDto = new CafeSurveyRespDto();
+
+        cafeSurveyRespDto.setReplyPower_high(gnbCntMap.get("power").get(0));
+        cafeSurveyRespDto.setReplyPower_mid(gnbCntMap.get("power").get(1));
+        cafeSurveyRespDto.setReplyPower_low(gnbCntMap.get("power").get(2));
+
+        cafeSurveyRespDto.setReplyWifi_high(gnbCntMap.get("wifi").get(0));
+        cafeSurveyRespDto.setReplyWifi_mid(gnbCntMap.get("wifi").get(1));
+        cafeSurveyRespDto.setReplyWifi_low(gnbCntMap.get("wifi").get(2));
+
+        cafeSurveyRespDto.setReplyToilet_high(gnbCntMap.get("toilet").get(0));
+        cafeSurveyRespDto.setReplyToilet_mid(gnbCntMap.get("toilet").get(1));
+        cafeSurveyRespDto.setReplyToilet_low(gnbCntMap.get("toilet").get(2));
+
+        if (gnbCntMap.get("time").get(0) >= gnbCntMap.get("time").get(1)) {
+            // 이용시간 제한 있음
+            cafeSurveyRespDto.setReplyTime(true);
+        } else {
+            // 이용시간 제한 없음
+            cafeSurveyRespDto.setReplyTime(false);
+        }
+
+        return cafeSurveyRespDto;
+    }
 
 
     @Override
@@ -118,6 +230,7 @@ public class CafeServiceImpl implements CafeService {
 
         return optionalCafeVisitLog.get().isCrowdSurvey();
     }
+
 
     @Override
     public List<NearByCafeWithCrowdResultDto> addCrowdInfoToNearByCafes(List<NearByCafeResultDto> nearByCafeLocations,
