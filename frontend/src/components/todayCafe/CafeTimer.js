@@ -4,7 +4,7 @@ import { timerActions } from "../../store/timer"
 import { Progress } from "semantic-ui-react"
 
 const CafeTimer = () => {
-  const isAuthenticated = sessionStorage.getItem("cafeAuth")
+  const cafeAuth = sessionStorage.getItem("cafeAuth")
 
   // 누적시간은 리덕스에서 가져오고, useState로 갱신될때마다 리렌더링하도록 구현해야함
   const dispatch = useDispatch()
@@ -32,7 +32,7 @@ const CafeTimer = () => {
         color="green"
         progress="value"
         value={parseInt(accTime / 60)}
-        disabled={!isAuthenticated}
+        disabled={cafeAuth === '0'}
       >
         <p style={{ color: "#00754A" }}>
           {hours}시간 {minutes}분 경과! {isComplete ? '[완료]' : ''}

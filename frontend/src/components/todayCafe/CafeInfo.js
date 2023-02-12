@@ -17,14 +17,14 @@ const CafeInfo = () => {
         <Grid.Row only="mobile tablet">
           <Grid.Column mobile={3} tablet={5} computer={1} />
           <Grid.Column mobile={10} tablet={6} computer={5}>
-            {!cafeAuth && (
+            {cafeAuth === '0' && (
               <BsFillPatchQuestionFill
                 style={{ marginInline: "0.5rem 0.8rem" }}
                 size="100%"
                 color="grey"
               />
             )}
-            {cafeAuth && (
+            {cafeAuth === '1' && (
               <img
                 src={require(`../../assets/cafe_logos/${logo_url}`)}
                 style={{ border: "3vw solid #fbbc05", borderRadius: "70%" }}
@@ -48,14 +48,14 @@ const CafeInfo = () => {
         <Grid.Row style={{ width: "100%" }} centered>
           <Grid columns={2}>
             <Grid.Column only="computer" computer={5}>
-              {!cafeAuth && (
+              {cafeAuth === '0' && (
                 <BsFillPatchQuestionFill
                   style={{ marginInline: "0.5rem 0.8rem" }}
                   size="100%"
                   color="grey"
                 />
               )}
-              {cafeAuth && (
+              {cafeAuth === '1' && (
                 <img
                   src={require(`../../assets/cafe_logos/${logo_url}`)}
                   style={{

@@ -121,14 +121,14 @@ const CafeTodoList = (props) => {
                     value={enteredTodo}
                     onChange={inputChangeHandler}
                     style={{ width: "calc(100% - 50px)" }}
-                    disabled={!cafeAuth}
+                    disabled={cafeAuth === '0'}
                   />
                   <Button
                     icon="add"
                     positive
                     floated="right"
                     onClick={submitHandler}
-                    disabled={!cafeAuth}
+                    disabled={cafeAuth === '0'}
                   />
                 </Card.Content>
               </Card>
