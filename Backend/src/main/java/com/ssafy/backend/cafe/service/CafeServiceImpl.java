@@ -3,9 +3,11 @@ package com.ssafy.backend.cafe.service;
 import com.ssafy.backend.cafe.domain.dto.*;
 import com.ssafy.backend.cafe.domain.entity.Cafe;
 import com.ssafy.backend.cafe.domain.entity.CafeCrowd;
+import com.ssafy.backend.cafe.domain.entity.CafeLocation;
 import com.ssafy.backend.cafe.domain.enums.CrowdLevel;
 import com.ssafy.backend.cafe.domain.enums.Direction;
 import com.ssafy.backend.cafe.repository.CafeCrowdRepository;
+import com.ssafy.backend.cafe.repository.CafeLocationRepository;
 import com.ssafy.backend.cafe.repository.CafeRepository;
 import com.ssafy.backend.cafe.util.GeometryUtil;
 import com.ssafy.backend.common.exception.cafe.CafeException;
@@ -19,7 +21,9 @@ import com.ssafy.backend.post.util.PostUtil;
 import com.ssafy.backend.redis.CafeAuth;
 import com.ssafy.backend.redis.CafeAuthRepository;
 import com.ssafy.backend.todaycafe.domain.entity.CafeVisitLog;
+import com.ssafy.backend.todaycafe.domain.entity.Survey;
 import com.ssafy.backend.todaycafe.repository.CafeVisitLogRepository;
+import com.ssafy.backend.todaycafe.repository.SurveyRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
@@ -39,6 +43,8 @@ import javax.persistence.Query;
 @Transactional
 public class CafeServiceImpl implements CafeService {
 
+    private final int THREE_HOURS_AGO = 3;
+    private final int TWO_MONTH_AGO = 2;
     private final EntityManager em;
     private final MemberService memberService;
     private final CafeAuthRepository cafeAuthRepository;
@@ -47,8 +53,72 @@ public class CafeServiceImpl implements CafeService {
     private final MemberCafeTierRepository memberCafeTierRepository;
     private final PostUtil postUtil;
     private final CafeCrowdRepository cafeCrowdRepository;
-    private final int THREE_HOURS_AGO = 3;
     private final CafeVisitLogRepository cafeVisitLogRepository;
+    private final CafeLocationRepository cafeLocationRepository;
+    private final SurveyRepository surveyRepository;
+
+
+    @Override
+    public CafeSurveyRespDto getCafeSurvey(LocationAndDateDto locationAndDateDto) {
+
+        // location으로 cafe id 가져오기
+        Optional<CafeLocation> optionalCafeLocation = cafeLocationRepository
+                                                                .findByLatAndLng(locationAndDateDto.getLatitude(),
+                                                                                locationAndDateDto.getLongitude());
+        if (optionalCafeLocation.isEmpty()) {
+            throw new CafeException(CafeExceptionType.CAFE_NOT_EXIST);
+        }
+
+        long cafeId = optionalCafeLocation.get().getCafe().getId();
+
+        // 해당 카페의 설문을 현재 날짜로 부터 2달 전 데이터 가져오기
+        LocalDateTime todayTime = locationAndDateDto.getTodayTime();
+        LocalDateTime twoMonthAgo = todayTime.minusMonths(TWO_MONTH_AGO);
+        List<Survey> surveys = surveyRepository.findByCafeIdsAndTimeRange(cafeId, twoMonthAgo, todayTime);
+        System.out.println("surveys = " + surveys);
+
+        CafeSurveyRespDto cafeSurveyRespDto = new CafeSurveyRespDto();
+
+        /**
+         * 설문조사 빈도 데이터를 map으로 저장
+         * "power": [3, 4, 1] <- G,N,B 순
+         */
+        Map<String, ArrayList<Integer>> gnbCntMap = new HashMap<>();
+        gnbCntMap.put("power", new ArrayList<>());
+        gnbCntMap.put("wifi", new ArrayList<>());
+        gnbCntMap.put("toilet", new ArrayList<>());
+
+        // surveys 내용 빈도수 뽑아내서 resp dto 내용 채우기
+        for (Survey survey : surveys) {
+            if (survey.getReplyPower().equals("G")) {
+
+            } else if (survey.getReplyPower().equals("N")) {
+
+            } else if (survey.getReplyPower().equals("B")) {
+
+            }
+
+            if (survey.getReplyWifi().equals("G")) {
+
+            } else if (survey.getReplyWifi().equals("N")) {
+
+            } else if (survey.getReplyWifi().equals("B")) {
+
+            }
+
+            if (survey.getReplyToilet().equals("G")) {
+
+            } else if (survey.getReplyToilet().equals("N")) {
+
+            } else if (survey.getReplyToilet().equals("B")) {
+
+            }
+        }
+
+        // 현재 카페 id에 해당하는 redis 정보 가져오기 -> count를 구하면 이용중 유저 수 get 가능
+
+        return null;
+    }
 
 
     @Override
@@ -118,6 +188,7 @@ public class CafeServiceImpl implements CafeService {
 
         return optionalCafeVisitLog.get().isCrowdSurvey();
     }
+
 
     @Override
     public List<NearByCafeWithCrowdResultDto> addCrowdInfoToNearByCafes(List<NearByCafeResultDto> nearByCafeLocations,
