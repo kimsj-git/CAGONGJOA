@@ -74,7 +74,7 @@ public class CafeServiceImpl implements CafeService {
             throw new CafeException(CafeExceptionType.CAFE_AUTH_MISMATCH);
         }
 
-        if (optionalCafeVisitLog.get().isSurvey()) {
+        if (optionalCafeVisitLog.get().isCrowdSurvey()) {
             throw new CafeException(CafeExceptionType.ALREADY_SUBMIT_CROWD_SURVEY);
         }
 
@@ -116,7 +116,7 @@ public class CafeServiceImpl implements CafeService {
             throw new CafeException(CafeExceptionType.CAFE_AUTH_MISMATCH);
         }
 
-        return optionalCafeVisitLog.get().isSurvey();
+        return optionalCafeVisitLog.get().isCrowdSurvey();
     }
 
     @Override
