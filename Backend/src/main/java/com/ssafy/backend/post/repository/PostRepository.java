@@ -20,16 +20,11 @@ public interface PostRepository extends JpaRepository<Post, Long> {
     @Query("SELECT p from Post p left join p.postCafeList pc where p.postType in :types and pc.id in :cafeIdList")
     Slice<Post> findAllByPostTypeInAndPostCafeList_CafeIdIn(@Param("types")List<PostType> types, @Param("cafeIdList")List<Long> cafeIdList, Pageable pageable);
 
-//    Slice<Post> findAllByIdLessThanAndPostTypeInAndPostCafeList_CafeIdIn(Long id, List<PostType> types, List<Long> cafeIdList, Pageable pageable);
-//
-//    Slice<Post> findAllByPostTypeInAndPostCafeList_CafeIdIn(List<PostType> types, List<Long> cafeIdList, Pageable pageable);
-
     @Query("SELECT distinct p FROM Post p left join p.postLikeList pl left join p.postCafeList pc where pl.size > 10 and pc.cafe.id in :cafeIdList")
     Slice<Post> findHotPost(@Param("cafeIdList")List<Long> cafeIdList, Pageable pageable);
 
     @Query("SELECT distinct p FROM Post p left join p.postLikeList pl left join p.postCafeList pc where p.id < :postId and pl.size > 10 and pc.cafe.id in :cafeIdList")
     Slice<Post> findHotPostNext(@Param("cafeIdList") List<Long> cafeIdList, @Param("postId") Long postId, Pageable pageable);
-
 
     @Query("Select p from Post p left join p.postCafeList pc where p.id < :postId and p.content like %:searchKey% and pc.id in :cafeIdList")
     List<Post> findBySearchContentNext(@Param("cafeIdList") List<Long> cafeIdList, @Param("searchKey") String searchKey, @Param("postId") Long postId, Pageable pageable);
@@ -43,5 +38,7 @@ public interface PostRepository extends JpaRepository<Post, Long> {
     @Query("Select p from Post p left join p.postCafeList pc where p.id < :postId and p.member.nickname like %:searchKey% and pc.id in :cafeIdList")
     List<Post> findBySearchNicknameNext(@Param("cafeIdList") List<Long> cafeIdList, @Param("searchKey") String searchKey, @Param("postId") Long postId, Pageable pageable);
 
+    @Query("select p from Post p left join p.member m where p.id < :postId and m.id = :memberId")
+    List<Post> findAllMyFeed(@Param("postId") Long postId, @Param("memberId") Long memberId, Pageable pageable);
 
 }

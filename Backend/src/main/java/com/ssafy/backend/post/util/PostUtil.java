@@ -11,7 +11,7 @@ import com.ssafy.backend.member.service.MemberServiceImpl;
 import com.ssafy.backend.post.domain.dto.CheckedResponseDto;
 import com.ssafy.backend.post.domain.entity.Post;
 import com.ssafy.backend.post.domain.entity.PostImage;
-import com.ssafy.backend.post.repository.ImageRepository;
+import com.ssafy.backend.post.repository.PostImageRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -31,7 +31,7 @@ public class PostUtil {
     @Value("${cloud.aws.s3.bucket}")
     private String bucket;
     private PostImage postImage;
-    private final ImageRepository imageRepository;
+    private final PostImageRepository imageRepository;
     private final MemberServiceImpl memberService;
 
 
