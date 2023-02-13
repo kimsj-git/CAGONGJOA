@@ -4,7 +4,7 @@ import "./ToggleButton.css"
 import useFetch from "../../hooks/useFetch.js"
 const DEFAULT_REST_URL = process.env.REACT_APP_REST_DEFAULT_URL
 const ToggleButton = (props) => {
-  const [btnState, setBtnState] = useState(false)
+  const [btnState, setBtnState] = useState(props.btnType === 'like' ? props.isLiked : false)
   const handleClick = () => {
     props.btnType === "like" && props.likeHandler(btnState)
     props.btnType === "hot" && props.onHotSelect()

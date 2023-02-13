@@ -18,13 +18,15 @@ const PostList = (props) => {
   const dispatch = useDispatch()
   const posts = useSelector((state) => state.posts.posts)
   const filterState = useSelector((state) => state.posts.filterState)
-  const [lastPostRef, setLastPostRef] = useState(-1)
   const isLoading = useSelector((state) => state.posts.isLoading)
+  const hasNext = useSelector((state) => state.posts.hasNext)
+  const [lastPostRef, setLastPostRef] = useState(-1)
   // const { data: fetchedPosts, isLoading, sendRequest: getPosts } = useFetch()
 
   const isMounted = useRef(false)
   const [ref, inView] = useInView({
     threshold: 0.5,
+    delay: 500,
     // triggerOnce: true,
   })
 
@@ -44,7 +46,7 @@ const PostList = (props) => {
   }, [filterState])
 
   useEffect(() => {
-    if (isMounted.current && inView) {
+    if (isMounted.current && inView && lastPostRef !== -1) {
       refreshPosts(lastPostRef)
       console.log("포스트 더보기 요청")
       console.log(inView)
@@ -65,28 +67,33 @@ const PostList = (props) => {
   return (
     <Fragment>
       <Feed>
-        {posts.map((post, index) => (
-          <PostItem
-            key={post.postId}
-            id={post.postId}
-            createdAt={post.createdAt}
-            type={post.postType}
-            writer={post.writerNickname}
-            userType={post.userType}
-            tier={post.exp}
-            cafeName={post.cafeName}
-            cafeBrand={post.brandType}
-            content={post.content}
-            images={post.imgUrlPath}
-            likeCnt={post.postLikeCount}
-            commentCnt={post.commentCount}
-            isLoading={isLoading}
-          />
-        ))}
-        <div ref={ref} />
+
+            {posts.map((post, index) => (
+              <PostItem
+                key={post.postId}
+                id={post.postId}
+                createdAt={post.createdAt}
+                type={post.postType}
+                writer={post.writerNickname}
+                userType={post.userType}
+                tier={post.exp}
+                cafeName={post.cafeName}
+                cafeBrand={post.brandType}
+                content={post.content}
+                images={post.imgUrlPath}
+                likeCnt={post.postLikeCount}
+                commentCnt={post.commentCount}
+                isLoading={isLoading}
+                isLiked={post.likeChecked}
+              />
+            ))}
+            {!posts.length && <p>게시글이 없습니다.</p>}
+          
+        
+        <div ref={hasNext ? ref : null} />
       </Feed>
     </Fragment>
+
   )
 }
-
 export default PostList

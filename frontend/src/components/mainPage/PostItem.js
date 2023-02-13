@@ -11,13 +11,13 @@ import "./Post.css"
 const DEFAULT_REST_URL = process.env.REACT_APP_REST_DEFAULT_URL
 
 const typeIcon = {
-  free: "chat",
-  qna: "question",
-  together: "handshake",
-  tip: "lightbulb",
-  recommend: "thumbs up",
-  help: "bullhorn",
-  lost: "box",
+  "free": "chat",
+  "qna": "question",
+  "together": "handshake",
+  "tip": "lightbulb",
+  "recommend": "thumbs up",
+  "help": "bullhorn",
+  "lost": "box",
 }
 const PostItem = (props) => {
   const { data, isLoading, sendRequest: fetchLike } = useFetch()
@@ -153,6 +153,7 @@ const PostItem = (props) => {
             content={props.likeCnt}
             btnType="like"
             likeHandler={likePost}
+            isLiked={props.isLiked}
           />
 
           <PostDetail post={props} likeHandler={likePost} />

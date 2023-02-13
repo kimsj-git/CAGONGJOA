@@ -47,7 +47,6 @@ public class PostServiceImpl implements PostService {
     // Util
     private final PostUtil postUtil;
     private final CafeServiceImpl cafeService;
-    private final MemberServiceImpl memberService;
     private final PostImageRepository imageRepository;
 
     /**
@@ -87,6 +86,7 @@ public class PostServiceImpl implements PostService {
 
        post = postRepository.save(post);
 
+        System.out.println("이미지 파일길이 : " + files.length);
         if (files != null) {
             List<PostImage> postImages = postUtil.imageUpload(post, files);
             post.updatePostImage(postImages);
@@ -158,8 +158,9 @@ public class PostServiceImpl implements PostService {
      * 4. 글 전체 조회 (10개) [확인완료]
      **/
     @Override
-    public List<PostPagingResponseDto> feedPosts(PostPagingRequestDto requestDto, Pageable pageable) {
+    public Map<String, Object> feedPosts(PostPagingRequestDto requestDto, Pageable pageable) {
         String cafeName;
+        Boolean hasNext;
         Slice<Post> postSlice;
         // 1. 유저 기본사항을 체크한다. OK
         CheckedResponseDto checked = postUtil.checkMember();
@@ -185,13 +186,14 @@ public class PostServiceImpl implements PostService {
         for (NearByCafeResultDto dto : nearByCafeResultDtos) {
             cafeIdList.add(dto.getId().longValue());
         }
+        System.out.println(cafeIdList);
 
         if (types.contains(PostType.hot)) { // 핫 게시물을 포함하고 있을 때
 
             if (postId == -1L) {
                 // 처음 요청할때 (refresh)
                 System.out.println("hot 첫번째요청");
-                postSlice = postRepository.findHotPost(cafeIdList, pageable);
+                postSlice = postRepository.findHotPostNext(cafeIdList, Long.MAX_VALUE, pageable);
             } else {
                 // 두번째 이상으로 요청할 때 (마지막 글의 pk 를 기준으로 함)
                 System.out.println("hot 두번째이상 요청");
@@ -204,23 +206,29 @@ public class PostServiceImpl implements PostService {
             if (postId == -1L) {
                 // 처음 요청할때 (refresh)
                 System.out.println("피드 첫번째 요청");
-                postSlice = postRepository.findAllByPostTypeInAndPostCafeList_CafeIdIn(types, cafeIdList, pageable);
+                postSlice = postRepository.findNextFeed(Long.MAX_VALUE, types, cafeIdList, pageable);
             } else {
                 // 두번째 이상으로 요청할 때 (마지막 글의 pk 를 기준으로 함)
                 System.out.println("두번째이상 요청");
-                postSlice = postRepository.findAllByIdLessThanAndPostTypeInAndPostCafeList_CafeIdIn(postId, types, cafeIdList, pageable);
+                postSlice = postRepository.findNextFeed(postId, types, cafeIdList, pageable);
                 // 갖고올 게시물이 없으면
             }
-
         }
 //         post를 slice 형태로 갖고오기
 
-        if (postSlice.isEmpty() || postSlice == null) { // 불러올 게시물이 있을때
-            throw new PostException(PostExceptionType.NO_POST_FEED);
+        List<PostPagingResponseDto> postResponseDtoList = new ArrayList<>();
+        if (postSlice.isEmpty() || postSlice == null) { // 불러올 게시물이 없을 때
+            Map<String, Object> responseMap = new TreeMap();
+            responseMap.put("hasNext", false);
+            responseMap.put("post", postResponseDtoList);
+        }
+        if(postSlice.hasNext()) {
+            hasNext = true;
+        }else {
+            hasNext = false;
         }
 
         // 5. 리턴값 채워넣기
-        List<PostPagingResponseDto> postResponseDtoList = new ArrayList<>();
         for (Post slice : postSlice) {
             Optional<Post> optionalPost = postRepository.findById(slice.getId());
             Post post = optionalPost.get();
@@ -236,13 +244,15 @@ public class PostServiceImpl implements PostService {
             System.out.println("인증된카페? " + post.isCafeAuthorized());
             PostPagingResponseDto postPagingResponseDto = PostPagingResponseDto.builder()
                     .isCafeAuthorized(post.isCafeAuthorized())
-                    .postId(slice.getId())
+                    .postId(post.getId())
                     .imgUrlPath(imgUrlPath)
                     .createdAt(post.getCreatedAt())
+                    .isLikeChecked(postLikeRepository.findByPostIdAndMemberId(post.getId(), checked.getMemberId()).isPresent())
                     .content(post.getContent())
                     .commentCount(commentCount)
                     .writerNickname(post.getMember().getNickname())
                     .postLikeCount(postLikeCount)
+                    .postType(post.getPostType())
                     .build();
 
             if (post.isCafeAuthorized()) {
@@ -260,7 +270,10 @@ public class PostServiceImpl implements PostService {
             }
             postResponseDtoList.add(postPagingResponseDto);
         }
-        return postResponseDtoList;
+        Map<String, Object> responseMap = new TreeMap();
+        responseMap.put("hasNext", hasNext);
+        responseMap.put("post", postResponseDtoList);
+        return responseMap;
     }
 
     /**
@@ -388,7 +401,7 @@ public class PostServiceImpl implements PostService {
     public List<PostSearchResponseDto> searchPost(PostSearchRequestDto requestDto, Pageable pageable) {
 
         String cafeName;
-        List<Post> postList;
+        Slice<Post> postList;
         // 1. 유저 기본사항을 체크한다. OK
         CheckedResponseDto checked = postUtil.checkMember();
         Long memberId = checked.getMemberId();
@@ -450,6 +463,9 @@ public class PostServiceImpl implements PostService {
 
         if (postList.isEmpty() || postList == null) { // 불러올 게시물이 있을때
             throw new PostException(PostExceptionType.NO_POST_FEED);
+        }
+        if(postList.hasNext()) {
+
         }
 
         // 5. 리턴값 채워넣기

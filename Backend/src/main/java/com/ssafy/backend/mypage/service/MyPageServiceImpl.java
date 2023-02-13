@@ -31,6 +31,7 @@ import com.ssafy.backend.todaycafe.repository.FortuneRepository;
 import com.ssafy.backend.todaycafe.repository.TodoRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -164,7 +165,7 @@ public class MyPageServiceImpl implements MyPageService {
     @Override
     public List<MyFeedResponseDto> getMyFeed(Long postId, Pageable pageable) {
         String cafeName;
-        List<Post> postList;
+        Slice<Post> postList;
         // 1. 유저 기본사항을 체크한다. OK
         CheckedResponseDto checked = postUtil.checkMember();
         Long memberId = checked.getMemberId();
@@ -203,7 +204,7 @@ public class MyPageServiceImpl implements MyPageService {
 
             MyFeedResponseDto myFeedResponseDto = MyFeedResponseDto.builder()
                     .isCafeAuthorized(post.isCafeAuthorized())
-                    .postId(slice.getId())
+                    .postId(post.getId())
                     .imgUrlPath(imgUrlPath)
                     .createdAt(post.getCreatedAt())
                     .content(post.getContent())

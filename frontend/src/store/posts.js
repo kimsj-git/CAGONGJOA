@@ -2,6 +2,7 @@
 
 import { createSlice } from "@reduxjs/toolkit"
 const initialPostsState = {
+  hasNext: true,
   posts: [
     {
       userType: true,
@@ -112,7 +113,7 @@ const postsSlice = createSlice({
   reducers: {
     // posts 업데이트
     updatePosts(state, actions) {
-      console.log(actions)
+      state.hasNext = actions.payload.hasNext
       if (actions.payload.lastPostId === -1) {
         state.posts = []
       }
@@ -219,16 +220,19 @@ export const getPosts = (dataSet) => {
           sendRequest(dataSet)
         }
       }
-      if (responseData.httpStatus === "OK") {
+      if (responseData.httpStatus === "OK" || responseData.httpStatus === "NO_CONTENT") {
         return responseData.data
       }
+
     }
     try {
-      const fetchedPosts = await sendRequest()
+      const {hasNext, post}= await sendRequest()
+      
       dispatch(
         postsActions.updatePosts({
-          fetchedPosts: fetchedPosts,
+          fetchedPosts: post,
           lastPostId: dataSet.postId,
+          hasNext: hasNext,
         })
       )
     } catch (error) {

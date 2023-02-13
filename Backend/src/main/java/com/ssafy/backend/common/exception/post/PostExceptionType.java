@@ -4,6 +4,9 @@ import com.ssafy.backend.common.exception.BaseExceptionType;
 import com.ssafy.backend.common.exception.enums.SignType;
 import org.springframework.http.HttpStatus;
 
+import java.util.Map;
+import java.util.TreeMap;
+
 public enum PostExceptionType implements BaseExceptionType {
     //== 회원가입, 로그인 시 ==//
     // 밑에 생성자 파라미터에 정의한 내용을 넣어줌
