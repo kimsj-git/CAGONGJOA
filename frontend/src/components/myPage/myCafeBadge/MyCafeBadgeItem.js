@@ -50,20 +50,20 @@ const MyCafeBadgeItem = ({
         ]
       : "#65B1EF"
   const openDetail = async () => {
-    // setIsLoading(true)
-    //const cafeDetail =  await GetCafeDetail({lat:"",lng:""})
-    // setIsLoading(false)
-    // clickHandler(cafeDetail)
-    setCafeInfo({ name: myCafe.cafeName })
+    setIsLoading(true)
+    const cafeDetail =  await GetCafeDetail({lat:myCafe.latitude,lng:myCafe.longitude})
+    setIsLoading(false)
+    clickHandler(cafeDetail)
+    setCafeInfo({ name: myCafe.cafeName, address: myCafe.address })
   }
   return (
-    <Grid.Column width={5}>
+    <Grid.Column width={4} style={{margin:"1rem"}}>
       <Popup
         trigger={
           <Image
             onClick={openDetail}
             src={require(`../../../assets/cafe_logos/${
-              BRAND_LOGOS[myCafe.BrandType]
+              BRAND_LOGOS[myCafe.brandType]
             }.png`)}
             style={{ border: `1rem solid ${tierColor}`, borderRadius: "70%" }}
           />

@@ -5,7 +5,6 @@ const GetCafeDetail = async (props) => {
   const date = new Date()
   const TIME_ZONE = 3240 * 10000
   const sendDate = new Date(+date + TIME_ZONE).toISOString().substr(0, 19)
-  console.log(`${REST_DEFAULT_URL}/cafe/survey?latitude=${props.lat}&longitude=${props.lng}&todayTime=${sendDate}`)
   const response = await fetch(
     `${REST_DEFAULT_URL}/cafe/survey?latitude=${props.lat}&longitude=${props.lng}&todayTime=${sendDate}`,
     {
@@ -15,7 +14,6 @@ const GetCafeDetail = async (props) => {
       },
     }
   )
-  console.log(response)
   const responseData = await response.json()
   console.log(responseData)
   if (
