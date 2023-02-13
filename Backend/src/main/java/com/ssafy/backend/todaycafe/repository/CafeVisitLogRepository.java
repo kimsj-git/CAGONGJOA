@@ -20,4 +20,6 @@ public interface CafeVisitLogRepository extends JpaRepository<CafeVisitLog, Long
     List<CafeVisitLog> findByVisitedAtLikeAndMemberId(@Param("memberId") long memberId, @Param("ymDate") String ymDate);
 
     List<CafeVisitLog> findAllByVisitedAtAndMemberId(int visitedAt, Long memberId);
+
+    List<CafeVisitLog> findByVisitedAt(int visitedAt);
 }

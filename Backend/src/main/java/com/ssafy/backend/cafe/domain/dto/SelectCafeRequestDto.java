@@ -11,4 +11,5 @@ public class SelectCafeRequestDto {
     private long cafeId;
     private Double latitude;
     private Double longitude;
+    private int todayDate; // 20230213
 }
