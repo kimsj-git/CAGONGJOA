@@ -22,8 +22,7 @@ public class CoffeeMakeController {
     @PutMapping("/")
     public ResponseEntity<ResponseDTO> makeOneCoffee(@RequestParam int coffeeMakeType) throws Exception {
         CoffeeMakeResponseDto coffeeMakeResponseDto = todayCafeService.makeCoffee(coffeeMakeType);
-        System.out.println("type : " + coffeeMakeResponseDto.getResponseType());
-        switch (coffeeMakeResponseDto.getResponseType()) {
+        switch (coffeeMakeType) {
             case 1: responseDTO = new ResponseDTO("[responseType 1] 10커피콩 -> 1커피콩 완료","",HttpStatus.OK,coffeeMakeResponseDto); break;
             case 2: responseDTO = new ResponseDTO("[responseType 2] 27커피콩 -> 3커피콩 완료","",HttpStatus.OK,coffeeMakeResponseDto); break;
         }
