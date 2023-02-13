@@ -3,8 +3,8 @@
 import { createSlice } from "@reduxjs/toolkit"
 
 const initialSearchState = {
-  searchedPosts: [],
-  searchedUsers: [],
+  searchedByPost: [],
+  searchedByUser: [],
   hasSearched: [false, false],
   isLoading: false,
 }
@@ -13,15 +13,27 @@ const searchSlice = createSlice({
   name: "search",
   initialState: initialSearchState,
   reducers: {
-    keywordChange(state, action) {
+    searchByPost(state, action) {
+      state.searchedByPost = [...action.payload]
       state.hasSearched = [true, false]
-      state.searchedPosts = [...action.payloadt]
     },
-    domainChange(state, action) {
-      action.payload.searchType
-        ? (state.searchedUsers = [...action.payload.result])
-        : (state.searchedPosts = [...action.payload.result])
-      state.hasSearched[action.payload.searchType] = true
+    searchByUser(state, action) {
+      state.searchedByUser = [...action.payload]
+      state.hasSearched = [true, true]
+    },
+
+    loadMoreResults(state, action) {
+      if (action.payload.type === 1) {
+        state.searchedByPost = [
+          ...state.searchedByPost,
+          ...action.payload.result,
+        ]
+      } else if (action.payload.type === 2) {
+        state.searchedByUsers = [
+          ...state.searchedByUser,
+          ...action.payload.result,
+        ]
+      }
     },
 
     isLoading(state) {
