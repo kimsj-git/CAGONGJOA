@@ -163,4 +163,15 @@ public class MemberServiceImpl implements MemberService {
         });
     }
 
+    @Override
+    public void addMemberCoin(int addCoinVal) {
+        long memberId = getMemberIdAndNicknameByJwtToken().getId();
+        Optional<MemberCoin> optionalMemberCoin = memberCoinRepository.findByMemberId(memberId);
+        if (optionalMemberCoin.isEmpty()) {
+            throw new MemberException(MemberExceptionType.NOT_FOUND_MEMBER);
+        }
+        int coffeeBeanCount = optionalMemberCoin.get().getCoffeeBeanCount();
+        optionalMemberCoin.get().setCoffeeBeanCount(coffeeBeanCount + addCoinVal);
+    }
+
 }
