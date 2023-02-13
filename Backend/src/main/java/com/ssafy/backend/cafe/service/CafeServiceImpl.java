@@ -190,7 +190,7 @@ public class CafeServiceImpl implements CafeService {
             throw new CafeException(CafeExceptionType.ALREADY_SUBMIT_CROWD_SURVEY);
         }
 
-        optionalCafeVisitLog.get().setSurvey(true);
+        optionalCafeVisitLog.get().setCrowdSurvey(true);
 
         // 혼잡도 설문 저장
         Optional<Cafe> optionalCafe = cafeRepository.findById(cafeId);

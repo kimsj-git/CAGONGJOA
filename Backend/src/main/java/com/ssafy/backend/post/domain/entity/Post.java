@@ -92,9 +92,9 @@ public class Post extends BaseEntity {
         this.isCafeAuthorized = true;
     }
 
-    public void addPostCafe(PostCafe postCafe) {
-        this.postCafeList.add(postCafe);
-        postCafe.setPost(this);
+
+    public void updatePostCafe(List<PostCafe> postCafeList) {
+        this.postCafeList = postCafeList;
     }
 
     public void deleteImages() {

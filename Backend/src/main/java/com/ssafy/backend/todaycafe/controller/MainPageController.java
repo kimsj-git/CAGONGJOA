@@ -69,7 +69,6 @@ public class MainPageController {
         if(type != 1762320904) throw new TodayCafeException(TodayCafeExceptionType.BAD_TYPE_REQUEST);
         int currentTimeBar = todayCafeService.addTimeBar();
         responseDTO = new ResponseDTO("시간바 추가 완료!", "", HttpStatus.OK, currentTimeBar);
-
         return new ResponseEntity<>(responseDTO, HttpStatus.OK);
     }
 

@@ -97,7 +97,7 @@ public class CafeVisitLog {
         this.isSurvey = true;
     }
 
-    public void setSurvey(boolean survey) {
-        isSurvey = survey;
+    public void setCrowdSurvey(boolean isCrowdSurvey) {
+        this.isCrowdSurvey = isCrowdSurvey;
     }
 }
