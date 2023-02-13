@@ -61,7 +61,7 @@ const PostDetail = (props) => {
                       src="https://www.freepnglogos.com/uploads/starbucks-logo-png-transparent-0.png"
                     />
                     <Card.Header>{props.post.writer}</Card.Header>
-                    <Card.Meta>스타벅스 강남R점</Card.Meta>
+                    <Card.Meta>{props.post.cafeName}</Card.Meta>
                     <Card.Meta textAlign="right">
                       {props.post.createdAt}
                     </Card.Meta>
@@ -80,10 +80,10 @@ const PostDetail = (props) => {
                 </Card>
               </ScrollPanel>
               <div style={{ display: "flex", marginTop: "1rem" }}>
-                {sessionStorage.getItem("nickname") !== props.post.writer && (
+                {sessionStorage.getItem("nickname") === props.post.writer && (
                   <PostForm isEditing postToEdit={props.post} />
                 )}
-                {sessionStorage.getItem("nickname") !== props.post.writer && (
+                {sessionStorage.getItem("nickname") === props.post.writer && (
                   <Button
                     fluid
                     toggle
@@ -101,6 +101,7 @@ const PostDetail = (props) => {
                   inverted
                   content={props.post.likeCnt}
                   likeHandler={props.likeHandler}
+                  isLiked={props.post.isLiked}
                 />
               </div>
               <Confirm

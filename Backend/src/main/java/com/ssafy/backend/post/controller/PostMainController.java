@@ -38,13 +38,11 @@ public class PostMainController {
     @PostMapping("/feed")
     public ResponseEntity<ResponseDTO> postMain(
             @RequestBody PostPagingRequestDto requestDto,
-            @PageableDefault(size = 10, sort = "id", direction = Sort.Direction.DESC) Pageable pageable) {
+                @PageableDefault(sort = "id", direction = Sort.Direction.DESC) Pageable pageable) {
 
-        List<PostPagingResponseDto> postSlice = postService.feedPosts(requestDto, pageable);
+        Map<String, Object> postSlice = postService.feedPosts(requestDto, pageable);
         responseDTO
                 = new ResponseDTO("feed 생성 성공!", "", HttpStatus.OK, postSlice);
-
-
         // 리턴객체 : 유저정보(카페로고, 닉네임, 칭호, 카페이름), 만든시간, 이미지, 글내용 전체, 좋아요 개수, 댓글 개수, 게시물 PK
 
         return new ResponseEntity<>(responseDTO, HttpStatus.OK);
@@ -64,7 +62,6 @@ public class PostMainController {
 
         responseDTO = new ResponseDTO("게시글 좋아요 반영 완료", "", HttpStatus.OK, likeResponseDto);
         return new ResponseEntity<>(responseDTO, HttpStatus.OK);
-
     }
 
     /**

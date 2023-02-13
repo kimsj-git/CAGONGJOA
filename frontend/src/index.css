@@ -9,6 +9,13 @@
   }
 }
 
+body {
+  background-image: url('https://img.freepik.com/free-photo/paperboard-texture_95678-72.jpg?w=900&t=st=1676290189~exp=1676290789~hmac=23bae26e4905a9a86024df323de506202c5f2af6d8a6214807a91621107b8e63');
+}
+
+* {
+  /* font-family: 'GangwonEdu_OTFBoldA' !important; */
+}
 .ui.container {
   background-color: #fbfcfd;
 }
@@ -55,39 +62,15 @@
 }
 
 @font-face {
-  font-family: "insungitCutelivelyjisu";
-  src: url("https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_11-01@1.0/insungitCutelivelyjisu.woff2")
-    format("woff2");
+  font-family: 'GangwonEduSaeeum_OTFMediumA';
+  src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2201-2@1.0/GangwonEduSaeeum_OTFMediumA.woff') format('woff');
   font-weight: normal;
   font-style: normal;
 }
 
 @font-face {
-  font-family: "KNPSKkomi-Regular00";
-  src: url("https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2201-2@1.0/KNPSKkomi-Regular00.woff")
-    format("woff");
-  font-weight: normal;
-  font-style: normal;
-}
-
-@font-face {
-  font-family: "Dovemayo-Medium";
-  src: url("https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_four@1.0/Dovemayo-Medium.woff")
-    format("woff");
-  font-weight: normal;
-  font-style: normal;
-}
-@font-face {
-  font-family: "netmarbleB";
-  src: url("https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_four@1.1/netmarbleB.woff")
-    format("woff");
-  font-weight: normal;
-  font-style: normal;
-}
-@font-face {
-  font-family: "BCcardB";
-  src: url("https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_20-07@1.1/BCcardB.woff")
-    format("woff");
+  font-family: 'GangwonEdu_OTFBoldA';
+  src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2201-2@1.0/GangwonEdu_OTFBoldA.woff') format('woff');
   font-weight: normal;
   font-style: normal;
 }

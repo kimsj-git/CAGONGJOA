@@ -2,6 +2,7 @@ package com.ssafy.backend.post.domain.dto;
 
 import com.ssafy.backend.member.domain.entity.Member;
 import com.ssafy.backend.post.domain.entity.*;
+import com.ssafy.backend.post.domain.enums.PostType;
 import lombok.*;
 import org.springframework.data.domain.Pageable;
 
@@ -27,8 +28,10 @@ public class PostPagingResponseDto {
     private LocalDateTime createdAt;
     private List<String> imgUrlPath;
     private String content;
+    private boolean isLikeChecked;
     private int postLikeCount;
     private int commentCount;
+    private PostType postType;
 
     public void updateDto(String cafeName, Long exp, String brandType) {
         this.cafeName = cafeName;
