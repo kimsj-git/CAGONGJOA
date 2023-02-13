@@ -22,4 +22,5 @@ public interface CafeService {
 
     CafeSurveyRespDto getCafeSurvey(LocationAndDateDto locationDto);
 
+    int attendanceReward(int todayDate);
 }

@@ -162,6 +162,20 @@ public class CafeServiceImpl implements CafeService {
         return cafeSurveyRespDto;
     }
 
+    @Override
+    public int attendanceReward(int todayDate) {
+
+        // 오늘 날짜 20230213와 일치하는 todayCafeLog가 있는지?
+        List<CafeVisitLog> todayVisLog = cafeVisitLogRepository.findByVisitedAt(todayDate);
+
+        if (todayVisLog.isEmpty()) {
+            // 오늘 처음 출석이라면 리워드 제공
+            return 10;
+        }
+
+        return 0;
+    }
+
 
     @Override
     public void saveCrowdLevel(CrowdCheckReqDto crowdCheckReqDto) {

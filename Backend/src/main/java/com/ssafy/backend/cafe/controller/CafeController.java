@@ -41,7 +41,10 @@ public class CafeController {
     @PostMapping("/auth/select")
     public ResponseEntity<ResponseDTO> cafeAuth(@RequestBody SelectCafeRequestDto selectCafeRequestDto) {
         cafeService.saveCafeAuth(selectCafeRequestDto);
-        ResponseDTO responseDTO = new ResponseDTO("위치 인증 완료!", "", HttpStatus.CREATED, null);
+        // 처음 위치인증 하면 출석보상 10 커피콩 줄거야 if 널이면, 기존그대로 else 널이 아니면 커피콩 10개 적립!
+        int rewardCoin = cafeService.attendanceReward(selectCafeRequestDto.getTodayDate());
+        RewardCoffeeBeanRespDto rewardCoffeeBeanRespDto = new RewardCoffeeBeanRespDto(rewardCoin);
+        ResponseDTO responseDTO = new ResponseDTO("위치 인증 완료!", "", HttpStatus.CREATED, rewardCoffeeBeanRespDto);
         return new ResponseEntity<>(responseDTO, HttpStatus.OK);
     }
 
