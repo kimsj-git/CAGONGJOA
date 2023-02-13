@@ -1,9 +1,6 @@
 package com.ssafy.backend.mypage.service;
 
-import com.ssafy.backend.mypage.domain.dto.CafeLiveRespDto;
-import com.ssafy.backend.mypage.domain.dto.GetTimeReqDto;
-import com.ssafy.backend.mypage.domain.dto.MyFeedResponseDto;
-import com.ssafy.backend.mypage.domain.dto.VisitCafeListResponseDto;
+import com.ssafy.backend.mypage.domain.dto.*;
 import org.springframework.data.domain.Pageable;
 
 import java.util.List;
@@ -15,4 +12,6 @@ public interface MyPageService {
     List<VisitCafeListResponseDto> getCafeVisitList();
 
     List<MyFeedResponseDto> getMyFeed(Long postId, Pageable pageable);
+
+    List<MyCommentResponseDto> getMyComment(Long commentId, Pageable pageable);
 }

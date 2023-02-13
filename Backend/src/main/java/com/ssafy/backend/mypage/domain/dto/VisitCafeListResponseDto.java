@@ -17,5 +17,12 @@ public class VisitCafeListResponseDto {
     private String cafeName; // 카페명
     private String brandType; // 카페 브랜드 타입
     private Long exp; // 경험치
+    private Double latitude; // 위도
+    private Double longitude; // 경도
+
+    public void addLocation (Double latitude, Double longitude){
+        this.latitude = latitude;
+        this.longitude = longitude;
+    }
 
 }
