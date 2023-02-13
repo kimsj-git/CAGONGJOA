@@ -85,12 +85,11 @@ public class PostServiceImpl implements PostService {
             post.updateContent(content);
         }
 
-        Post savedPost = postRepository.save(post);
+       post = postRepository.save(post);
 
         if (files != null) {
-            List<PostImage> postImages = postUtil.imageUpload(savedPost, files);
-//            System.out.println(postImages);
-            savedPost.updatePostImage(postImages);
+            List<PostImage> postImages = postUtil.imageUpload(post, files);
+            post.updatePostImage(postImages);
             System.out.println("이미지도 첨부 완료");
 
         }
@@ -102,7 +101,7 @@ public class PostServiceImpl implements PostService {
                 List<NearByCafeResultDto> resultDtoList = cafeService.getNearByCafeLocations(clientPosInfoDto);
                 for (NearByCafeResultDto resultDto : resultDtoList) {
                     PostCafe postCafe = PostCafe.builder()
-                            .post(savedPost)
+                            .post(post)
                             .cafe(cafeRepository.findById(resultDto.getId().longValue()).get())
                             .build();
                     postCafeRepository.save(postCafe); // Post 가 너무 뚱뚱해지는걸 막기위해
@@ -115,13 +114,18 @@ public class PostServiceImpl implements PostService {
             System.out.println("글생성 : 여기까지 옴");
             Cafe cafe = cafeRepository.findById(cafeAuth.get().getCafeId()).get(); // 카페 닉네임을 확인한다.
             System.out.println("cafe 이름 : " + cafe.getName());
-            savedPost.updateAuthorized();
+            post.updateAuthorized();
+            System.out.println("여기옴");
             // 1-3. 카페위치 저장하기
             PostCafe postCafe = PostCafe.builder()
-                    .post(savedPost)
+                    .post(post)
                     .cafe(cafe)
                     .build();
-            savedPost.addPostCafe(postCafe); // 인증된 카페의 경우, post 에 postCafe 저장해주기
+            postCafe = postCafeRepository.save(postCafe);
+            System.out.println("여긴와?");
+            List<PostCafe> postCafeList = new ArrayList<>();
+            postCafeList.add(postCafe);
+            post.updatePostCafe(postCafeList);
         }
 
         return post.getId();
