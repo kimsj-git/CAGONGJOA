@@ -107,7 +107,11 @@ public class TodayCafeServiceImpl implements TodayCafeService {
                 coffeeBeanCnt -= 10;
 
                 memberCoin.updateCoin(coffeeBeanCnt, coffeeCnt);
-                coffeeResponseDto.setResponseType(1);
+
+                // 변경된 내용으로 리턴하기 위해 dto 내용 업데이트
+                coffeeResponseDto.setCoffeeCnt(coffeeCnt);
+                coffeeResponseDto.setCoffeeBeanCnt(coffeeBeanCnt);
+
                 return coffeeResponseDto;
             } else { // 10 보다 작을때
                 throw new TodayCafeException(TodayCafeExceptionType.NOT_ENOUGH_10_BEAN);
@@ -118,7 +122,10 @@ public class TodayCafeServiceImpl implements TodayCafeService {
                 coffeeBeanCnt -= 27;
 
                 memberCoin.updateCoin(coffeeBeanCnt, coffeeCnt);
-                coffeeResponseDto.setResponseType(4);
+
+                // 변경된 내용으로 리턴하기 위해 dto 내용 업데이트
+                coffeeResponseDto.setCoffeeCnt(coffeeCnt);
+                coffeeResponseDto.setCoffeeBeanCnt(coffeeBeanCnt);
                 return coffeeResponseDto;
             } else {
                 throw new TodayCafeException(TodayCafeExceptionType.NOT_ENOUGH_27_BEAN);
