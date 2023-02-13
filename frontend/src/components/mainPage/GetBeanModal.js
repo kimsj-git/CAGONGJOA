@@ -60,7 +60,6 @@ const GetBeanModal = (props) => {
       } else if(responseData.httpStatus === "CREATED"){
           setOpen(true)
           setTimeout(()=>{props.setIsJamSurvey(true)},1500) 
-          sessionStorage.setItem('jamSurvey', 1)
       }
   }
   return (

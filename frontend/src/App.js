@@ -38,7 +38,7 @@ function App() {
     sessionStorage.getItem("cafeAuth")
   )
   const [isJamSurvey, setIsJamSurvey] = useState(
-    sessionStorage.getItem("jamSurvey")
+    JSON.parse(sessionStorage.getItem("todayCafe")) ? JSON.parse(sessionStorage.getItem("todayCafe")).isCrowdSubmitted : false
   )
 
   useEffect(() => {
