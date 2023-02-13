@@ -8,6 +8,7 @@ const MapCafeDetial = (props) => {
   const detailHandler = () => {
     setIsShowMore(!isShowMore)
   }
+  console.log(props)
   return (
     <>
       {props.isLoading ? (
@@ -34,32 +35,29 @@ const MapCafeDetial = (props) => {
               </Icon.Group>
               주소: {props.address}
             </p>
-            <p>
-              <Icon name="clock" color="orange" /> 10:00 ~ 20:00
-            </p>
             {isShowMore && (
               <>
                 <p>
                   <Icon name="wifi" color="green" /> 원활:
-                  {props.cafeDetail.replyPower_high} 보통:
-                  {props.cafeDetail.replyPower_mid} 불안:
-                  {props.cafeDetail.replyPower_low}
+                  {props.cafeDetail && props.cafeDetail.replyPower_high ? props.cafeDetail.replyPower_high : 0} 보통:
+                  {props.cafeDetail && props.cafeDetail.replyPower_mid ? props.cafeDetail.replyPower_mid : 0} 불안:
+                  {props.cafeDetail && props.cafeDetail.replyPower_low ? props.cafeDetail.replyPower_low : 0}
                 </p>
                 <p>
                   <Icon name="plug" color="yellow" /> 충분:
-                  {props.cafeDetail.replyWifi_high} 보통:
-                  {props.cafeDetail.replyWifi_mid} 부족:
-                  {props.cafeDetail.replyWifi_low}
+                  {props.cafeDetail && props.cafeDetail.replyWifi_high ? props.cafeDetail.replyWifi_high : 0} 보통:
+                  {props.cafeDetail && props.cafeDetail.replyWifi_mid ? props.cafeDetail.replyWifi_mid : 0} 부족:
+                  {props.cafeDetail && props.cafeDetail.replyWifi_low ? props.cafeDetail.replyWifi_low : 0}
                 </p>
                 <p>
                   <Icon name="bath" color="blue" /> 청결:
-                  {props.cafeDetail.replyToilet_high} 보통:
-                  {props.cafeDetail.replyToilet_mid} 열악:
-                  {props.cafeDetail.replyToilet_low}
+                  {props.cafeDetail && props.cafeDetail.replyToilet_high ? props.cafeDetail.replyToilet_high : 0} 보통:
+                  {props.cafeDetail && props.cafeDetail.replyToilet_mid ? props.cafeDetail.replyToilet_mid : 0} 열악:
+                  {props.cafeDetail && props.cafeDetail.replyToilet_low ? props.cafeDetail.replyToilet_low : 0}
                 </p>
                 <p>
                   <Icon name="hourglass half" color="grey" />
-                  시간제한 {props.cafeDetail.replyTime ? "O" : "X"}
+                  시간제한 {props.cafeDetail && props.cafeDetail.replyTime ? "O" : "X"}
                 </p>
               </>
             )}
