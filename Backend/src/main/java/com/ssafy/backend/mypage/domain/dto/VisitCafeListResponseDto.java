@@ -19,6 +19,7 @@ public class VisitCafeListResponseDto {
     private Long exp; // 경험치
     private Double latitude; // 위도
     private Double longitude; // 경도
+    private String address;
 
     public void addLocation (Double latitude, Double longitude){
         this.latitude = latitude;

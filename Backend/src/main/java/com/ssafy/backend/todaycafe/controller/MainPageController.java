@@ -68,8 +68,7 @@ public class MainPageController {
     public ResponseEntity<ResponseDTO> addTimeBar(@RequestParam int type) {
         if(type != 1762320904) throw new TodayCafeException(TodayCafeExceptionType.BAD_TYPE_REQUEST);
         int currentTimeBar = todayCafeService.addTimeBar();
-        Map.Entry<String, Integer> result = new AbstractMap.SimpleEntry<>("현재경과시간", currentTimeBar);
-        responseDTO = new ResponseDTO("시간바 추가 완료!", "", HttpStatus.OK, result);
+        responseDTO = new ResponseDTO("시간바 추가 완료!", "", HttpStatus.OK, currentTimeBar);
 
         return new ResponseEntity<>(responseDTO, HttpStatus.OK);
     }

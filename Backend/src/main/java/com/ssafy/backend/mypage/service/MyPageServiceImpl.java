@@ -152,6 +152,7 @@ public class MyPageServiceImpl implements MyPageService {
                     .cafeName(memberCafeTier.getCafe().getName())
                     .latitude(cafeLocation.getLat())
                     .longitude(cafeLocation.getLng())
+                    .address(cafeLocation.getAddress())
                     .build();
 
             visitCafeResponseList.add(responseDto);
