@@ -11,10 +11,4 @@ import lombok.*;
 public class CoffeeMakeResponseDto {
     private Integer coffeeCnt;
     private Integer coffeeBeanCnt;
-    private Integer responseType;
-
-    public void setResponseType(int responseType) {
-        this.responseType = responseType;
-    }
-
 }
