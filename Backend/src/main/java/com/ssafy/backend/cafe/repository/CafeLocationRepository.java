@@ -12,6 +12,8 @@ import java.util.List;
 import java.util.Optional;
 
 public interface CafeLocationRepository extends JpaRepository<CafeLocation, Long> {
+    List<CafeLocation> findAllByIdIn(List<Long> cafeIdList);
+
     Optional<CafeLocation> findByLatAndLng(Double lat, Double lng);
 
 }

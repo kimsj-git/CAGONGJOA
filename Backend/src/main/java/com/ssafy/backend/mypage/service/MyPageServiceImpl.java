@@ -2,6 +2,8 @@ package com.ssafy.backend.mypage.service;
 
 import com.ssafy.backend.cafe.domain.dto.CafeNameAndBrandDto;
 import com.ssafy.backend.cafe.domain.entity.Cafe;
+import com.ssafy.backend.cafe.domain.entity.CafeLocation;
+import com.ssafy.backend.cafe.repository.CafeLocationRepository;
 import com.ssafy.backend.common.exception.mypage.MyPageException;
 import com.ssafy.backend.common.exception.mypage.MyPageExceptionType;
 import com.ssafy.backend.common.exception.post.PostException;
@@ -10,6 +12,7 @@ import com.ssafy.backend.member.domain.entity.MemberCafeTier;
 import com.ssafy.backend.member.repository.MemberCafeTierRepository;
 import com.ssafy.backend.member.service.MemberService;
 import com.ssafy.backend.mypage.domain.dto.CafeLiveRespDto;
+import com.ssafy.backend.mypage.domain.dto.MyCommentResponseDto;
 import com.ssafy.backend.mypage.domain.dto.MyFeedResponseDto;
 import com.ssafy.backend.mypage.domain.dto.VisitCafeListResponseDto;
 import com.ssafy.backend.post.domain.dto.CheckedResponseDto;
@@ -50,6 +53,7 @@ public class MyPageServiceImpl implements MyPageService {
     private final PostRepository postRepository;
     private final MemberCafeTierRepository memberCafeTierRepository;
     private final PostImageRepository postImageRepository;
+    private final CafeLocationRepository cafeLocationRepository;
 
     @Override
     public List<CafeLiveRespDto> getCafeLives(int todayDate) {
@@ -129,12 +133,25 @@ public class MyPageServiceImpl implements MyPageService {
         if (memberCafeTierList.isEmpty() || memberCafeTierList == null) {
             throw new MyPageException(MyPageExceptionType.NO_CAFE_VISITED);
         }
+        List<Long> cafeIdList = new ArrayList<>();
         for (MemberCafeTier memberCafe : memberCafeTierList) {
+            cafeIdList.add(memberCafe.getCafe().getId());
+        }
+
+        List<CafeLocation> cafeLocationList = cafeLocationRepository.findAllByIdIn(cafeIdList);
+
+        MemberCafeTier memberCafeTier;
+        CafeLocation cafeLocation;
+        for (int i = 0; i < memberCafeTierList.size(); i++) {
+            memberCafeTier = memberCafeTierList.get(i);
+            cafeLocation = cafeLocationList.get(i);
             VisitCafeListResponseDto responseDto = VisitCafeListResponseDto.builder()
-                    .cafeId(memberCafe.getCafe().getId())
-                    .exp(memberCafe.getExp())
-                    .brandType(memberCafe.getCafe().getBrandType())
-                    .cafeName(memberCafe.getCafe().getName())
+                    .cafeId(memberCafeTier.getCafe().getId())
+                    .exp(memberCafeTier.getExp())
+                    .brandType(memberCafeTier.getCafe().getBrandType())
+                    .cafeName(memberCafeTier.getCafe().getName())
+                    .latitude(cafeLocation.getLat())
+                    .longitude(cafeLocation.getLng())
                     .build();
 
             visitCafeResponseList.add(responseDto);
@@ -210,5 +227,10 @@ public class MyPageServiceImpl implements MyPageService {
             responseDtoList.add(myFeedResponseDto);
         }
         return responseDtoList;
+    }
+
+    @Override
+    public List<MyCommentResponseDto> getMyComment(Long commentId, Pageable pageable) {
+        return null;
     }
 }

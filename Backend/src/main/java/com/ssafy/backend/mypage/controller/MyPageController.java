@@ -2,10 +2,7 @@ package com.ssafy.backend.mypage.controller;
 
 import com.ssafy.backend.common.annotation.Auth;
 import com.ssafy.backend.common.dto.ResponseDTO;
-import com.ssafy.backend.mypage.domain.dto.CafeLiveRespDto;
-import com.ssafy.backend.mypage.domain.dto.GetTimeReqDto;
-import com.ssafy.backend.mypage.domain.dto.MyFeedResponseDto;
-import com.ssafy.backend.mypage.domain.dto.VisitCafeListResponseDto;
+import com.ssafy.backend.mypage.domain.dto.*;
 import com.ssafy.backend.mypage.service.MyPageService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -59,12 +56,27 @@ public class MyPageController {
 
     @Auth
     @GetMapping("/myFeed")
-    public ResponseEntity<ResponseDTO> getMyFeed(@RequestParam Long postId,
-                                                 @PageableDefault(size = 10, sort = "id", direction = Sort.Direction.DESC) Pageable pageable) {
+    public ResponseEntity<ResponseDTO> getMyComment(@RequestParam Long postId,
+                                                 @PageableDefault(size = 20, sort = "id", direction = Sort.Direction.DESC) Pageable pageable) {
 
         List<MyFeedResponseDto> myFeedList = myPageService.getMyFeed(postId, pageable);
 
-        ResponseDTO responseDTO = new ResponseDTO("내 글목록 불러오기 완료!", "", HttpStatus.OK, myFeedList);
+        ResponseDTO responseDTO = new ResponseDTO("내 댓글목록 불러오기 완료!", "", HttpStatus.OK, myFeedList);
+        return new ResponseEntity<>(responseDTO, HttpStatus.OK);
+    }
+
+    /**
+     * 4. 내가쓴 댓글 조회하기
+     */
+
+    @Auth
+    @GetMapping("/myComment")
+    public ResponseEntity<ResponseDTO> getMyFeed(@RequestParam Long commentId,
+                                                 @PageableDefault(size = 10, sort = "id", direction = Sort.Direction.DESC) Pageable pageable) {
+
+        List<MyCommentResponseDto> myCommentList = myPageService.getMyComment(commentId, pageable);
+
+        ResponseDTO responseDTO = new ResponseDTO("내 글목록 불러오기 완료!", "", HttpStatus.OK, myCommentList);
         return new ResponseEntity<>(responseDTO, HttpStatus.OK);
     }
 
