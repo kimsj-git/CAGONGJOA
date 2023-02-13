@@ -257,6 +257,7 @@ public class TodayCafeServiceImpl implements TodayCafeService {
                 .exp(tier.getExp())
                 .brandType(savedCafeVisitLog.getCafe().getBrandType())
                 .accTime(savedCafeVisitLog.getAccTime())
+                .isCrowdSubmitted(savedCafeVisitLog.isCrowdSurvey())
                 .isSurveySubmitted(savedCafeVisitLog.isSurvey())
                 .coffeeBeanCnt(memberCoin.getCoffeeBeanCount())
                 .coffeeCnt(memberCoin.getCoffeeCount())
@@ -267,10 +268,6 @@ public class TodayCafeServiceImpl implements TodayCafeService {
             String fortuneContent = fortuneOptional.get().getContent();
             cafeAuthResponseDto.updateFortune(fortuneContent);
         }
-//        Optional<CafeCrowd> cafeCrowdOptional = cafeCrowdRepository.findByCafeVisitLogId(cafeVisitLog.getId());
-//        if(cafeCrowdOptional.isPresent()){
-//            cafeAuthResponseDto.updateCrowd(true);
-//        }
 
         System.out.println("카페생성 성공!");
         return cafeAuthResponseDto;
