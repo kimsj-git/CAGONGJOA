@@ -56,7 +56,7 @@ const JamSurvey = ({setIsJamSurvey}) => {
           />
         </div>
         <div style={{ paddingInline: "1rem" }}>
-          {selectedBtn !== null && <GetBeanModal selectedBtn={selectedBtn} open={openModal} setIsJamSurvey={setIsJamSurvey}/>}
+          {selectedBtn !== null && <GetBeanModal selectedBtn={selectedBtn} open={openModal} setIsJamSurvey={setIsJamSurvey} location="jamSurv" beanNum={1}/>}
         </div>
       </Segment>
     )

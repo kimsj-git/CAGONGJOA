@@ -44,7 +44,7 @@ const MyCafeBadgeItem = ({
   setIsLoading,
 }) => {
   const tierColor =
-    parseInt(myCafe.exp / 1000) < 5
+    parseInt(myCafe.exp / 1000) < 4
       ? ["#8B6331", "#C0C0C0", "#FF9614", "#3DFF92"][
           parseInt(myCafe.exp / 1000)
         ]
@@ -60,13 +60,17 @@ const MyCafeBadgeItem = ({
     <Grid.Column width={4} style={{margin:"1rem"}}>
       <Popup
         trigger={
+          <div>
+            
           <Image
             onClick={openDetail}
             src={require(`../../../assets/cafe_logos/${
               BRAND_LOGOS[myCafe.brandType]
             }.png`)}
-            style={{ border: `1rem solid ${tierColor}`, borderRadius: "70%" }}
-          />
+            style={{ border: `1rem solid ${tierColor}`, borderRadius: "70%", marginBottom:"1rem"}}
+            />
+            <p style={{fontSize:"10px", fontWeight:"bold"}}>{myCafe.cafeName}</p>
+            </div>
         }
       >
         <div
@@ -77,7 +81,7 @@ const MyCafeBadgeItem = ({
             alignItems: "center",
           }}
         >
-          <h3>{myCafe.cafeName}</h3>
+          {/* <h3>{myCafe.cafeName}</h3> */}
           <p>
             경험치: {myCafe.exp} / {(parseInt(myCafe.exp / 1000) + 1) * 1000}
           </p>

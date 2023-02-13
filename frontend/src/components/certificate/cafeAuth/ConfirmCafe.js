@@ -13,6 +13,9 @@ const ConfirmCafe = ({ setIsCafeAuth, setIsJamSurvey }) => {
   const [isLoading, setIsLoading] = useState(false)
   const open = useSelector((state) => state.modal.openConfirmCafe)
   const cafeData = useSelector((state) => state.modal.selectedCafe)
+  const date = new Date()
+  const [year, month, day] = date.toLocaleDateString().split(".")
+
   const okBtnHandler = async () => {
     setIsLoading(true)
     const response = await fetch(`${REST_DEFAULT_URL}/cafe/auth/select`, {
@@ -25,11 +28,15 @@ const ConfirmCafe = ({ setIsCafeAuth, setIsJamSurvey }) => {
         cafeId: cafeData.id,
         latitude: JSON.parse(sessionStorage.getItem("location")).lat,
         longitude: JSON.parse(sessionStorage.getItem("location")).lng,
+        todayDate: `${year}${month < 10 ? "0" + month.trim() : month.trim()}${
+          day < 10 ? "0" + day.trim() : day.trim()
+        }`,
       }),
     })
     setIsLoading(false)
     const responseData = await response.json()
     console.log(responseData)
+    const rewardCoin = responseData.data.rewardCoin
     if (responseData.httpStatus === "CREATED") {
       const response = await fetch(`${REST_DEFAULT_URL}/cafe/auth/data`, {
         method: "GET",
@@ -62,11 +69,17 @@ const ConfirmCafe = ({ setIsCafeAuth, setIsJamSurvey }) => {
           isSurveySubmitted: responseData.data.isSurveySubmitted,
           isCrowdSubmitted: responseData.data.isCrowdSubmitted,
           brandType: responseData.data.brandType,
+          accTime: responseData.data.accTime,
         }
         sessionStorage.setItem("todayCafe", JSON.stringify(todayCafe))
         sessionStorage.setItem("todoList", responseData.data.todoList)
         setIsJamSurvey(responseData.data.isCrowdSubmitted)
         setIsCafeAuth("1")
+        if (rewardCoin === 10) {
+          alert("출석 보상: 커피콩 10개 획득!")
+          dispatch(modalActions.toggleConfirmCafeModal())
+          dispatch(modalActions.toggleNearCafeListModal())
+        }
       } else if (
         responseData.httpStatus === "BAD_REQUEST" &&
         responseData.data.sign === "JWT"
@@ -86,15 +99,12 @@ const ConfirmCafe = ({ setIsCafeAuth, setIsJamSurvey }) => {
           history.push("/login")
         } else if (responseData.httpStatus === "OK") {
           sessionStorage.setItem("accessToken", responseData.data.accessToken)
-          console.log(2)
           alert("카페 인증에 실패했습니다.")
         }
       } else {
-        console.log(3)
         alert("카페 인증에 실패했습니다.")
       }
     } else {
-      console.log(1)
       alert("카페 인증에 실패했습니다.")
     }
     dispatch(modalActions.toggleConfirmCafeModal())

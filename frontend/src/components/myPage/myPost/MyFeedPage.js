@@ -14,7 +14,7 @@ const MyFeedPage = () => {
 
   return (
     <>
-      <Menu color="blue" widths={3} style={{mairginTop:"3rem"}}>
+      <Menu color="blue" widths={2} style={{mairginTop:"3rem"}}>
         <Menu.Item
           name="내 게시글"
           dir="myposts"
@@ -27,17 +27,17 @@ const MyFeedPage = () => {
           active={activeItem === "mycomments"}
           onClick={handleItemClick}
         />
-        <Menu.Item
+        {/* <Menu.Item
           name="좋아요"
           dir="mylikes"
           active={activeItem === "mylikes"}
           onClick={handleItemClick}
-        />
+        /> */}
       </Menu>
 
       {activeItem === "myposts" && <MyPosts />}
       {activeItem === "mycomments" && <MyComments />}
-      {activeItem === "mylikes" && <MyLikes />}
+      {/* {activeItem === "mylikes" && <MyLikes />} */}
     </>
   )
 }

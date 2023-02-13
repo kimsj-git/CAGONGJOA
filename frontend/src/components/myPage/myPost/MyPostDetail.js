@@ -51,16 +51,18 @@ const MyPostDetail = (props) => {
                     />
                   }
                     <Card.Header>{props.post.writerNickname}</Card.Header>
-                    <Card.Meta>스타벅스 강남R점</Card.Meta>
+                    <Card.Meta>{props.post.cafeName? props.post.cafeName : ''}</Card.Meta>
                     <Card.Meta textAlign="right">
                       {createdAt[0]} {createdAt[1]}
                     </Card.Meta>
-                    {props.post.imgUrlPath.length > 0 && <Image
+                    {props.post.imgUrlPath.length > 0 && props.post.imgUrlPath.map((img)=>{
+                      return <Image
                       src={props.post.imgUrlPath[0]}
                       wrapped
                       ui={true}
                       style={{ marginBlock: "0.5rem" }}
-                    />}
+                    />
+                    })}
                     <Card.Description
                       style={{ fontSize: "1.2rem", lineHeight: "1.8" }}
                     >
@@ -97,7 +99,7 @@ const MyPostDetail = (props) => {
                   btnType="like"
                   fluid
                   inverted
-                  content={props.post.likeCnt}
+                  content={props.post.postLikeCount}
                   likeHandler={props.likeHandler}
                 />
               </div>

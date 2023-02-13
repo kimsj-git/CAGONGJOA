@@ -62,8 +62,10 @@ const MyPosts = () => {
   }, [inView])
 
   useEffect(()=>{
-    setMyPosts((prev) => [...prev, ...requestPost])
-    setPostId((prev) => prev + requestPost.length)
+    setMyPosts((prev) => [ ...prev,...requestPost])
+    if(requestPost.length>0){
+      setPostId(requestPost[requestPost.length-1].postId)
+    }
   }, [requestPost])
   return (
     <>
