@@ -7,7 +7,7 @@ import { modalActions } from "../../../store/modal"
 
 const REST_DEFAULT_URL = process.env.REACT_APP_REST_DEFAULT_URL
 
-const ConfirmCafe = ({setIsCafeAuth, setIsJamSurvey}) => {
+const ConfirmCafe = ({ setIsCafeAuth, setIsJamSurvey }) => {
   const history = useHistory()
   const dispatch = useDispatch()
   const [isLoading, setIsLoading] = useState(false)
@@ -30,8 +30,8 @@ const ConfirmCafe = ({setIsCafeAuth, setIsJamSurvey}) => {
     setIsLoading(false)
     const responseData = await response.json()
     console.log(responseData)
-    if (responseData.httpStatus==="CREATED") {
-      const response = await fetch(`${REST_DEFAULT_URL}/cafe/auth/data`,{
+    if (responseData.httpStatus === "CREATED") {
+      const response = await fetch(`${REST_DEFAULT_URL}/cafe/auth/data`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
@@ -40,7 +40,7 @@ const ConfirmCafe = ({setIsCafeAuth, setIsJamSurvey}) => {
       })
       const responseData = await response.json()
       console.log(responseData)
-      if (responseData.httpStatus ==="OK"){
+      if (responseData.httpStatus === "OK") {
         //현재 위치
         const location = { lat: cafeData.latitude, lng: cafeData.longitude }
         // 선택한 카페 정보
@@ -52,41 +52,48 @@ const ConfirmCafe = ({setIsCafeAuth, setIsJamSurvey}) => {
         sessionStorage.setItem("myCafe", JSON.stringify(selectedCafeData))
         sessionStorage.setItem("location", JSON.stringify(location))
         sessionStorage.setItem("cafeAuth", 1)
-        
+        console.log(responseData)
         // 오늘의 카페에서 사용할 정보
         const todayCafe = {
-          coffeeBeanCnt : responseData.data.coffeeBeanCnt,
-          coffeeCnt : responseData.data.coffeeCnt,
-          exp : responseData.data.exp,
+          coffeeBeanCnt: responseData.data.coffeeBeanCnt,
+          coffeeCnt: responseData.data.coffeeCnt,
+          exp: responseData.data.exp,
           fortune: responseData.data.fortune,
-          surveySubmitted: responseData.data.surveySubmitted,
-          brandType: responseData.data.brandType
+          isSurveySubmitted: responseData.data.isSurveySubmitted,
+          isCrowdSubmitted: responseData.data.isCrowdSubmitted,
+          brandType: responseData.data.brandType,
         }
         sessionStorage.setItem("todayCafe", JSON.stringify(todayCafe))
-        setIsCafeAuth('1')
-      } else if (responseData.httpStatus === "BAD_REQUEST" && responseData.data.sign ==="JWT"){
-        const response = await fetch(`${REST_DEFAULT_URL}/member/refresh`,{
+        sessionStorage.setItem("todoList", responseData.data.todoList)
+        setIsJamSurvey(responseData.data.isCrowdSubmitted)
+        setIsCafeAuth("1")
+      } else if (
+        responseData.httpStatus === "BAD_REQUEST" &&
+        responseData.data.sign === "JWT"
+      ) {
+        const response = await fetch(`${REST_DEFAULT_URL}/member/refresh`, {
           method: "GET",
           headers: {
-            "Authorization-RefreshToken" : `Bearer ${sessionStorage.getItem('refreshToken')}`
-          }
+            "Authorization-RefreshToken": `Bearer ${sessionStorage.getItem(
+              "refreshToken"
+            )}`,
+          },
         })
         const responseData = await response.json()
-        if (responseData.httpStatus!=="OK"){
+        if (responseData.httpStatus !== "OK") {
           sessionStorage.clear()
           alert("세션 만료되었습니다.")
-          history.push('/login')
-        }else if(responseData.httpStatus === "OK"){
-          sessionStorage.setItem('accessToken', responseData.data.accessToken)
+          history.push("/login")
+        } else if (responseData.httpStatus === "OK") {
+          sessionStorage.setItem("accessToken", responseData.data.accessToken)
           console.log(2)
           alert("카페 인증에 실패했습니다.")
         }
-      }else{
+      } else {
         console.log(3)
         alert("카페 인증에 실패했습니다.")
       }
-    }
-    else{
+    } else {
       console.log(1)
       alert("카페 인증에 실패했습니다.")
     }

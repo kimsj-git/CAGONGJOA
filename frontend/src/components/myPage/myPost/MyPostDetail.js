@@ -20,7 +20,7 @@ import { postsActions } from "../../../store/posts"
 const MyPostDetail = (props) => {
   const dispatch = useDispatch()
   const [open, setOpen] = useState(false)
-
+  const createdAt = props.post.createdAt.split('T')
   return (
     <Modal
       onClose={() => setOpen(false)}
@@ -42,19 +42,21 @@ const MyPostDetail = (props) => {
               <ScrollPanel style={{ width: "100%", height: "77.5vh" }}>
                 <Card fluid style={{ boxShadow: "none" }}>
                   <Card.Content>
+                    {props.post.imgUrlPath.length >0 && 
                     <Image
-                      avatar
-                      floated="left"
-                      size="huge"
-                      src={props.post.images[0]}
+                    avatar
+                    floated="left"
+                    size="huge"
+                    src={props.post.imgUrlPath[0]}
                     />
-                    <Card.Header>{props.post.author}</Card.Header>
+                  }
+                    <Card.Header>{props.post.writerNickname}</Card.Header>
                     <Card.Meta>스타벅스 강남R점</Card.Meta>
                     <Card.Meta textAlign="right">
-                      {props.post.createdAt}
+                      {createdAt[0]} {createdAt[1]}
                     </Card.Meta>
-                    {props.post.images.length > 0 && <Image
-                      src={props.post.images[0]}
+                    {props.post.imgUrlPath.length > 0 && <Image
+                      src={props.post.imgUrlPath[0]}
                       wrapped
                       ui={true}
                       style={{ marginBlock: "0.5rem" }}
@@ -101,7 +103,7 @@ const MyPostDetail = (props) => {
               </div>
             </Grid.Column>
             <Grid.Column mobile={16} tablet={8} computer={8}>
-              <Header>{`댓글 ${props.post.commentCnt}`}</Header>
+              <Header>{`댓글 ${props.post.commentCount}`}</Header>
               <Divider />
               <ScrollPanel style={{ width: "100%", height: "70vh" }}>
                 <Comment.Group>

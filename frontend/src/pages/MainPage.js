@@ -1,6 +1,5 @@
 import { Fragment } from "react"
 import { Grid } from "semantic-ui-react"
-import { useState } from "react"
 import MainPageTopBar from "../components/mainPage/MainPageTopBar"
 import PostList from "../components/mainPage/PostList"
 import JamSurvey from "../components/mainPage/JamSurvey"
