@@ -1,4 +1,5 @@
 import { Grid, Image, Popup } from "semantic-ui-react"
+import GetCafeDetail from "../../map/GetCafeDetail"
 
 const BRAND_LOGOS = {
   할리스: "hollys",
@@ -36,17 +37,25 @@ const BRAND_LOGOS = {
   바나프레소: "banapresso",
 }
 
-const MyCafeBadgeItem = ({ myCafe, clickHandler, setCafeInfo }) => {
+const MyCafeBadgeItem = ({
+  myCafe,
+  clickHandler,
+  setCafeInfo,
+  setIsLoading,
+}) => {
   const tierColor =
     parseInt(myCafe.exp / 1000) < 5
       ? ["#8B6331", "#C0C0C0", "#FF9614", "#3DFF92"][
           parseInt(myCafe.exp / 1000)
         ]
       : "#65B1EF"
-    const openDetail = () => {
-        clickHandler()
-        setCafeInfo({name: myCafe.cafeName, })
-    }
+  const openDetail = async () => {
+    // setIsLoading(true)
+    //const cafeDetail =  await GetCafeDetail({lat:"",lng:""})
+    // setIsLoading(false)
+    // clickHandler(cafeDetail)
+    setCafeInfo({ name: myCafe.cafeName })
+  }
   return (
     <Grid.Column width={5}>
       <Popup

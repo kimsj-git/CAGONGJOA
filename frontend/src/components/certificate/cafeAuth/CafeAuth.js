@@ -67,6 +67,7 @@ const CafeAuth = (props) => {
               </GridColumn>
               <GridColumn width={1}></GridColumn>
               <GridColumn
+              onClick={()=>{alert("업데이트 중..")}}
                 width={6}
                 textAlign="center"
                 verticalAlign="middle"

@@ -12,7 +12,7 @@ const Signup = ({ setIsAuthenticated }) => {
   const history = useHistory()
   const location = useLocation()
   const dispatch = useDispatch()
-  const hangelcheck = /^[가-힣a-zA-Z]+$/
+  const hangelcheck = /^[가-힣a-zA-Z0-9]+$/
   // props로 받아옴
   const oauthType = location.state.oauthType
   const oauthId = location.state.oauthId
