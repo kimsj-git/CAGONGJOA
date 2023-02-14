@@ -192,8 +192,8 @@ export const getPosts = (dataSet) => {
           types: dataSet.filters.length
             ? dataSet.filters
             : ["free", "qna", "together", "tip", "recommend", "help", "lost"],
-          latitude: JSON.parse(sessionStorage.getItem("location")).lat,
-          longitude: JSON.parse(sessionStorage.getItem("location")).lng,
+          latitude: dataSet.location.lat,
+          longitude: dataSet.location.lng,  
           dist: 0.5,
         }),
       })

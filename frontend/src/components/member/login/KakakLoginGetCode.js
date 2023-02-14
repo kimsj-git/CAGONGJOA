@@ -1,10 +1,11 @@
 // 토큰 주고 받고, 유저 정보 저장을 위한 파일
 import { useEffect } from "react"
 import { useHistory } from "react-router-dom"
+import CafeAuthFetch from "../../certificate/cafeAuth/CafeAuthFetch"
 
 const DEFAULT_REST_URL = process.env.REACT_APP_REST_DEFAULT_URL
 
-const KakaoLoginGetCode = ({setIsAuthenticated}) => {
+const KakaoLoginGetCode = ({setIsAuthenticated, setIsCafeAuth}) => {
   // 화면 생성시 시작
   const history = useHistory()
   const PARAMS = new URL(document.location).searchParams

@@ -35,8 +35,20 @@ const PostList = (props) => {
     .map(([key, value]) => key)
 
   const refreshPosts = (postId = -1) => {
-    dispatch(getPosts({ postId: postId, filters: filters }))
+    if (JSON.parse(sessionStorage.getItem("location"))) {
+      dispatch(
+        getPosts({
+          location: {
+            lat: JSON.parse(sessionStorage.getItem("location")).lat,
+            lng: JSON.parse(sessionStorage.getItem("location")).lng,
+          },
+          postId: postId,
+          filters: filters,
+        })
+      )
+    }
   }
+
   useEffect(() => {
     CafeAuthFetch()
     refreshPosts()
@@ -67,33 +79,30 @@ const PostList = (props) => {
   return (
     <Fragment>
       <Feed>
+        {posts.map((post, index) => (
+          <PostItem
+            key={post.postId}
+            id={post.postId}
+            createdAt={post.createdAt}
+            type={post.postType}
+            writer={post.writerNickname}
+            userType={post.userType}
+            tier={post.exp}
+            cafeName={post.cafeName}
+            cafeBrand={post.brandType}
+            content={post.content}
+            images={post.imgUrlPath}
+            likeCnt={post.postLikeCount}
+            commentCnt={post.commentCount}
+            isLoading={isLoading}
+            isLiked={post.likeChecked}
+          />
+        ))}
+        {!posts.length && <p>게시글이 없습니다.</p>}
 
-            {posts.map((post, index) => (
-              <PostItem
-                key={post.postId}
-                id={post.postId}
-                createdAt={post.createdAt}
-                type={post.postType}
-                writer={post.writerNickname}
-                userType={post.userType}
-                tier={post.exp}
-                cafeName={post.cafeName}
-                cafeBrand={post.brandType}
-                content={post.content}
-                images={post.imgUrlPath}
-                likeCnt={post.postLikeCount}
-                commentCnt={post.commentCount}
-                isLoading={isLoading}
-                isLiked={post.likeChecked}
-              />
-            ))}
-            {!posts.length && <p>게시글이 없습니다.</p>}
-          
-        
         <div ref={hasNext ? ref : null} />
       </Feed>
     </Fragment>
-
   )
 }
 export default PostList
