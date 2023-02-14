@@ -5,13 +5,17 @@ import com.ssafy.backend.cafe.domain.entity.Cafe;
 import com.ssafy.backend.cafe.domain.entity.CafeCrowd;
 import com.ssafy.backend.cafe.repository.CafeCrowdRepository;
 import com.ssafy.backend.cafe.repository.CafeRepository;
+import com.ssafy.backend.common.exception.cafe.CafeException;
+import com.ssafy.backend.common.exception.cafe.CafeExceptionType;
 import com.ssafy.backend.common.exception.todaycafe.TodayCafeException;
 import com.ssafy.backend.common.exception.todaycafe.TodayCafeExceptionType;
+import com.ssafy.backend.member.domain.dto.MemberIdAndNicknameDto;
 import com.ssafy.backend.member.domain.entity.MemberCafeTier;
 import com.ssafy.backend.member.domain.entity.MemberCoin;
 import com.ssafy.backend.member.repository.MemberCafeTierRepository;
 import com.ssafy.backend.member.repository.MemberCoinRepository;
 import com.ssafy.backend.member.repository.MemberRepository;
+import com.ssafy.backend.member.service.MemberService;
 import com.ssafy.backend.member.util.MemberUtil;
 import com.ssafy.backend.post.util.PostUtil;
 import com.ssafy.backend.redis.CafeAuth;
@@ -50,6 +54,7 @@ public class TodayCafeServiceImpl implements TodayCafeService {
     private final CafeAuthRepository cafeAuthRepository;
     private final CafeCrowdRepository cafeCrowdRepository;
     private final MemberUtil memberUtil;
+    private final MemberService memberService;
 
 
     // 1. 커피 갖고오기
@@ -447,6 +452,24 @@ public class TodayCafeServiceImpl implements TodayCafeService {
         CafeVisitLog cafeVisitLog = cafeVisitLogRepository.findByVisitedAtAndMemberIdAndCafeId(visitedAtValue, memberId, cafeId).get();
 
         cafeVisitLog.updateTimeBar();
+        return cafeVisitLog.getAccTime();
+    }
+
+    @Override
+    public int getAccTime(int todayDate) {
+        MemberIdAndNicknameDto memberIdAndNicknameByJwtToken = memberService.getMemberIdAndNicknameByJwtToken();
+        String nickname = memberIdAndNicknameByJwtToken.getNickname();
+        long memberId = memberIdAndNicknameByJwtToken.getId();
+        Optional<CafeAuth> cafeAuthOptional = cafeAuthRepository.findById(nickname);
+
+        CafeAuth cafeAuth = cafeAuthOptional.orElseThrow(() -> new CafeException(CafeExceptionType.CAFE_AUTH_EXPIRED));
+
+        Optional<CafeVisitLog> cafeVisitLogOptional
+                = cafeVisitLogRepository.findByVisitedAtAndMemberIdAndCafeId(todayDate, memberId, cafeAuth.getCafeId());
+
+        CafeVisitLog cafeVisitLog = cafeVisitLogOptional.
+                orElseThrow(() -> new TodayCafeException(TodayCafeExceptionType.NO_VISIT_LOG));
+
         return cafeVisitLog.getAccTime();
     }
 }
