@@ -46,7 +46,6 @@ const ConfirmCafe = ({ setIsCafeAuth, setIsJamSurvey }) => {
         },
       })
       const responseData = await response.json()
-      console.log(responseData)
       if (responseData.httpStatus === "OK") {
         //현재 위치
         const location = { lat: cafeData.latitude, lng: cafeData.longitude }

@@ -16,6 +16,43 @@ import { ScrollPanel } from "primereact/scrollpanel"
 import CommentItem from "../../mainPage/CommentItem"
 import ToggleButton from "../../common/ToggleButton"
 import { postsActions } from "../../../store/posts"
+import MyPostForm from "./MyPostForm"
+
+const BRAND_LOGOS = {
+  할리스: "hollys",
+  폴바셋: "paulbasset",
+  파스쿠찌: "pascucci",
+  투썸플레이스: "twosome",
+  토프레소: "topresso",
+  텐퍼센트커피: "tenpercent",
+  탐앤탐스: "tomntoms",
+  컴포즈커피: "compose",
+  커피에반하다: "coffeebanada",
+  커피스미스: "coffeesmith",
+  커피빈: "coffeebean",
+  커피베이: "coffeebay",
+  커피나무: "coffeenamu",
+  카페베네: "caffeebene",
+  카페띠아모: "caffetiamo",
+  전광수: "jungwang",
+  이디야커피: "edia",
+  요거프레소: "yogerpresso",
+  엔제리너스: "angelinus",
+  스타벅스: "starbucks",
+  스무디킹: "smoothy",
+  셀렉토커피: "selecto",
+  빽다방: "paiksdabang",
+  베스킨라빈스: "baskin",
+  메가커피: "megacoffee",
+  매머드: "mammoth",
+  드롭탑: "droptop",
+  더벤티: "theventi",
+  달콤커피: "dalkomm",
+  나우커피: "nowcoffee",
+  공차: "gongcha",
+  개인카페: "selfcafe",
+  바나프레소: "banapresso",
+}
 
 const MyPostDetail = (props) => {
   const dispatch = useDispatch()
@@ -34,7 +71,6 @@ const MyPostDetail = (props) => {
         floating
         icon={{ name: "comment", size: "large", style: { margin: "0px" } }}
       />
-
       <Modal.Content>
         <div>
           <Grid>
@@ -47,7 +83,7 @@ const MyPostDetail = (props) => {
                     avatar
                     floated="left"
                     size="huge"
-                    src={props.post.imgUrlPath[0]}
+                    src={props.post.brandType ? require(`../../../assets/cafe_logos/${BRAND_LOGOS[props.post.brandType]}.png`) : ""}
                     />
                   }
                     <Card.Header>{props.post.writerNickname}</Card.Header>
@@ -58,7 +94,7 @@ const MyPostDetail = (props) => {
                     {props.post.imgUrlPath.length > 0 && props.post.imgUrlPath.map((img,index)=>{
                       return <Image
                       key={index}
-                      src={props.post.imgUrlPath[0]}
+                      src={img}
                       wrapped
                       ui={true}
                       style={{ marginBlock: "0.5rem" }}
@@ -66,21 +102,16 @@ const MyPostDetail = (props) => {
                     })}
                     <Card.Description
                       style={{ fontSize: "1.2rem", lineHeight: "1.8" }}
+                      dangerouslySetInnerHTML={{ __html: props.post.content }}
                     >
-                      {props.post.content}
+
                     </Card.Description>
                   </Card.Content>
                 </Card>
               </ScrollPanel>
               <div style={{ display: "flex", marginTop: "1rem" }}>
-                {sessionStorage.getItem("nickname") === props.writer && (
-                  <Button
-                    fluid
-                    // inverted
-                    color="orange"
-                    icon="edit"
-                    content="수정"
-                  ></Button>
+              {sessionStorage.getItem("nickname") === props.post.writerNickname && (
+                  <MyPostForm isEditing postToEdit={props.post} />
                 )}
                 {sessionStorage.getItem("nickname") === props.writer && (
                   <Button
