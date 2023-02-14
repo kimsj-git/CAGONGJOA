@@ -168,22 +168,61 @@ public class CommentServiceImpl implements CommentService {
         List<RepliesPagingResponseDto> repliesPagingResponseDtos = new ArrayList<>();
         CommentPagingResponseDto commentPagingResponseDto;
 
-        for (Comment commentSlice:commentGroupList) {
-            if(commentSlice.getStepNo() == 0) {
-                commentPagingResponseDto = CommentPagingResponseDto.
 
+        // cafeAuth 를 통해 find 를 해야함.. (nickname)
+        // like check commentLike 에서 findByIdandCommentId 하기
+        // exp
 
-
-
-
-
-                        CommentResponseBuilder().build();
-
-            }else {
-
-            }
-
+        List<RepliesPagingResponseDto> repliesList = new ArrayList<>();
+        for (Comment commentSlice : commentGroupList) {
+            commentSlice.getMember().getNickname();
         }
+        Long parentId = commentGroupList.get(0).getId();
+        for (Comment commentSlice : commentGroupList) {
+            if (commentSlice.getStepNo() == 0) {
+                commentPagingResponseDto = CommentPagingResponseDto.CommentResponseBuilder()
+                        .commentId(commentSlice.getId())
+                        .writerId(commentSlice.getMember().getId())
+                        .writerNickname(commentSlice.getMember().getNickname())
+                        .content(commentSlice.getContent())
+                        .createdAt(commentSlice.getCreatedAt())
+                        .commentLikeCnt(commentSlice.getCommentLikeList().size())
+                        .groupNo(commentSlice.getGroupNo())
+                        .writerType(false)
+                        .build();
+
+                Optional<CafeAuth> cafeAuthOptional = cafeAuthRepository.findById(commentSlice.getMember().getNickname());
+                if(cafeAuthOptional.isPresent()) {
+                    Long cafeId = cafeAuthOptional.get().getCafeId();
+                    Cafe cafe = cafeRepository.findById(cafeId).get();
+                    MemberCafeTier memberCafeTier = memberCafeTierRepository.findByMemberIdAndCafeId(memberId,cafeId).get();
+                    commentPagingResponseDto.updateCommentVerifiedUser(cafeId,cafe.getName(),memberCafeTier.getExp(),cafe.getBrandType());
+
+                }
+            } else {
+                RepliesPagingResponseDto repliesPagingResponseDto = RepliesPagingResponseDto.RepliesResponseBuilder()
+                        .commentId(commentSlice.getId())
+                        .writerId(commentSlice.getMember().getId())
+                        .writerNickname(commentSlice.getMember().getNickname())
+                        .content(commentSlice.getContent())
+                        .createdAt(commentSlice.getCreatedAt())
+                        .commentLikeCnt(commentSlice.getCommentLikeList().size())
+                        .parentId(parentId)
+                        .writerType(false)
+                        .build();
+
+                Optional<CafeAuth> cafeAuthOptional = cafeAuthRepository.findById(commentSlice.getMember().getNickname());
+                if(cafeAuthOptional.isPresent()) {
+                    Long cafeId = cafeAuthOptional.get().getCafeId();
+                    Cafe cafe = cafeRepository.findById(cafeId).get();
+                    MemberCafeTier memberCafeTier = memberCafeTierRepository.findByMemberIdAndCafeId(memberId, cafeId).get();
+                    repliesPagingResponseDto.updateCommentVerifiedUser(cafeId, cafe.getName(), memberCafeTier.getExp(), cafe.getBrandType());
+                }
+                repliesList.add(repliesPagingResponseDto);
+            }
+//            commentPagingResponseDto.updateReplies(repliesList);
+        }
+
 
         return null;
     }

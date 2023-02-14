@@ -8,7 +8,7 @@ import java.time.LocalDateTime;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder(builderMethodName = "CommentResponseBuilder", builderClassName = "CommentResponseBuilder")
+@Builder(builderMethodName = "RepliesResponseBuilder", builderClassName = "RepliesResponseBuilder")
 public class RepliesPagingResponseDto {
     private Long commentId;
     private Long writerId;

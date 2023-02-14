@@ -15,6 +15,7 @@ import {
 import { ScrollPanel } from "primereact/scrollpanel"
 import CommentList from "./CommentList"
 import ToggleButton from "../common/ToggleButton"
+import { BsChatDotsFill } from "react-icons/bs"
 import { useDispatch, useSelector } from "react-redux"
 import { postsActions } from "../../store/posts"
 import PostForm from "./PostForm"
@@ -58,8 +59,12 @@ const PostDetail = (props) => {
           inverted
           color="green"
           icon="comment"
-          content={props.post.commentCnt}
-        ></Button>
+          style={{borderRadius: "40px", display: "flex", alignItems: "center", justifyContent: "center"}}
+        >
+          <BsChatDotsFill size={24} style={{marginRight: "0.5rem"}}/>
+          {props.post.commentCnt}
+
+        </Button>
       }
     >
       <Label
