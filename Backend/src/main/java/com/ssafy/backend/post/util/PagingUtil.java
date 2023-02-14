@@ -30,9 +30,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 import static com.ssafy.backend.common.exception.jwt.JwtExceptionType.JWT_VERIFICATION_EXCEPTION;
 
@@ -157,6 +155,25 @@ public class PagingUtil {
         }
         return commentSlice;
 
+    }
+
+    public Map.Entry<Long,Long> findGroupNo(Long postId, Long commentId) {
+        Long groupNo;
+        Long stepNo;
+        Optional<Comment> commentOptional = commentRepository.findTopByPostIdOrderByIdDesc(postId);
+        if (commentId == -1L) { // 댓글
+            if (commentOptional.isEmpty() || commentOptional == null) {
+                groupNo = 1L;
+                stepNo = 0L;
+            } else {
+                groupNo = commentOptional.get().getGroupNo() + 1L;
+                stepNo = 0L;
+            }
+        } else {
+            groupNo = commentRepository.findById(commentId).get().getGroupNo();
+            stepNo = commentRepository.findTopByPostIdAndGroupNoOrderByIdDesc(postId, groupNo).get().getStepNo() + 1;
+        }
+        return new AbstractMap.SimpleEntry<>(groupNo,stepNo);
     }
 
 

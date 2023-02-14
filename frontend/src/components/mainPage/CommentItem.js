@@ -4,6 +4,7 @@ import ToggleButton from "../common/ToggleButton"
 import useFetch from "../../hooks/useFetch"
 import { useDispatch } from "react-redux"
 import { commentsActions } from "../../store/comments"
+import ReplyItem from "./ReplyItem"
 const DEFAULT_REST_URL = process.env.REACT_APP_REST_DEFAULT_URL
 
 const CommentItem = (props) => {
@@ -81,7 +82,7 @@ const CommentItem = (props) => {
             ></Button>
 
             {/* comment.nickname 변수명 추후 확인 필요!!! */}
-            {comment.nickname === sessionStorage.getItem("nickname") && (
+            {comment.writerNickname === sessionStorage.getItem("nickname") && (
               <Button
                 size="mini"
                 compact
@@ -94,6 +95,11 @@ const CommentItem = (props) => {
                 }}
               ></Button>
             )}
+            <Comment.Group>
+              {comment.replies.map((reply) => {
+                return <ReplyItem reply={reply} />
+              })}
+            </Comment.Group>
 
             <Confirm
               open={confirmOpen}

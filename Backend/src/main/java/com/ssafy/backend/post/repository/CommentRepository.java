@@ -23,4 +23,6 @@ public interface CommentRepository extends JpaRepository<Comment, Long> {
     Slice<Comment> findAllByIdLessThanAndMemberId(Long commentId, Long memberId, Pageable pageable);
 
     Optional<Comment> findTopByPostIdAndGroupNoOrderByIdDesc(Long postId, Long groupNo);
+
+    List<Comment> findAllByGroupNoOrderById(Long groupNo);
 }

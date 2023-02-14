@@ -3,14 +3,13 @@ package com.ssafy.backend.post.domain.dto;
 import lombok.*;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 @ToString
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder(builderMethodName = "CommentResponseBuilder", builderClassName = "CommentResponseBuilder")
-public class CommentPagingResponseDto {
+public class RepliesPagingResponseDto {
     private Long commentId;
     private Long writerId;
     private String writerNickname;
@@ -22,10 +21,8 @@ public class CommentPagingResponseDto {
     private String content;
     private LocalDateTime createdAt;
     private int commentLikeCnt;
-    private Long groupNo;
-    private Long stepNo;
+    private Long parentId;
     private Boolean likeChecked;
-    private List<RepliesPagingResponseDto> replies;
 
     public void updateCommentVerifiedUser(Long verifiedCafeId, String verifiedCafeName, Long exp, String cafeBrandType) {
         this.verifiedCafeId = verifiedCafeId;
