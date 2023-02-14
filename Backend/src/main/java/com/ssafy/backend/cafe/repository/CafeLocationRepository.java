@@ -16,4 +16,5 @@ public interface CafeLocationRepository extends JpaRepository<CafeLocation, Long
 
     Optional<CafeLocation> findByLatAndLng(Double lat, Double lng);
 
+    Optional<CafeLocation> findByCafeId(long cafeId);
 }
