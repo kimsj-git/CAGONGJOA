@@ -16,8 +16,8 @@ const Layout = (props) => {
             id="side-col"
             className="main-column"
             only="computer"
-            largeScreen= {path ==="/login" ? 2 : 3}
-            widescreen={path ==="/login" ? 2 : 3}
+            largeScreen={path === "/login" ? 2 : 3}
+            widescreen={path === "/login" ? 2 : 3}
           >
             <SideNavigation
               setIsCafeAuth={props.setIsCafeAuth}
@@ -37,9 +37,9 @@ const Layout = (props) => {
             className="main-column"
             mobile={16}
             tablet={16}
-            computer={8}
-            largeScreen={6}
-            widescreen={6}
+            computer={path === "/login" || path === "/oauth/kakao" ? 16 : 8}
+            largeScreen={path === "/login" || path === "/oauth/kakao" ? 16 : 6}
+            widescreen={path === "/login" || path === "/oauth/kakao" ? 16 : 6}
           >
             <main>{props.children}</main>
           </Grid.Column>
