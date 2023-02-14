@@ -119,9 +119,12 @@ const CommentItem = (props) => {
         {replyMode && (
           <Form
             reply
-            onSubmit={() => {
+            onSubmit={(e) => {
               props.addNewComment(newReply, comment.commentId)
-              setNewReply("")
+              // setNewReply("")
+              e.target[0].value = ""
+              // console.log(e)
+
             }}
           >
             <Form.Input
@@ -132,6 +135,7 @@ const CommentItem = (props) => {
                 color: "teal",
               }}
               size="mini"
+              // content={newReply}
               onChange={(e) => setNewReply(e.target.value)}
             />
           </Form>

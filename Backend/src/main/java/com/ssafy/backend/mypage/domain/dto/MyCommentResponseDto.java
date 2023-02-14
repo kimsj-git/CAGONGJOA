@@ -17,4 +17,8 @@ public class MyCommentResponseDto {
     private LocalDateTime createdAt;
     private int commentLikeCnt;
 
+    public void updateCafeName(String cafeName)  {
+        this.cafeName = cafeName;
+    }
+
 }
