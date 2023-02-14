@@ -57,11 +57,11 @@ public class MyPageController {
     @Auth
     @GetMapping("/myFeed")
     public ResponseEntity<ResponseDTO> getMyComment(@RequestParam Long postId,
-                                                 @PageableDefault(size = 20, sort = "id", direction = Sort.Direction.DESC) Pageable pageable) {
+                                                 @PageableDefault(size = 10, sort = "id", direction = Sort.Direction.DESC) Pageable pageable) {
 
         List<MyFeedResponseDto> myFeedList = myPageService.getMyFeed(postId, pageable);
 
-        ResponseDTO responseDTO = new ResponseDTO("내 댓글목록 불러오기 완료!", "", HttpStatus.OK, myFeedList);
+        ResponseDTO responseDTO = new ResponseDTO("내 글목록 불러오기 완료!", "", HttpStatus.OK, myFeedList);
         return new ResponseEntity<>(responseDTO, HttpStatus.OK);
     }
 
@@ -72,11 +72,11 @@ public class MyPageController {
     @Auth
     @GetMapping("/myComment")
     public ResponseEntity<ResponseDTO> getMyFeed(@RequestParam Long commentId,
-                                                 @PageableDefault(size = 10, sort = "id", direction = Sort.Direction.DESC) Pageable pageable) {
+                                                 @PageableDefault(size = 20, sort = "id", direction = Sort.Direction.DESC) Pageable pageable) {
 
         List<MyCommentResponseDto> myCommentList = myPageService.getMyComment(commentId, pageable);
 
-        ResponseDTO responseDTO = new ResponseDTO("내 글목록 불러오기 완료!", "", HttpStatus.OK, myCommentList);
+        ResponseDTO responseDTO = new ResponseDTO("내 댓글목록 불러오기 완료!", "", HttpStatus.OK, myCommentList);
         return new ResponseEntity<>(responseDTO, HttpStatus.OK);
     }
 

@@ -62,7 +62,8 @@ public class CommentServiceImpl implements CommentService {
         Set<Long> groupSet = new HashSet<>();
         List<Comment> commentList = commentRepository.findAllByPostId(postId);
         if (commentList == null || commentList.isEmpty()) {
-            throw new PostException(PostExceptionType.NO_COMMENT_FEED);
+//            throw new PostException(PostExceptionType.NO_COMMENT_FEED);
+            return null;
         }
         for (Comment comment : commentList) {
             if (comment.getGroupNo() > groupNo) groupSet.add(comment.getGroupNo());
@@ -70,15 +71,24 @@ public class CommentServiceImpl implements CommentService {
         }
         System.out.println(groupSet);
         if (groupSet.isEmpty() || groupSet == null) { // 불러올 그게 없다.
-            throw new PostException(PostExceptionType.NO_COMMENT_FEED);
+//            throw new PostException(PostExceptionType.NO_COMMENT_FEED);
+            return null;
         }
         Slice<Comment> commentSlice = commentRepository.findAllByGroupNoInAndPostId(groupSet, postId);
         if (commentSlice == null || commentSlice.isEmpty()) {
-            throw new PostException(PostExceptionType.NO_COMMENT_FEED);
+//            throw new PostException(PostExceptionType.NO_COMMENT_FEED);
+            return null;
+        }
+        Map<Long, String> commentNicknameMap = new TreeMap<>();
+
+
+        for (Comment comment : commentSlice) {
+            commentNicknameMap.put(comment.getId(),comment.getMember().getNickname());
         }
 
         for (Comment comment : commentSlice) {
             CommentPagingResponseDto commentPagingResponseDto = CommentPagingResponseDto.CommentResponseBuilder()
+                    .commentId(comment.getId())
                     .writerId(comment.getMember().getId())
                     .writerNickname(comment.getMember().getNickname())
                     .content(comment.getContent())

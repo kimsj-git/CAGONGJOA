@@ -14,9 +14,11 @@ import com.ssafy.backend.common.exception.post.PostExceptionType;
 import com.ssafy.backend.member.domain.dto.MemberIdAndNicknameDto;
 import com.ssafy.backend.member.service.MemberServiceImpl;
 import com.ssafy.backend.post.domain.dto.CheckedResponseDto;
+import com.ssafy.backend.post.domain.entity.Comment;
 import com.ssafy.backend.post.domain.entity.Post;
 import com.ssafy.backend.post.domain.entity.PostImage;
 import com.ssafy.backend.post.domain.enums.PostType;
+import com.ssafy.backend.post.repository.CommentRepository;
 import com.ssafy.backend.post.repository.PostImageRepository;
 import com.ssafy.backend.post.repository.PostRepository;
 import lombok.RequiredArgsConstructor;
@@ -39,6 +41,7 @@ import static com.ssafy.backend.common.exception.jwt.JwtExceptionType.JWT_VERIFI
 @Service
 public class PagingUtil {
     private final PostRepository postRepository;
+    private final CommentRepository commentRepository;
 
 
     /**
@@ -132,6 +135,27 @@ public class PagingUtil {
         }
         return postSlice;
 
+    }
+
+    public Slice<Comment> findMyComments(Long commentId, Long memberId, Pageable pageable) {
+        Slice<Comment> commentSlice;
+        if (commentId == -1L) {
+            // 처음 요청할때 (refresh)
+            System.out.println("내글 불러오기 첫번째 요청");
+            commentSlice = commentRepository.findAllByIdLessThanAndMemberId(Long.MAX_VALUE,memberId, pageable);
+
+        } else {
+            // 두번째 이상으로 요청할 때 (마지막 글의 pk 를 기준으로 함)
+            System.out.println("내글 불러오기 다음 요청");
+            commentSlice = commentRepository.findAllByIdLessThanAndMemberId(commentId,memberId, pageable);
+            // 갖고올 게시물이 없으면
+        }
+//         post를 slice 형태로 갖고오기
+
+        if (commentSlice.isEmpty() || commentSlice == null) { // 불러올 게시물이 없을 때
+            throw new PostException(PostExceptionType.NO_POST_FEED);
+        }
+        return commentSlice;
 
     }
 

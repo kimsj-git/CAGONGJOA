@@ -47,11 +47,9 @@ public class PostUtil {
         }
         System.out.println("postImageList : " + postImages);
         for (MultipartFile multipartFile : multipartFiles) {
+            if(multipartFile.isEmpty() || multipartFile == null) continue;
             long size = multipartFile.getSize(); // 파일 크기
             System.out.println("파일 사이즈 : " + size);
-            if (size == 0) {
-                continue;
-            }
             String originalName = multipartFile.getOriginalFilename(); // 파일 원래이름 (xxx.jpg) 갖고오기
             String randomName = UUID.randomUUID().toString().concat("-").concat(originalName);
 

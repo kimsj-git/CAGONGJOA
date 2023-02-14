@@ -34,4 +34,6 @@ public interface PostRepository extends JpaRepository<Post, Long> {
     @Query("select distinct p from Post p left join p.member m where p.id < :postId and m.id = :memberId")
     Slice<Post> findAllMyFeed(@Param("postId") Long postId, @Param("memberId") Long memberId, Pageable pageable);
 
+    @Query("select p from Post p left join p.commentList cl where cl.id in :commentIdList")
+    List<Post> findAllByCommentIdIn(@Param("commentIdList") List<Long> commentIdList);
 }
