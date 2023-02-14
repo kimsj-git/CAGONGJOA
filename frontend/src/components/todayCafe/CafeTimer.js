@@ -44,7 +44,7 @@ const CafeTimer = () => {
             Authorization: `Bearer ${sessionStorage.getItem("accessToken")}`,
           },
         })
-      }, 10000)
+      }, 30000)
       return () => clearInterval(intervalId)
     }
   })
