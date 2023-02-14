@@ -11,6 +11,7 @@ import com.ssafy.backend.common.exception.post.PostExceptionType;
 import com.ssafy.backend.member.domain.entity.MemberCafeTier;
 import com.ssafy.backend.member.repository.MemberCafeTierRepository;
 import com.ssafy.backend.member.service.MemberService;
+import com.ssafy.backend.member.util.MemberUtil;
 import com.ssafy.backend.mypage.domain.dto.CafeLiveRespDto;
 import com.ssafy.backend.mypage.domain.dto.MyCommentResponseDto;
 import com.ssafy.backend.mypage.domain.dto.MyFeedResponseDto;
@@ -22,6 +23,7 @@ import com.ssafy.backend.post.domain.entity.PostCafe;
 import com.ssafy.backend.post.domain.entity.PostImage;
 import com.ssafy.backend.post.repository.PostImageRepository;
 import com.ssafy.backend.post.repository.PostRepository;
+import com.ssafy.backend.post.util.PagingUtil;
 import com.ssafy.backend.post.util.PostUtil;
 import com.ssafy.backend.todaycafe.domain.entity.CafeVisitLog;
 import com.ssafy.backend.todaycafe.domain.entity.Fortune;
@@ -51,10 +53,12 @@ public class MyPageServiceImpl implements MyPageService {
     private final TodoRepository todoRepository;
     private final FortuneRepository fortuneRepository;
     private final PostUtil postUtil;
+    private final PagingUtil pagingUtil;
     private final PostRepository postRepository;
     private final MemberCafeTierRepository memberCafeTierRepository;
     private final PostImageRepository postImageRepository;
     private final CafeLocationRepository cafeLocationRepository;
+    private final MemberUtil memberUtil;
 
     @Override
     public List<CafeLiveRespDto> getCafeLives(int todayDate) {
@@ -128,7 +132,7 @@ public class MyPageServiceImpl implements MyPageService {
      **/
     @Override
     public List<VisitCafeListResponseDto> getCafeVisitList() {
-        Long memberId = postUtil.checkMember().getMemberId();
+        Long memberId = memberUtil.checkMember().getMemberId();
         List<VisitCafeListResponseDto> visitCafeResponseList = new ArrayList<>();
         List<MemberCafeTier> memberCafeTierList = memberCafeTierRepository.findAllCafeTier(memberId);
         if (memberCafeTierList.isEmpty() || memberCafeTierList == null) {
@@ -167,30 +171,15 @@ public class MyPageServiceImpl implements MyPageService {
         String cafeName;
         Slice<Post> postList;
         // 1. 유저 기본사항을 체크한다. OK
-        CheckedResponseDto checked = postUtil.checkMember();
+        CheckedResponseDto checked = memberUtil.checkMember();
         Long memberId = checked.getMemberId();
 
-
-        if (postId == -1L) {
-            // 처음 요청할때 (refresh)
-            System.out.println("글내용으로 찾기 첫번째 요청");
-            postList = postRepository.findAllMyFeed(Long.MAX_VALUE,memberId, pageable);
-
-        } else {
-            // 두번째 이상으로 요청할 때 (마지막 글의 pk 를 기준으로 함)
-            System.out.println("글내용으로 찾기 다음 요청");
-            postList = postRepository.findAllMyFeed(postId,memberId, pageable);
-            // 갖고올 게시물이 없으면
-        }
-//         post를 slice 형태로 갖고오기
-
-        if (postList.isEmpty() || postList == null) { // 불러올 게시물이 없을 때
-            throw new PostException(PostExceptionType.NO_POST_FEED);
-        }
+        // 2. 내 피드들 가져오기
+        Slice<Post> postSlice = pagingUtil.findMyFeeds(postId,memberId,pageable);
 
         // 5. 리턴값 채워넣기
         List<MyFeedResponseDto> responseDtoList = new ArrayList<>();
-        for (Post slice : postList) {
+        for (Post slice : postSlice) {
             Optional<Post> optionalPost = postRepository.findById(slice.getId());
             Post post = optionalPost.get();
             List<PostImage> postImages = postImageRepository.findAllByPostId(postId);

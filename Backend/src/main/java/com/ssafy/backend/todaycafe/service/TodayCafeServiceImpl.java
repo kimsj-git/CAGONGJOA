@@ -12,6 +12,7 @@ import com.ssafy.backend.member.domain.entity.MemberCoin;
 import com.ssafy.backend.member.repository.MemberCafeTierRepository;
 import com.ssafy.backend.member.repository.MemberCoinRepository;
 import com.ssafy.backend.member.repository.MemberRepository;
+import com.ssafy.backend.member.util.MemberUtil;
 import com.ssafy.backend.post.util.PostUtil;
 import com.ssafy.backend.redis.CafeAuth;
 import com.ssafy.backend.redis.CafeAuthRepository;
@@ -48,13 +49,14 @@ public class TodayCafeServiceImpl implements TodayCafeService {
     private final MemberCafeTierRepository memberCafeTierRepository;
     private final CafeAuthRepository cafeAuthRepository;
     private final CafeCrowdRepository cafeCrowdRepository;
+    private final MemberUtil memberUtil;
 
 
     // 1. 커피 갖고오기
     public CoffeeMakeResponseDto getCoffees() {
         // 1. id 받아오기s
         CoffeeMakeResponseDto coffeeResponseDto;
-        Long memberId = postUtil.checkMember().getMemberId();
+        Long memberId = memberUtil.checkMember().getMemberId();
         Optional<MemberCoin> memberCoinOptional = memberCoinRepository.findByMemberId(memberId);
 
         if (memberCoinOptional == null || memberCoinOptional.isEmpty()) {
@@ -90,7 +92,7 @@ public class TodayCafeServiceImpl implements TodayCafeService {
      **/
     @Override
     public CoffeeMakeResponseDto makeCoffee(int type) {
-        Long memberId = postUtil.checkMember().getMemberId();
+        Long memberId = memberUtil.checkMember().getMemberId();
         CoffeeMakeResponseDto coffeeResponseDto = getCoffees();
         int coffeeCnt = coffeeResponseDto.getCoffeeCnt();
         int coffeeBeanCnt = coffeeResponseDto.getCoffeeBeanCnt();
@@ -144,9 +146,9 @@ public class TodayCafeServiceImpl implements TodayCafeService {
     public FortuneResponseDto randomFortune(int type) {
 
         CoffeeMakeResponseDto coffeeResponseDto = getCoffees();
-        Long memberId = postUtil.checkMember().getMemberId();
+        Long memberId = memberUtil.checkMember().getMemberId();
         int coffeeCnt = coffeeResponseDto.getCoffeeCnt();
-        String nickname = postUtil.checkMember().getNickname();
+        String nickname = memberUtil.checkMember().getNickname();
         CafeAuth cafeAuth = cafeAuthRepository.findById(nickname).get();
         Long cafeId = cafeAuth.getCafeId(); // CafeAuth 를 거쳐왔기 때문에 null일 수 없음
         int visitedAtValue = Integer.parseInt(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd")));
@@ -212,8 +214,8 @@ public class TodayCafeServiceImpl implements TodayCafeService {
     public AfterCafeAuthResponseDto saveCafeVisit() {
         CafeVisitLog cafeVisitLog;
         // 1. 필요 값들 불러오기
-        Long memberId = postUtil.checkMember().getMemberId();
-        String nickname = postUtil.checkMember().getNickname();
+        Long memberId = memberUtil.checkMember().getMemberId();
+        String nickname = memberUtil.checkMember().getNickname();
         CafeAuth cafeAuth = cafeAuthRepository.findById(nickname).get();
         Long cafeId = cafeAuth.getCafeId();
         System.out.println("CAFEAuth 가 있나요?" + cafeAuth);
@@ -291,8 +293,8 @@ public class TodayCafeServiceImpl implements TodayCafeService {
         String replyToilet = surveyRequestDto.getReplyToilet();
         boolean replyTime = surveyRequestDto.isReplyTime();
         int visitedAtValue = Integer.parseInt(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd")));
-        Long memberId = postUtil.checkMember().getMemberId();
-        String nickname = postUtil.checkMember().getNickname();
+        Long memberId = memberUtil.checkMember().getMemberId();
+        String nickname = memberUtil.checkMember().getNickname();
         CafeAuth cafeAuth = cafeAuthRepository.findById(nickname).get();
         Cafe cafe = cafeRepository.findById(cafeAuth.getCafeId()).get();
 
@@ -328,8 +330,8 @@ public class TodayCafeServiceImpl implements TodayCafeService {
         int visitedAt = todoReqeustDto.getVisitedAt();
         Boolean isComplete = todoReqeustDto.isComplete();
 
-        Long memberId = postUtil.checkMember().getMemberId();
-        String nickname = postUtil.checkMember().getNickname();
+        Long memberId = memberUtil.checkMember().getMemberId();
+        String nickname = memberUtil.checkMember().getNickname();
         CafeAuth cafeAuth = cafeAuthRepository.findById(nickname).get();
         Long cafeId = cafeAuth.getCafeId();
 
@@ -407,7 +409,7 @@ public class TodayCafeServiceImpl implements TodayCafeService {
      **/
     @Override
     public List<TodoResponseDto> findTodo(int visitedAt) {
-        Long memberId = postUtil.checkMember().getMemberId();
+        Long memberId = memberUtil.checkMember().getMemberId();
 
         List<CafeVisitLog> cafeVisitLogList = cafeVisitLogRepository.findAllByVisitedAtAndMemberId(visitedAt, memberId);
         if (cafeVisitLogList.isEmpty() || cafeVisitLogList == null) {
@@ -437,8 +439,8 @@ public class TodayCafeServiceImpl implements TodayCafeService {
 
     @Override
     public int addTimeBar() {
-        Long memberId = postUtil.checkMember().getMemberId();
-        String nickname = postUtil.checkMember().getNickname();
+        Long memberId = memberUtil.checkMember().getMemberId();
+        String nickname = memberUtil.checkMember().getNickname();
         CafeAuth cafeAuth = cafeAuthRepository.findById(nickname).get();
         Long cafeId = cafeAuth.getCafeId(); // CafeAuth 를 거쳐왔기 때문에 null일 수 없음
         int visitedAtValue = Integer.parseInt(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd")));
