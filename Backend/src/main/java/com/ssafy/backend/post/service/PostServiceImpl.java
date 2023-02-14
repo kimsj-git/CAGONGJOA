@@ -81,6 +81,7 @@ public class PostServiceImpl implements PostService {
 
         // 1-3. 이미지 업로드 Build
         Post post = Post.postWriteBuilder()
+                .isCafeAuthorized(false)
                 .member(member)
                 .postType(requestDto.getType())
                 .build();
@@ -118,7 +119,7 @@ public class PostServiceImpl implements PostService {
             System.out.println("글생성 : 여기까지 옴");
             Cafe cafe = cafeRepository.findById(cafeAuth.get().getCafeId()).get(); // 카페 닉네임을 확인한다.
             System.out.println("cafe 이름 : " + cafe.getName());
-            post.updateAuthorized();
+            post.updateAuthorized(true);
             System.out.println("여기옴");
             // 1-3. 카페위치 저장하기
             PostCafe postCafe = PostCafe.builder()
@@ -199,9 +200,9 @@ public class PostServiceImpl implements PostService {
             int postLikeCount = post.getPostLikeList().size();
             int commentCount = post.getCommentList().size();
 
-            System.out.println("인증된카페? " + post.isCafeAuthorized());
+            System.out.println("인증된카페? " + post.getIsCafeAuthorized());
             PostPagingResponseDto postPagingResponseDto = PostPagingResponseDto.builder()
-                    .isCafeAuthorized(post.isCafeAuthorized())
+                    .isCafeAuthorized(post.getIsCafeAuthorized())
                     .postId(post.getId())
                     .imgUrlPath(imgUrlPath)
                     .createdAt(post.getCreatedAt())
@@ -213,7 +214,7 @@ public class PostServiceImpl implements PostService {
                     .postType(post.getPostType())
                     .build();
 
-            if (post.isCafeAuthorized()) {
+            if (post.getIsCafeAuthorized()) {
                 if (post.getPostCafeList() == null || post.getPostCafeList().isEmpty()) {
                     throw new PostException(PostExceptionType.NO_POST_CAFE);
                 }
@@ -257,7 +258,7 @@ public class PostServiceImpl implements PostService {
         PostDetailResponseDto detailResponseDto = PostDetailResponseDto.builder()
                 .postId(postId)
                 .nickname(nickname)
-                .isCafeAuthorized(post.isCafeAuthorized())
+                .isCafeAuthorized(post.getIsCafeAuthorized())
                 .createdAt(post.getCreatedAt())
                 .type(post.getPostType())
                 .postContent(post.getContent())
@@ -397,7 +398,7 @@ public class PostServiceImpl implements PostService {
 
 
             PostSearchResponseDto postSearchResponseDto = PostSearchResponseDto.builder()
-                    .isCafeAuthorized(post.isCafeAuthorized())
+                    .isCafeAuthorized(post.getIsCafeAuthorized())
                     .postId(slice.getId())
                     .imgUrlPath(imgUrlPath)
                     .createdAt(post.getCreatedAt())
@@ -408,7 +409,7 @@ public class PostServiceImpl implements PostService {
                     .postLikeCount(postLikeCount)
                     .build();
 
-            if (post.isCafeAuthorized()) {
+            if (post.getIsCafeAuthorized()) {
                 if (post.getPostCafeList() == null || post.getPostCafeList().isEmpty()) {
                     throw new PostException(PostExceptionType.NO_POST_CAFE);
                 }

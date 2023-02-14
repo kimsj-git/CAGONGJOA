@@ -24,6 +24,25 @@ const PostDetail = (props) => {
   const dispatch = useDispatch()
   const [open, setOpen] = useState(false)
   const [confirmOpen, setConfirmOpen] = useState(false)
+  // const {
+  //   data: fetchedComments,
+  //   isLoading,
+  //   sendRequest: getComments,
+  // } = useFetch()
+  // const refreshComments = async (commentId=-1) => {
+  //   await getComments({
+  //     url: `${DEFAULT_REST_URL}/main/postDetail/comment/feed`,
+  //     method: "POST",
+  //     headers: {
+  //       Authorization: `Bearer ${sessionStorage.getItem("accessToken")}`,
+  //       "Content-Type": "application/json",
+  //     },
+  //     body: {
+  //       postId: props.post.id,
+  //       commentId: commentId,
+  //     },
+  //   })
+  // }
 
   return (
     <Modal

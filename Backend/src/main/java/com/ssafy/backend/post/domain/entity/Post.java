@@ -4,6 +4,7 @@ import com.ssafy.backend.common.entity.BaseEntity;
 import com.ssafy.backend.member.domain.entity.Member;
 import com.ssafy.backend.post.domain.enums.PostType;
 import lombok.*;
+import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
@@ -59,7 +60,8 @@ public class Post extends BaseEntity {
      * 5. 카페 인증된 유저인지 미인증된 유저인지 저장
      **/
     @Column(name = "is_cafe_authorized", columnDefinition = "TINYINT(1)", length = 1)
-    private boolean isCafeAuthorized;
+    @ColumnDefault("false")
+    private Boolean isCafeAuthorized;
 
     /**
      * 6. 양방향 매핑
@@ -88,8 +90,8 @@ public class Post extends BaseEntity {
         this.postImageList = postImageList;
     }
 
-    public void updateAuthorized(){
-        this.isCafeAuthorized = true;
+    public void updateAuthorized(Boolean isCafeAuthorized){
+        this.isCafeAuthorized = isCafeAuthorized;
     }
 
 
