@@ -10,6 +10,6 @@ import lombok.*;
 @Getter
 public class CommentLikeRequestDto {
     private Long commentId;
-    private boolean isChecked;
+    private Boolean isChecked;
 
 }
