@@ -200,6 +200,7 @@ public class MyPageServiceImpl implements MyPageService {
                     .commentCount(commentCount)
                     .writerNickname(slice.getMember().getNickname())
                     .postLikeCount(postLikeCount)
+                    .postType(slice.getPostType())
                     .build();
 
             if (slice.isCafeAuthorized()) {

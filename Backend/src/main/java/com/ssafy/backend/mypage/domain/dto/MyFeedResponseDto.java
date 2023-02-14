@@ -1,5 +1,6 @@
 package com.ssafy.backend.mypage.domain.dto;
 
+import com.ssafy.backend.post.domain.enums.PostType;
 import lombok.*;
 
 import java.time.LocalDateTime;
@@ -16,6 +17,7 @@ public class MyFeedResponseDto {
     private boolean isCafeAuthorized;
     private Long postId;
     private String writerNickname;
+    private PostType postType;
     private Long exp;
     private String cafeName;
     private String brandType;

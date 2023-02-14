@@ -28,7 +28,9 @@ const PostDetail = (props) => {
   return (
     <Modal
       onClose={() => setOpen(false)}
-      onOpen={() => setOpen(true)}
+      onOpen={() => {
+        setOpen(true)
+      }}
       open={open}
       size="large"
       trigger={

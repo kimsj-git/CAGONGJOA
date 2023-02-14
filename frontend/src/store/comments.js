@@ -65,13 +65,13 @@ const commentsSlice = createSlice({
     likeComment(state, action) {
       state.comments.find(
         (comment) => comment.commentId === action.payload
-      ).commentLike += 1
+      ).commentLikeCnt += 1
     },
     // post 좋아요 취소
     cancleLikeComment(state, action) {
       state.comments.find(
         (comment) => comment.commentId === action.payload
-      ).commentLike -= 1
+      ).commentLikeCnt -= 1
     },
   },
 })

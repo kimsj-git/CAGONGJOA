@@ -23,6 +23,7 @@ public class CommentPagingResponseDto {
     private int commentLikeCnt;
     private Long groupNo;
     private Long stepNo;
+    private Boolean likeChecked;
 
     public void updateCommentVerifiedUser(Long verifiedCafeId, String verifiedCafeName, Long exp, String cafeBrandType) {
         this.verifiedCafeId = verifiedCafeId;
