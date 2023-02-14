@@ -94,6 +94,8 @@ public class CommentServiceImpl implements CommentService {
                     .content(comment.getContent())
                     .createdAt(comment.getCreatedAt())
                     .commentLikeCnt(comment.getCommentLikeList().size())
+                    .groupNo(comment.getGroupNo())
+                    .stepNo(comment.getStepNo())
                     .build();
             System.out.println("미인증 유저 댓글쓰기 불러오기 완료");
             Optional<CafeAuth> cafeAuth = cafeAuthRepository.findById(comment.getMember().getNickname());
@@ -130,12 +132,19 @@ public class CommentServiceImpl implements CommentService {
 
         // 3. 댓글 대댓글 구분
         Long groupNo;
+        Long stepNo;
         Optional<Comment> commentOptional = commentRepository.findTopByPostIdOrderByIdDesc(postId);
         if (commentId == -1L) { // 댓글
             if (commentOptional.isEmpty() || commentOptional == null) {
-                groupNo = 1L;
-            }else groupNo = commentOptional.get().getGroupNo() + 1L;
-        }else groupNo = commentRepository.findById(commentId).get().getGroupNo();
+                groupNo = 1L; stepNo = 0L;
+            }else {
+                groupNo = commentOptional.get().getGroupNo() + 1L;
+                stepNo = 0L;
+            }
+        }else {
+            groupNo = commentRepository.findById(commentId).get().getGroupNo();
+            stepNo = commentRepository.findTopByPostIdAndGroupNoOrderByIdDesc(postId, groupNo).get().getStepNo() + 1;
+        }
 
         // 4. 글 저장하기
         Comment comment = Comment.builder()
@@ -143,6 +152,7 @@ public class CommentServiceImpl implements CommentService {
                 .member(member)
                 .post(post)
                 .content(content)
+                .stepNo(stepNo)
                 .build();
 
         // 인증 여부에 따라 글을 쓸수있다 - GeoAuth - 따로 필요없음
