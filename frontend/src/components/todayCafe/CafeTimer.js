@@ -1,18 +1,13 @@
-import { useEffect, useRef, Fragment, useState } from "react"
-import { useSelector, useDispatch } from "react-redux"
-import { timerActions } from "../../store/timer"
+import { useEffect, Fragment, useState } from "react"
 import { Progress } from "semantic-ui-react"
 
-const CafeTimer = () => {
+const CafeTimer = (props) => {
   const cafeAuth = sessionStorage.getItem("cafeAuth")
-
-  // 누적시간은 리덕스에서 가져오고, useState로 갱신될때마다 리렌더링하도록 구현해야함
-  const dispatch = useDispatch()
-  const accTime = useSelector((state) => state.timer.accTime)
+  const accTime = props.accTime
 
   // 누적 시간 기록
   const hours = parseInt(accTime / 60) % 60
-  const minutes = accTime
+  const minutes = accTime % 60
 
   // // 2시간 경과 체크
   const [isComplete, setIsComplete] = useState(false)
@@ -31,8 +26,8 @@ const CafeTimer = () => {
         total={120}
         color="green"
         progress="value"
-        value={parseInt(accTime / 60)}
-        disabled={cafeAuth === '0'}
+        value={accTime}
+        disabled={(cafeAuth === '0' || cafeAuth === null)}
       >
         <p style={{ color: "#00754A" }}>
           {hours}시간 {minutes}분 경과! {isComplete ? '[완료]' : ''}

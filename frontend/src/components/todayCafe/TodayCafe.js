@@ -5,14 +5,14 @@ import CafeTodos from "./CafeTodos"
 
 import { Container, Grid } from "semantic-ui-react"
 
-const TodayCafe = () => {
+const TodayCafe = (props) => {
   return (
     <TodayCafePage>
       <Container style={{backgroundColor: "#f9f9f9"}}>
         <Grid>
           <Grid.Row columns={1}>
             <Grid.Column>
-              <CafeInfo />
+              <CafeInfo accTime={props.accTime}/>
             </Grid.Column>
           </Grid.Row>
           <Grid.Row columns={1}>

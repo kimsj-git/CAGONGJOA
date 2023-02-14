@@ -1,8 +1,6 @@
-import { useState, useMemo, useRef, useEffect } from "react"
+import { useState, useRef, useEffect } from "react"
 import { useHistory } from "react-router-dom"
 import { Route, Switch } from "react-router-dom"
-import { useSelector, useDispatch } from "react-redux"
-import { timerActions } from "./store/timer"
 import { Grid } from "semantic-ui-react"
 
 import AuthRoute from "./AuthRoute"
@@ -25,6 +23,7 @@ import MyCafeBadge from "./components/myPage/myCafeBadge/MyCafeBadge"
 import MyFeedPage from "./components/myPage/myPost/MyFeedPage"
 import Settings from "./components/myPage/settingsPage/Settings"
 import useFetch from "./hooks/useFetch"
+import CafeAuthFetch from "./components/certificate/cafeAuth/CafeAuthFetch"
 const DEFAULT_REST_URL = process.env.REACT_APP_REST_DEFAULT_URL
 
 function App() {
@@ -38,7 +37,9 @@ function App() {
     sessionStorage.getItem("cafeAuth")
   )
   const [isJamSurvey, setIsJamSurvey] = useState(
-    JSON.parse(sessionStorage.getItem("todayCafe")) ? JSON.parse(sessionStorage.getItem("todayCafe")).isCrowdSubmitted : false
+    JSON.parse(sessionStorage.getItem("todayCafe"))
+      ? JSON.parse(sessionStorage.getItem("todayCafe")).isCrowdSubmitted
+      : false
   )
 
   useEffect(() => {
@@ -47,42 +48,42 @@ function App() {
     }
   }, [Authenticated])
 
-  // 위치 인증되면 최초 1회 누적시간 가져오기
-  const { sendRequest: getAccTime } = useFetch()
-  const time = useRef(0)
-  useEffect(() => {
-    if (isCafeAuth === 1) {
-      const fetchData = async () => {
-        const { data } = await getAccTime({
-          url: `${DEFAULT_REST_URL}/cafe/auth/data`,
-          headers: {
-            Authorization: `Bearer ${sessionStorage.getItem("accessToken")}`,
-          },
-        })
-        time.current = data.accTime
-      }
-      fetchData()
-    }
-  }, [isCafeAuth])
+  let initialTime = 0
+  const todayCafe = JSON.parse(sessionStorage.getItem("todayCafe"))
+  if (todayCafe !== null) {
+    initialTime = todayCafe.accTime
+  }
+  const time = useRef(initialTime)
 
   // 1분마다 시간경과 요청 보내기
-  const { sendRequest: sendTime } = useFetch()
+  const { data: timeData, sendRequest: sendTime } = useFetch()
   useEffect(() => {
-    if (isCafeAuth === 1) {
+    if (isCafeAuth === "1") {
       const intervalId = setInterval(async () => {
-        const { data } = await sendTime({
-          url: `${DEFAULT_REST_URL}/todaycafe/main/addtime`,
+        await sendTime({
+          url: `${DEFAULT_REST_URL}/todaycafe/main/addtime?type=1762320904`,
           method: "PUT",
           headers: {
             Authorization: `Bearer ${sessionStorage.getItem("accessToken")}`,
             "Content-Type": "application/json",
           },
         })
-        time.current = data.accTime
+        time.current = timeData
+        // console.log(time.current)
       }, 60000) // 1 minute
       return () => clearInterval(intervalId)
     }
-  }, [isCafeAuth, time.current])
+  }, [])
+
+  // 8분마다 서버에 현재 유저의 인증 상태 여부를 확인 요청
+  useEffect(() => {
+    const intervalId = setInterval(async () => {
+      if (isCafeAuth === '1') {
+        CafeAuthFetch()
+      }
+    }, 1000) // 8 minutes
+    return () => clearInterval(intervalId)
+  }, [])
 
   return (
     <Layout
@@ -92,8 +93,8 @@ function App() {
     >
       <Switch>
         {/* Navigation 관련 ROUTE*/}
-        <AuthRoute component={ChatPage} path="/chat" exact/>
-        <AuthRoute component={TodayCafe} path="/today-cafe" exact/>
+        <AuthRoute component={ChatPage} path="/chat" exact />
+        <AuthRoute component={TodayCafe} path="/today-cafe" exact />
         <Route path="/mypage" component={MyPage} exact>
           <MyPage
             setIsAuthenticated={setIsAuthenticated}
@@ -101,10 +102,10 @@ function App() {
             isCafeAuth={isCafeAuth}
           />
         </Route>
-        <AuthRoute path="/search" component={SearchPage} exact/>
+        <AuthRoute path="/search" component={SearchPage} exact />
 
         {/* Login 관련 ROUTE */}
-        <Route path="/login" component={LoginPage} exact/>
+        <Route path="/login" component={LoginPage} exact />
         <Route path="/oauth/kakao">
           <KakaoLoginGetCode setIsAuthenticated={setIsAuthenticated} />
         </Route>
@@ -113,13 +114,17 @@ function App() {
         </Route>
 
         {/* TodayCafe 관련 ROUTE */}
-        <AuthRoute path="/today-cafe/make-coffee" component={MakeCoffee} exact/>
-        <AuthRoute path="/today-cafe/fortune" component={Fortune} exact/>
+        <AuthRoute
+          path="/today-cafe/make-coffee"
+          component={MakeCoffee}
+          exact
+        />
+        <AuthRoute path="/today-cafe/fortune" component={Fortune} exact />
 
         {/* MyPage 관련 ROUTE */}
-        <AuthRoute path="/mypage/study" component={StudyHistory} exact/>
-        <AuthRoute path="/mypage/cafebadge" component={MyCafeBadge} exact/>
-        <AuthRoute path="/mypage/feed" component={MyFeedPage} exact/>
+        <AuthRoute path="/mypage/study" component={StudyHistory} exact />
+        <AuthRoute path="/mypage/cafebadge" component={MyCafeBadge} exact />
+        <AuthRoute path="/mypage/feed" component={MyFeedPage} exact />
         <AuthRoute path="/mypage/setting" exact>
           <Grid divided="vertically" textAlign="center">
             <Settings />
@@ -127,7 +132,7 @@ function App() {
         </AuthRoute>
 
         {/* Error 페이지 */}
-        <AuthRoute path="/error" component={ErrorPage} exact/>
+        <AuthRoute path="/error" component={ErrorPage} exact />
 
         {/* MainPage Route */}
         <Route path="/" exact>
@@ -138,10 +143,10 @@ function App() {
             setIsJamSurvey={setIsJamSurvey}
           />
         </Route>
-        <AuthRoute path="/map" component={MapPage} exact/>
+        <AuthRoute path="/map" component={MapPage} exact />
 
         {/* NotFound 페이지*/}
-        <Route path="*" component={NotFound}/>
+        <Route path="*" component={NotFound} />
       </Switch>
     </Layout>
   )
