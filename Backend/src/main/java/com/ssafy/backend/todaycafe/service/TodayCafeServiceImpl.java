@@ -340,6 +340,7 @@ public class TodayCafeServiceImpl implements TodayCafeService {
         CafeAuth cafeAuth = cafeAuthRepository.findById(nickname).get();
         Long cafeId = cafeAuth.getCafeId();
 
+        // 1: create, 2: update, 3: toggle, 4: delete
         if (eventType == 1 || eventType == 2 || eventType == 3 || eventType == 4) {
 
         } else {
@@ -349,16 +350,25 @@ public class TodayCafeServiceImpl implements TodayCafeService {
         if (visitedAt == 0) {
             throw new TodayCafeException(TodayCafeExceptionType.VISITED_AT_ERROR);
         }
+
+        // Type 1
         if (eventType == 1) { // Todo 생성
-            cafeVisitLog = cafeVisitLogRepository.findByVisitedAtAndMemberIdAndCafeId(visitedAt, memberId, cafeId).get();
+            cafeVisitLog = cafeVisitLogRepository
+                    .findByVisitedAtAndMemberIdAndCafeId(visitedAt, memberId, cafeId)
+                    .orElseThrow(() -> new TodayCafeException(TodayCafeExceptionType.NO_VISIT_LOG));
+
             Todo todo = Todo.builder()
                     .cafeVisitLog(cafeVisitLog)
                     .build();
+
             if (content == null) {
                 throw new TodayCafeException(TodayCafeExceptionType.NO_CONTENT);
             }
-            todo.updateContent(content);
+
+            todo.updateContent(content); // 글 내용 생성
+
             Todo savedTodo = todoRepository.save(todo);
+
             todoResponseDto = TodoResponseDto.builder()
                     .id(savedTodo.getId())
                     .responseType(1)
@@ -368,6 +378,7 @@ public class TodayCafeServiceImpl implements TodayCafeService {
 
             return todoResponseDto;
         }
+
 
         if (todoId == null) {
             throw new TodayCafeException(TodayCafeExceptionType.ID_REQUIRED);
@@ -382,13 +393,12 @@ public class TodayCafeServiceImpl implements TodayCafeService {
                 .id(todo.getId())
                 .isComplete(todo.isComplete())
                 .build();
-
+        // Type 2
         if (eventType == 2) { // Todo 업데이트 - todo 의 pk 로
             if (content == null || content.isEmpty()) {
                 throw new TodayCafeException(TodayCafeExceptionType.NO_CONTENT);
             }
             todo.updateContent(content);
-            todoRepository.save(todo);
             todoResponseDto.updateDto(todo.getContent(), todo.isComplete());
             todoResponseDto.updateResponseType(2);
             return todoResponseDto;

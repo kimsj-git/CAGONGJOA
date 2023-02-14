@@ -23,7 +23,7 @@ import java.util.Map;
 @RequestMapping("todaycafe/main")
 @RequiredArgsConstructor
 public class MainPageController {
-    private ResponseDTO responseDTO;
+
     private final TodayCafeService todayCafeService;
 
 
@@ -32,16 +32,16 @@ public class MainPageController {
     @PostMapping("/todo")
     public ResponseEntity<ResponseDTO> writeTodo(@RequestBody TodoReqeustDto todoReqeustDto) {
         TodoResponseDto todoResponseDto = todayCafeService.todoEvent(todoReqeustDto);
-        responseDTO = new ResponseDTO("", "", HttpStatus.OK, todoResponseDto);
+        ResponseDTO responseDTO = new ResponseDTO("", "", HttpStatus.OK, todoResponseDto);
         switch (todoResponseDto.getResponseType()) {
             case 1:
-                responseDTO.setMsg("[responseType 1] 글생성 완료!");
+                responseDTO.setMsg("[responseType 1] 글생성 완료!"); // todo 1객체
                 break;
             case 2:
-                responseDTO.setMsg("[responseType 2] 글 업데이트 완료");
+                responseDTO.setMsg("[responseType 2] 글 업데이트 완료"); // todo 1객체
                 break;
             case 3:
-                responseDTO.setMsg("[responseType 3] 체크박스 토글 완료");
+                responseDTO.setMsg("[responseType 3] 체크박스 토글 완료"); // todo 1객체
                 break;
             case 4:
                 responseDTO.setMsg("[responseType 4] 글 삭제 완료");
@@ -57,7 +57,7 @@ public class MainPageController {
 
         List<TodoResponseDto> todoList = todayCafeService.findTodo(visitedAt);
 
-        responseDTO = new ResponseDTO("Todo List 불러오기 완료!", "", HttpStatus.OK, todoList);
+        ResponseDTO responseDTO = new ResponseDTO("Todo List 불러오기 완료!", "", HttpStatus.OK, todoList);
 
         return new ResponseEntity<>(responseDTO, HttpStatus.OK);
     }
@@ -68,7 +68,7 @@ public class MainPageController {
     public ResponseEntity<ResponseDTO> addTimeBar(@RequestParam int type) {
         if(type != 1762320904) throw new TodayCafeException(TodayCafeExceptionType.BAD_TYPE_REQUEST);
         int currentTimeBar = todayCafeService.addTimeBar();
-        responseDTO = new ResponseDTO("시간바 추가 완료!", "", HttpStatus.OK, currentTimeBar);
+        ResponseDTO responseDTO = new ResponseDTO("시간바 추가 완료!", "", HttpStatus.OK, currentTimeBar);
         return new ResponseEntity<>(responseDTO, HttpStatus.OK);
     }
 
@@ -78,7 +78,7 @@ public class MainPageController {
     public ResponseEntity<ResponseDTO> submitSurvey(@RequestBody SurveyRequestDto surveyRequestDto) {
         todayCafeService.saveSurvey(surveyRequestDto);
 
-        responseDTO = new ResponseDTO("조사결과 저장완료", "", HttpStatus.OK, null);
+        ResponseDTO responseDTO = new ResponseDTO("조사결과 저장완료", "", HttpStatus.OK, null);
 
         return new ResponseEntity<>(responseDTO, HttpStatus.OK);
     }
@@ -88,7 +88,7 @@ public class MainPageController {
     @GetMapping("/acctime")
     public ResponseEntity<ResponseDTO> getAccTime(@RequestParam int todayDate) {
         int accTime = todayCafeService.getAccTime(todayDate);
-        responseDTO = new ResponseDTO("현재 카페 누적시간 제공 완료", "", HttpStatus.OK, accTime);
+        ResponseDTO responseDTO = new ResponseDTO("현재 카페 누적시간 제공 완료", "", HttpStatus.OK, accTime);
         return new ResponseEntity<>(responseDTO, HttpStatus.OK);
     }
 
