@@ -83,7 +83,7 @@ public class CommentServiceImpl implements CommentService {
 
 
         for (Comment comment : commentSlice) {
-            commentNicknameMap.put(comment.getId(),comment.getMember().getNickname());
+            commentNicknameMap.put(comment.getId(), comment.getMember().getNickname());
         }
 
         for (Comment comment : commentSlice) {
@@ -136,12 +136,13 @@ public class CommentServiceImpl implements CommentService {
         Optional<Comment> commentOptional = commentRepository.findTopByPostIdOrderByIdDesc(postId);
         if (commentId == -1L) { // 댓글
             if (commentOptional.isEmpty() || commentOptional == null) {
-                groupNo = 1L; stepNo = 0L;
-            }else {
+                groupNo = 1L;
+                stepNo = 0L;
+            } else {
                 groupNo = commentOptional.get().getGroupNo() + 1L;
                 stepNo = 0L;
             }
-        }else {
+        } else {
             groupNo = commentRepository.findById(commentId).get().getGroupNo();
             stepNo = commentRepository.findTopByPostIdAndGroupNoOrderByIdDesc(postId, groupNo).get().getStepNo() + 1;
         }
@@ -204,10 +205,11 @@ public class CommentServiceImpl implements CommentService {
 
         //1. 유저 확인
         CheckedResponseDto checked = memberUtil.checkMember();
-        long memberId = checked.getMemberId(); // 멤버 아이디를 확인한다.
-        boolean isChecked = requestDto.isChecked();
+        Long memberId = checked.getMemberId(); // 멤버 아이디를 확인한다.
+        Boolean isChecked = requestDto.getIsChecked();
         Long commentId = requestDto.getCommentId();
 
+        System.out.println("isChecked : " + isChecked + "    memberId : " + memberId);
 
         Optional<Comment> optionalComment = commentRepository.findById(commentId);
         if (optionalComment.isEmpty() || optionalComment == null) {
@@ -217,23 +219,25 @@ public class CommentServiceImpl implements CommentService {
         Optional<CommentLike> commentLikeOptional = commentLikeRepository.findByCommentIdAndMemberId(commentId, memberId);
 
         if (!isChecked) {
-            if (commentLikeOptional != null || commentLikeOptional.isPresent()) {
+            if (commentLikeOptional.isPresent()) {
                 throw new PostException(PostExceptionType.COMMENT_LIKE_CHECK_FAIL);
+            } else {
+                CommentLike commentLike = CommentLike.CommentLikeBuilder()
+                        .comment(comment)
+                        .member(memberRepository.findById(memberId).get())
+                        .build();
+                commentLikeRepository.save(commentLike);
+                responseIsChecked = true;
             }
-            CommentLike commentLike = CommentLike.CommentLikeBuilder()
-                    .comment(comment)
-                    .member(memberRepository.findById(memberId).get())
-                    .build();
-            commentLikeRepository.save(commentLike);
-            responseIsChecked = true;
         }
         // True 라면 삭제
         else {
-            if (commentLikeOptional == null || commentLikeOptional.isEmpty()) {
+            if (commentLikeOptional.isEmpty()) {
                 throw new PostException(PostExceptionType.COMMENT_LIKE_CHECK_FAIL);
+            } else {
+                commentLikeRepository.deleteByCommentIdAndMemberId(commentId, memberId);
+                responseIsChecked = false;
             }
-            commentLikeRepository.deleteById(commentId);
-            responseIsChecked = false;
         }
         int count = commentLikeRepository.countCommentLikeByCommentId(commentId);
 

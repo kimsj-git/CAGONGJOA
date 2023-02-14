@@ -333,7 +333,7 @@ public class TodayCafeServiceImpl implements TodayCafeService {
         Long todoId = todoReqeustDto.getTodoId();
         String content = todoReqeustDto.getContent();
         int visitedAt = todoReqeustDto.getVisitedAt();
-        Boolean isComplete = todoReqeustDto.isComplete();
+        Boolean isComplete = todoReqeustDto.getIsComplete();
 
         Long memberId = memberUtil.checkMember().getMemberId();
         String nickname = memberUtil.checkMember().getNickname();
