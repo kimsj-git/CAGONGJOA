@@ -156,7 +156,7 @@ const CafeInfo = (props) => {
                 </Grid.Row>
                 <Grid.Row columns={1}>
                   <Grid.Column>
-                    <CafeTimer />
+                    <CafeTimer accTime={props.accTime}/>
                   </Grid.Column>
                 </Grid.Row>
               </Grid>

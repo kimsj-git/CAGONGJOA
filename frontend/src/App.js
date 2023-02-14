@@ -1,8 +1,6 @@
-import { useState, useMemo, useRef, useEffect } from "react"
+import { useState, useRef, useEffect } from "react"
 import { useHistory } from "react-router-dom"
 import { Route, Switch } from "react-router-dom"
-import { useSelector, useDispatch } from "react-redux"
-import { timerActions } from "./store/timer"
 import { Grid } from "semantic-ui-react"
 
 import AuthRoute from "./AuthRoute"
@@ -66,11 +64,11 @@ function App() {
   }, [isCafeAuth])
 
   // 1분마다 시간경과 요청 보내기
-  const { sendRequest: sendTime } = useFetch()
+  const { data: timeData, sendRequest: sendTime } = useFetch()
   useEffect(() => {
-    if (isCafeAuth === 1) {
+    if (isCafeAuth === '1') {
       const intervalId = setInterval(async () => {
-        const { data } = await sendTime({
+        await sendTime({
           url: `${DEFAULT_REST_URL}/todaycafe/main/addtime`,
           method: "PUT",
           headers: {
@@ -78,11 +76,12 @@ function App() {
             "Content-Type": "application/json",
           },
         })
-        time.current = data.accTime
+        time.current = timeData
+        console.log(timeData)
       }, 60000) // 1 minute
       return () => clearInterval(intervalId)
     }
-  }, [isCafeAuth, time.current])
+  }, [])
 
   return (
     <Layout
