@@ -40,7 +40,7 @@ const BRAND_LOGOS = {
   바나프레소: "banapresso",
 }
 
-const CafeInfo = (props) => {
+const CafeInfo = () => {
   const cafeAuth = sessionStorage.getItem("cafeAuth")
   const nowCafe = JSON.parse(sessionStorage.getItem("myCafe"))
   const todayCafe = JSON.parse(sessionStorage.getItem("todayCafe"))
@@ -156,7 +156,7 @@ const CafeInfo = (props) => {
                 </Grid.Row>
                 <Grid.Row columns={1}>
                   <Grid.Column>
-                    <CafeTimer accTime={props.accTime}/>
+                    <CafeTimer />
                   </Grid.Column>
                 </Grid.Row>
               </Grid>
