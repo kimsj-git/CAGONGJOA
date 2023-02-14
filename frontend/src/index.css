@@ -12,12 +12,12 @@
 body {
   /* background-image: url('https://img.freepik.com/free-photo/paperboard-texture_95678-72.jpg?w=900&t=st=1676290189~exp=1676290789~hmac=23bae26e4905a9a86024df323de506202c5f2af6d8a6214807a91621107b8e63'); */
   /* background-color: #fffbed !important; */
-  background: rgb(249, 144, 109) !important;
-  background: linear-gradient(
+  background: rgba(254, 171, 143, 1) !important;
+  /* background: linear-gradient(
     0deg,
     rgba(249, 144, 109, 0.8128501400560224) 30%,
     rgba(254, 171, 143, 1) 100%
-  ) !important;
+  ) !important; */
   /* background: linear-gradient(
     0deg,
     rgba(249, 144, 109, 0.8128501400560224) 50%,
@@ -48,13 +48,6 @@ body {
 
 .ui.secondary.vertical.menu > .link.item:hover svg {
   transform: scale(1.1);
-}
-
-#login-wrapper {
-  padding-block: 5rem;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
 }
 
 @font-face {
@@ -89,11 +82,6 @@ body {
   font-style: normal;
 }
 
-#title {
-  font-family: "IM_Hyemin-Bold" !important;
-  color: sienna;
-  font-size: 5rem;
-}
 .side-bar * {
   font-family: "IM_Hyemin-Bold" !important;
 }

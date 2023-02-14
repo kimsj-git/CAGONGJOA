@@ -1,5 +1,6 @@
 // 로그인 페이지
 import { useEffect } from "react"
+import { Transition, Grid } from "semantic-ui-react"
 import KakaoLogin from "../../components/member/login/KakaoLogin"
 import { Image } from "semantic-ui-react"
 import "./LoginPage.css"
@@ -31,60 +32,103 @@ const LoginPage = () => {
   }, [])
 
   return (
-    <div id="login-wrapper">
-      {/* <div style={{ display: "flex", alignItems: "center" }}> */}
-      {/* <Image
-          src={require("../../assets/icons/coffee_location_red.png")}
-          size="small"
-        /> */}
-      {/* <Image
-          src={require("../../assets/icons/chat_bubble.png")}
-          size="tiny"
-        />
-        <Image src={require("../../assets/icons/bean.png")} size="tiny" />
-      </div> */}
-      <div className="map-box">
-        <div className="circular-border" style={{ top: "-5%", left: "-10%" }} />
-        <div className="circular-border" style={{ top: "30%", left: "-15%" }} />
-        <div className="circular-border" style={{ top: "-10%", left: "30%" }} />
-        <div className="circular-border" style={{ top: "30%", left: "30%" }} />
-        <Image className="map" src={require("../../assets/map5.jpg")} />
-        <Image
-          src={require("../../assets/icons/coffee_location_red.png")}
-          size="small"
-          style={{
-            position: "absolute",
-            top: "10%",
-            left: "10%",
-          }}
-        />
-        <Image
-          src={require("../../assets/icons/coffee_location_yellow.png")}
-          size="small"
-          style={{
-            position: "absolute",
-            top: "20%",
-            left: "20%",
-          }}
-        />
-        <Image
-          src={require("../../assets/icons/coffee_location_green.png")}
-          size="small"
-          style={{
-            position: "absolute",
-            top: "30%",
-            left: "30%",
-          }}
-        />
-      </div>
-      <Image
-        src={require("../../assets/icons/kagongjoa_logo.png")}
-        size="medium"
-      />
-      <h1 id="title">카공조아</h1>
-
-      <KakaoLogin />
-    </div>
+    <Grid id="login-wrapper" stackable columns={2} centered textAlign="center">
+      <Grid.Column width={6}>
+        <div className="map-box">
+          <div className="circular-border" style={{ top: "0%", left: "-3%" }} />
+          <div
+            className="circular-border"
+            style={{ top: "25%", left: "-5%" }}
+          />
+          <div
+            className="circular-border"
+            style={{ top: "-5%", left: "20%" }}
+          />
+          <div
+            className="circular-border"
+            style={{ top: "20%", left: "25%" }}
+          />
+          <Image className="map" src={require("../../assets/map5.jpg")} />
+          <Image
+            className="map-marker"
+            src={require("../../assets/icons/coffee_location_red.png")}
+            style={{
+              top: "15%",
+              left: "65%",
+              animation: "float 4s ease-in-out infinite",
+              animationDelay: "1s",
+            }}
+          />
+          <Image
+            className="map-marker"
+            src={require("../../assets/icons/coffee_location_yellow.png")}
+            style={{
+              top: "70%",
+              left: "50%",
+              animation: "float 4s ease-in-out infinite",
+              animationDelay: "2s",
+            }}
+          />
+          <Image
+            className="map-marker"
+            src={require("../../assets/icons/coffee_location_green.png")}
+            style={{
+              top: "25%",
+              left: "12%",
+              animation: "float 4s ease-in-out infinite",
+              animationDelay: "3s",
+            }}
+          />
+          <Image
+            className="map-marker"
+            src={require("../../assets/icons/kagongjoa_logo.png")}
+            style={{
+              top: "35%",
+              left: "35%",
+              width: "30%",
+              height: "30%",
+            }}
+          />
+          <div class="circle"></div>
+          <div class="circle" style={{ animationDelay: "0s" }}></div>
+          <div class="circle" style={{ animationDelay: "1s" }}></div>
+          <div class="circle" style={{ animationDelay: "2s" }}></div>
+          <div class="circle" style={{ animationDelay: "3s" }}></div>
+        </div>
+      </Grid.Column>
+      <Grid.Column
+        width={6}
+        textAlign="left"
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          height: "60%",
+          padding: "2rem 0 2rem 10rem ",
+          justifyContent: "space-between",
+        }}
+      >
+        <div style={{ display: "flex" }}>
+          <p class="title">카공조아</p>
+          <Transition animation="pulse" duration={300} visible={true}>
+            <Image
+              src={require("../../assets/icons/chat_bubble_right.png")}
+              style={{
+                width: "6rem",
+                height: "5rem",
+                // marginBottom
+                // top: "-80%",
+                // right: "-40%",
+                display: "inline-block",
+                // position: "absolute",
+                // animation: "float 6s ease-in-out infinite",
+              }}
+            />
+          </Transition>
+        </div>
+        <p className="subtitle">내 주변 카페 이용객들과 소통해보세요!</p>
+        <KakaoLogin style={{ fontSize: "10rem" }} />
+      </Grid.Column>
+    </Grid>
   )
 }
 
