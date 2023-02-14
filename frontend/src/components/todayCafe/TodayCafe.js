@@ -1,18 +1,17 @@
 import TodayCafePage from "../../pages/TodayCafePage"
 import CafeInfo from "./CafeInfo"
-import CafeTimer from "./CafeTimer"
 import CafeTodos from "./CafeTodos"
 
 import { Container, Grid } from "semantic-ui-react"
 
-const TodayCafe = (props) => {
+const TodayCafe = () => {
   return (
     <TodayCafePage>
       <Container style={{backgroundColor: "#f9f9f9"}}>
         <Grid>
           <Grid.Row columns={1}>
             <Grid.Column>
-              <CafeInfo accTime={props.accTime}/>
+              <CafeInfo />
             </Grid.Column>
           </Grid.Row>
           <Grid.Row columns={1}>
