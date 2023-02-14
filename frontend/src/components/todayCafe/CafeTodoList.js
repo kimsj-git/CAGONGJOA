@@ -39,6 +39,8 @@ const CafeTodoList = (props) => {
   useEffect(() => {
     if (todosList !== null) {
       setTodos(todosList)
+    } else if ( todosList === null) {
+      setTodos([])
     }
   }, [todosList, submitedData])
 
