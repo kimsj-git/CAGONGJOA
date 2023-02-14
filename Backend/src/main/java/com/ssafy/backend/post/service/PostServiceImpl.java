@@ -66,7 +66,8 @@ public class PostServiceImpl implements PostService {
         Double longitude = requestDto.getLongitude();
         Double dist = requestDto.getDist();
         String content = requestDto.getContent();
-        if (files != null || content != null) {
+        System.out.println("여까진 와?");
+        if (content != null || files == null) {
 
         } else {
             throw new PostException(NO_CONTENT_POST_FORM); // 이미지나 글 둘중 하나라도 없으면 에러
@@ -88,15 +89,14 @@ public class PostServiceImpl implements PostService {
             post.updateContent(content);
         }
 
-       post = postRepository.save(post);
-
+        post = postRepository.save(post);
+        if(files != null) {
         System.out.println("이미지 파일길이 : " + files.length);
-        if (files != null) {
-            List<PostImage> postImages = postUtil.imageUpload(post, files);
-            post.updatePostImage(postImages);
-            System.out.println("이미지도 첨부 완료");
-
+        List<PostImage> postImages = postUtil.imageUpload(post, files);
+        post.updatePostImage(postImages);
+        System.out.println("이미지도 첨부 완료");
         }
+
         // 1-4. 유저 인증여부 확인
         Optional<CafeAuth> cafeAuth = cafeAuthRepository.findById(checked.getNickname());
         if (cafeAuth.isEmpty() || cafeAuth == null) { // 카페 이름이 없으면 - 인증되지 않은 유저
@@ -169,7 +169,7 @@ public class PostServiceImpl implements PostService {
         CheckedResponseDto checked = memberUtil.checkMember();
 
         // 2. 주변 카페들 정보 알아오기 - 주변 카페에 해당되는 글들만 된다.
-        List<Long> cafeIdList = postUtil.getNearByCafeIdList(requestDto.getLatitude(), requestDto.getLongitude(),requestDto.getDist());
+        List<Long> cafeIdList = postUtil.getNearByCafeIdList(requestDto.getLatitude(), requestDto.getLongitude(), requestDto.getDist());
         // 3. 카테고리로 나누어 하기
         Slice<Post> postSlice = pagingUtil.getPostFeeds(cafeIdList, requestDto.getPostId(), requestDto.getTypes(), pageable);
 
@@ -180,9 +180,9 @@ public class PostServiceImpl implements PostService {
             responseMap.put("hasNext", false);
             responseMap.put("post", postResponseDtoList);
         }
-        if(postSlice.hasNext()) {
+        if (postSlice.hasNext()) {
             hasNext = true;
-        }else {
+        } else {
             hasNext = false;
         }
 
@@ -368,7 +368,7 @@ public class PostServiceImpl implements PostService {
         Long postId = requestDto.getPostId();
 
         // 2. 주변 카페들 정보 알아오기 - 주변 카페에 해당되는 글들만 된다.
-        List<Long> cafeIdList = postUtil.getNearByCafeIdList(requestDto.getLatitude(), requestDto.getLongitude(),requestDto.getDist());
+        List<Long> cafeIdList = postUtil.getNearByCafeIdList(requestDto.getLatitude(), requestDto.getLongitude(), requestDto.getDist());
         // 3. 카테고리로 나누어 하기
         Slice<Post> postSlice = pagingUtil.getSearchedFeeds(cafeIdList, requestDto.getPostId(), requestDto.getSearchKey(), requestDto.getSearchType(), pageable);
 
@@ -377,7 +377,7 @@ public class PostServiceImpl implements PostService {
         if (postSlice.isEmpty() || postSlice == null) { // 불러올 게시물이 있을때
             throw new PostException(PostExceptionType.NO_POST_FEED);
         }
-        if(postSlice.hasNext()) {
+        if (postSlice.hasNext()) {
 
         }
 
@@ -438,7 +438,7 @@ public class PostServiceImpl implements PostService {
         String content = updateDto.getContent();
         List<Long> imageIdList = updateDto.getImageIdList();
 
-        if (imageIdList != null ||imageIdList.isEmpty() ||  content != null || files != null) {
+        if (imageIdList != null || imageIdList.isEmpty() || content != null || files != null) {
 
         } else {
             throw new PostException(NO_CONTENT_POST_FORM);

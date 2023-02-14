@@ -28,7 +28,7 @@ public class PostFormController {
     public ResponseEntity<ResponseDTO> postSave(
             @RequestPart(value = "imgFiles", required = false) MultipartFile[] files,
             @RequestPart(value = "writeForm") PostWriteFormRequestDto requestPostDto){
-        System.out.println("파일이있나용? " + files);
+
         Long postId = postService.writePost(files, requestPostDto);
         if ( postId != -1L) {
             responseDTO = new ResponseDTO("글쓰기 완료!", "", HttpStatus.OK, postId);

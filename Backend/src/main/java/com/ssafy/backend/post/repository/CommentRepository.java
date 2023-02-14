@@ -2,6 +2,7 @@ package com.ssafy.backend.post.repository;
 
 
 import com.ssafy.backend.post.domain.entity.Comment;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.data.jpa.repository.JpaRepository;
 
@@ -18,4 +19,6 @@ public interface CommentRepository extends JpaRepository<Comment, Long> {
     void deleteAllByGroupNo(Long groupNo);
 
     List<Comment> findAllByPostId(Long postId);
+
+    Slice<Comment> findAllByIdLessThanAndMemberId(Long commentId, Long memberId, Pageable pageable);
 }

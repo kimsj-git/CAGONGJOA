@@ -17,10 +17,11 @@ import com.ssafy.backend.mypage.domain.dto.MyCommentResponseDto;
 import com.ssafy.backend.mypage.domain.dto.MyFeedResponseDto;
 import com.ssafy.backend.mypage.domain.dto.VisitCafeListResponseDto;
 import com.ssafy.backend.post.domain.dto.CheckedResponseDto;
-import com.ssafy.backend.post.domain.dto.PostSearchResponseDto;
+import com.ssafy.backend.post.domain.entity.Comment;
 import com.ssafy.backend.post.domain.entity.Post;
 import com.ssafy.backend.post.domain.entity.PostCafe;
 import com.ssafy.backend.post.domain.entity.PostImage;
+import com.ssafy.backend.post.repository.CommentRepository;
 import com.ssafy.backend.post.repository.PostImageRepository;
 import com.ssafy.backend.post.repository.PostRepository;
 import com.ssafy.backend.post.util.PagingUtil;
@@ -59,6 +60,7 @@ public class MyPageServiceImpl implements MyPageService {
     private final PostImageRepository postImageRepository;
     private final CafeLocationRepository cafeLocationRepository;
     private final MemberUtil memberUtil;
+    private final CommentRepository commentRepository;
 
     @Override
     public List<CafeLiveRespDto> getCafeLives(int todayDate) {
@@ -222,6 +224,40 @@ public class MyPageServiceImpl implements MyPageService {
 
     @Override
     public List<MyCommentResponseDto> getMyComment(Long commentId, Pageable pageable) {
+
+        Long memberId = memberUtil.checkMember().getMemberId();
+
+        Slice<Comment> commentSlice = pagingUtil.findMyComments(commentId, memberId, pageable);
+        if(commentSlice == null || commentSlice.isEmpty()) {
+
+        }
+        List<Long> commentIdList = new ArrayList<>();
+        for (Comment comment : commentSlice) {
+            commentIdList.add(comment.getId());
+        }
+
+        Boolean hasNext;
+        if(commentSlice.hasNext()) hasNext = true;
+        else hasNext = false;
+        List<MyCommentResponseDto> commentResponseDtoList = new ArrayList<>();
+        List<Post> postList = postRepository.findAllByCommentIdIn(commentIdList);
+        if(postList.size() != commentIdList.size()) {
+            System.out.println("뭐지이거?");
+        }
+        MyCommentResponseDto commentResponseDto;
+        for (int i = 0; i < postList.size(); i++) {
+            Comment comment = commentSlice.getContent().get(i);
+            Post post = postList.get(i);
+
+            commentResponseDto = MyCommentResponseDto.builder()
+                    .commentContent(comment.getContent())
+                    .commentLikeCnt(comment.getCommentLikeList().size())
+                    .postContent(post.getContent())
+//                    .cafeName(post.getPostCafeList())
+                    .createdAt(comment.getCreatedAt())
+                    .build();
+        }
+
         return null;
     }
 }
