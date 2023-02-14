@@ -21,7 +21,8 @@ public class CommentPagingResponseDto {
     private String content;
     private LocalDateTime createdAt;
     private int commentLikeCnt;
-
+    private Long groupNo;
+    private Long stepNo;
 
     public void updateCommentVerifiedUser(Long verifiedCafeId, String verifiedCafeName, Long exp, String cafeBrandType) {
         this.verifiedCafeId = verifiedCafeId;

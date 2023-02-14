@@ -182,39 +182,37 @@ public class MyPageServiceImpl implements MyPageService {
         // 5. 리턴값 채워넣기
         List<MyFeedResponseDto> responseDtoList = new ArrayList<>();
         for (Post slice : postSlice) {
-            Optional<Post> optionalPost = postRepository.findById(slice.getId());
-            Post post = optionalPost.get();
-            List<PostImage> postImages = postImageRepository.findAllByPostId(postId);
+            List<PostImage> postImages = postImageRepository.findAllByPostId(slice.getId());
 
             List<String> imgUrlPath = new ArrayList<>();
             for (PostImage postImage : postImages) {
                 imgUrlPath.add(postImage.getImgUrl());
             }
-            int postLikeCount = post.getPostLikeList().size();
-            int commentCount = post.getCommentList().size();
+            int postLikeCount = slice.getPostLikeList().size();
+            int commentCount = slice.getCommentList().size();
 
             MyFeedResponseDto myFeedResponseDto = MyFeedResponseDto.builder()
-                    .isCafeAuthorized(post.isCafeAuthorized())
-                    .postId(post.getId())
+                    .isCafeAuthorized(slice.isCafeAuthorized())
+                    .postId(slice.getId())
                     .imgUrlPath(imgUrlPath)
-                    .createdAt(post.getCreatedAt())
-                    .content(post.getContent())
+                    .createdAt(slice.getCreatedAt())
+                    .content(slice.getContent())
                     .commentCount(commentCount)
-                    .writerNickname(post.getMember().getNickname())
+                    .writerNickname(slice.getMember().getNickname())
                     .postLikeCount(postLikeCount)
                     .build();
 
-            if (post.isCafeAuthorized()) {
-                if (post.getPostCafeList() == null || post.getPostCafeList().isEmpty()) {
+            if (slice.isCafeAuthorized()) {
+                if (slice.getPostCafeList() == null || slice.getPostCafeList().isEmpty()) {
                     throw new PostException(PostExceptionType.NO_POST_CAFE);
                 }
                 // 당연히 없지
-                PostCafe postCafe = post.getPostCafeList().get(0); // 인증된 유저의 글쓰기 경우, postCafe 객체를 하나만 가지고있음
+                PostCafe postCafe = slice.getPostCafeList().get(0); // 인증된 유저의 글쓰기 경우, postCafe 객체를 하나만 가지고있음
                 Cafe cafe = postCafe.getCafe();
                 Long cafeId = cafe.getId();
                 String brandType = cafe.getBrandType();
                 cafeName = cafe.getName();
-                Long exp = memberCafeTierRepository.findByMemberIdAndCafeId(post.getMember().getId(), cafeId).get().getExp();
+                Long exp = memberCafeTierRepository.findByMemberIdAndCafeId(slice.getMember().getId(), cafeId).get().getExp();
                 myFeedResponseDto.updateDto(cafeName, exp, brandType);
             }
             responseDtoList.add(myFeedResponseDto);

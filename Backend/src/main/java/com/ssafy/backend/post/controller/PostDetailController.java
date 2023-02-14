@@ -33,7 +33,7 @@ public class PostDetailController {
      **/
 
     @Auth
-    @GetMapping("/comment/feed")
+    @PostMapping("/comment/feed")
     public ResponseEntity<ResponseDTO> feedComment(
             @RequestBody CommentPagingRequestDto requestDto) {
 

@@ -46,6 +46,9 @@ public class Comment extends BaseEntity {
         @Column(name = "group_no")
         private Long groupNo;
 
+        @Column(name = "step_no")
+        private Long stepNo;
+
         // 5. 댓글 그룹의 번호
 
         // 5. 댓글 그룹의 pk
