@@ -26,4 +26,5 @@ public interface MemberService {
 
     void deleteMember();
 
+    void addMemberCoin(int addCoinVal);
 }

@@ -1,4 +1,5 @@
 import { Item } from "semantic-ui-react"
+import MyPostDetail from "./MyPostDetail"
 
 const MyCommentsItem = ({comment}) => {
     const myComment = `${comment.comment.substr(0,20)}...`
@@ -12,6 +13,7 @@ const MyCommentsItem = ({comment}) => {
         </Item.Meta>
         <Item.Extra>{postContent}</Item.Extra>
       </Item.Content>
+      {/* <MyPostDetail post={comment}/> */}
     </Item>
   )
 }

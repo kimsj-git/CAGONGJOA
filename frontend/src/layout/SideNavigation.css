@@ -4,6 +4,10 @@
     display: none;
     white-space: nowrap;
   }
+  .side-bar span{
+    display:none;
+    white-space:nowrap;
+  }
 
   #side-col {
     width: 120px !important;

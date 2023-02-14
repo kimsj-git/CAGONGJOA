@@ -9,10 +9,7 @@ import lombok.*;
 @Builder
 @Getter
 public class CommentLikeRequestDto {
-
     private Long commentId;
     private boolean isChecked;
-
-
 
 }

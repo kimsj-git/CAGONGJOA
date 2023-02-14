@@ -1,6 +1,5 @@
 package com.ssafy.backend.post.domain.entity;
 
-import com.ssafy.backend.cafe.domain.entity.Cafe;
 import com.ssafy.backend.common.entity.BaseEntity;
 import com.ssafy.backend.member.domain.entity.Member;
 import com.ssafy.backend.post.domain.enums.PostType;
@@ -14,15 +13,12 @@ import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
 
-import static javax.persistence.FetchType.LAZY;
-
 @Table(name = "post")
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
-@Builder
-@ToString(of = {"id", "memberId", "type", "content"})
+@Builder(builderClassName = "postWriteBuilder", builderMethodName = "postWriteBuilder")
 public class Post extends BaseEntity {
 
     //== Column  ==//
@@ -65,53 +61,44 @@ public class Post extends BaseEntity {
     @Column(name = "is_cafe_authorized", columnDefinition = "TINYINT(1)", length = 1)
     private boolean isCafeAuthorized;
 
-
     /**
      * 6. 양방향 매핑
      **/
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL)
-    List<Comment> commentList = new ArrayList<>();
+    List<Comment> commentList;
 
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL)
-    List<PostImage> postImageList = new ArrayList<>();
+    List<PostImage> postImageList;
 
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL)
-    List<PostLike> postLikeList = new ArrayList<>();
+    List<PostLike> postLikeList;
 
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL)
-    List<PostCafe> postCafeList = new ArrayList<>();
+    List<PostCafe> postCafeList;
 
     /**
      * 생성자 : content, member, 카테고리, 이미지(나중추가)
      **/
-    @Builder(builderClassName = "postWriteBuilder", builderMethodName = "postWriteBuilder")
-    public Post(String content, Member member, PostType postType) {
-        this.member = member;
-        this.content = content;
-        this.postType = postType;
-    }
 
-    public void updateContents(String content) {
+    public void updateContent(String content) {
         this.content = content;
-    }
-
-    public void addPostImage(PostImage postImage) {
-        this.postImageList.add(postImage);
-        postImage.setPost(this);
     }
 
     public void updatePostImage(List<PostImage> postImageList) {
         this.postImageList = postImageList;
     }
 
-    public void addPostCafe(PostCafe postCafe) {
-        this.postCafeList.add(postCafe);
-        postCafe.setPost(this);
+    public void updateAuthorized(){
+        this.isCafeAuthorized = true;
+    }
+
+
+    public void updatePostCafe(List<PostCafe> postCafeList) {
+        this.postCafeList = postCafeList;
     }
 
     public void deleteImages() {
         this.postImageList = new ArrayList<>();
     }
-
 
 }

@@ -1,8 +1,14 @@
+import { useEffect } from "react"
+import CafeAuthFetch from "../components/certificate/cafeAuth/CafeAuthFetch"
 import TodayCafeNavigation from "../components/todayCafe/TodayCafeNavigation"
 
 import { Grid, Container } from "semantic-ui-react"
 
 const TodayCafe = (props) => {
+  useEffect(() => {
+    CafeAuthFetch()
+  }, [])
+  
   return (
     <Container
       style={{

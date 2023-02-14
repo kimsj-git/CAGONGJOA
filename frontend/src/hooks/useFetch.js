@@ -1,5 +1,6 @@
 import { useCallback, useState } from "react"
 import { useHistory } from "react-router-dom"
+import Logout from "../components/member/logout/Logout"
 const REST_DEFAULT_URL = process.env.REACT_APP_REST_DEFAULT_URL
 
 const useFetch = () => {
@@ -25,12 +26,12 @@ const useFetch = () => {
           }
         })
         const responseData = await response.json()
-        if (!responseData.httpStatus==="OK"){
-          sessionStorage.clear()
-          history.push('/login')
+        if (responseData.httpStatus!=="OK"){
+          Logout()
+        }else if(responseData.httpStatus === "OK"){
+          sessionStorage.setItem('accessToken', responseData.data.accessToken)
+          sendRequest(requestConfig)
         }
-        sessionStorage.setItem('accessToken', responseData.data.accessToken)
-        sendRequest(requestConfig)
       } else if (responseData.httpStatus === "OK") {
         setData(responseData.data)
       } else {

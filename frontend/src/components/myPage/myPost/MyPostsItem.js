@@ -1,25 +1,29 @@
 import { Item } from "semantic-ui-react"
-
+import MyPostDetail from './MyPostDetail'
+import classes from "./MyPostsItem.module.css"
 const MyPostsItem = ({ post }) => {
-  const content = `${post.postContent.substr(0, 50)}...`
+  const content = post.content.length>50 ? `${post.content.substr(0, 50)}...` : post.content
+  
   return (
-    <Item>
+    <Item className={classes.items}>
       <Item.Image
         size="tiny"
         src={
-          post.postImg
-            ? require(`../../../assets/icons/${post.postImg}`)
+          post.imgUrlPath.length>0
+            ? post.imgUrlPath[0]
             : require("../../../assets/icons/kagongjoa_logo.png")
         }
         alt="#"
       />
 
-      <Item.Content>
-        <Item.Header>[{post.cafeName}]</Item.Header>
+      <Item.Content className={classes.content}>
+        <Item.Header>[{post.cafeName ? post.cafeName : "질문글"}]</Item.Header>
         <Item.Meta>
-          <span>{content}</span>
+          <span dangerouslySetInnerHTML={{ __html: content }}></span>
         </Item.Meta>
-        <Item.Extra>{post.postType}</Item.Extra>
+        <Item.Extra className={classes.detailBtn} >{post.postType}
+        <MyPostDetail post={post}/>
+        </Item.Extra>
       </Item.Content>
     </Item>
   )

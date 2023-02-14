@@ -45,7 +45,7 @@ public class PostRepositoryTest {
         Long postId = 2L;
         Optional<Post> updateResult = postRepository.findById(postId);
         Post post = updateResult.orElseThrow();
-        post.updateContents("New 집에가고싶다");
+        post.updateContent("New 집에가고싶다");
 
         postRepository.save(post);
 

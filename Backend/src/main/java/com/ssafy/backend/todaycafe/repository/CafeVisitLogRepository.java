@@ -9,9 +9,7 @@ import java.util.List;
 import java.util.Optional;
 
 public interface CafeVisitLogRepository extends JpaRepository<CafeVisitLog, Long> {
-    List<CafeVisitLog> findByMemberIdAndCafeId(Long memberId, Long cafeId);
-
-    Optional<CafeVisitLog> findByVisitedAtAndCafeId(Integer visitedAt, Long cafeId);
+    Optional<CafeVisitLog> findByVisitedAtAndMemberIdAndCafeId(Integer visitedAt, Long memberId, Long cafeId);
 
     // 카페일지 + 운세 가져오기
 //    @Query("SELECT c FROM CafeVisitLog c WHERE c.member.id = :memberId AND CONCAT(c.visitedAt, '') LIKE %:ymDate%")
@@ -20,4 +18,8 @@ public interface CafeVisitLogRepository extends JpaRepository<CafeVisitLog, Long
 
     @Query("SELECT c FROM CafeVisitLog c WHERE CONCAT(c.visitedAt, '') LIKE %:ymDate% AND c.member.id = :memberId")
     List<CafeVisitLog> findByVisitedAtLikeAndMemberId(@Param("memberId") long memberId, @Param("ymDate") String ymDate);
+
+    List<CafeVisitLog> findAllByVisitedAtAndMemberId(int visitedAt, Long memberId);
+
+    List<CafeVisitLog> findByVisitedAt(int visitedAt);
 }

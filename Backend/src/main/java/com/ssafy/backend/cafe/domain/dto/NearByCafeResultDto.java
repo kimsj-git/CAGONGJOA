@@ -1,5 +1,6 @@
 package com.ssafy.backend.cafe.domain.dto;
 
+import com.ssafy.backend.cafe.domain.enums.CrowdLevel;
 import lombok.*;
 import org.locationtech.jts.geom.Point;
 

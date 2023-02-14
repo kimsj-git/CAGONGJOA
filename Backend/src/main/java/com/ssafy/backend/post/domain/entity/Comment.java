@@ -46,23 +46,15 @@ public class Comment extends BaseEntity {
         @Column(name = "group_no")
         private Long groupNo;
 
-        // 5. 댓글 그룹의 번호
         @Column(name = "step_no")
         private Long stepNo;
+
+        // 5. 댓글 그룹의 번호
 
         // 5. 댓글 그룹의 pk
 
         @OneToMany(mappedBy = "comment")
         private List<CommentLike> commentLikeList = new ArrayList<>();
-
-        @Builder(builderClassName = "CommentWriteBuilder", builderMethodName = "CommentWriteBuilder")
-        public Comment (Post post, Member member, String content, Long group, Long step) {
-                this.post = post;
-                this.content = content;
-                this.groupNo = group;
-                this.member = member;
-                this.stepNo = step;
-        }
 
         public void updateComment(String content) {
                 this.content = content;

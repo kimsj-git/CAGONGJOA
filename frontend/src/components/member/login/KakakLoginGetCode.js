@@ -4,7 +4,7 @@ import { useHistory } from "react-router-dom"
 
 const DEFAULT_REST_URL = process.env.REACT_APP_REST_DEFAULT_URL
 
-const KakaoLoginGetCode = () => {
+const KakaoLoginGetCode = ({setIsAuthenticated}) => {
   // 화면 생성시 시작
   const history = useHistory()
   const PARAMS = new URL(document.location).searchParams
@@ -24,6 +24,7 @@ const KakaoLoginGetCode = () => {
           sessionStorage.setItem("accessToken", responseData.data.jwtTokens.accessToken)
           sessionStorage.setItem("refreshToken", responseData.data.jwtTokens.refreshToken)
           sessionStorage.setItem("nickname", responseData.data.nickname)
+          setIsAuthenticated(true)
           history.push("/")
         }
         // 첫 로그인 회원일 경우

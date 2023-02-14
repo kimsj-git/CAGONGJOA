@@ -23,11 +23,11 @@ public class PostFormController {
      * 3-1. 글 등록 요청 [이미지 + 글 테스트완료 - 위치인증 값 필요]
      **/
 
-    @Auth
+//    @Auth
     @PostMapping("/write")
     public ResponseEntity<ResponseDTO> postSave(
             @RequestPart(value = "imgFiles", required = false) MultipartFile[] files,
-            @RequestPart(value = "writeForm") PostWriteFormRequestDto requestPostDto) throws Exception {
+            @RequestPart(value = "writeForm") PostWriteFormRequestDto requestPostDto){
 
         Long postId = postService.writePost(files, requestPostDto);
         if ( postId != -1L) {

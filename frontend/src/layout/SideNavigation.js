@@ -16,8 +16,9 @@ import { IoSearch } from "react-icons/io5"
 import CafeAuth from "../components/certificate/cafeAuth/CafeAuth"
 import "./SideNavigation.css"
 
-const SideNavigation = () => {
+const SideNavigation = ({ isCafeAuth, setIsCafeAuth, setIsJamSurvey }) => {
   const location = useLocation()
+  const path = location.pathname
   const directory = {
     "/": "home",
     "/today-cafe": "today-cafe",
@@ -25,17 +26,16 @@ const SideNavigation = () => {
     "/mypage": "mypage",
     "/search": "search",
   }
+  console.log(isCafeAuth)
   const [activeItem, setActiveItem] = useState(directory[location.pathname])
   const [prevItem, setPrevItem] = useState("")
   const menuClickHandler = (e, { name }) => {
     setActiveItem(name)
     if (activeItem !== name) {
       setPrevItem(activeItem)
-      console.log(name)
     }
   }
   const closeModal = () => {
-    console.log(prevItem)
     setActiveItem(prevItem)
   }
 
@@ -50,6 +50,7 @@ const SideNavigation = () => {
         paddingInline: "1.5rem 0.5rem",
         borderRight: "1px solid lightgray",
         height: "100vh",
+        display: path === "/login" || path=== "/oauth/kakao" ? "none": ""
       }}
     >
       <div style={{ margin: "0.5rem 0rem 1.5rem" }}>
@@ -100,15 +101,21 @@ const SideNavigation = () => {
             </div>
           </NavLink>
         </Menu.Item>
-        <Menu.Item
+        
+        {(isCafeAuth === null || isCafeAuth === '0') && <Menu.Item
           name="location"
           link
           onClick={menuClickHandler}
           active={activeItem === "location"}
         >
           {/* 위치인증 모달 창 */}
-          <CafeAuth activeItem={activeItem} closeModal={closeModal} />
-        </Menu.Item>
+          <CafeAuth
+            activeItem={activeItem}
+            closeModal={closeModal}
+            setIsCafeAuth={setIsCafeAuth}
+            setIsJamSurvey={setIsJamSurvey}
+          />
+        </Menu.Item>}
         <Menu.Item
           name="post"
           link

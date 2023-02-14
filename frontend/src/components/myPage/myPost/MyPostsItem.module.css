@@ -1,0 +1,30 @@
+@media screen and (max-width: 767px) {
+  .items {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+  }
+  .content {
+    display: flex !important;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    
+  }
+  .detailBtn {
+    display: flex !important;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+  }
+}
+@media screen and (min-width: 767px) {
+
+.detailBtn {
+  display: flex !important;
+  flex-direction: column;
+  justify-content: center;
+  align-items: end;
+}
+}

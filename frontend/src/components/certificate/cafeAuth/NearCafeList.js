@@ -10,19 +10,14 @@ const NearCafeList = (props) => {
   const open = useSelector((state) => state.modal.openNearCafeList)
   const cafeData = useSelector((state) => state.cafe.nearCafe)
   const isLoading = useSelector((state) => state.cafe.isCafeListLoading)
-  
+
   const closeHandler = () => {
     props.closeNearCafeList()
     dispatch(modalActions.toggleNearCafeListModal())
   }
 
   return (
-    <Modal
-      closeIcon
-      onClose={closeHandler}
-      open={open}
-      size="tiny"
-    >
+    <Modal closeIcon onClose={closeHandler} open={open} size="tiny">
       <Modal.Header>카페 방문 인증</Modal.Header>
       <Modal.Content>
         {isLoading && (
@@ -46,13 +41,22 @@ const NearCafeList = (props) => {
             {cafeData.length === 0 && (
               <div>
                 <p>주변에 카페가 없어요...</p>
-                <Button>영수증으로 인증하기</Button>
+                <Button
+                  onClick={() => {
+                    alert("업데이트 중..")
+                  }}
+                >
+                  영수증으로 인증하기
+                </Button>
               </div>
             )}
           </>
         )}
       </Modal.Content>
-      <ConfirmCafe />
+      <ConfirmCafe
+        setIsCafeAuth={props.setIsCafeAuth}
+        setIsJamSurvey={props.setIsJamSurvey}
+      />
     </Modal>
   )
 }

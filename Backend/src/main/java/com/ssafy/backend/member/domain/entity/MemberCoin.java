@@ -45,6 +45,7 @@ public class MemberCoin {
         this.coffeeCount -= 1;
     }
 
-
-
+    public void setCoffeeBeanCount(Integer coffeeBeanCount) {
+        this.coffeeBeanCount = coffeeBeanCount;
+    }
 }

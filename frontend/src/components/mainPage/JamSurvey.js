@@ -3,19 +3,18 @@ import { Segment, Image, Button, Modal, Header, Icon } from "semantic-ui-react"
 import ToggleButton from "../common/ToggleButton"
 import GetBeanModal from "./GetBeanModal"
 
-const JamSurvey = () => {
+const JamSurvey = ({setIsJamSurvey}) => {
   const [selectedBtn, setSelectedBtn] = useState(null)
   const handleChoice = (choice) => {
     setSelectedBtn(choice)
   }
   const nowCafe = JSON.parse(sessionStorage.getItem("myCafe")) ? JSON.parse(sessionStorage.getItem("myCafe")).cafeName : ""
   const isAuthenticated = sessionStorage.getItem("cafeAuth")
-  const [hasReported, setHasReported] = useState(false)
   let openModal = false
 
   return (
     isAuthenticated &&
-    !hasReported && (
+     (
       <Segment raised padded>
         {nowCafe && <h3>{nowCafe}은 지금...?</h3>}
         <div style={{ display: "flex", marginBlock: "2rem" }}>
@@ -57,7 +56,7 @@ const JamSurvey = () => {
           />
         </div>
         <div style={{ paddingInline: "1rem" }}>
-          <GetBeanModal open={openModal} setHasReported={setHasReported} />
+          {selectedBtn !== null && <GetBeanModal selectedBtn={selectedBtn} open={openModal} setIsJamSurvey={setIsJamSurvey} location="jamSurv" beanNum={1}/>}
         </div>
       </Segment>
     )

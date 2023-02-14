@@ -1,8 +1,9 @@
-import { useEffect } from "react"
+import { useState, useRef, useEffect } from "react"
 import { useHistory } from "react-router-dom"
 import { Route, Switch } from "react-router-dom"
 import { Grid } from "semantic-ui-react"
 
+import AuthRoute from "./AuthRoute"
 import MapPage from "./pages/MapPage"
 import KakaoLoginGetCode from "./components/member/login/KakakLoginGetCode"
 import Layout from "./layout/Layout"
@@ -21,91 +22,176 @@ import StudyHistory from "./components/myPage/studyHistory/StudyHistory"
 import MyCafeBadge from "./components/myPage/myCafeBadge/MyCafeBadge"
 import MyFeedPage from "./components/myPage/myPost/MyFeedPage"
 import Settings from "./components/myPage/settingsPage/Settings"
-import BlockList from "./components/myPage/settingsPage/BlockList"
+import useFetch from "./hooks/useFetch"
+import CafeAuthFetch from "./components/certificate/cafeAuth/CafeAuthFetch"
+const DEFAULT_REST_URL = process.env.REACT_APP_REST_DEFAULT_URL
 
 function App() {
   // 바로 로그인 화면으로
   const history = useHistory()
   const Authenticated = sessionStorage.getItem("accessToken")
-  
-  useEffect(()=>{
-    if (!Authenticated){
-      history.push('/login')
+  const [isAuthenticated, setIsAuthenticated] = useState(
+    sessionStorage.getItem("accessToken")
+  )
+  const [isCafeAuth, setIsCafeAuth] = useState(
+    sessionStorage.getItem("cafeAuth")
+  )
+  const [isJamSurvey, setIsJamSurvey] = useState(
+    JSON.parse(sessionStorage.getItem("todayCafe"))
+      ? JSON.parse(sessionStorage.getItem("todayCafe")).isCrowdSubmitted
+      : false
+  )
+
+  useEffect(() => {
+    if (!Authenticated || Authenticated === undefined) {
+      history.push("/login")
     }
+  }, [Authenticated])
+
+  // const todayCafe = JSON.parse(sessionStorage.getItem("todayCafe"))
+  // if (todayCafe !== null) {
+  //   initialTime = todayCafe.accTime
+  // }
+
+  // const fullDate = (date) => {
+  //   const yyyy = date.getFullYear()
+  //   const mm = date.getMonth() + 1
+  //   const dd = date.getDate()
+  //   return yyyy * 10000 + mm * 100 + dd
+  // }
+
+  let initialTime = 0
+  // const getInitialTime = async () => {
+  //   const response = await fetch(
+  //     `${DEFAULT_REST_URL}/todaycafe/main/acctime?todayDate=${fullDate(
+  //       new Date()
+  //     )}`,
+  //     {
+  //       headers: {
+  //         Authorization: `Bearer ${sessionStorage.getItem("accessToken")}`,
+  //       },
+  //     }
+  //   )
+  //   const responseData = await response.json()
+  //   // console.log(responseData.data)
+  //   initialTime = responseData.data
+    
+  // }
+  // console.log('최초시간', initialTime)
+  // useEffect(() => {
+  //   getInitialTime()
+  // }, [isCafeAuth])
+
+  const time = useRef(initialTime)
+  console.log(time.current)
+  // 1분마다 시간경과 요청 보내기
+  useEffect(() => {
+    if (isCafeAuth === "1") {
+      const intervalId = setInterval(async () => {
+        const response = await fetch(
+          `${DEFAULT_REST_URL}/todaycafe/main/addtime?type=1762320904`,
+          {
+            method: "PUT",
+            headers: {
+              Authorization: `Bearer ${sessionStorage.getItem("accessToken")}`,
+              "Content-Type": "application/json",
+            },
+          }
+        )
+        const responseData = await response.json()
+        time.current = responseData.data
+        console.log(time.current)
+        // console.log('acctime', accTime)
+        // await sendTime({
+        //   url: `${DEFAULT_REST_URL}/todaycafe/main/addtime?type=1762320904`,
+        //   method: "PUT",
+        //   headers: {
+        //     Authorization: `Bearer ${sessionStorage.getItem("accessToken")}`,
+        //     "Content-Type": "application/json",
+        //   },
+        // })
+        // time.current = timeData
+        // console.log("업뎃", time.current)
+      }, 60000) // 1 minute
+      return () => clearInterval(intervalId)
+    }
+  }, [time.current])
+
+  // 8분마다 서버에 현재 유저의 인증 상태 여부를 확인 요청
+  useEffect(() => {
+    const intervalId = setInterval(async () => {
+      if (isCafeAuth === "1") {
+        CafeAuthFetch()
+      }
+    }, 480000) // 8 minutes
+    return () => clearInterval(intervalId)
   }, [])
 
   return (
-    <Layout>
+    <Layout
+      isCafeAuth={isCafeAuth}
+      setIsCafeAuth={setIsCafeAuth}
+      setIsJamSurvey={setIsJamSurvey}
+    >
       <Switch>
         {/* Navigation 관련 ROUTE*/}
-        <Route path="/chat" exact>
-          <ChatPage />
+        <AuthRoute component={ChatPage} path="/chat" exact />
+        <AuthRoute component={TodayCafe} path="/today-cafe" exact />
+        <Route path="/today-cafe" component={TodayCafe} exact>
+          <TodayCafe accTime={time.current} />
         </Route>
-        <Route path="/today-cafe" exact>
-          <TodayCafe />
+        <Route path="/mypage" component={MyPage} exact>
+          <MyPage
+            setIsAuthenticated={setIsAuthenticated}
+            setIsCafeAuth={setIsCafeAuth}
+            isCafeAuth={isCafeAuth}
+          />
         </Route>
-        <Route path="/mypage" exact>
-          <MyPage />
-        </Route>
-        <Route path="/search" exact>
-          <SearchPage />
-        </Route>
+        <AuthRoute path="/search" component={SearchPage} exact />
 
         {/* Login 관련 ROUTE */}
-        <Route path="/login" exact>
-          <LoginPage />
-        </Route>
+        <Route path="/login" component={LoginPage} exact />
         <Route path="/oauth/kakao">
-          <KakaoLoginGetCode />
+          <KakaoLoginGetCode setIsAuthenticated={setIsAuthenticated} />
         </Route>
         <Route path="/signup" exact>
-          <SignupPage />
+          <SignupPage setIsAuthenticated={setIsAuthenticated} />
         </Route>
 
         {/* TodayCafe 관련 ROUTE */}
-        <Route path="/today-cafe/make-coffee" exact>
-          <MakeCoffee />
-        </Route>
-        <Route path="/today-cafe/fortune" exact>
-          <Fortune />
-        </Route>
+        <AuthRoute
+          path="/today-cafe/make-coffee"
+          component={MakeCoffee}
+          exact
+        />
+        <AuthRoute path="/today-cafe/fortune" component={Fortune} exact />
 
         {/* MyPage 관련 ROUTE */}
-        <Route path="/mypage/study" exact>
-          <StudyHistory />
-        </Route>
-        <Route path="/mypage/cafebadge" exact>
-          <MyCafeBadge />
-        </Route>
-        <Route path="/mypage/feed" exact>
-          <MyFeedPage />
-        </Route>
-        <Route path="/mypage/setting" exact>
+        <AuthRoute path="/mypage/study" component={StudyHistory} exact />
+        <AuthRoute path="/mypage/cafebadge" component={MyCafeBadge} exact />
+        <AuthRoute path="/mypage/feed" component={MyFeedPage} exact />
+        <AuthRoute path="/mypage/setting" exact>
           <Grid divided="vertically" textAlign="center">
             <Settings />
           </Grid>
-        </Route>
-        <Route path="/mypage/setting/blocklist" exact>
-          <BlockList />
-        </Route>
+        </AuthRoute>
 
         {/* Error 페이지 */}
-        <Route path="/error" exact>
-          <ErrorPage />
-        </Route>
+        <AuthRoute path="/error" component={ErrorPage} exact />
 
         {/* MainPage Route */}
         <Route path="/" exact>
-          <MainPage />
+          <MainPage
+            isAuthenticated={isAuthenticated}
+            isCafeAuth={isCafeAuth}
+            isJamSurvey={isJamSurvey}
+            setIsJamSurvey={setIsJamSurvey}
+          />
         </Route>
-        <Route path="/map" exact>
-          <MapPage/>
-        </Route>
+        <AuthRoute path="/map" component={MapPage} exact />
 
         {/* NotFound 페이지*/}
-        <Route path="*">
-          <NotFound />
-        </Route>
+        <Route path="*" component={NotFound} />
       </Switch>
     </Layout>
   )
