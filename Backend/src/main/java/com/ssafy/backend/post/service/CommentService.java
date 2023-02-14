@@ -18,7 +18,7 @@ public interface CommentService {
     List<CommentPagingResponseDto> feedComment(CommentPagingRequestDto requestDto);
 
 
-    Long writeComment(CommentWriteRequestDTO commentWriteDto);
+    CommentPagingResponseDto writeComment(CommentWriteRequestDTO commentWriteDto);
 
     /** 2. 댓글 수정 **/
     void updateComment(CommentUpdateRequestDTO commentUpdateDto);

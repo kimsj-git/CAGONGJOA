@@ -17,5 +17,9 @@
 } */
 
 .card.post {
-  border-radius: "100px !important"
+  border-radius: 40px !important;
+}
+
+.post img {
+  border-radius: 40px !important;
 }

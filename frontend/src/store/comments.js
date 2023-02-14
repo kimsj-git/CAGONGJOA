@@ -4,18 +4,52 @@ import { createSlice } from "@reduxjs/toolkit"
 const initialCommentsState = {
   comments: [
     {
-      commentId: 1,
-      content: "댓글1",
-      createdAt: "2023-02-05T12:36:19",
-      commentLike: 3,
-      memberId: 1,
+      commentId: 2,
+            writerId: 3,
+            writerNickname: "종스비",
+            writerType: true,
+            verifiedCafeId: 1,
+            verifiedCafeName: "달콤커피 역삼역점",
+            cafeBrandType: "달콤커피",
+            exp: 500,
+            content: "나 사나이 양준모, 돈까스가 고프다",
+            createdAt: "2023-02-10T12:54:12",
+            commentLikeCnt: 0,
+            likeChecked: false,
+            replies: [
+              {
+                commentId: 8,
+                      writerId: 3,
+                      writerNickname: "리액티스트",
+                      writerType: false,
+                      verifiedCafeId: null,
+                      verifiedCafeName: null,
+                      cafeBrandType: null,
+                      exp: null,
+                      content: "대댓글 작업중",
+                      createdAt: "2023-02-14T12:54:12",
+                      commentLikeCnt: 0,
+                      parentId: 2,
+                      likeChecked: false,
+              }
+            ]
     },
     {
-      commentId: 2,
-      content: "댓글2",
-      createdAt: "2023-02-05T22:36:19",
-      commentLike: 5,
-      memberId: 2,
+      commentId: 3,
+                      writerId: 1,
+                      writerNickname: "리액티스트",
+                      writerType: false,
+                      verifiedCafeId: null,
+                      verifiedCafeName: null,
+                      cafeBrandType: null,
+                      exp: null,
+                      content: "나 사나이 양준모, 돈까스가 고프다",
+                      createdAt: "2023-02-14T12:54:12",
+                      commentLikeCnt: 0,
+                      likeChecked: false,
+                      replies: [
+                        
+                      ]
     },
   ],
   lastCommentId: -1,
