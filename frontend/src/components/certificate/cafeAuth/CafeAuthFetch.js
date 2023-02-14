@@ -96,6 +96,8 @@ const CafeAuthFetch = async () => {
             CafeAuthFetch()
           }
         }
+        console.log(todayCafe)
+        console.log(myCafe)
         sessionStorage.setItem("todayCafe", JSON.stringify(todayCafe))
         sessionStorage.setItem("myCafe", JSON.stringify(myCafe))
       }

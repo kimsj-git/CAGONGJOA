@@ -9,7 +9,7 @@ const initialCafeState = {
   mapCafeFilterList: [],
   cafeBrandFilterList: [],
   isFiltered: false,
-  selectedBrand: "",
+  isFindFeed: false,
 }
 
 const cafeSlice = createSlice({
@@ -49,6 +49,12 @@ const cafeSlice = createSlice({
         })
       }
     },
+    findFeed(state){
+      state.isFindFeed = true
+    },
+    findFeedMyLocation(state){
+      state.isFindFeed = false
+    }
   },
 })
 //refresh 토큰 보내는 로직 구현 추가해야함
