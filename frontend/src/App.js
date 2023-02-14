@@ -68,7 +68,7 @@ function App() {
       }, 60000) // 1 minute
       return () => clearInterval(intervalId)
     }
-  }, [time.current])
+  })
   
   // 8분마다 서버에 현재 유저의 인증 상태 여부를 확인 요청
   useEffect(() => {
