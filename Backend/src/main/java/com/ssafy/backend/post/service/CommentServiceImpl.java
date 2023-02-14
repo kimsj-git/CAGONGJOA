@@ -53,7 +53,7 @@ public class CommentServiceImpl implements CommentService {
         Long postId = requestDto.getPostId();
         Long groupNo;
         if (commentId == -1L) {
-            groupNo = 1L;
+            groupNo = 0L;
         } else {
             groupNo = commentRepository.findById(commentId).get().getGroupNo();
         }
@@ -96,6 +96,7 @@ public class CommentServiceImpl implements CommentService {
                     .commentLikeCnt(comment.getCommentLikeList().size())
                     .groupNo(comment.getGroupNo())
                     .stepNo(comment.getStepNo())
+                    .writerType(false)
                     .build();
             System.out.println("미인증 유저 댓글쓰기 불러오기 완료");
             Optional<CafeAuth> cafeAuth = cafeAuthRepository.findById(comment.getMember().getNickname());

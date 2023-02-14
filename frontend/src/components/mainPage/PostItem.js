@@ -76,7 +76,7 @@ const PostItem = (props) => {
   return props.isLoading ? (
     <LoadingPost />
   ) : (
-    <Card raised fluid>
+    <Card raised fluid className="post">
       <Label
         corner="right"
         color="orange"

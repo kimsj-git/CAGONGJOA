@@ -78,13 +78,16 @@
   background-color: rgb(255, 133, 40) !important;
   border-radius: 2rem;
   border: none !important;
-  box-shadow: 0 0 0 1px rgb(34 36 38 / 10%) inset !important;
+  box-shadow: 0 0 0 1px rgb(66 31 0 / 10%) inset !important;
+  font-weight: bold;
 }
 
 #cancle-select,
 #cancle-hot {
-  box-shadow: 0 0 0 1px #767676 inset !important;
-  color: #767676 !important;
+  box-shadow: 0 0 0 1.8px rgb(66, 31, 0) inset !important;
+  font-weight: bold;
+  /* color: #767676 !important; */
+  color: rgb(66, 31, 0) !important;
   background: transparent none !important;
   border-radius: 2rem;
 }

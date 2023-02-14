@@ -52,7 +52,7 @@ const PostDetail = (props) => {
           <Grid>
             <Grid.Column mobile={16} tablet={8} computer={8}>
               <ScrollPanel style={{ width: "100%", height: "77.5vh" }}>
-                <Card fluid style={{ boxShadow: "none" }}>
+                <Card fluid style={{ boxShadow: "none"}}>
                   <Card.Content>
                     <Image
                       avatar
@@ -119,6 +119,9 @@ const PostDetail = (props) => {
                     `${DEFAULT_REST_URL}/main/postDetail/delete?postId=${props.post.id}`,
                     {
                       method: "DELETE",
+                      headers: {
+                        Authorization: `Bearer ${sessionStorage.getItem("accessToken")}`
+                      }
                     }
                   )
                   setOpen(false)
