@@ -13,6 +13,7 @@ const CommentItem = (props) => {
   const [replyMode, setReplyMode] = useState(false)
   const [newReply, setNewReply] = useState("")
   const [confirmOpen, setConfirmOpen] = useState(false)
+  const isWriterVerified = comment.writerType
 
   const likeComment = (isLiked) => {
     isLiked
@@ -32,6 +33,7 @@ const CommentItem = (props) => {
     })
   }
 
+
   return (
     // <Comment.Group>
     <Comment>
@@ -45,9 +47,9 @@ const CommentItem = (props) => {
           style={{ display: "flex", justifyContent: "space-between" }}
         >
           <div style={{ fontSize: "1.1rem", lineHeight: "1.2" }}>
-            상남자준모
+            {comment.writerNickname}
             <Icon name="chess queen" color="orange" />
-            <Comment.Metadata content="할리스 강남역점" />
+            <Comment.Metadata content={isWriterVerified ? comment.verifiedCafeName : null } />
           </div>
           <Comment.Metadata content={comment.createdAt} />
         </Comment.Author>
@@ -61,10 +63,11 @@ const CommentItem = (props) => {
           <Comment.Action>
             <ToggleButton
               btnType="like"
-              content={comment.commentLike}
+              content={comment.commentLikeCnt}
               likeHandler={likeComment}
               compact
               size="mini"
+              isLiked={comment.likeChecked}
             />
             <Button
               size="mini"
@@ -118,6 +121,7 @@ const CommentItem = (props) => {
             reply
             onSubmit={() => {
               props.addNewComment(newReply, comment.commentId)
+              setNewReply("")
             }}
           >
             <Form.Input

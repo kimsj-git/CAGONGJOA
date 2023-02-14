@@ -20,6 +20,7 @@ const CommentList = (props) => {
   const lastCommentId = useSelector((state) => state.comments.lastCommentId)
   const [ref, inView] = useInView({
     threshold: 0.5,
+    delay: 500,
   })
   const [newComment, setNewComment] = useState("")
 
@@ -47,7 +48,7 @@ const CommentList = (props) => {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        postId: props.post.id, // post id 왜 안가지??
+        postId: props.post.id,
         content: text,
         commentId: id,
       }),
@@ -60,7 +61,7 @@ const CommentList = (props) => {
     () => {
       console.log("인뷰 이펙트 실행")
       console.log(inView)
-      if (isMounted.current && inView) {
+      if (inView) {
         console.log("인뷰 이펙트, 마운티드 통과")
         console.log("인뷰 이펙트, 인뷰 통과")
         console.log(lastCommentId)
@@ -113,6 +114,7 @@ const CommentList = (props) => {
         reply
         onSubmit={() => {
           addNewComment(newComment, -1)
+          setNewComment("")
         }}
       >
         <Form.Input

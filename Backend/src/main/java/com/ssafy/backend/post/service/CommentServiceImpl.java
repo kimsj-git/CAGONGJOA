@@ -85,8 +85,11 @@ public class CommentServiceImpl implements CommentService {
         for (Comment comment : commentSlice) {
             commentNicknameMap.put(comment.getId(), comment.getMember().getNickname());
         }
-
+        Boolean commentLikeChecked;
         for (Comment comment : commentSlice) {
+            Optional<CommentLike> commentOptional = commentLikeRepository.findByCommentIdAndMemberId(comment.getId(),comment.getMember().getId());
+            if(commentOptional.isPresent())  commentLikeChecked = true;
+            else commentLikeChecked = false;
             CommentPagingResponseDto commentPagingResponseDto = CommentPagingResponseDto.CommentResponseBuilder()
                     .commentId(comment.getId())
                     .writerId(comment.getMember().getId())
@@ -97,6 +100,7 @@ public class CommentServiceImpl implements CommentService {
                     .groupNo(comment.getGroupNo())
                     .stepNo(comment.getStepNo())
                     .writerType(false)
+                    .likeChecked(commentLikeChecked)
                     .build();
             System.out.println("미인증 유저 댓글쓰기 불러오기 완료");
             Optional<CafeAuth> cafeAuth = cafeAuthRepository.findById(comment.getMember().getNickname());
