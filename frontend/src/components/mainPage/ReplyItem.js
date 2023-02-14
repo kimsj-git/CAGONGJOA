@@ -10,6 +10,23 @@ const ReplyItem = (props) => {
   const reply = props.reply
   const isWriterVerified = reply.writerType
   const [confirmOpen, setConfirmOpen] = useState(false)
+  const { data, isLoading, sendRequest: fetchLike } = useFetch()
+
+  const likeReply = (isLiked) => {
+    dispatch(commentsActions.likeReply({parentId: reply.parentId, replyId: reply.commentId, num: isLiked ? -1 : 1}))
+    fetchLike({
+      url: `${DEFAULT_REST_URL}/main/postDetail/comment/like`,
+      method: "PUT",
+      headers: {
+        Authorization: `Bearer ${sessionStorage.getItem("accessToken")}`,
+        "Content-Type": "application/json",
+      },
+      body: {
+        isChecked: isLiked,
+        commentId: reply.commentId,
+      },
+    })
+  }
   return (
         <Comment>
       <Comment.Avatar
@@ -31,15 +48,12 @@ const ReplyItem = (props) => {
         <Comment.Text style={{ fontSize: "1.1rem", lineHeight: "1.5" }}>
           {reply.content}
         </Comment.Text>
-        {/* <Comment.Metadata>
-          <Icon name="thumbs up outline" color="red" />5
-        </Comment.Metadata> */}
         <Comment.Actions>
           <Comment.Action>
             <ToggleButton
               btnType="like"
               content={reply.commentLikeCnt}
-              // likeHandler={likeComment}
+              likeHandler={likeReply}
               compact
               size="mini"
               isLiked={reply.likeChecked}
@@ -69,11 +83,14 @@ const ReplyItem = (props) => {
               }}
               onConfirm={() => {
                 setConfirmOpen(false)
-                dispatch(commentsActions.deleteComment(props.comment.commentId))
+                dispatch(commentsActions.deleteReply({parentId: reply.parentID, deletedReplyId: reply.commentId}))
                 fetch(
-                  `${DEFAULT_REST_URL}/main/postDetail/comment/delete?commentId=${props.comment.commentId}`,
+                  `${DEFAULT_REST_URL}/main/postDetail/comment/delete?commentId=${reply.commentId}`,
                   {
                     method: "DELETE",
+                    headers: {
+                      Authorization: `Bearer ${sessionStorage.getItem("accessToken")}`,
+                    },
                   }
                 )
               }}

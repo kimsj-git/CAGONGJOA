@@ -17,9 +17,7 @@ const CommentItem = (props) => {
   const isWriterVerified = comment.writerType
 
   const likeComment = (isLiked) => {
-    isLiked
-      ? dispatch(commentsActions.cancleLikeComment(comment.commentId))
-      : dispatch(commentsActions.likeComment(comment.commentId))
+    dispatch(commentsActions.likeComment({commentID: comment.commentId, num: isLiked ? -1 : 1}))
     fetchLike({
       url: `${DEFAULT_REST_URL}/main/postDetail/comment/like`,
       method: "PUT",
@@ -57,9 +55,6 @@ const CommentItem = (props) => {
         <Comment.Text style={{ fontSize: "1.1rem", lineHeight: "1.5" }}>
           {comment.content}
         </Comment.Text>
-        {/* <Comment.Metadata>
-          <Icon name="thumbs up outline" color="red" />5
-        </Comment.Metadata> */}
         <Comment.Actions>
           <Comment.Action>
             <ToggleButton
@@ -81,7 +76,6 @@ const CommentItem = (props) => {
               }}
             ></Button>
 
-            {/* comment.nickname 변수명 추후 확인 필요!!! */}
             {comment.writerNickname === sessionStorage.getItem("nickname") && (
               <Button
                 size="mini"
@@ -97,7 +91,7 @@ const CommentItem = (props) => {
             )}
             <Comment.Group>
               {comment.replies.map((reply) => {
-                return <ReplyItem reply={reply} />
+                return <ReplyItem reply={reply} addNewComment={props.addNewComment}/>
               })}
             </Comment.Group>
 
@@ -116,6 +110,9 @@ const CommentItem = (props) => {
                   `${DEFAULT_REST_URL}/main/postDetail/comment/delete?commentId=${props.comment.commentId}`,
                   {
                     method: "DELETE",
+                    headers: {
+                      Authorization: `Bearer ${sessionStorage.getItem("accessToken")}`,
+                    },
                   }
                 )
               }}
@@ -128,8 +125,8 @@ const CommentItem = (props) => {
             onSubmit={(e) => {
               props.addNewComment(newReply, comment.commentId)
               // setNewReply("")
-              e.target[0].value = ""
-              // console.log(e)
+              // e.target[0].value = ""
+              console.log(e.target)
 
             }}
           >

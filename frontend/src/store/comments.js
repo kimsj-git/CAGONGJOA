@@ -73,8 +73,14 @@ const commentsSlice = createSlice({
         : -1
     },
 
+    updateReplies(state, action) {
+      const parentComment = action.payload
+      const parentIdx = state.comments.findIndex(
+        (comment) => comment.commentId === parentComment.commentId
+      )
+      state.comments[parentIdx] = parentComment
     // comment 생성은 fetch 요청으로 대체
-
+      },
     // comment 삭제
     deleteComment(state, action) {
       const deletedCommentId = action.payload
@@ -84,6 +90,13 @@ const commentsSlice = createSlice({
       state.lastCommentId = state.comments.length
         ? state.comments.at(-1).commentId
         : -1
+    },
+    // reply 삭제
+    deleteReply(state, action) {
+      const {parentId, deletedReplyId} = action.payload
+      const parentIdx = state.comments.findIndex((comment) => comment.commentId === parentId)
+      state.comments[parentIdx].replies = state.comments[parentIdx].replies.filter((reply) => reply.commentId !== deletedReplyId)
+      
     },
     // comment 수정
     editComment(state, action) {
@@ -95,18 +108,34 @@ const commentsSlice = createSlice({
       state.comments[editIdx].commentType = editedComment.type
       state.comments[editIdx].imgUrlPath = editedComment.images
     },
-    // comment 좋아요
+    
+    // comment 좋아요/좋아요 취소
     likeComment(state, action) {
+      const {commentId, num} = action.payload
       state.comments.find(
-        (comment) => comment.commentId === action.payload
-      ).commentLikeCnt += 1
+        (comment) => comment.commentId === commentId
+      ).commentLikeCnt += num
     },
-    // post 좋아요 취소
-    cancleLikeComment(state, action) {
+    // reply 좋아요/좋아요 취소
+    likeReply(state, action) {
+      const {parentId, replyId, num} = action.payload
       state.comments.find(
-        (comment) => comment.commentId === action.payload
-      ).commentLikeCnt -= 1
+        (comment) => comment.commentId === parentId
+      ).find((reply) => reply.commentId === replyId).commentLikeCnt += num
     },
+    // // comment 좋아요 취소
+    // cancleLikeComment(state, action) {
+    //   state.comments.find(
+    //     (comment) => comment.commentId === action.payload
+    //   ).commentLikeCnt -= 1
+    // },
+    // // reply 좋아요 취소
+    // cancleLikeReply(state, action) {
+    //   const {parentId, replyId} = 
+    //   state.comments.find(
+    //     (comment) => comment.commentId === parentId
+    //   ).find((reply) => reply.commentId === replyId).commentLikeCnt -= 1
+    // },
   },
 })
 

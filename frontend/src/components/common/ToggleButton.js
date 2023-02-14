@@ -2,6 +2,8 @@ import React, { useState, useEffect } from "react"
 import { Button, Transition } from "semantic-ui-react"
 import "./ToggleButton.css"
 import useFetch from "../../hooks/useFetch.js"
+import { IoHeart } from "react-icons/io5"
+
 const DEFAULT_REST_URL = process.env.REACT_APP_REST_DEFAULT_URL
 const ToggleButton = (props) => {
   const [btnState, setBtnState] = useState(
@@ -39,12 +41,14 @@ const ToggleButton = (props) => {
         basic={basic}
         compact={compact}
         onClick={grouped ? props.onClick : handleClick}
-        icon={icon}
-        content={props.content}
         size={props.size}
         className={grouped ? "btn-group" : null}
         color={props.color}
-      />
+        style={{display: "flex", alignItems: "center", justifyContent: "center"}}
+      >
+        {props.btnType === "like" && <IoHeart size={24} style={{marginRight: "0.5rem"}}/>}
+        {props.content}
+      </Button>
     </Transition>
   )
 }

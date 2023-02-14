@@ -35,4 +35,8 @@ public class CommentPagingResponseDto {
         this.writerType = true;
 
     }
+
+    public void updateReplies(List<RepliesPagingResponseDto> replies) {
+        this.replies = replies;
+    }
 }

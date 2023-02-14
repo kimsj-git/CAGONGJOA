@@ -16,7 +16,8 @@
 }
 #login-wrapper .subtitle {
   font-family: "IM_Hyemin-Bold" !important;
-  color: rgb(253, 232, 230);
+  /* color: rgb(253, 232, 230); */
+  color: rgb(255 247 216 / 50%);
   font-size: 2.5rem;
   white-space: nowrap;
 }
@@ -37,9 +38,12 @@
   position: absolute !important;
   top: 5%;
   left: 5%;
-  border-radius: 100%;
+  border-radius: 30% 25% 40% 5%;
+  /* border-color: ; */
+  border: solid rgb(255 247 216 / 50%) 10px;
   height: 90%;
   width: 90%;
+  box-shadow: -12px 18px 6px 6px rgb(255 0 0 / 30%)
 }
 
 .map-box .map-marker {
@@ -52,14 +56,17 @@
 
 .circular-border {
   color: transparent;
-  border: 10px solid;
+  /* border:  rgb(255 247 216 / 50%) 5px; */
+  border-style: solid;
+  border-radius: 50%;
+  /* rotate: 35deg; */
   z-index: 0.5;
 
-  width: 80%;
-  height: 80%;
+  width: 90%;
+  height: 90%;
   /* border-radius: 100%; */
-  border: solid 10px;
-  border-image: url("../../assets/yellow_pencil.jpg");
+  /* border: solid 10px; */
+  /* border-image: url("../../assets/yellow_pencil.jpg"); */
   position: absolute;
 }
 /* box-shadow: 20px 38px 34px -26px hsla(0, 0%, 0%, 0.2); */

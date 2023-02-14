@@ -79,8 +79,8 @@ const PostItem = (props) => {
     <Card raised fluid className="post">
       <Label
         corner="right"
-        color="orange"
-        icon={{ name: typeIcon[props.type], color: "white" }}
+        icon={{ name: typeIcon[props.type] }}
+        size="large"
       />
       <Card.Content>
         {props.images.length ? (
