@@ -4,6 +4,8 @@ import { Progress } from "semantic-ui-react"
 const CafeTimer = (props) => {
   const cafeAuth = sessionStorage.getItem("cafeAuth")
   const accTime = props.accTime
+  useEffect(() => {
+  }, [accTime])
 
   // 누적 시간 기록
   const hours = parseInt(accTime / 60) % 60
