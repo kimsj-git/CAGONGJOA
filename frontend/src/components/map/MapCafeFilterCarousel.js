@@ -36,7 +36,7 @@ const MapCafeFilterCarousel = () => {
   }
   const responsiveOptions = [
     {
-      breakpoint: "1444px",
+      breakpoint: "1992px",
       numVisible: 4,
       numScroll: 2,
     },

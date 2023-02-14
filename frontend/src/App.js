@@ -5,6 +5,7 @@ import { useSelector, useDispatch } from "react-redux"
 import { timerActions } from "./store/timer"
 import { Grid } from "semantic-ui-react"
 
+import AuthRoute from "./AuthRoute"
 import MapPage from "./pages/MapPage"
 import KakaoLoginGetCode from "./components/member/login/KakakLoginGetCode"
 import Layout from "./layout/Layout"
@@ -23,7 +24,6 @@ import StudyHistory from "./components/myPage/studyHistory/StudyHistory"
 import MyCafeBadge from "./components/myPage/myCafeBadge/MyCafeBadge"
 import MyFeedPage from "./components/myPage/myPost/MyFeedPage"
 import Settings from "./components/myPage/settingsPage/Settings"
-import BlockList from "./components/myPage/settingsPage/BlockList"
 import useFetch from "./hooks/useFetch"
 const DEFAULT_REST_URL = process.env.REACT_APP_REST_DEFAULT_URL
 
@@ -92,27 +92,19 @@ function App() {
     >
       <Switch>
         {/* Navigation 관련 ROUTE*/}
-        <Route path="/chat" exact>
-          <ChatPage />
-        </Route>
-        <Route path="/today-cafe" exact>
-          <TodayCafe />
-        </Route>
-        <Route path="/mypage" exact>
+        <AuthRoute component={ChatPage} path="/chat" exact/>
+        <AuthRoute component={TodayCafe} path="/today-cafe" exact/>
+        <Route path="/mypage" component={MyPage} exact>
           <MyPage
             setIsAuthenticated={setIsAuthenticated}
             setIsCafeAuth={setIsCafeAuth}
             isCafeAuth={isCafeAuth}
           />
         </Route>
-        <Route path="/search" exact>
-          <SearchPage />
-        </Route>
+        <AuthRoute path="/search" component={SearchPage} exact/>
 
         {/* Login 관련 ROUTE */}
-        <Route path="/login" exact>
-          <LoginPage />
-        </Route>
+        <Route path="/login" component={LoginPage} exact/>
         <Route path="/oauth/kakao">
           <KakaoLoginGetCode setIsAuthenticated={setIsAuthenticated} />
         </Route>
@@ -121,36 +113,21 @@ function App() {
         </Route>
 
         {/* TodayCafe 관련 ROUTE */}
-        <Route path="/today-cafe/make-coffee" exact>
-          <MakeCoffee />
-        </Route>
-        <Route path="/today-cafe/fortune" exact>
-          <Fortune />
-        </Route>
+        <AuthRoute path="/today-cafe/make-coffee" component={MakeCoffee} exact/>
+        <AuthRoute path="/today-cafe/fortune" component={Fortune} exact/>
 
         {/* MyPage 관련 ROUTE */}
-        <Route path="/mypage/study" exact>
-          <StudyHistory />
-        </Route>
-        <Route path="/mypage/cafebadge" exact>
-          <MyCafeBadge />
-        </Route>
-        <Route path="/mypage/feed" exact>
-          <MyFeedPage />
-        </Route>
-        <Route path="/mypage/setting" exact>
+        <AuthRoute path="/mypage/study" component={StudyHistory} exact/>
+        <AuthRoute path="/mypage/cafebadge" component={MyCafeBadge} exact/>
+        <AuthRoute path="/mypage/feed" component={MyFeedPage} exact/>
+        <AuthRoute path="/mypage/setting" exact>
           <Grid divided="vertically" textAlign="center">
             <Settings />
           </Grid>
-        </Route>
-        <Route path="/mypage/setting/blocklist" exact>
-          <BlockList />
-        </Route>
+        </AuthRoute>
 
         {/* Error 페이지 */}
-        <Route path="/error" exact>
-          <ErrorPage />
-        </Route>
+        <AuthRoute path="/error" component={ErrorPage} exact/>
 
         {/* MainPage Route */}
         <Route path="/" exact>
@@ -161,14 +138,10 @@ function App() {
             setIsJamSurvey={setIsJamSurvey}
           />
         </Route>
-        <Route path="/map" exact>
-          <MapPage />
-        </Route>
+        <AuthRoute path="/map" component={MapPage} exact/>
 
         {/* NotFound 페이지*/}
-        <Route path="*">
-          <NotFound />
-        </Route>
+        <Route path="*" component={NotFound}/>
       </Switch>
     </Layout>
   )

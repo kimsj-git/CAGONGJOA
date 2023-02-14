@@ -57,7 +57,7 @@ const MyCafeBadgeItem = ({
     setCafeInfo({ name: myCafe.cafeName, address: myCafe.address })
   }
   return (
-    <Grid.Column width={4} style={{margin:"1rem"}}>
+    <Grid.Column width={4} style={{margin:"1rem", backgroundColor:"rgba(223, 223, 223, 0.6)", borderRadius:"80%"}}>
       <Popup
         trigger={
           <div>
@@ -67,7 +67,7 @@ const MyCafeBadgeItem = ({
             src={require(`../../../assets/cafe_logos/${
               BRAND_LOGOS[myCafe.brandType]
             }.png`)}
-            style={{ border: `1rem solid ${tierColor}`, borderRadius: "70%", marginBottom:"1rem"}}
+            style={{ border: `0.5rem solid ${tierColor}`, borderRadius: "70%", marginBottom:"1rem"}}
             />
             <p style={{fontSize:"10px", fontWeight:"bold"}}>{myCafe.cafeName}</p>
             </div>

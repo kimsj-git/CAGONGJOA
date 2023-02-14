@@ -27,7 +27,7 @@ const MyPostDetail = (props) => {
       onOpen={() => setOpen(true)}
       open={open}
       size="large"
-      trigger={<Button size="mini" color="green" floated="right">자세히</Button>}
+      trigger={<Button size="mini" color="green" style={{margin:0}}>자세히</Button>}
     >
       <Label
         color="orange"
@@ -55,8 +55,9 @@ const MyPostDetail = (props) => {
                     <Card.Meta textAlign="right">
                       {createdAt[0]} {createdAt[1]}
                     </Card.Meta>
-                    {props.post.imgUrlPath.length > 0 && props.post.imgUrlPath.map((img)=>{
+                    {props.post.imgUrlPath.length > 0 && props.post.imgUrlPath.map((img,index)=>{
                       return <Image
+                      key={index}
                       src={props.post.imgUrlPath[0]}
                       wrapped
                       ui={true}

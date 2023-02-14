@@ -18,6 +18,7 @@ import "./SideNavigation.css"
 
 const SideNavigation = ({ isCafeAuth, setIsCafeAuth, setIsJamSurvey }) => {
   const location = useLocation()
+  const path = location.pathname
   const directory = {
     "/": "home",
     "/today-cafe": "today-cafe",
@@ -49,6 +50,7 @@ const SideNavigation = ({ isCafeAuth, setIsCafeAuth, setIsJamSurvey }) => {
         paddingInline: "1.5rem 0.5rem",
         borderRight: "1px solid lightgray",
         height: "100vh",
+        display: path === "/login" || path=== "/oauth/kakao" ? "none": ""
       }}
     >
       <div style={{ margin: "0.5rem 0rem 1.5rem" }}>

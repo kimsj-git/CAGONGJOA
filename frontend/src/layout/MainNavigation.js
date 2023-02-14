@@ -1,3 +1,4 @@
+import { useLocation } from "react-router-dom"
 import { NavLink } from "react-router-dom"
 import { Icon } from "semantic-ui-react"
 import { Dock } from "primereact/dock"
@@ -7,6 +8,8 @@ import PostForm from "../components/mainPage/PostForm"
 import classes from "./MainNavigation.module.css"
 
 const MainNavigation = () => {
+  const location = useLocation()
+  const path = location.pathname
   const items = [
     {
       label: "home",
@@ -43,7 +46,7 @@ const MainNavigation = () => {
     },
   ]
   return (
-    <section className={classes.nav}>
+    <section className={classes.nav} style={{display: path === "/login"|| path === "/oauth/kakao" ? "none": ""}}>
       <Dock className={classes.nav} model={items} />
     </section>
   )
