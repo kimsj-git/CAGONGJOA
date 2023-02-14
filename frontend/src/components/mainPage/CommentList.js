@@ -24,7 +24,7 @@ const CommentList = (props) => {
   })
   const [newComment, setNewComment] = useState("")
 
-  const refreshComments = async (id) => {
+  const refreshComments = async (id=-1) => {
     await getComments({
       url: `${DEFAULT_REST_URL}/main/postDetail/comment/feed`,
       method: "POST",
@@ -61,23 +61,18 @@ const CommentList = (props) => {
     () => {
       console.log("인뷰 이펙트 실행")
       console.log(inView)
-      if (inView) {
+      if (isMounted && inView) {
         console.log("인뷰 이펙트, 마운티드 통과")
         console.log("인뷰 이펙트, 인뷰 통과")
         console.log(lastCommentId)
         refreshComments(lastCommentId)
       }
     },
-    // else {
-    // console.log("인뷰 이펙트, 마운티드 통과 못함")
-    // refreshComments(-1)
-    // }
-    // }
     [inView]
   )
   useEffect(() => {
     console.log("댓글 이펙트 실행")
-    if (isMounted.current) {
+    // if (isMounted.current) {
       console.log("댓글 이펙트, 마운티드 통과")
       dispatch(
         commentsActions.updateComments({
@@ -85,10 +80,10 @@ const CommentList = (props) => {
           lastCommentId: lastCommentId,
         })
       )
-    } else {
-      console.log("댓글 이펙트, 마운티드 통과 못함")
-      isMounted.current = true
-    }
+    // } else {
+    //   console.log("댓글 이펙트, 마운티드 통과 못함")
+    //   isMounted.current = true
+    // }
   }, [fetchedComments])
 
   return (
@@ -103,6 +98,7 @@ const CommentList = (props) => {
                 key={comment.commentId}
                 comment={comment}
                 addNewComment={addNewComment}
+                refreshComments={refreshComments}
               />
             )
           })}
@@ -112,9 +108,10 @@ const CommentList = (props) => {
       <Divider />
       <Form
         reply
-        onSubmit={() => {
+        onSubmit={(e) => {
           addNewComment(newComment, -1)
-          setNewComment("")
+          // e.target[0].value = ""
+          
         }}
       >
         <Form.Input
@@ -125,7 +122,7 @@ const CommentList = (props) => {
             icon: "paper plane",
           }}
           size="tiny"
-          // value={newComment}
+          // content={newComment}
           onChange={(e) => {
             setNewComment(e.target.value)
           }}

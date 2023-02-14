@@ -192,7 +192,7 @@ public class MyPageServiceImpl implements MyPageService {
             int commentCount = slice.getCommentList().size();
 
             MyFeedResponseDto myFeedResponseDto = MyFeedResponseDto.builder()
-                    .isCafeAuthorized(slice.isCafeAuthorized())
+                    .isCafeAuthorized(slice.getIsCafeAuthorized())
                     .postId(slice.getId())
                     .imgUrlPath(imgUrlPath)
                     .createdAt(slice.getCreatedAt())
@@ -203,7 +203,7 @@ public class MyPageServiceImpl implements MyPageService {
                     .postType(slice.getPostType())
                     .build();
 
-            if (slice.isCafeAuthorized()) {
+            if (slice.getIsCafeAuthorized()) {
                 if (slice.getPostCafeList() == null || slice.getPostCafeList().isEmpty()) {
                     throw new PostException(PostExceptionType.NO_POST_CAFE);
                 }
@@ -246,17 +246,22 @@ public class MyPageServiceImpl implements MyPageService {
         MyCommentResponseDto commentResponseDto;
         for (int i = 0; i < postList.size(); i++) {
             Comment comment = commentSlice.getContent().get(i);
-            Post post = postList.get(i);
-
             commentResponseDto = MyCommentResponseDto.builder()
+                    .commentId(comment.getId())
                     .commentContent(comment.getContent())
                     .commentLikeCnt(comment.getCommentLikeList().size())
-                    .postContent(post.getContent())
+                    .postContent(comment.getPost().getContent())
 //                    .cafeName(post.getPostCafeList())
                     .createdAt(comment.getCreatedAt())
                     .build();
+            if(comment.getPost().getIsCafeAuthorized()) {
+                System.out.println("인증된 글");
+                commentResponseDto.updateCafeName(comment.getPost().getPostCafeList().get(0).getCafe().getName());
+            }
+
+            commentResponseDtoList.add(commentResponseDto);
         }
 
-        return null;
+        return commentResponseDtoList;
     }
 }
