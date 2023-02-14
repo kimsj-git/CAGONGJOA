@@ -2,6 +2,7 @@
 import { useEffect } from "react"
 import KakaoLogin from "../../components/member/login/KakaoLogin"
 import { Image } from "semantic-ui-react"
+import "./LoginPage.css"
 
 const LoginPage = () => {
   useEffect(() => {
@@ -42,7 +43,40 @@ const LoginPage = () => {
         />
         <Image src={require("../../assets/icons/bean.png")} size="tiny" />
       </div> */}
-
+      <div className="map-box">
+        <div className="circular-border" style={{ top: "-5%", left: "-10%" }} />
+        <div className="circular-border" style={{ top: "30%", left: "-15%" }} />
+        <div className="circular-border" style={{ top: "-10%", left: "30%" }} />
+        <div className="circular-border" style={{ top: "30%", left: "30%" }} />
+        <Image className="map" src={require("../../assets/map5.jpg")} />
+        <Image
+          src={require("../../assets/icons/coffee_location_red.png")}
+          size="small"
+          style={{
+            position: "absolute",
+            top: "10%",
+            left: "10%",
+          }}
+        />
+        <Image
+          src={require("../../assets/icons/coffee_location_yellow.png")}
+          size="small"
+          style={{
+            position: "absolute",
+            top: "20%",
+            left: "20%",
+          }}
+        />
+        <Image
+          src={require("../../assets/icons/coffee_location_green.png")}
+          size="small"
+          style={{
+            position: "absolute",
+            top: "30%",
+            left: "30%",
+          }}
+        />
+      </div>
       <Image
         src={require("../../assets/icons/kagongjoa_logo.png")}
         size="medium"

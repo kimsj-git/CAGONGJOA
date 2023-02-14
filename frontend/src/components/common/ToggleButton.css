@@ -8,12 +8,14 @@
   background-color: #ff695e;
   box-shadow: none !important;
   color: #fff;
+  transition: all 0.4s ease;
 }
 
 #cancle-like {
   background-color: transparent;
   box-shadow: 0 0 0 2px #ff695e inset !important;
   color: #ff695e;
+  transition: all 0.4s ease;
 }
 
 #crowded {

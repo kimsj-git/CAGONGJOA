@@ -1,0 +1,28 @@
+.map-box {
+  position: relative;
+  width: 50vw;
+}
+
+.map-box:before {
+  content: "";
+  display: block;
+  padding-top: 100%;
+}
+
+.map-box .map {
+  filter: brightness(1.05) sepia(20%);
+  position: absolute !important;
+  top: 2%;
+  left: 1%;
+  border-radius: 100%;
+  height: 50%;
+}
+
+.circular-border {
+  color: transparent;
+  border: 1px solid white;
+  width: 50%;
+  height: 50%;
+  border-radius: 100%;
+  position: absolute;
+}
