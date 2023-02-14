@@ -7,10 +7,12 @@ const ToggleButton = (props) => {
   const [btnState, setBtnState] = useState(
     props.btnType === "like" ? props.isLiked : false
   )
+  const [visibility, setVisibility] = useState(true)
   const handleClick = () => {
     props.btnType === "like" && props.likeHandler(btnState)
     props.btnType === "hot" && props.onHotSelect()
     setBtnState(!btnState)
+    setVisibility((prev) => !prev)
   }
 
   const {
@@ -23,7 +25,7 @@ const ToggleButton = (props) => {
     icon = "thumbs up",
   } = props
   return (
-    <Transition animation="pulse" duration={300} visible={btnState}>
+    <Transition animation="pulse" duration={300} visible={visibility}>
       <Button
         id={
           grouped

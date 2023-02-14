@@ -29,6 +29,7 @@ public class CommentPagingResponseDto {
         this.verifiedCafeName = verifiedCafeName;
         this.exp = exp;
         this.cafeBrandType = cafeBrandType;
+        this.writerType = true;
 
     }
 }

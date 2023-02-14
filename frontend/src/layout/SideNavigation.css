@@ -19,6 +19,9 @@
   }
 }
 
+.side-bar {
+  /* background-color: rgb(255, 244, 184) !important; */
+}
 .side-bar * {
   white-space: nowrap;
 }
