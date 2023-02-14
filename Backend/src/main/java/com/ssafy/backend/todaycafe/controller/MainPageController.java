@@ -83,4 +83,13 @@ public class MainPageController {
         return new ResponseEntity<>(responseDTO, HttpStatus.OK);
     }
 
+    @Auth
+    @CafeAuth
+    @GetMapping("/acctime")
+    public ResponseEntity<ResponseDTO> getAccTime(@RequestParam int todayDate) {
+        int accTime = todayCafeService.getAccTime(todayDate);
+        responseDTO = new ResponseDTO("현재 카페 누적시간 제공 완료", "", HttpStatus.OK, accTime);
+        return new ResponseEntity<>(responseDTO, HttpStatus.OK);
+    }
+
 }

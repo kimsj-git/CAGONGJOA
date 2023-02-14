@@ -27,4 +27,6 @@ public interface TodayCafeService {
 
     /** 7. 타임바에 추가하기   **/
     int addTimeBar();
+
+    int getAccTime(int todayDate);
 }
