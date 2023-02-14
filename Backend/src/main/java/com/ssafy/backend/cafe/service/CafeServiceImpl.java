@@ -17,6 +17,7 @@ import com.ssafy.backend.member.domain.entity.MemberCafeTier;
 import com.ssafy.backend.member.repository.MemberCafeTierRepository;
 import com.ssafy.backend.member.repository.MemberRepository;
 import com.ssafy.backend.member.service.MemberService;
+import com.ssafy.backend.member.util.MemberUtil;
 import com.ssafy.backend.post.util.PostUtil;
 import com.ssafy.backend.redis.CafeAuth;
 import com.ssafy.backend.redis.CafeAuthRepository;
@@ -51,11 +52,11 @@ public class CafeServiceImpl implements CafeService {
     private final CafeRepository cafeRepository;
     private final MemberRepository memberRepository;
     private final MemberCafeTierRepository memberCafeTierRepository;
-    private final PostUtil postUtil;
     private final CafeCrowdRepository cafeCrowdRepository;
     private final CafeVisitLogRepository cafeVisitLogRepository;
     private final CafeLocationRepository cafeLocationRepository;
     private final SurveyRepository surveyRepository;
+    private final MemberUtil memberUtil;
 
 
     @Override
@@ -470,8 +471,8 @@ public class CafeServiceImpl implements CafeService {
 
     @Override
     public void saveTier() {
-        String nickname = postUtil.checkMember().getNickname();
-        Long memberId = postUtil.checkMember().getMemberId();
+        String nickname = memberUtil.checkMember().getNickname();
+        Long memberId = memberUtil.checkMember().getMemberId();
         CafeAuth cafeAuth = cafeAuthRepository.findById(nickname).get();
         Long cafeId = cafeAuth.getCafeId();
         Optional<MemberCafeTier> optionalMemberCafeTier = memberCafeTierRepository.findByMemberIdAndCafeId(memberId, cafeId);

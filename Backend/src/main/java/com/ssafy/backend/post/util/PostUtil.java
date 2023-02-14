@@ -3,6 +3,9 @@ package com.ssafy.backend.post.util;
 
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.*;
+import com.ssafy.backend.cafe.domain.dto.ClientPosInfoDto;
+import com.ssafy.backend.cafe.domain.dto.NearByCafeResultDto;
+import com.ssafy.backend.cafe.service.CafeServiceImpl;
 import com.ssafy.backend.common.exception.jwt.JwtException;
 import com.ssafy.backend.common.exception.post.PostException;
 import com.ssafy.backend.common.exception.post.PostExceptionType;
@@ -30,31 +33,12 @@ public class PostUtil {
     private final AmazonS3 amazonS3;
     @Value("${cloud.aws.s3.bucket}")
     private String bucket;
-    private PostImage postImage;
     private final PostImageRepository imageRepository;
     private final MemberServiceImpl memberService;
+    private final CafeServiceImpl cafeService;
 
 
-    /**
-     * 0. 유저 확인
-     **/
-    public CheckedResponseDto checkMember() {
-
-        // 1. accessToken 을 해독하여, payload 에서 memberId 와 nickname 을 가져온다.
-        MemberIdAndNicknameDto memberIdAndNicknameDto = memberService.getMemberIdAndNicknameByJwtToken();
-        if (memberIdAndNicknameDto == null) throw new JwtException(JWT_VERIFICATION_EXCEPTION); // JWT 유효성 체크
-        Long memberId = memberIdAndNicknameDto.getId();
-        String nickname = memberIdAndNicknameDto.getNickname();
-
-        CheckedResponseDto checkedResponseDto = CheckedResponseDto.builder()
-                .nickname(nickname)
-                .memberId(memberId)
-                .build();
-
-        return checkedResponseDto;
-    }
-
-    public List<PostImage>  imageUpload(Post post, MultipartFile[] multipartFiles){
+    public List<PostImage> imageUpload(Post post, MultipartFile[] multipartFiles) {
         ObjectMetadata objectMetaData = new ObjectMetadata();
         List<PostImage> postImages = imageRepository.findAllByPostId(post.getId());
 
@@ -65,7 +49,7 @@ public class PostUtil {
         for (MultipartFile multipartFile : multipartFiles) {
             long size = multipartFile.getSize(); // 파일 크기
             System.out.println("파일 사이즈 : " + size);
-            if(size == 0) {
+            if (size == 0) {
                 continue;
             }
             String originalName = multipartFile.getOriginalFilename(); // 파일 원래이름 (xxx.jpg) 갖고오기
@@ -95,7 +79,7 @@ public class PostUtil {
             // S3 서버에서 변환된 URL 가져오기
             String imagePath = amazonS3.getUrl(bucket, randomName).toString();
 
-            postImage = PostImage.builder()
+            PostImage postImage = PostImage.builder()
                     .imgUrl(imagePath)
                     .post(post)
                     .accessKey(randomName)
@@ -125,6 +109,26 @@ public class PostUtil {
         }
         imageRepository.deleteAllByIdIn(deleteIdList);
 
+    }
+
+    public List<Long> getNearByCafeIdList(Double latitude, Double longitude, Double dist) {
+
+        // 3. 주변 카페들 정보 알아오기 - 주변 카페에 해당되는 글들만 된다.
+        ClientPosInfoDto clientPosInfoDto = new ClientPosInfoDto(latitude, longitude, dist);
+        List<NearByCafeResultDto> nearByCafeResultDtos = cafeService.getNearByCafeLocations(clientPosInfoDto);
+
+        if (nearByCafeResultDtos.isEmpty() || nearByCafeResultDtos == null) {
+            throw new PostException(PostExceptionType.NO_CAFE_AROUND);
+        } else {
+            System.out.println(" 글 불러오기 - 주변 카페 개수 : " + nearByCafeResultDtos.size() + "개       " + nearByCafeResultDtos);
+        }
+        // cafe id 만 전달해줄거임
+        List<Long> cafeIdList = new ArrayList<>();
+        for (NearByCafeResultDto dto : nearByCafeResultDtos) {
+            cafeIdList.add(dto.getId().longValue());
+        }
+        System.out.println("주변 카페 Id 리스트 전달완료!");
+        return cafeIdList;
     }
 
 }

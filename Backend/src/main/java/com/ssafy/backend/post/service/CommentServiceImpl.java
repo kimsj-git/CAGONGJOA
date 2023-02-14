@@ -9,6 +9,7 @@ import com.ssafy.backend.member.domain.entity.Member;
 import com.ssafy.backend.member.domain.entity.MemberCafeTier;
 import com.ssafy.backend.member.repository.MemberCafeTierRepository;
 import com.ssafy.backend.member.repository.MemberRepository;
+import com.ssafy.backend.member.util.MemberUtil;
 import com.ssafy.backend.post.domain.dto.*;
 import com.ssafy.backend.post.domain.entity.Comment;
 import com.ssafy.backend.post.domain.entity.CommentLike;
@@ -35,6 +36,7 @@ public class CommentServiceImpl implements CommentService {
     private final CommentLikeRepository commentLikeRepository;
     private final MemberRepository memberRepository;
     private final PostUtil postUtil;
+    private final MemberUtil memberUtil;
     private final CafeAuthRepository cafeAuthRepository;
     private final MemberCafeTierRepository memberCafeTierRepository;
 
@@ -44,7 +46,7 @@ public class CommentServiceImpl implements CommentService {
     @Override
     public List<CommentPagingResponseDto> feedComment(CommentPagingRequestDto requestDto) {
         // 가지고와야할 값 - 댓글, 대댓글 / 작성시간 /
-        postUtil.checkMember();
+        memberUtil.checkMember();
 
         List<CommentPagingResponseDto> commentResponseList = new ArrayList<>();
         Long commentId = requestDto.getCommentId();
@@ -102,7 +104,7 @@ public class CommentServiceImpl implements CommentService {
     @Override
     public Long writeComment(CommentWriteRequestDTO commentWriteDto) {
         //1. 유저 확인
-        CheckedResponseDto checked = postUtil.checkMember();
+        CheckedResponseDto checked = memberUtil.checkMember();
         Long memberId = checked.getMemberId(); // 멤버 아이디를 확인한다.
         // 2. 값 확인
         Long commentId = commentWriteDto.getCommentId();
@@ -145,7 +147,7 @@ public class CommentServiceImpl implements CommentService {
 
     @Override
     public void updateComment(CommentUpdateRequestDTO commentUpdateDto) {
-        CheckedResponseDto checked = postUtil.checkMember();
+        CheckedResponseDto checked = memberUtil.checkMember();
         Long commentId = commentUpdateDto.getCommentId();
 
         Optional<Comment> optionalComment = commentRepository.findById(commentId);
@@ -181,7 +183,7 @@ public class CommentServiceImpl implements CommentService {
         Boolean responseIsChecked;
 
         //1. 유저 확인
-        CheckedResponseDto checked = postUtil.checkMember();
+        CheckedResponseDto checked = memberUtil.checkMember();
         long memberId = checked.getMemberId(); // 멤버 아이디를 확인한다.
         boolean isChecked = requestDto.isChecked();
         Long commentId = requestDto.getCommentId();
@@ -231,7 +233,7 @@ public class CommentServiceImpl implements CommentService {
     @Override
     public void deleteComment(Long commentId) {
         //1. 유저를 확인한다.
-        CheckedResponseDto checked = postUtil.checkMember();
+        CheckedResponseDto checked = memberUtil.checkMember();
         long memberId = checked.getMemberId(); // 멤버 아이디를 확인한다.
 
         //2. 유저(나) 와 댓글유저가 일치하는지 확인한다.

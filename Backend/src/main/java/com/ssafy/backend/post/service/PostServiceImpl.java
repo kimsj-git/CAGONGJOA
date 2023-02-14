@@ -14,10 +14,12 @@ import com.ssafy.backend.member.domain.entity.MemberCafeTier;
 import com.ssafy.backend.member.repository.MemberCafeTierRepository;
 import com.ssafy.backend.member.repository.MemberRepository;
 import com.ssafy.backend.member.service.MemberServiceImpl;
+import com.ssafy.backend.member.util.MemberUtil;
 import com.ssafy.backend.post.domain.dto.*;
 import com.ssafy.backend.post.domain.entity.*;
 import com.ssafy.backend.post.domain.enums.PostType;
 import com.ssafy.backend.post.repository.*;
+import com.ssafy.backend.post.util.PagingUtil;
 import com.ssafy.backend.post.util.PostUtil;
 import com.ssafy.backend.redis.CafeAuth;
 import com.ssafy.backend.redis.CafeAuthRepository;
@@ -45,7 +47,9 @@ public class PostServiceImpl implements PostService {
     private final MemberCafeTierRepository memberCafeTierRepository;
     private final PostCafeRepository postCafeRepository;
     // Util
+    private final PagingUtil pagingUtil;
     private final PostUtil postUtil;
+    private final MemberUtil memberUtil;
     private final CafeServiceImpl cafeService;
     private final PostImageRepository imageRepository;
 
@@ -56,7 +60,7 @@ public class PostServiceImpl implements PostService {
     public Long writePost(MultipartFile[] files, PostWriteFormRequestDto requestDto) {
 
         //1. 유저 확인
-        CheckedResponseDto checked = postUtil.checkMember();
+        CheckedResponseDto checked = memberUtil.checkMember();
         long memberId = checked.getMemberId(); // 멤버 아이디를 확인한다.
         Double latitude = requestDto.getLatitude();
         Double longitude = requestDto.getLongitude();
@@ -144,7 +148,7 @@ public class PostServiceImpl implements PostService {
             throw new PostException(PostExceptionType.BAD_POST_ID);
         }
         Post post = postOptional.get();
-        long memberId = postUtil.checkMember().getMemberId();
+        long memberId = memberUtil.checkMember().getMemberId();
         long writerId = post.getMember().getId();
         if (memberId != writerId) {
             throw new PostException(PostExceptionType.USER_IS_NOT_WRITER);
@@ -161,60 +165,14 @@ public class PostServiceImpl implements PostService {
     public Map<String, Object> feedPosts(PostPagingRequestDto requestDto, Pageable pageable) {
         String cafeName;
         Boolean hasNext;
-        Slice<Post> postSlice;
         // 1. 유저 기본사항을 체크한다. OK
-        CheckedResponseDto checked = postUtil.checkMember();
+        CheckedResponseDto checked = memberUtil.checkMember();
 
-        // 2. request Dto 값들 체크 - OK
-        Long postId = requestDto.getPostId();
-        List<PostType> types = requestDto.getTypes();
-        Double latitude = requestDto.getLatitude();
-        Double longitude = requestDto.getLongitude();
-        Double dist = requestDto.getDist();
+        // 2. 주변 카페들 정보 알아오기 - 주변 카페에 해당되는 글들만 된다.
+        List<Long> cafeIdList = postUtil.getNearByCafeIdList(requestDto.getLatitude(), requestDto.getLongitude(),requestDto.getDist());
+        // 3. 카테고리로 나누어 하기
+        Slice<Post> postSlice = pagingUtil.getPostFeeds(cafeIdList, requestDto.getPostId(), requestDto.getTypes(), pageable);
 
-        // 3. 주변 카페들 정보 알아오기 - 주변 카페에 해당되는 글들만 된다.
-        ClientPosInfoDto clientPosInfoDto = new ClientPosInfoDto(latitude, longitude, dist);
-        List<NearByCafeResultDto> nearByCafeResultDtos = cafeService.getNearByCafeLocations(clientPosInfoDto);
-
-        if (nearByCafeResultDtos.isEmpty() || nearByCafeResultDtos == null) {
-            throw new PostException(PostExceptionType.NO_CAFE_AROUND);
-        } else {
-            System.out.println(" 글 불러오기 - 주변 카페 개수 : " + nearByCafeResultDtos.size() + "개       " + nearByCafeResultDtos);
-        }
-        // cafe id 만 전달해줄거임
-        List<Long> cafeIdList = new ArrayList<>();
-        for (NearByCafeResultDto dto : nearByCafeResultDtos) {
-            cafeIdList.add(dto.getId().longValue());
-        }
-        System.out.println(cafeIdList);
-
-        if (types.contains(PostType.hot)) { // 핫 게시물을 포함하고 있을 때
-
-            if (postId == -1L) {
-                // 처음 요청할때 (refresh)
-                System.out.println("hot 첫번째요청");
-                postSlice = postRepository.findHotPostNext(cafeIdList, Long.MAX_VALUE, pageable);
-            } else {
-                // 두번째 이상으로 요청할 때 (마지막 글의 pk 를 기준으로 함)
-                System.out.println("hot 두번째이상 요청");
-                postSlice = postRepository.findHotPostNext(cafeIdList, postId, pageable);
-                // 갖고올 게시물이 없으면
-            }
-
-        } else { //
-
-            if (postId == -1L) {
-                // 처음 요청할때 (refresh)
-                System.out.println("피드 첫번째 요청");
-                postSlice = postRepository.findNextFeed(Long.MAX_VALUE, types, cafeIdList, pageable);
-            } else {
-                // 두번째 이상으로 요청할 때 (마지막 글의 pk 를 기준으로 함)
-                System.out.println("두번째이상 요청");
-                postSlice = postRepository.findNextFeed(postId, types, cafeIdList, pageable);
-                // 갖고올 게시물이 없으면
-            }
-        }
-//         post를 slice 형태로 갖고오기
 
         List<PostPagingResponseDto> postResponseDtoList = new ArrayList<>();
         if (postSlice.isEmpty() || postSlice == null) { // 불러올 게시물이 없을 때
@@ -282,7 +240,7 @@ public class PostServiceImpl implements PostService {
     @Override
     public PostDetailResponseDto findOnePost(Long postId) {
         // 1. 로그인된 유저의 정보를 확인한다.
-        CheckedResponseDto checked = postUtil.checkMember();
+        CheckedResponseDto checked = memberUtil.checkMember();
         String nickname = checked.getNickname();
 
         Optional<Post> postOptional = postRepository.findById(postId);
@@ -324,7 +282,7 @@ public class PostServiceImpl implements PostService {
     public PostLikeResponseDto likePost(PostLikeRequestDto likeRequestDto) {
 
         //1. 유저 확인
-        CheckedResponseDto checked = postUtil.checkMember();
+        CheckedResponseDto checked = memberUtil.checkMember();
         long memberId = checked.getMemberId(); // 멤버 아이디를 확인한다.
 
         Long postId = likeRequestDto.getPostId();
@@ -403,74 +361,29 @@ public class PostServiceImpl implements PostService {
         String cafeName;
         Slice<Post> postList;
         // 1. 유저 기본사항을 체크한다. OK
-        CheckedResponseDto checked = postUtil.checkMember();
+        CheckedResponseDto checked = memberUtil.checkMember();
         Long memberId = checked.getMemberId();
 
         // 2. request Dto 값들 체크 - OK
         Long postId = requestDto.getPostId();
-        int searchType = requestDto.getSearchType();
-        Double latitude = requestDto.getLatitude();
-        Double longitude = requestDto.getLongitude();
-        Double dist = requestDto.getDist();
-        String searchKeyword = requestDto.getSearchKey();
 
-        // 3. 주변 카페들 정보 알아오기 - 주변 카페에 해당되는 글들만 된다.
-        ClientPosInfoDto clientPosInfoDto = new ClientPosInfoDto(latitude, longitude, dist);
-        List<NearByCafeResultDto> nearByCafeResultDtos = cafeService.getNearByCafeLocations(clientPosInfoDto);
+        // 2. 주변 카페들 정보 알아오기 - 주변 카페에 해당되는 글들만 된다.
+        List<Long> cafeIdList = postUtil.getNearByCafeIdList(requestDto.getLatitude(), requestDto.getLongitude(),requestDto.getDist());
+        // 3. 카테고리로 나누어 하기
+        Slice<Post> postSlice = pagingUtil.getSearchedFeeds(cafeIdList, requestDto.getPostId(), requestDto.getSearchKey(), requestDto.getSearchType(), pageable);
 
-        if (nearByCafeResultDtos.isEmpty() || nearByCafeResultDtos == null) {
-            throw new PostException(PostExceptionType.NO_CAFE_AROUND);
-        } else {
-            System.out.println(" 글 불러오기 - 주변 카페 개수 : " + nearByCafeResultDtos.size() + "개       " + nearByCafeResultDtos);
-        }
-        // cafe id 만 전달해줄거임
-        List<Long> cafeIdList = new ArrayList<>();
-        for (NearByCafeResultDto dto : nearByCafeResultDtos) {
-            cafeIdList.add(dto.getId().longValue());
-        }
-
-        if (searchType == 1) { // 글 내용으로 찾기
-
-            if (postId == -1L) {
-                // 처음 요청할때 (refresh)
-                System.out.println("글내용으로 찾기 첫번째 요청");
-                postList = postRepository.findBySearchContentFirst(cafeIdList, searchKeyword, pageable);
-
-            } else {
-                // 두번째 이상으로 요청할 때 (마지막 글의 pk 를 기준으로 함)
-                System.out.println("글내용으로 찾기 다음 요청");
-                postList = postRepository.findBySearchContentNext(cafeIdList, searchKeyword, postId, pageable);
-                // 갖고올 게시물이 없으면
-            }
-
-        } else if (searchType == 2) { // 유저 이름으로 찾기
-
-            if (postId == -1L) {
-                // 처음 요청할때 (refresh)
-                System.out.println("유저 이름으로 찾기 첫번째 요청");
-                postList = postRepository.findBySearchNicknameFirst(cafeIdList,searchKeyword, pageable);
-            } else {
-                // 두번째 이상으로 요청할 때 (마지막 글의 pk 를 기준으로 함)
-                System.out.println("유저 이름으로 찾기 다음 요청");
-                postList = postRepository.findBySearchNicknameNext(cafeIdList,searchKeyword,postId, pageable);
-                // 갖고올 게시물이 없으면
-            }
-
-        } else {
-            throw new PostException(PostExceptionType.NOT_ALLOWED_TYPE);
-        }
 //         post를 slice 형태로 갖고오기
 
-        if (postList.isEmpty() || postList == null) { // 불러올 게시물이 있을때
+        if (postSlice.isEmpty() || postSlice == null) { // 불러올 게시물이 있을때
             throw new PostException(PostExceptionType.NO_POST_FEED);
         }
-        if(postList.hasNext()) {
+        if(postSlice.hasNext()) {
 
         }
 
         // 5. 리턴값 채워넣기
         List<PostSearchResponseDto> responseDtoList = new ArrayList<>();
-        for (Post slice : postList) {
+        for (Post slice : postSlice) {
             Optional<Post> optionalPost = postRepository.findById(slice.getId());
             Post post = optionalPost.get();
             List<PostImage> postImages = imageRepository.findAllByPostId(postId);
@@ -488,7 +401,7 @@ public class PostServiceImpl implements PostService {
                     .postId(slice.getId())
                     .imgUrlPath(imgUrlPath)
                     .createdAt(post.getCreatedAt())
-                    .searchType(searchType)
+                    .searchType(requestDto.getSearchType())
                     .content(post.getContent())
                     .commentCount(commentCount)
                     .writerNickname(post.getMember().getNickname())
