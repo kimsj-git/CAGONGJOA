@@ -2,6 +2,8 @@ package com.ssafy.backend.cafe.controller;
 
 import com.ssafy.backend.cafe.domain.dto.*;
 import com.ssafy.backend.cafe.service.CafeService;
+import com.ssafy.backend.common.annotation.Auth;
+import com.ssafy.backend.common.annotation.CafeAuth;
 import com.ssafy.backend.common.dto.ResponseDTO;
 import com.ssafy.backend.member.service.MemberService;
 import com.ssafy.backend.todaycafe.domain.dto.TodoResponseDto;
@@ -33,6 +35,18 @@ public class CafeController {
         // 15분 마다 클라이언트로부터 비동기로 레디스 체크 -> 인증된 상태라면 레디스 데이터 삭제 후 재생성 (time out 시간 초기화)
         cafeService.checkCafeAuth();
         ResponseDTO responseDTO = new ResponseDTO("위치 인증 체크 완료!", "", HttpStatus.OK, null);
+        return new ResponseEntity<>(responseDTO, HttpStatus.OK);
+    }
+
+
+    @Auth
+    @CafeAuth
+    @GetMapping("/auth/initCheck")
+    public ResponseEntity<ResponseDTO> initCheckCafeAuth() {
+        // 최초 접속시 위치인증 여부를 체크하고, 위치인증이 되었다면 카페 상호명과 위경도를 제공
+        InitCafeAuthRespDto respDto = cafeService.initCheckCafeAuth();
+
+        ResponseDTO responseDTO = new ResponseDTO("처음 접속시 위치 인증 체크 완료!", "", HttpStatus.OK, respDto);
         return new ResponseEntity<>(responseDTO, HttpStatus.OK);
     }
 

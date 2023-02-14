@@ -177,6 +177,32 @@ public class CafeServiceImpl implements CafeService {
         return 0;
     }
 
+    @Override
+    public InitCafeAuthRespDto initCheckCafeAuth() {
+        // @CafeAuth로 위치인증은 된 상황
+        String nickname = memberService.getMemberIdAndNicknameByJwtToken().getNickname();
+        Optional<CafeAuth> cafeAuthOptional = cafeAuthRepository.findById(nickname); // key = nickname
+        CafeAuth cafeAuth = cafeAuthOptional.orElseThrow(() -> new CafeException(CafeExceptionType.CAFE_AUTH_EXPIRED));
+
+        long cafeId = cafeAuth.getCafeId();
+
+        // cafeId로 위경도 가져오기
+        Optional<CafeLocation> optionalCafeLocation = cafeLocationRepository.findByCafeId(cafeId);
+        CafeLocation cafeLocation
+                = optionalCafeLocation.orElseThrow(() -> new CafeException(CafeExceptionType.CAFE_NOT_EXIST));
+
+        String cafeName = cafeLocation.getCafe().getName();
+
+
+        InitCafeAuthRespDto respDto = InitCafeAuthRespDto.builder()
+                .cafeName(cafeName)
+                .latitude(cafeLocation.getLat())
+                .longitude(cafeLocation.getLng())
+                .build();
+
+        return respDto;
+    }
+
 
     @Override
     public void saveCrowdLevel(CrowdCheckReqDto crowdCheckReqDto) {
@@ -363,27 +389,21 @@ public class CafeServiceImpl implements CafeService {
         String nickname = memberService.getMemberIdAndNicknameByJwtToken().getNickname();
         Optional<CafeAuth> cafeAuthOptional = cafeAuthRepository.findById(nickname); // key = nickname
 
-        // 레디스에 인증정보가 없다면
-        if (cafeAuthOptional.isEmpty()) {
-            throw new CafeException(CafeExceptionType.CAFE_AUTH_EXPIRED);
-        }
+        // 레디스에 인증정보가 없다면 에러
+        CafeAuth cafeAuth = cafeAuthOptional.orElseThrow(() -> new CafeException(CafeExceptionType.CAFE_AUTH_EXPIRED));
 
         // 존재한다면 삭제후 갱신
-        long cafeId = cafeAuthOptional.get().getCafeId();
-        System.out.println("cafeId = " + cafeId);
-        System.out.println("nickname = " + nickname);
-
+        long cafeId = cafeAuth.getCafeId();
         cafeAuthRepository.deleteById(nickname);
 
-        CafeAuth cafeAuth = CafeAuth.builder()
+        CafeAuth newCafeAuth = CafeAuth.builder()
                 .cafeId(cafeId)
                 .nickname(nickname)
                 .expiration(600) // 600초
                 .build();
 
-        cafeAuthRepository.save(cafeAuth);
+        cafeAuthRepository.save(newCafeAuth);
     }
-
 
 
     @Override
@@ -417,7 +437,6 @@ public class CafeServiceImpl implements CafeService {
         if (cafeAuthOptional.isEmpty()) {
             throw new CafeException(CafeExceptionType.CAFE_AUTH_SAVE_FAIL);
         }
-
     }
 
 
