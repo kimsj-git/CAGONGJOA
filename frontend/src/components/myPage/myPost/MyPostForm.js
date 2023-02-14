@@ -19,10 +19,12 @@ import { postsActions } from "../../../store/posts.js";
 
 const DEFAULT_REST_URL = process.env.REACT_APP_REST_DEFAULT_URL;
 const MyPostForm = (props) => {
+  console.log(props)
   const dispatch = useDispatch();
   // 현재 카페 정보 가져오기
   const isAuthenticated = sessionStorage.getItem("cafeAuth");
-  let currentCafe = null;
+  const [currentCafe,setCurrentCafe] = useState(null)
+  const [isLoading, setIsLoading] = useState(false)
 
   // const { data: newPostId, isLoading, sendRequest: newPost } = useFetch()
   // 모달창 상태 관리
@@ -145,6 +147,7 @@ const submitHandler = async () => {
   };
 
   const onPostFormOpen = () => {
+    setIsLoading(true)
     setFirstOpen(true);
     setPostContent(props.isEditing ? props.postToEdit.content : "");
     setPostType(
@@ -154,18 +157,21 @@ const submitHandler = async () => {
         ? "free"
         : "qna"
     );
-    sessionStorage.getItem("cafeAuth")
-      ? (currentCafe = JSON.parse(sessionStorage.getItem("myCafe"))?.cafeName)
-      : (currentCafe = null);
-    dispatch(imageActions.uploadImage(...props.postToEdit.images));
-    console.log('PostForm Opened')
+    if (sessionStorage.getItem("cafeAuth") === '1'){
+      setCurrentCafe(JSON.parse(sessionStorage.getItem("myCafe")).cafeName)
+    }
+    if (props.isEditing) {
+      dispatch(imageActions.uploadImage(...props.postToEdit.imgUrlPath));
+    } 
+    setIsLoading(false)
   }
 
   return (
     <>
+    {!isLoading && 
       <Modal
-        open={firstOpen}
-        onClose={() => {
+      open={firstOpen}
+      onClose={() => {
           setFirstOpen(false);
           dispatch(imageActions.closeModal());
           setPostContent("");
@@ -175,9 +181,9 @@ const submitHandler = async () => {
         trigger={
           isStudyHistory ? (
             <Button
-              onClick={props.onCaptureHandler}
-              style={{
-                marginTop: "1rem",
+            onClick={props.onCaptureHandler}
+            style={{
+              marginTop: "1rem",
                 backgroundColor: "#FFD700",
                 opacity: "36%",
                 border: "1.5px dashed black",
@@ -185,7 +191,7 @@ const submitHandler = async () => {
                 borderRadius: "10px",
                 boxShadow: "0px 4px 4px rgba(0,0,0,0.25)",
               }}
-            >
+              >
               <Icon name="star" color="orange" style={{ opacity: "100%" }} />
               자랑하기
             </Button>
@@ -198,12 +204,12 @@ const submitHandler = async () => {
                 flexDirection: "row",
                 alignItems: "center",
               }}
-            >
+              >
               {props.activeItem === "post" ? (
                 <BsPencilFill size="30" color="black" />
-              ) : (
-                <BsPencil size="30" color="black" />
-              )}
+                ) : (
+                  <BsPencil size="30" color="black" />
+                  )}
               {props.isMainNavigation ? "" : <p>글 쓰기</p>}
             </div>
           )
@@ -211,12 +217,14 @@ const submitHandler = async () => {
       >
         <Modal.Header>
           {props.isEditing
-            ? props.postToEdit.cafeName + "의 이야기를 들려주세요!"
+            ? props.postToEdit.cafeName 
+            ? props.postToEdit.cafeName + "의 이야기를 들려주세요!" 
+            : "근처 유저들에게 질문을 남겨보세요!"
             : currentCafe
-            ? currentCafe + "의 이야기를 들려주세요!"
-            : sessionStorage.getItem("address")?.split(" ").at(-1) +
-              " 근처 유저들에게 질문을 남겨보세요!"}
+              ? currentCafe + "의 이야기를 들려주세요!"
+              : sessionStorage.getItem("address")?.split(" ").at(-1) + " 근처 유저들에게 질문을 남겨보세요!"}
         </Modal.Header>
+
 
         {/* <Image size="medium" src="/images/wireframe/image.png" wrapped /> */}
         <Modal.Content scrolling>
@@ -228,28 +236,26 @@ const submitHandler = async () => {
             <Dropdown
               id="post-type"
               fluid
-              placeholder="글 타입을 선택해주세요!"
+              placeholder= {props.isEditing ? "type" : "글 타입을 선택해주세요!"}
               selection
               floating
               required
               disabled={
-                props.isEditing
-                  ? props.postToEdit.userType
-                    ? true
-                    : false
+                props.isEditing ?
+                true
                   : currentCafe
                   ? false
                   : true
-              }
-              options={postTypes}
-              onChange={(event, data) => {
-                setPostType(data.value);
+                }
+                options={postTypes}
+                onChange={(event, data) => {
+                  setPostType(data.value);
               }}
               style={{ marginBottom: "20px" }}
               defaultValue={
                 props.isEditing ? postType : currentCafe ? "free" : "qna"
               }
-            />
+              />
             <div className="card">
               <Editor
                 value={postContent}
@@ -257,7 +263,7 @@ const submitHandler = async () => {
                   setPostContent(e.htmlValue);
                 }}
                 style={{ height: "100px" }}
-              />
+                />
             </div>
             <ImageUploadBox />
           </Form.Field>
@@ -295,10 +301,11 @@ const submitHandler = async () => {
                 setFirstOpen(false);
                 setSecondOpen(false);
               }}
-            />
+              />
           </Modal.Actions>
         </Modal>
       </Modal>
+    }
 
       <Modal
         onClose={() => {

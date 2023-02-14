@@ -10,14 +10,26 @@
 }
 
 body {
-  background-image: url('https://img.freepik.com/free-photo/paperboard-texture_95678-72.jpg?w=900&t=st=1676290189~exp=1676290789~hmac=23bae26e4905a9a86024df323de506202c5f2af6d8a6214807a91621107b8e63');
+  /* background-image: url('https://img.freepik.com/free-photo/paperboard-texture_95678-72.jpg?w=900&t=st=1676290189~exp=1676290789~hmac=23bae26e4905a9a86024df323de506202c5f2af6d8a6214807a91621107b8e63'); */
+  /* background-color: #fffbed !important; */
+  background: rgba(254, 171, 143, 1) !important;
+  /* background: linear-gradient(
+    0deg,
+    rgba(249, 144, 109, 0.8128501400560224) 30%,
+    rgba(254, 171, 143, 1) 100%
+  ) !important; */
+  /* background: linear-gradient(
+    0deg,
+    rgba(249, 144, 109, 0.8128501400560224) 50%,
+    rgba(255, 255, 255, 1) 100%
+  ) !important; */
 }
 
 * {
   /* font-family: 'GangwonEdu_OTFBoldA' !important; */
 }
+
 .ui.container {
-  background-color: #fbfcfd;
 }
 
 .link.item p {
@@ -38,13 +50,6 @@ body {
   transform: scale(1.1);
 }
 
-#login-wrapper {
-  padding-block: 5rem;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
 @font-face {
   font-family: "KyoboHand";
   src: url("https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_20-04@1.0/KyoboHand.woff")
@@ -62,23 +67,21 @@ body {
 }
 
 @font-face {
-  font-family: 'GangwonEduSaeeum_OTFMediumA';
-  src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2201-2@1.0/GangwonEduSaeeum_OTFMediumA.woff') format('woff');
+  font-family: "GangwonEduSaeeum_OTFMediumA";
+  src: url("https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2201-2@1.0/GangwonEduSaeeum_OTFMediumA.woff")
+    format("woff");
   font-weight: normal;
   font-style: normal;
 }
 
 @font-face {
-  font-family: 'GangwonEdu_OTFBoldA';
-  src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2201-2@1.0/GangwonEdu_OTFBoldA.woff') format('woff');
+  font-family: "GangwonEdu_OTFBoldA";
+  src: url("https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2201-2@1.0/GangwonEdu_OTFBoldA.woff")
+    format("woff");
   font-weight: normal;
   font-style: normal;
 }
-#title {
-  font-family: "IM_Hyemin-Bold" !important;
-  color: sienna;
-  font-size: 5rem;
-}
+
 .side-bar * {
   font-family: "IM_Hyemin-Bold" !important;
 }

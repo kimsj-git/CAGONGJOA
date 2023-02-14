@@ -1,0 +1,105 @@
+#login-wrapper {
+  height: 100vh;
+  /* padding-block: 5rem;
+  display: flex;
+  flex-direction: column; */
+  align-items: center;
+}
+
+#login-wrapper .title {
+  font-family: "IM_Hyemin-Bold" !important;
+  color: rgb(66, 31, 0);
+  font-size: 8rem;
+  white-space: nowrap;
+  margin: 0 1.5rem 0 0 !important;
+}
+#login-wrapper .subtitle {
+  font-family: "IM_Hyemin-Bold" !important;
+  color: rgb(253, 232, 230);
+  font-size: 2.5rem;
+  white-space: nowrap;
+}
+
+.map-box {
+  position: relative;
+  /* width: 50vw; */
+}
+
+.map-box:before {
+  content: "";
+  display: block;
+  padding-top: 100%;
+}
+
+.map-box .map {
+  filter: brightness(1.05) sepia(20%);
+  position: absolute !important;
+  top: 5%;
+  left: 5%;
+  border-radius: 100%;
+  height: 90%;
+  width: 90%;
+}
+
+.map-box .map-marker {
+  width: 20%;
+  height: 20%;
+  position: absolute !important;
+  z-index: 1;
+  /* border-radius: 100%; */
+}
+
+.circular-border {
+  color: transparent;
+  border: 10px solid;
+  z-index: 0.5;
+
+  width: 80%;
+  height: 80%;
+  /* border-radius: 100%; */
+  border: solid 10px;
+  border-image: url("../../assets/yellow_pencil.jpg");
+  position: absolute;
+}
+/* box-shadow: 20px 38px 34px -26px hsla(0, 0%, 0%, 0.2); */
+/* border-radius: 255px 15px 225px 15px/15px 225px 15px 255px; */
+
+.map-box .circle {
+  border-radius: 50%;
+  background-color: rgba(255, 134, 134, 0.15);
+  border-color: rgb(255, 83, 83);
+  border: 3px solid rgb(255, 83, 83);
+  width: 60%;
+  height: 60%;
+  top: 20%;
+  left: 20%;
+  position: absolute;
+  opacity: 0;
+  animation: scaleIn 4s infinite cubic-bezier(0, -0.3, 0.63, 0.42);
+}
+
+@keyframes scaleIn {
+  from {
+    transform: scale(0.5, 0.5);
+    opacity: 0.5;
+  }
+  to {
+    transform: scale(2.5, 2.5);
+    opacity: 0;
+  }
+}
+
+@keyframes float {
+  0% {
+    /* box-shadow: 0 5px 15px 0px rgba(0, 0, 0, 0.6); */
+    transform: translatey(0px);
+  }
+  50% {
+    /* box-shadow: 0 25px 15px 0px rgba(0, 0, 0, 0.2); */
+    transform: translatey(-10px);
+  }
+  100% {
+    /* box-shadow: 0 5px 15px 0px rgba(0, 0, 0, 0.6); */
+    transform: translatey(0px);
+  }
+}

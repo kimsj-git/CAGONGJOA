@@ -19,10 +19,11 @@ import { postsActions } from "../../store/posts.js";
 
 const DEFAULT_REST_URL = process.env.REACT_APP_REST_DEFAULT_URL;
 const PostForm = (props) => {
+  console.log(props)
   const dispatch = useDispatch();
   // 현재 카페 정보 가져오기
   const isAuthenticated = sessionStorage.getItem("cafeAuth");
-  let currentCafe = null;
+  const [currentCafe,setCurrentCafe] = useState(null);
 
   // const { data: newPostId, isLoading, sendRequest: newPost } = useFetch()
   // 모달창 상태 관리
@@ -63,6 +64,7 @@ const PostForm = (props) => {
 
     return new File([u8arr], fileName, { type: mime });
   };
+  const [isLoading, setIsLoading] = useState(false)
 
 const submitHandler = async () => {
 // post 내용이 없을 경우
@@ -143,8 +145,8 @@ const submitHandler = async () => {
     setPostContent("");
     setPostType("");
   };
-
   const onPostFormOpen = () => {
+    setIsLoading(true)
     setFirstOpen(true);
     setPostContent(props.isEditing ? props.postToEdit.content : "");
     setPostType(
@@ -154,23 +156,25 @@ const submitHandler = async () => {
         ? "free"
         : "qna"
     );
-    sessionStorage.getItem("cafeAuth")
-      ? (currentCafe = JSON.parse(sessionStorage.getItem("myCafe"))?.cafeName)
-      : (currentCafe = null);
-    dispatch(imageActions.uploadImage(...props.postToEdit.images));
-    console.log('PostForm Opened')
+    if (sessionStorage.getItem("cafeAuth") === '1'){
+      setCurrentCafe(JSON.parse(sessionStorage.getItem("myCafe")).cafeName)
+    }
+    if (props.isEditing) {
+      dispatch(imageActions.uploadImage(...props.postToEdit.images));
+    } 
+    setIsLoading(false)
   }
-
   return (
     <>
+    {!isLoading&&
       <Modal
-        open={firstOpen}
-        onClose={() => {
-          setFirstOpen(false);
-          dispatch(imageActions.closeModal());
-          setPostContent("");
-          setPostType("");
-        }}
+      open={firstOpen}
+      onClose={() => {
+        setFirstOpen(false);
+        dispatch(imageActions.closeModal());
+        setPostContent("");
+        setPostType("");
+      }}
         onOpen={onPostFormOpen}
         trigger={
           isStudyHistory ? (
@@ -191,8 +195,8 @@ const submitHandler = async () => {
             </Button>
           ) : props.isEditing ? (
             <Button fluid color="orange" icon="edit" content="수정"></Button>
-          ) : (
-            <div
+            ) : (
+              <div
               style={{
                 display: "flex",
                 flexDirection: "row",
@@ -203,7 +207,7 @@ const submitHandler = async () => {
                 <BsPencilFill size="30" color="black" />
               ) : (
                 <BsPencil size="30" color="black" />
-              )}
+                )}
               {props.isMainNavigation ? "" : <p>글 쓰기</p>}
             </div>
           )
@@ -211,11 +215,12 @@ const submitHandler = async () => {
       >
         <Modal.Header>
           {props.isEditing
-            ? props.postToEdit.cafeName + "의 이야기를 들려주세요!"
+            ? props.postToEdit.userType 
+            ? props.postToEdit.cafeName + "의 이야기를 들려주세요!" 
+            : "근처 유저들에게 질문을 남겨보세요!"
             : currentCafe
-            ? currentCafe + "의 이야기를 들려주세요!"
-            : sessionStorage.getItem("address")?.split(" ").at(-1) +
-              " 근처 유저들에게 질문을 남겨보세요!"}
+              ? currentCafe + "의 이야기를 들려주세요!"
+              : sessionStorage.getItem("address")?.split(" ").at(-1) + " 근처 유저들에게 질문을 남겨보세요!"}
         </Modal.Header>
 
         {/* <Image size="medium" src="/images/wireframe/image.png" wrapped /> */}
@@ -234,12 +239,12 @@ const submitHandler = async () => {
               required
               disabled={
                 props.isEditing
-                  ? props.postToEdit.userType
-                    ? true
-                    : false
-                  : currentCafe
-                  ? false
-                  : true
+                ? props.postToEdit.userType
+                ? true
+                : false
+                : currentCafe
+                ? false
+                : true
               }
               options={postTypes}
               onChange={(event, data) => {
@@ -249,7 +254,7 @@ const submitHandler = async () => {
               defaultValue={
                 props.isEditing ? postType : currentCafe ? "free" : "qna"
               }
-            />
+              />
             <div className="card">
               <Editor
                 value={postContent}
@@ -257,7 +262,7 @@ const submitHandler = async () => {
                   setPostContent(e.htmlValue);
                 }}
                 style={{ height: "100px" }}
-              />
+                />
             </div>
             <ImageUploadBox />
           </Form.Field>
@@ -277,7 +282,7 @@ const submitHandler = async () => {
           size="small"
           basic
           closeOnDimmerClick={false}
-        >
+          >
           <Header icon>
             <Icon name="check circle" />글 작성이 완료되었습니다!
           </Header>
@@ -295,15 +300,16 @@ const submitHandler = async () => {
                 setFirstOpen(false);
                 setSecondOpen(false);
               }}
-            />
+              />
           </Modal.Actions>
         </Modal>
       </Modal>
+            }
 
       <Modal
-        onClose={() => {
-          setSecondOpen(false);
-        }}
+      onClose={() => {
+        setSecondOpen(false);
+      }}
         open={secondOpen}
         size="small"
         basic

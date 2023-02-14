@@ -5,8 +5,8 @@ import { todoActions } from "../../store/todo"
 const CafeTodoItem = (props) => {
   const dispatch = useDispatch()
   
-  const onCheckHandler = () => {
-    props.toggleHandler(props.id)
+  const onCheckHandler = (selectedTodoId) => {
+    props.toggleHandler(selectedTodoId)
   }
 
   const content = (
@@ -16,8 +16,9 @@ const CafeTodoItem = (props) => {
   )
 
   const deleteTodoHandler = (deleteTodoId) => {
-    console.log(deleteTodoId)
-    dispatch(todoActions.deleteTodo(deleteTodoId))
+    props.deleteHandler(deleteTodoId)
+    // console.log(deleteTodoId)
+    // dispatch(todoActions.deleteTodo(deleteTodoId))
   }
 
   return (
@@ -27,7 +28,7 @@ const CafeTodoItem = (props) => {
           <Checkbox
             label={{ children: content }}
             checked={props.isCompleted}
-            onChange={onCheckHandler}
+            onChange={(e) => onCheckHandler(props.id)}
           />
         <Button floated="right" icon="trash alternate" onClick={(e) => deleteTodoHandler(props.id)}/>
         </Card.Description>

@@ -152,7 +152,7 @@ function App() {
         {/* Login 관련 ROUTE */}
         <Route path="/login" component={LoginPage} exact />
         <Route path="/oauth/kakao">
-          <KakaoLoginGetCode setIsAuthenticated={setIsAuthenticated} />
+          <KakaoLoginGetCode setIsAuthenticated={setIsAuthenticated} setIsCafeAuth={setIsCafeAuth} />
         </Route>
         <Route path="/signup" exact>
           <SignupPage setIsAuthenticated={setIsAuthenticated} />
@@ -186,6 +186,7 @@ function App() {
             isCafeAuth={isCafeAuth}
             isJamSurvey={isJamSurvey}
             setIsJamSurvey={setIsJamSurvey}
+            setIsCafeAuth={setIsCafeAuth}
           />
         </Route>
         <AuthRoute path="/map" component={MapPage} exact />

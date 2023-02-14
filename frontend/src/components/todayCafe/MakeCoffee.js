@@ -1,43 +1,49 @@
 import { useState, useEffect } from "react"
 import TodayCafePage from "../../pages/TodayCafePage"
 import { Button, Icon } from "semantic-ui-react"
-import useFetch from "../../hooks/useFetch"
 const DEFAULT_REST_URL = process.env.REACT_APP_REST_DEFAULT_URL
 
 const MakeCoffee = () => {
   const cafeAuth = sessionStorage.getItem("cafeAuth")
-  const [coffeeCnt, setCoffeeCnt] = useState(sessionStorage.getItem("coffeeCnt"))
-  const [coffeeBeanCnt, setCoffeeBeanCnt] = useState(sessionStorage.getItem("coffeeBeanCnt"))
+  const todayCafe = JSON.parse(sessionStorage.getItem("todayCafe"))
+  let initialCoffeeCnt = 0
+  let initialCoffeeBeanCnt = 0
 
-  const { data: fetchedData, isLoading, sendRequest: makeCoffee } = useFetch()
+  if (todayCafe !== null) {
+    initialCoffeeCnt = todayCafe.coffeeCnt
+    initialCoffeeBeanCnt = todayCafe.coffeeBeanCnt
+  } 
+  const [coffeeCnt, setCoffeeCnt] = useState(initialCoffeeCnt)
+  const [coffeeBeanCnt, setCoffeeBeanCnt] = useState(initialCoffeeBeanCnt)
 
   const coffeeMakeHandler = async (coffeeMakeType) => {
-    await makeCoffee({
-      url: `${DEFAULT_REST_URL}/todaycafe/coffeemaking`,
+    const response = await fetch(`${DEFAULT_REST_URL}/todaycafe/coffeemaking/?coffeeMakeType=${coffeeMakeType}`,{
       method: 'PUT',
       headers: {
+        "Content-Type": "application/json",
         Authorization: `Bearer ${sessionStorage.getItem("accessToken")}`,
-        'Content-Type': 'application/json',
-      },
-      body: {
-        coffeeMakeType: coffeeMakeType,
       },
     })
+    const responseData = await response.json()
+    if (responseData.httpStatus === 'NOT_ACCEPTABLE') {
+      // console.log(responseData)
+      alert("커피콩이 부족합니다.")
+    } else {
+      // console.log(responseData)
+      setCoffeeCnt(responseData.data.coffeeCnt)
+      setCoffeeBeanCnt(responseData.data.coffeeBeanCnt)
+      let todayCafe = JSON.parse(sessionStorage.getItem("todayCafe"))
+      todayCafe = {...todayCafe, coffeeCnt: responseData.data.coffeeCnt, coffeeBeanCnt: responseData.data.coffeeBeanCnt}
+      sessionStorage.setItem("todayCafe", JSON.stringify(todayCafe))
+    }
   }
-
-  useEffect(() => {
-    sessionStorage.setItem("coffeeCnt", fetchedData.coffeeCnt)
-    sessionStorage.setItem("coffeeBeanCnt", fetchedData.coffeeBeanCnt)
-    setCoffeeCnt(fetchedData.coffeeCnt)
-    setCoffeeBeanCnt(fetchedData.coffeeBeanCnt)
-  }, [fetchedData])
 
   return (
     <TodayCafePage>
       <h1>커피 내리기</h1>
       <p>커피콩으로 커피를 내려보세요!</p>
-      <p>내 커피콩: {coffeeCnt}개</p>
-      <p>내 커피: {coffeeBeanCnt}개</p>
+      <p>내 커피콩: {coffeeBeanCnt}개</p>
+      <p>내 커피: {coffeeCnt}개</p>
       <Button onClick={(e) => coffeeMakeHandler(1)} color="black">
         커피콩 10개 <Icon name="arrow right" /> 커피 1잔
       </Button>
