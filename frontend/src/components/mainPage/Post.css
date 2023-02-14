@@ -15,3 +15,7 @@
     filter: hue-rotate(360deg);
   }
 } */
+
+.card.post {
+  border-radius: "100px !important"
+}

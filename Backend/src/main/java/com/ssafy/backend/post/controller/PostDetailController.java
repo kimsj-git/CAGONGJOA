@@ -117,7 +117,6 @@ public class PostDetailController {
      **/
 
     @Auth
-    @CafeAuth
     @DeleteMapping("/delete")
 
     public ResponseEntity<ResponseDTO> deletePost(@RequestParam Long postId) {
