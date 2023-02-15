@@ -3,7 +3,6 @@ import { Grid, Container } from "semantic-ui-react"
 import { BsFillPatchQuestionFill } from "react-icons/bs"
 import CafeReport from "./CafeReport"
 import CafeTimer from "./CafeTimer"
-import CafeAuth from "../certificate/cafeAuth/CafeAuth"
 import useFetch from "../../hooks/useFetch"
 const DEFAULT_REST_URL = process.env.REACT_APP_REST_DEFAULT_URL
 
@@ -120,12 +119,12 @@ const CafeInfo = () => {
           <Grid.Column only="tablet computer" tablet={5} computer={10}>
             <Grid style={{ textAlign: "center" }}>
               <Grid.Row style={{ display: "flex", justifyContent: "right" }}>
-                { isSurveySubmitted && <CafeReport icon={false} size={"large"} content={"제보하기"} setSurvey={changeSubmittedState}/>}
+                { !isSurveySubmitted && <CafeReport icon={false} size={"large"} content={"제보하기"} setSurvey={changeSubmittedState}/>}
               </Grid.Row>
             </Grid>
           </Grid.Column>
           <Grid.Column only="mobile" mobile={3}>
-            { isSurveySubmitted && <CafeReport icon={"write square"} size={"mini"} content={null} setSurvey={changeSubmittedState}/>}
+            { !isSurveySubmitted && <CafeReport icon={"write square"} size={"mini"} content={null} setSurvey={changeSubmittedState}/>}
           </Grid.Column>
         </Grid.Row>
 
@@ -181,7 +180,7 @@ const CafeInfo = () => {
                     </p>
                   </Grid.Column>
                   <Grid.Column only="computer" computer={5}>
-                    { isSurveySubmitted && <CafeReport
+                    { !isSurveySubmitted && <CafeReport
                       icon={false}
                       size={"large"}
                       content={"제보하기"}
