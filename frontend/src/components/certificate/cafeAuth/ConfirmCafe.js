@@ -15,8 +15,18 @@ const ConfirmCafe = ({ setIsCafeAuth, setIsJamSurvey }) => {
   const cafeData = useSelector((state) => state.modal.selectedCafe)
   const date = new Date()
   const [year, month, day] = date.toLocaleDateString().split(".")
-
-  const okBtnHandler = async () => {
+  const confirmHandler = () => {
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition((position) => {
+        const location = {
+          lat: position.coords.latitude,
+          lng: position.coords.longitude,
+        }
+        okBtnHandler(location)
+      })
+    }
+  }
+  const okBtnHandler = async (location) => {
     setIsLoading(true)
     const response = await fetch(`${REST_DEFAULT_URL}/cafe/auth/select`, {
       method: "POST",
@@ -26,8 +36,8 @@ const ConfirmCafe = ({ setIsCafeAuth, setIsJamSurvey }) => {
       },
       body: JSON.stringify({
         cafeId: cafeData.id,
-        latitude: JSON.parse(sessionStorage.getItem("location")).lat,
-        longitude: JSON.parse(sessionStorage.getItem("location")).lng,
+        latitude: location.lat,
+        longitude: location.lng,
         todayDate: `${year}${month < 10 ? "0" + month.trim() : month.trim()}${
           day < 10 ? "0" + day.trim() : day.trim()
         }`,
@@ -129,7 +139,7 @@ const ConfirmCafe = ({ setIsCafeAuth, setIsJamSurvey }) => {
               </p>
             </Modal.Content>
             <ModalActions>
-              <Button size="mini" onClick={okBtnHandler} color="blue">
+              <Button size="mini" onClick={confirmHandler} color="blue">
                 확인
               </Button>
               <Button

@@ -5,17 +5,30 @@
 }
 
 #like {
-  background-color: #ff695e;
+  background-color: var(--point-color-red);
   box-shadow: none !important;
+  border-radius: 40px;
   color: #fff;
+  font-size: 1.1rem;
   transition: all 0.4s ease;
 }
 
 #cancle-like {
   background-color: transparent;
-  box-shadow: 0 0 0 2px #ff695e inset !important;
-  color: #ff695e;
+  box-shadow: 0 0 0 2px var(--point-color-red) inset !important;
+  border-radius: 40px ;
+  color: var(--point-color-red);
+  font-size: 1.1rem;
   transition: all 0.4s ease;
+}
+#cancle-like:hover {
+  background-color: #ff695e86;
+  box-shadow: none !important;
+  border-radius: 40px;
+  color: #fff;
+  font-size: 1.1rem;
+  transition: all 0.4s ease;
+  
 }
 
 #crowded {
@@ -75,19 +88,30 @@
 #select,
 #hot {
   color: white !important;
-  background-color: rgb(255, 133, 40) !important;
+  background-color: var(--point-color-red) !important;
   border-radius: 2rem;
   border: none !important;
-  box-shadow: 0 0 0 1px rgb(66 31 0 / 10%) inset !important;
+  box-shadow: 0 0 0 1px rgb(251, 189, 189) inset !important;
   font-weight: bold;
+  transition: all 0.4s ease;
 }
 
 #cancle-select,
 #cancle-hot {
-  box-shadow: 0 0 0 1.8px rgb(66, 31, 0) inset !important;
+  box-shadow: 0 0 0 1.8px rgb(255, 255, 255) inset !important;
   font-weight: bold;
-  /* color: #767676 !important; */
-  color: rgb(66, 31, 0) !important;
+  color: var(--custom-pink) !important;
   background: transparent none !important;
   border-radius: 2rem;
+  transition: all 0.4s ease;
+}
+
+#cancle-select:hover,
+#cancle-hot:hover {
+  box-shadow: 0 0 0 1.8px rgb(251, 189, 189) inset !important;
+  font-weight: bold;
+  color: #fff !important;
+  background-color: var(--custom-pink) !important;
+  border-radius: 2rem;
+  transition: all 0.4s ease;
 }

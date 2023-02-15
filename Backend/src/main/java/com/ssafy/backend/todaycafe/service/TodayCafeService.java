@@ -29,4 +29,6 @@ public interface TodayCafeService {
     int addTimeBar();
 
     int getAccTime(int todayDate);
+
+    Boolean checkSubmitSurvey(int todayDate);
 }

@@ -1,9 +1,10 @@
 import { Item } from "semantic-ui-react"
 import MyPostDetail from './MyPostDetail'
 import classes from "./MyPostsItem.module.css"
+
 const MyPostsItem = ({ post }) => {
   const content = post.content.length>50 ? `${post.content.substr(0, 50)}...` : post.content
-  
+
   return (
     <Item className={classes.items}>
       <Item.Image
@@ -21,7 +22,7 @@ const MyPostsItem = ({ post }) => {
         <Item.Meta>
           <span dangerouslySetInnerHTML={{ __html: content }}></span>
         </Item.Meta>
-        <Item.Extra className={classes.detailBtn} >{post.postType}
+        <Item.Extra className={classes.detailBtn} >
         <MyPostDetail post={post}/>
         </Item.Extra>
       </Item.Content>

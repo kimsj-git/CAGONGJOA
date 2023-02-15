@@ -7,13 +7,20 @@ import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.ssafy.backend.cafe.domain.dto.ClientPosInfoDto;
 import com.ssafy.backend.cafe.domain.dto.NearByCafeResultDto;
+import com.ssafy.backend.cafe.domain.entity.Cafe;
+import com.ssafy.backend.cafe.repository.CafeRepository;
 import com.ssafy.backend.cafe.service.CafeServiceImpl;
 import com.ssafy.backend.common.exception.jwt.JwtException;
 import com.ssafy.backend.common.exception.post.PostException;
 import com.ssafy.backend.common.exception.post.PostExceptionType;
 import com.ssafy.backend.member.domain.dto.MemberIdAndNicknameDto;
+import com.ssafy.backend.member.domain.entity.MemberCafeTier;
+import com.ssafy.backend.member.repository.MemberCafeTierRepository;
+import com.ssafy.backend.member.service.MemberService;
 import com.ssafy.backend.member.service.MemberServiceImpl;
 import com.ssafy.backend.post.domain.dto.CheckedResponseDto;
+import com.ssafy.backend.post.domain.dto.CommentPagingResponseDto;
+import com.ssafy.backend.post.domain.dto.RepliesPagingResponseDto;
 import com.ssafy.backend.post.domain.entity.Comment;
 import com.ssafy.backend.post.domain.entity.Post;
 import com.ssafy.backend.post.domain.entity.PostImage;
@@ -21,6 +28,8 @@ import com.ssafy.backend.post.domain.enums.PostType;
 import com.ssafy.backend.post.repository.CommentRepository;
 import com.ssafy.backend.post.repository.PostImageRepository;
 import com.ssafy.backend.post.repository.PostRepository;
+import com.ssafy.backend.redis.CafeAuth;
+import com.ssafy.backend.redis.CafeAuthRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Pageable;
@@ -30,9 +39,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 import static com.ssafy.backend.common.exception.jwt.JwtExceptionType.JWT_VERIFICATION_EXCEPTION;
 
@@ -42,6 +49,10 @@ import static com.ssafy.backend.common.exception.jwt.JwtExceptionType.JWT_VERIFI
 public class PagingUtil {
     private final PostRepository postRepository;
     private final CommentRepository commentRepository;
+    private final CafeAuthRepository cafeAuthRepository;
+    private final CafeRepository cafeRepository;
+    private final MemberCafeTierRepository memberCafeTierRepository;
+    private final MemberService memberService;
 
 
     /**
@@ -120,12 +131,12 @@ public class PagingUtil {
         if (postId == -1L) {
             // 처음 요청할때 (refresh)
             System.out.println("글내용으로 찾기 첫번째 요청");
-            postSlice = postRepository.findAllMyFeed(Long.MAX_VALUE,memberId, pageable);
+            postSlice = postRepository.findAllMyFeed(Long.MAX_VALUE, memberId, pageable);
 
         } else {
             // 두번째 이상으로 요청할 때 (마지막 글의 pk 를 기준으로 함)
             System.out.println("글내용으로 찾기 다음 요청");
-            postSlice = postRepository.findAllMyFeed(postId,memberId, pageable);
+            postSlice = postRepository.findAllMyFeed(postId, memberId, pageable);
             // 갖고올 게시물이 없으면
         }
 //         post를 slice 형태로 갖고오기
@@ -142,12 +153,12 @@ public class PagingUtil {
         if (commentId == -1L) {
             // 처음 요청할때 (refresh)
             System.out.println("내글 불러오기 첫번째 요청");
-            commentSlice = commentRepository.findAllByIdLessThanAndMemberId(Long.MAX_VALUE,memberId, pageable);
+            commentSlice = commentRepository.findAllByIdLessThanAndMemberId(Long.MAX_VALUE, memberId, pageable);
 
         } else {
             // 두번째 이상으로 요청할 때 (마지막 글의 pk 를 기준으로 함)
             System.out.println("내글 불러오기 다음 요청");
-            commentSlice = commentRepository.findAllByIdLessThanAndMemberId(commentId,memberId, pageable);
+            commentSlice = commentRepository.findAllByIdLessThanAndMemberId(commentId, memberId, pageable);
             // 갖고올 게시물이 없으면
         }
 //         post를 slice 형태로 갖고오기
@@ -157,6 +168,25 @@ public class PagingUtil {
         }
         return commentSlice;
 
+    }
+
+    public Map.Entry<Long, Long> findGroupNo(Long postId, Long commentId) {
+        Long groupNo;
+        Long stepNo;
+        Optional<Comment> commentOptional = commentRepository.findTopByPostIdOrderByIdDesc(postId);
+        if (commentId == -1L) { // 댓글
+            if (commentOptional.isEmpty() || commentOptional == null) {
+                groupNo = 1L;
+                stepNo = 0L;
+            } else {
+                groupNo = commentOptional.get().getGroupNo() + 1L;
+                stepNo = 0L;
+            }
+        } else {
+            groupNo = commentRepository.findById(commentId).get().getGroupNo();
+            stepNo = commentRepository.findTopByPostIdAndGroupNoOrderByIdDesc(postId, groupNo).get().getStepNo() + 1;
+        }
+        return new AbstractMap.SimpleEntry<>(groupNo, stepNo);
     }
 
 

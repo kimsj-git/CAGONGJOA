@@ -1,21 +1,37 @@
-/* .circle {
-  border: 5px solid;
-  border-radius: 100%;
-  border-image: linear-gradient(45deg, gold, deeppink) 1;
-  clip-path: circle(50%);
-  animation: huerotate 6s infinite linear;
-  filter: hue-rotate(360deg);
+.card.post {
+  border-radius: 40px !important;
 }
 
-@keyframes huerotate {
-  0% {
-    filter: hue-rotate(0deg);
-  }
-  100% {
-    filter: hue-rotate(360deg);
-  }
-} */
+.post .content > img {
+  border-radius: 40px 0px 40px 40px !important;
+}
 
-.card.post {
-  border-radius: "100px !important"
+.post .content {
+  border-top: 0px !important;
+}
+
+.post .ui.corner.label:after {
+  border-right-color: var(--point-color-red);
+}
+
+.post .label i.icon:before {
+  color: white;
+}
+
+#post-detail-btn {
+  border-radius: 40px; 
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--custom-mint); 
+  box-shadow: 0 0 0 2px inset var(--custom-mint) !important;
+  font-size: 1.1rem;
+  transition: all 0.4s ease;
+}
+
+#post-detail-btn:hover {
+  background-color: var(--custom-mint) !important;
+  color: white !important;
+  font-size: 1.1rem;
+  transition: all 0.4s ease;
 }

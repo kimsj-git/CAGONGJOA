@@ -49,16 +49,16 @@ const cafeSlice = createSlice({
         })
       }
     },
-    findFeed(state){
+    findFeed(state) {
       state.isFindFeed = true
     },
-    findFeedMyLocation(state){
+    findFeedMyLocation(state) {
       state.isFindFeed = false
-    }
+    },
   },
 })
 //refresh 토큰 보내는 로직 구현 추가해야함
-export const findNearCafeData = () => {
+export const findNearCafeData = (location) => {
   return async (dispatch) => {
     dispatch(cafeActions.cafeListLoading())
     const sendRequest = async () => {
@@ -69,8 +69,8 @@ export const findNearCafeData = () => {
           Authorization: `Bearer ${sessionStorage.getItem("accessToken")}`,
         },
         body: JSON.stringify({
-          latitude: JSON.parse(sessionStorage.getItem("location")).lat,
-          longitude: JSON.parse(sessionStorage.getItem("location")).lng,
+          latitude: location.lat,
+          longitude: location.lng
         }),
       })
       const responseData = await response.json()
@@ -108,7 +108,6 @@ export const findNearCafeData = () => {
   }
 }
 
-
 export const findCafeList = (dataSet) => {
   return async (dispatch) => {
     dispatch(cafeActions.cafeListLoading())
@@ -126,7 +125,7 @@ export const findCafeList = (dataSet) => {
         }),
       })
       const responseData = await response.json()
-      if (responseData.httpStatus==="OK") {
+      if (responseData.httpStatus === "OK") {
         return responseData.data
       }
     }
@@ -143,7 +142,7 @@ export const findCafeList = (dataSet) => {
 export const findMapCafeList = (dataSet) => {
   const date = new Date()
   const TIME_ZONE = 3240 * 10000
-  const sendDate = new Date(+date + TIME_ZONE).toISOString().substr(0,19)
+  const sendDate = new Date(+date + TIME_ZONE).toISOString().substr(0, 19)
 
   return async (dispatch) => {
     dispatch(cafeActions.cafeListLoading())
@@ -158,13 +157,13 @@ export const findMapCafeList = (dataSet) => {
           latitude: dataSet.lat,
           longitude: dataSet.lng,
           dist: dataSet.distance,
-          todayTime: sendDate
+          todayTime: sendDate,
         }),
       })
       console.log(response)
       const responseData = await response.json()
       console.log(responseData)
-      if (responseData.httpStatus==="OK") {
+      if (responseData.httpStatus === "OK") {
         return responseData.data
       }
     }

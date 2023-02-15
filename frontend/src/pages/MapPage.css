@@ -1,0 +1,12 @@
+#react-kakao-maps-sdk-map-container {
+  border-radius: 90px 90px 0px 0px;
+  /* border-top: 5px solid var(--custom-beige); */
+  border: 5px solid var(--custom-beige);
+  /* border-top-right: 5px solid var(--custom-beige); */
+}
+
+.MapDiv_map__lr2Wc{
+  height: 86% !important;
+  bottom: 0;
+  left: 0;
+}

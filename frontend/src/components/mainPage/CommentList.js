@@ -39,22 +39,38 @@ const CommentList = (props) => {
     })
   }
 
-  const addNewComment = async (text, id) => {
-    console.log(props.post.id)
-    await fetch(`${DEFAULT_REST_URL}/main/postDetail/comment/write`, {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${sessionStorage.getItem("accessToken")}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        postId: props.post.id,
-        content: text,
-        commentId: id,
-      }),
-    })
-
-    refreshComments(lastCommentId)
+  const addNewComment = async (text, id=-1) => {
+    if (id === -1) {
+      await fetch(`${DEFAULT_REST_URL}/main/postDetail/comment/write`, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${sessionStorage.getItem("accessToken")}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          postId: props.post.id,
+          content: text,
+          commentId: id,
+        }),
+      })
+      refreshComments(lastCommentId)
+    } else {
+      const response = await fetch(`${DEFAULT_REST_URL}/main/postDetail/comment/write`, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${sessionStorage.getItem("accessToken")}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          postId: props.post.id,
+          content: text,
+          commentId: id,
+        }),
+      })
+      const parentComment = await response.json()
+      console.log(parentComment)
+      dispatch(commentsActions.updateReplies(parentComment.data))
+    }
   }
 
   useEffect(
@@ -110,7 +126,7 @@ const CommentList = (props) => {
         reply
         onSubmit={(e) => {
           addNewComment(newComment, -1)
-          // e.target[0].value = ""
+          console.log(e.target)
           
         }}
       >

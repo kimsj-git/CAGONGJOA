@@ -16,14 +16,14 @@
 }
 
 .findCafeBtn {
-    border-radius: 10px;
-    display: flex;
     position: absolute;
     left: 30%;
-    bottom: 5rem;
-    height: 2em;
-    width: 15rem;
+    top: 2rem;
+    background-color: rgb(66, 203, 109) !important;
+    color: white !important;
+    white-space: nowrap;
     z-index: 2;
+    border: 4px solid var(--custom-beige) !important;
 }
 
 /* .filterCorousel {

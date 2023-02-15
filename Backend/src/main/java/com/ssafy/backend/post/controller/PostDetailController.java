@@ -54,9 +54,13 @@ public class PostDetailController {
     public ResponseEntity<ResponseDTO> commentWrite(
             @RequestBody CommentWriteRequestDTO commentWriteDto) {
 
-        Long commetId = commentService.writeComment(commentWriteDto);
+        CommentPagingResponseDto responseDto = commentService.writeComment(commentWriteDto);
 
-        responseDTO = new ResponseDTO("댓글 생성 완료!", "", HttpStatus.OK, null);
+        if(responseDto == null) {
+            responseDTO = new ResponseDTO("댓글 생성 완료!", "", HttpStatus.OK, responseDto);
+        }else {
+            responseDTO = new ResponseDTO("대댓글 생성 완료!", "", HttpStatus.OK, responseDto);
+        }
 
         return new ResponseEntity<>(responseDTO, HttpStatus.OK);
     }

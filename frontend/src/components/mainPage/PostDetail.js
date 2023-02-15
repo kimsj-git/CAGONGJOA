@@ -15,6 +15,7 @@ import {
 import { ScrollPanel } from "primereact/scrollpanel"
 import CommentList from "./CommentList"
 import ToggleButton from "../common/ToggleButton"
+import { BsChatDotsFill } from "react-icons/bs"
 import { useDispatch, useSelector } from "react-redux"
 import { postsActions } from "../../store/posts"
 import PostForm from "./PostForm"
@@ -54,12 +55,15 @@ const PostDetail = (props) => {
       size="large"
       trigger={
         <Button
+          id="post-detail-btn"
           fluid
           inverted
           color="green"
-          icon="comment"
-          content={props.post.commentCnt}
-        ></Button>
+          >
+          <BsChatDotsFill size={24} style={{marginRight: "0.5rem"}}/>
+          {props.post.commentCnt}
+
+        </Button>
       }
     >
       <Label
@@ -102,7 +106,7 @@ const PostDetail = (props) => {
               </ScrollPanel>
               <div style={{ display: "flex", marginTop: "1rem" }}>
                 {sessionStorage.getItem("nickname") === props.post.writer && (
-                  <PostForm isEditing postToEdit={props.post} />
+                  <PostForm isEditing={true} postToEdit={props.post} />
                 )}
                 {sessionStorage.getItem("nickname") === props.post.writer && (
                   <Button

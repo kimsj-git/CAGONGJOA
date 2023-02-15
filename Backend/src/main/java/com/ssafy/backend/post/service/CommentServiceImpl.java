@@ -15,6 +15,8 @@ import com.ssafy.backend.post.domain.entity.Comment;
 import com.ssafy.backend.post.domain.entity.CommentLike;
 import com.ssafy.backend.post.domain.entity.Post;
 import com.ssafy.backend.post.repository.*;
+import com.ssafy.backend.post.util.DtoMakingUtil;
+import com.ssafy.backend.post.util.PagingUtil;
 import com.ssafy.backend.post.util.PostUtil;
 import com.ssafy.backend.redis.CafeAuth;
 import com.ssafy.backend.redis.CafeAuthRepository;
@@ -29,16 +31,13 @@ import java.util.*;
 @Service
 @Transactional
 public class CommentServiceImpl implements CommentService {
-
     private final PostRepository postRepository;
-    private final CafeRepository cafeRepository;
     private final CommentRepository commentRepository;
     private final CommentLikeRepository commentLikeRepository;
     private final MemberRepository memberRepository;
-    private final PostUtil postUtil;
+    private final PagingUtil pagingUtil;
     private final MemberUtil memberUtil;
-    private final CafeAuthRepository cafeAuthRepository;
-    private final MemberCafeTierRepository memberCafeTierRepository;
+    private final DtoMakingUtil dtoMakingUtil;
 
     /**
      * 2-1. 댓글 불러오기
@@ -62,56 +61,33 @@ public class CommentServiceImpl implements CommentService {
         Set<Long> groupSet = new HashSet<>();
         List<Comment> commentList = commentRepository.findAllByPostId(postId);
         if (commentList == null || commentList.isEmpty()) {
-//            throw new PostException(PostExceptionType.NO_COMMENT_FEED);
-            return null;
+            return commentResponseList;
         }
         for (Comment comment : commentList) {
             if (comment.getGroupNo() > groupNo) groupSet.add(comment.getGroupNo());
-            if (groupSet.size() == 5) break;
+            if (groupSet.size() == 10) break;
         }
         System.out.println(groupSet);
         if (groupSet.isEmpty() || groupSet == null) { // 불러올 그게 없다.
 //            throw new PostException(PostExceptionType.NO_COMMENT_FEED);
-            return null;
+            return commentResponseList;
+        }
+        List<List<Comment>> commentGroupListList = new ArrayList<>();
+        for (Long groupId : groupSet) {
+            List<Comment> commentGroupList = commentRepository.findAllByPostIdAndGroupNoOrderById(postId, groupId);
+            commentGroupListList.add(commentGroupList);
         }
         Slice<Comment> commentSlice = commentRepository.findAllByGroupNoInAndPostId(groupSet, postId);
         if (commentSlice == null || commentSlice.isEmpty()) {
 //            throw new PostException(PostExceptionType.NO_COMMENT_FEED);
-            return null;
+            return commentResponseList;
         }
-        Map<Long, String> commentNicknameMap = new TreeMap<>();
-
-
-        for (Comment comment : commentSlice) {
-            commentNicknameMap.put(comment.getId(), comment.getMember().getNickname());
-        }
-        Boolean commentLikeChecked;
-        for (Comment comment : commentSlice) {
-            Optional<CommentLike> commentOptional = commentLikeRepository.findByCommentIdAndMemberId(comment.getId(),comment.getMember().getId());
-            if(commentOptional.isPresent())  commentLikeChecked = true;
-            else commentLikeChecked = false;
-            CommentPagingResponseDto commentPagingResponseDto = CommentPagingResponseDto.CommentResponseBuilder()
-                    .commentId(comment.getId())
-                    .writerId(comment.getMember().getId())
-                    .writerNickname(comment.getMember().getNickname())
-                    .content(comment.getContent())
-                    .createdAt(comment.getCreatedAt())
-                    .commentLikeCnt(comment.getCommentLikeList().size())
-                    .groupNo(comment.getGroupNo())
-                    .stepNo(comment.getStepNo())
-                    .writerType(false)
-                    .likeChecked(commentLikeChecked)
-                    .build();
-            System.out.println("미인증 유저 댓글쓰기 불러오기 완료");
-            Optional<CafeAuth> cafeAuth = cafeAuthRepository.findById(comment.getMember().getNickname());
-            if (cafeAuth.isPresent()) {
-                Cafe cafe = cafeRepository.findById(cafeAuth.get().getCafeId()).get();
-                MemberCafeTier memberCafeTier = memberCafeTierRepository.findByMemberIdAndCafeId(comment.getMember().getId(), cafe.getId()).get();
-                commentPagingResponseDto.updateCommentVerifiedUser(cafe.getId(), cafe.getName(), memberCafeTier.getExp(), cafe.getBrandType());
-                System.out.println("인증유저 댓글 업데이트 완료");
-            }
+        CommentPagingResponseDto commentPagingResponseDto;
+        for(List<Comment> comments : commentGroupListList){
+            commentPagingResponseDto = dtoMakingUtil.getCommentList(comments);
             commentResponseList.add(commentPagingResponseDto);
         }
+
         return commentResponseList;
     }
 
@@ -119,7 +95,7 @@ public class CommentServiceImpl implements CommentService {
      * 2-2. 댓글 쓰기 [테스트 완료]
      **/
     @Override
-    public Long writeComment(CommentWriteRequestDTO commentWriteDto) {
+    public CommentPagingResponseDto writeComment(CommentWriteRequestDTO commentWriteDto) {
         //1. 유저 확인
         CheckedResponseDto checked = memberUtil.checkMember();
         Long memberId = checked.getMemberId(); // 멤버 아이디를 확인한다.
@@ -129,42 +105,43 @@ public class CommentServiceImpl implements CommentService {
         String content = commentWriteDto.getContent();
         Member member = memberRepository.findById(memberId).get();
 
+
         Optional<Post> postOptional = postRepository.findById(postId);
         if (postOptional.isEmpty() || postOptional == null) {
             throw new PostException(PostExceptionType.BAD_POST_ID);
         }
         Post post = postOptional.get();
-
         // 3. 댓글 대댓글 구분
-        Long groupNo;
-        Long stepNo;
-        Optional<Comment> commentOptional = commentRepository.findTopByPostIdOrderByIdDesc(postId);
-        if (commentId == -1L) { // 댓글
-            if (commentOptional.isEmpty() || commentOptional == null) {
-                groupNo = 1L;
-                stepNo = 0L;
-            } else {
-                groupNo = commentOptional.get().getGroupNo() + 1L;
-                stepNo = 0L;
-            }
-        } else {
-            groupNo = commentRepository.findById(commentId).get().getGroupNo();
-            stepNo = commentRepository.findTopByPostIdAndGroupNoOrderByIdDesc(postId, groupNo).get().getStepNo() + 1;
-        }
+
+        Map.Entry<Long, Long> groupNoResult = pagingUtil.findGroupNo(postId, commentId);
+        Long groupNo = groupNoResult.getKey();
+        Long stepNo = groupNoResult.getValue();
 
         // 4. 글 저장하기
         Comment comment = Comment.builder()
-                .groupNo(groupNo)
                 .member(member)
                 .post(post)
                 .content(content)
+                .groupNo(groupNo)
                 .stepNo(stepNo)
                 .build();
 
         // 인증 여부에 따라 글을 쓸수있다 - GeoAuth - 따로 필요없음
-        comment = commentRepository.save(comment);
+        Comment savedComment = commentRepository.save(comment);
+
+        if (stepNo != 0) { // 대댓글일 때
+            System.out.println("대댓글!");
+        } else { // 그렇지 않을때 -> Redirect
+            System.out.println("댓글!");
+            return null;
+        }
         // 댓글을 썼을 때 어떻게 해야하징...
-        return comment.getId();
+        List<Comment> commentGroupList = commentRepository.findAllByPostIdAndGroupNoOrderById(postId, groupNo);
+        if (commentGroupList.isEmpty() || commentGroupList == null) {
+            throw new PostException(PostExceptionType.NO_COMMENT_FEED);
+        }
+
+        return dtoMakingUtil.getCommentList(commentGroupList);
     }
 
     /**

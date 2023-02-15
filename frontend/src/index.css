@@ -10,26 +10,17 @@
 }
 
 body {
-  /* background-image: url('https://img.freepik.com/free-photo/paperboard-texture_95678-72.jpg?w=900&t=st=1676290189~exp=1676290789~hmac=23bae26e4905a9a86024df323de506202c5f2af6d8a6214807a91621107b8e63'); */
-  /* background-color: #fffbed !important; */
-  background: rgb(250, 232, 226) !important;
-  /* background: linear-gradient(
-    0deg,
-    rgba(249, 144, 109, 0.8128501400560224) 30%,
-    rgba(254, 171, 143, 1) 100%
-  ) !important; */
-  /* background: linear-gradient(
-    0deg,
-    rgba(249, 144, 109, 0.8128501400560224) 50%,
-    rgba(255, 255, 255, 1) 100%
-  ) !important; */
+  --point-color-red: #ff695e;
+  --background-color: rgb(250, 232, 226);
+  --custom-beige: rgb(255 247 216 / 50%);
+  --custom-mint: #4de3a1;
+  --custom-pink: rgb(255, 168, 168);
+  background: var(--background-color) !important;
+
 }
 
 * {
   /* font-family: 'GangwonEdu_OTFBoldA' !important; */
-}
-
-.ui.container {
 }
 
 .link.item p {

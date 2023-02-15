@@ -154,10 +154,9 @@ const MapDiv = () => {
             className={classes.findCafeBtn}
             circular
             onClick={findCafeList}
-            color="blue"
-          >
-            현재 위치에서 카페 찾기
-          </Button>
+            size="huge"
+            content="현재 위치에서 카페 찾기"
+          />
         )}
         <MapLookFeed lat={center.lat} lng={center.lng} />
         <MapCafeFilterCarousel className={classes.filterCorousel} />

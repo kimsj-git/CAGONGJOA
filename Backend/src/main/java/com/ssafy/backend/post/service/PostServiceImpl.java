@@ -64,7 +64,8 @@ public class PostServiceImpl implements PostService {
         long memberId = checked.getMemberId(); // 멤버 아이디를 확인한다.
         Double latitude = requestDto.getLatitude();
         Double longitude = requestDto.getLongitude();
-        Double dist = requestDto.getDist();
+//        Double dist = requestDto.getDist();
+        Double dist = 1.0;
         String content = requestDto.getContent();
         System.out.println("여까진 와?");
         if (content != null || files == null) {

@@ -12,7 +12,15 @@ const CafeAuth = (props) => {
   const open = useSelector((state) => state.modal.openCafeAuthModal)
 
   const nextPageHander = () => {
-    dispatch(findNearCafeData(0.2))
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition((position) => {
+        const location = {
+          lat: position.coords.latitude,
+          lng: position.coords.longitude,
+        }
+        dispatch(findNearCafeData(location))
+      })
+    }
     dispatch(modalActions.toggleNearCafeListModal())
     dispatch(modalActions.closeCafeAuthModal())
   }
@@ -24,6 +32,7 @@ const CafeAuth = (props) => {
   const closeNearCafeList = () => {
     props.closeModal()
   }
+  
   return (
     <>
       <Modal
