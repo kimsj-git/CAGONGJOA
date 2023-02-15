@@ -9,7 +9,7 @@ const imageSlice = createSlice({
   initialState: initialImageState,
   reducers: {
     uploadImage(state, actions) {
-      state.uploadedImage = [...state.uploadedImage, actions.payload]
+      state.uploadedImage = [...state.uploadedImage, ...actions.payload]
     },
     closeModal(state) {
       state.uploadedImage = []

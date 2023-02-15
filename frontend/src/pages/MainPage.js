@@ -3,6 +3,7 @@ import { Grid } from "semantic-ui-react"
 import MainPageTopBar from "../components/mainPage/MainPageTopBar"
 import PostList from "../components/mainPage/PostList"
 import JamSurvey from "../components/mainPage/JamSurvey"
+import "./MapPage.css"
 
 const MainPage = ({
   isAuthenticated,

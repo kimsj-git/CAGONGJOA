@@ -16,6 +16,7 @@ import com.ssafy.backend.common.exception.post.PostExceptionType;
 import com.ssafy.backend.member.domain.dto.MemberIdAndNicknameDto;
 import com.ssafy.backend.member.domain.entity.MemberCafeTier;
 import com.ssafy.backend.member.repository.MemberCafeTierRepository;
+import com.ssafy.backend.member.service.MemberService;
 import com.ssafy.backend.member.service.MemberServiceImpl;
 import com.ssafy.backend.post.domain.dto.CheckedResponseDto;
 import com.ssafy.backend.post.domain.dto.CommentPagingResponseDto;
@@ -51,6 +52,7 @@ public class PagingUtil {
     private final CafeAuthRepository cafeAuthRepository;
     private final CafeRepository cafeRepository;
     private final MemberCafeTierRepository memberCafeTierRepository;
+    private final MemberService memberService;
 
 
     /**
@@ -129,12 +131,12 @@ public class PagingUtil {
         if (postId == -1L) {
             // 처음 요청할때 (refresh)
             System.out.println("글내용으로 찾기 첫번째 요청");
-            postSlice = postRepository.findAllMyFeed(Long.MAX_VALUE,memberId, pageable);
+            postSlice = postRepository.findAllMyFeed(Long.MAX_VALUE, memberId, pageable);
 
         } else {
             // 두번째 이상으로 요청할 때 (마지막 글의 pk 를 기준으로 함)
             System.out.println("글내용으로 찾기 다음 요청");
-            postSlice = postRepository.findAllMyFeed(postId,memberId, pageable);
+            postSlice = postRepository.findAllMyFeed(postId, memberId, pageable);
             // 갖고올 게시물이 없으면
         }
 //         post를 slice 형태로 갖고오기
@@ -151,12 +153,12 @@ public class PagingUtil {
         if (commentId == -1L) {
             // 처음 요청할때 (refresh)
             System.out.println("내글 불러오기 첫번째 요청");
-            commentSlice = commentRepository.findAllByIdLessThanAndMemberId(Long.MAX_VALUE,memberId, pageable);
+            commentSlice = commentRepository.findAllByIdLessThanAndMemberId(Long.MAX_VALUE, memberId, pageable);
 
         } else {
             // 두번째 이상으로 요청할 때 (마지막 글의 pk 를 기준으로 함)
             System.out.println("내글 불러오기 다음 요청");
-            commentSlice = commentRepository.findAllByIdLessThanAndMemberId(commentId,memberId, pageable);
+            commentSlice = commentRepository.findAllByIdLessThanAndMemberId(commentId, memberId, pageable);
             // 갖고올 게시물이 없으면
         }
 //         post를 slice 형태로 갖고오기
@@ -168,7 +170,7 @@ public class PagingUtil {
 
     }
 
-    public Map.Entry<Long,Long> findGroupNo(Long postId, Long commentId) {
+    public Map.Entry<Long, Long> findGroupNo(Long postId, Long commentId) {
         Long groupNo;
         Long stepNo;
         Optional<Comment> commentOptional = commentRepository.findTopByPostIdOrderByIdDesc(postId);
@@ -184,75 +186,7 @@ public class PagingUtil {
             groupNo = commentRepository.findById(commentId).get().getGroupNo();
             stepNo = commentRepository.findTopByPostIdAndGroupNoOrderByIdDesc(postId, groupNo).get().getStepNo() + 1;
         }
-        return new AbstractMap.SimpleEntry<>(groupNo,stepNo);
-    }
-
-    public CommentPagingResponseDto getCommentList(List<Comment> commentGroupList) {
-        CommentPagingResponseDto commentPagingResponseDto = CommentPagingResponseDto.CommentResponseBuilder()
-                .commentId(commentGroupList.get(0).getId())
-                .writerId(commentGroupList.get(0).getMember().getId())
-                .writerNickname(commentGroupList.get(0).getMember().getNickname())
-                .content(commentGroupList.get(0).getContent())
-                .createdAt(commentGroupList.get(0).getCreatedAt())
-                .commentLikeCnt(commentGroupList.get(0).getCommentLikeList().size())
-                .groupNo(commentGroupList.get(0).getGroupNo())
-                .writerType(false)
-                .build();
-        System.out.println(commentPagingResponseDto.toString());
-        Optional<CafeAuth> cafeAuthOptional = cafeAuthRepository.findById(commentGroupList.get(0).getMember().getNickname());
-        if (cafeAuthOptional.isPresent()) {
-            System.out.println("1차점검");
-            Long cafeId = cafeAuthOptional.get().getCafeId();
-            Cafe cafe = cafeRepository.findById(cafeId).get();
-            MemberCafeTier memberCafeTier = memberCafeTierRepository.findByMemberIdAndCafeId(commentGroupList.get(0).getMember().getId(), cafeId).get();
-            commentPagingResponseDto.updateCommentVerifiedUser(cafeId, cafe.getName(), memberCafeTier.getExp(), cafe.getBrandType());
-        }
-        System.out.println("2차점검");
-        System.out.println(commentPagingResponseDto.getVerifiedCafeName());
-
-
-        // cafeAuth 를 통해 find 를 해야함.. (nickname)
-        // like check commentLike 에서 findByIdandCommentId 하기
-        // exp
-
-        List<RepliesPagingResponseDto> repliesList = new ArrayList<>();
-
-        Long parentId = commentGroupList.get(0).getId();
-        for (Comment commentSlice : commentGroupList) {
-            if (commentSlice.getStepNo() == 0) {
-
-            } else {
-                RepliesPagingResponseDto repliesPagingResponseDto = RepliesPagingResponseDto.RepliesResponseBuilder()
-                        .commentId(commentSlice.getId())
-                        .writerId(commentSlice.getMember().getId())
-                        .writerNickname(commentSlice.getMember().getNickname())
-                        .content(commentSlice.getContent())
-                        .createdAt(commentSlice.getCreatedAt())
-                        .commentLikeCnt(commentSlice.getCommentLikeList().size())
-                        .parentId(parentId)
-                        .writerType(false)
-                        .build();
-                System.out.println("빌드는됨!");
-
-                Optional<CafeAuth> cafeOptional = cafeAuthRepository.findById(commentSlice.getMember().getNickname());
-                if (cafeAuthOptional.isPresent()) {
-                    Long cafeId = cafeOptional.get().getCafeId();
-                    Cafe cafe = cafeRepository.findById(cafeId).get();
-                    MemberCafeTier memberCafeTier = memberCafeTierRepository.findByMemberIdAndCafeId(commentSlice.getMember().getId(), cafeId).get();
-                    repliesPagingResponseDto.updateCommentVerifiedUser(cafeId, cafe.getName(), memberCafeTier.getExp(), cafe.getBrandType());
-                }
-                System.out.println("업데이트도됨!");
-                if (repliesPagingResponseDto != null) {
-                    repliesList.add(repliesPagingResponseDto);
-                }
-            }
-
-        }
-        System.out.println("for 문의 끝!! ");
-        if (!repliesList.isEmpty()) {
-            commentPagingResponseDto.updateReplies(repliesList);
-        }
-        return commentPagingResponseDto;
+        return new AbstractMap.SimpleEntry<>(groupNo, stepNo);
     }
 
 

@@ -32,4 +32,12 @@ public class RepliesPagingResponseDto {
         this.writerType = true;
 
     }
+
+    public void updateCommentLike (int commentLikeCnt) {
+        this.commentLikeCnt = commentLikeCnt;
+    }
+    public void updateLikeChecked(Boolean likeChecked) {
+        this.likeChecked = true;
+    }
+
 }

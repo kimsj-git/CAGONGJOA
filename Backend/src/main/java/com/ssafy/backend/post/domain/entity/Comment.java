@@ -54,7 +54,11 @@ public class Comment extends BaseEntity {
         // 5. 댓글 그룹의 pk
 
         @OneToMany(mappedBy = "comment")
-        private List<CommentLike> commentLikeList = new ArrayList<>();
+        private List<CommentLike> commentLikeList;
+
+        public void updateCommentLike(List<CommentLike> commentLikeList) {
+                this.commentLikeList = commentLikeList;
+        }
 
         public void updateComment(String content) {
                 this.content = content;

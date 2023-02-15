@@ -61,7 +61,7 @@ const commentsSlice = createSlice({
   reducers: {
     // comments 업데이트
     updateComments(state, actions) {
-      console.log(actions)
+      console.log('업데이트코멘츠')
       if (actions.payload.lastCommentId === -1) {
         state.comments = []
       }
@@ -74,6 +74,7 @@ const commentsSlice = createSlice({
     },
 
     updateReplies(state, action) {
+      console.log('업데이트리플라이즈')
       const parentComment = action.payload
       const parentIdx = state.comments.findIndex(
         (comment) => comment.commentId === parentComment.commentId

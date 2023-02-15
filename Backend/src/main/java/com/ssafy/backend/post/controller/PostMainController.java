@@ -38,7 +38,7 @@ public class PostMainController {
     @PostMapping("/feed")
     public ResponseEntity<ResponseDTO> postMain(
             @RequestBody PostPagingRequestDto requestDto,
-                @PageableDefault(sort = "id", direction = Sort.Direction.DESC) Pageable pageable) {
+                @PageableDefault(size = 10, sort = "id", direction = Sort.Direction.DESC) Pageable pageable) {
 
         Map<String, Object> postSlice = postService.feedPosts(requestDto, pageable);
         responseDTO

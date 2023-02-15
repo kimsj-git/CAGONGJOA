@@ -142,7 +142,7 @@ function App() {
             setIsCafeAuth={setIsCafeAuth}
           />
         </Route>
-        <AuthRoute path="/map" component={MapPage} exact />
+        <AuthRoute path="/map" component={MapPage} exact/>
 
         {/* NotFound 페이지*/}
         <Route path="*" component={NotFound} />

@@ -41,9 +41,7 @@ const CommentList = (props) => {
 
   const addNewComment = async (text, id=-1) => {
     if (id === -1) {
-      refreshComments(lastCommentId)
-    } else {
-      const parentComment = await fetch(`${DEFAULT_REST_URL}/main/postDetail/comment/write`, {
+      await fetch(`${DEFAULT_REST_URL}/main/postDetail/comment/write`, {
         method: "POST",
         headers: {
           Authorization: `Bearer ${sessionStorage.getItem("accessToken")}`,
@@ -55,7 +53,23 @@ const CommentList = (props) => {
           commentId: id,
         }),
       })
-      dispatch(commentsActions.updateReplies(parentComment))
+      refreshComments(lastCommentId)
+    } else {
+      const response = await fetch(`${DEFAULT_REST_URL}/main/postDetail/comment/write`, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${sessionStorage.getItem("accessToken")}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          postId: props.post.id,
+          content: text,
+          commentId: id,
+        }),
+      })
+      const parentComment = await response.json()
+      console.log(parentComment)
+      dispatch(commentsActions.updateReplies(parentComment.data))
     }
   }
 

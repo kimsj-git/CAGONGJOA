@@ -16,22 +16,22 @@ import ImageUploadBox from "./ImageUploadBox";
 import { Editor } from "primereact/editor";
 import { imageActions } from "../../store/image";
 import { postsActions } from "../../store/posts.js";
+import { getPosts } from "../../store/posts.js";
 
 const DEFAULT_REST_URL = process.env.REACT_APP_REST_DEFAULT_URL;
 const PostForm = (props) => {
-  console.log(props)
   const dispatch = useDispatch();
-  // 현재 카페 정보 가져오기
-  const isAuthenticated = sessionStorage.getItem("cafeAuth");
-  const [currentCafe,setCurrentCafe] = useState(null);
-
+  // 현재 카페 정보 관리
+  const [currentCafe, setCurrentCafe] = useState(null);
+  
+  
   // const { data: newPostId, isLoading, sendRequest: newPost } = useFetch()
   // 모달창 상태 관리
   const [firstOpen, setFirstOpen] = useState(false);
   const [secondOpen, setSecondOpen] = useState(false);
   // post 내용 관리
   const [postContent, setPostContent] = useState("");
-  const [postType, setPostType] = useState("");
+  const [postType, setPostType] = useState()
   const postImages = useSelector((state) => state.image.uploadedImage);
   // 자랑하기 여부
   const isStudyHistory = props.isStudyHistory;
@@ -64,15 +64,15 @@ const PostForm = (props) => {
 
     return new File([u8arr], fileName, { type: mime });
   };
-  const [isLoading, setIsLoading] = useState(false)
 
-const submitHandler = async () => {
-// post 내용이 없을 경우
-    if (!postContent && !postImages) {
+  const submitHandler = async () => {
+  // post 내용이 없을 경우
+    if (!postContent) {
       alert("글 내용을 입력해주세요!");
       return;
     }
-
+    
+    setSecondOpen(true);
     const formData = new FormData();
     
     // 글 수정 요청
@@ -100,15 +100,13 @@ const submitHandler = async () => {
           images: postImages,
         })
       );
-
-  const response = await fetch(`${DEFAULT_REST_URL}/writeForm/update`, {
-        method: "POST",
+      const response = await fetch(`${DEFAULT_REST_URL}/writeForm/update`, {
+        method: "PUT",
         headers: {
-          Authorization: `Bearer ${sessionStorage.getItem("accessToken")}`,
+          "Authorization": `Bearer ${sessionStorage.getItem("accessToken")}`,
         },
         body: formData,
       });
-      console.log(response);
     }
     // 글 생성 요청
     else {
@@ -137,44 +135,54 @@ const submitHandler = async () => {
         },
         body: formData,
       });
-      console.log(response);
+      console.log(postType);
     }
 
-    setSecondOpen(true);
+    dispatch(getPosts(
+      {
+        location: {
+          lat: JSON.parse(sessionStorage.getItem("location")).lat,
+          lng: JSON.parse(sessionStorage.getItem("location")).lng,
+        },
+        postId: -1,
+        filters: ["free", "qna", "together", "tip", "recommend", "help", "lost"],
+      }
+    ))
+
     // state 초기화
     setPostContent("");
     setPostType("");
   };
+
   const onPostFormOpen = () => {
-    setIsLoading(true)
+    const isAuthenticated = Number(sessionStorage.getItem("cafeAuth"));
+    isAuthenticated
+      ? setCurrentCafe(JSON.parse(sessionStorage.getItem("myCafe"))?.cafeName)
+      : setCurrentCafe(null);
+
+
     setFirstOpen(true);
-    setPostContent(props.isEditing ? props.postToEdit.content : "");
-    setPostType(
-      props.isEditing
-        ? props.postToEdit.type
-        : isAuthenticated
-        ? "free"
-        : "qna"
-    );
-    if (sessionStorage.getItem("cafeAuth") === '1'){
-      setCurrentCafe(JSON.parse(sessionStorage.getItem("myCafe")).cafeName)
-    }
     if (props.isEditing) {
-      dispatch(imageActions.uploadImage(...props.postToEdit.images));
-    } 
-    setIsLoading(false)
+      setPostContent(props.postToEdit.content);
+      setPostType(props.postToEdit.type);
+      props.postToEdit.images.length && dispatch(imageActions.uploadImage(props.postToEdit.images))
+    } else {
+      setPostContent("");
+      setPostType(currentCafe ? "free" : "qna");
+    }
+    console.log('PostForm Opened')
   }
+
   return (
     <>
-    {!isLoading&&
       <Modal
-      open={firstOpen}
-      onClose={() => {
-        setFirstOpen(false);
-        dispatch(imageActions.closeModal());
-        setPostContent("");
-        setPostType("");
-      }}
+        open={firstOpen}
+        onClose={() => {
+          setFirstOpen(false);
+          dispatch(imageActions.closeModal());
+          setPostContent("");
+          setPostType("");
+        }}
         onOpen={onPostFormOpen}
         trigger={
           isStudyHistory ? (
@@ -195,8 +203,8 @@ const submitHandler = async () => {
             </Button>
           ) : props.isEditing ? (
             <Button fluid color="orange" icon="edit" content="수정"></Button>
-            ) : (
-              <div
+          ) : (
+            <div
               style={{
                 display: "flex",
                 flexDirection: "row",
@@ -207,7 +215,7 @@ const submitHandler = async () => {
                 <BsPencilFill size="30" color="black" />
               ) : (
                 <BsPencil size="30" color="black" />
-                )}
+              )}
               {props.isMainNavigation ? "" : <p>글 쓰기</p>}
             </div>
           )
@@ -216,11 +224,12 @@ const submitHandler = async () => {
         <Modal.Header>
           {props.isEditing
             ? props.postToEdit.userType 
-            ? props.postToEdit.cafeName + "의 이야기를 들려주세요!" 
+            ? props.postToEdit.cafeName + "의 이야기를 들려주세요!"
             : "근처 유저들에게 질문을 남겨보세요!"
             : currentCafe
-              ? currentCafe + "의 이야기를 들려주세요!"
-              : sessionStorage.getItem("address")?.split(" ").at(-1) + " 근처 유저들에게 질문을 남겨보세요!"}
+            ? currentCafe + "의 이야기를 들려주세요!"
+            : sessionStorage.getItem("address")?.split(" ").at(-1) +
+              " 근처 유저들에게 질문을 남겨보세요!"}
         </Modal.Header>
 
         {/* <Image size="medium" src="/images/wireframe/image.png" wrapped /> */}
@@ -228,7 +237,13 @@ const submitHandler = async () => {
           {/* <Segment basic> */}
           <Form.Field>
             <Label htmlFor="post-type" color="yellow" pointing="below">
-              글 타입을 선택해주세요!
+            {props.isEditing
+            ? props.postToEdit.userType 
+              ? "글 타입을 선택해주세요!"
+              : "카페 인증을 안 받으면 질문글만 쓸 수 있어요!"
+            : currentCafe
+              ? "글 타입을 선택해주세요!"
+              : "카페 인증을 안 받으면 질문글만 쓸 수 있어요!"}
             </Label>
             <Dropdown
               id="post-type"
@@ -239,12 +254,12 @@ const submitHandler = async () => {
               required
               disabled={
                 props.isEditing
-                ? props.postToEdit.userType
-                ? true
-                : false
-                : currentCafe
-                ? false
-                : true
+                  ? props.postToEdit.userType
+                    ? true
+                    : false
+                  : currentCafe
+                  ? false
+                  : true
               }
               options={postTypes}
               onChange={(event, data) => {
@@ -254,7 +269,7 @@ const submitHandler = async () => {
               defaultValue={
                 props.isEditing ? postType : currentCafe ? "free" : "qna"
               }
-              />
+            />
             <div className="card">
               <Editor
                 value={postContent}
@@ -262,7 +277,7 @@ const submitHandler = async () => {
                   setPostContent(e.htmlValue);
                 }}
                 style={{ height: "100px" }}
-                />
+              />
             </div>
             <ImageUploadBox />
           </Form.Field>
@@ -277,14 +292,20 @@ const submitHandler = async () => {
         </Modal.Actions>
 
         <Modal
-          onClose={() => setSecondOpen(false)}
+        onOpen={() => {
+          dispatch(imageActions.filterHot(false))
+          
+        }}
+          onClose={() => {
+            setSecondOpen(false)
+          }}
           open={secondOpen}
           size="small"
           basic
           closeOnDimmerClick={false}
-          >
+        >
           <Header icon>
-            <Icon name="check circle" />글 작성이 완료되었습니다!
+            <Icon name="check circle" />{`글 ${props.isEditing ? "수정" : "작성"}이 완료되었습니다!`}
           </Header>
           {/* <Modal.Content>
           <p></p>
@@ -300,42 +321,11 @@ const submitHandler = async () => {
                 setFirstOpen(false);
                 setSecondOpen(false);
               }}
-              />
+            />
           </Modal.Actions>
         </Modal>
       </Modal>
-            }
 
-      <Modal
-      onClose={() => {
-        setSecondOpen(false);
-      }}
-        open={secondOpen}
-        size="small"
-        basic
-        closeOnDimmerClick={false}
-      >
-        <Header icon>
-          <Icon name="check circle" />
-          {`글 ${props.isEditing ? "수정" : "작성"}이 완료되었습니다!`}
-        </Header>
-        {/* <Modal.Content>
-          <p></p>
-        </Modal.Content> */}
-        <Modal.Actions>
-          <Button
-            basic
-            color="green"
-            icon="checkmark"
-            content="확인"
-            onClick={() => {
-              dispatch(imageActions.closeModal());
-              setFirstOpen(false);
-              setSecondOpen(false);
-            }}
-          />
-        </Modal.Actions>
-      </Modal>
     </>
   );
 };

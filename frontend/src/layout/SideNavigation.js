@@ -123,7 +123,7 @@ const SideNavigation = ({ isCafeAuth, setIsCafeAuth, setIsJamSurvey }) => {
           active={activeItem === "post"}
         >
           {/* 글 쓰기 네비 Item */}
-          <PostForm activeItem={activeItem} closeModal={closeModal} />
+          <PostForm isEditing={false} activeItem={activeItem} closeModal={closeModal} />
         </Menu.Item>
         <Menu.Item
           name="today-cafe"
