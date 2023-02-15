@@ -1,8 +1,10 @@
-import CafeReport from "./CafeReport"
+import { useState, useEffect } from "react"
 import { Grid, Container } from "semantic-ui-react"
 import { BsFillPatchQuestionFill } from "react-icons/bs"
-
+import CafeReport from "./CafeReport"
 import CafeTimer from "./CafeTimer"
+import useFetch from "../../hooks/useFetch"
+const DEFAULT_REST_URL = process.env.REACT_APP_REST_DEFAULT_URL
 
 const BRAND_LOGOS = {
   할리스: "hollys",
@@ -39,6 +41,12 @@ const BRAND_LOGOS = {
   개인카페: "selfcafe",
   바나프레소: "banapresso",
 }
+const fullDate = (date) => {
+  const yyyy = date.getFullYear()
+  const mm = date.getMonth() + 1
+  const dd = date.getDate()
+  return yyyy * 10000 + mm * 100 + dd
+}
 
 const CafeInfo = () => {
   const cafeAuth = sessionStorage.getItem("cafeAuth")
@@ -61,6 +69,31 @@ const CafeInfo = () => {
           ]
         : "#65B1EF"
   }
+
+  const [isSurveySubmitted, setIsSurveySubmitted] = useState(false)
+  const { data: isSurverySubmittedData, sendRequest: getIsSurveySubmitted } = useFetch()
+  useEffect(() => {
+    if (cafeAuth === "1") {
+      getIsSurveySubmitted({
+        url: `${DEFAULT_REST_URL}/todaycafe/main/survey/check?todayDate=${fullDate(
+          new Date()
+        )}`,
+        headers: {
+          Authorization: `Bearer ${sessionStorage.getItem("accessToken")}`,
+        },
+      })
+    }
+    console.log('isSurveySubmitted', isSurveySubmitted)
+  }, [])
+  
+  useEffect(() => {
+    setIsSurveySubmitted(isSurverySubmittedData)
+  }, [isSurverySubmittedData])
+
+  const changeSubmittedState = () => {
+    setIsSurveySubmitted(true)
+  }
+
   return (
     <Container style={{ backgroundColor: "#f9f9f9" }}>
       <Grid>
@@ -86,12 +119,12 @@ const CafeInfo = () => {
           <Grid.Column only="tablet computer" tablet={5} computer={10}>
             <Grid style={{ textAlign: "center" }}>
               <Grid.Row style={{ display: "flex", justifyContent: "right" }}>
-                <CafeReport icon={false} size={"large"} content={"제보하기"} />
+                { !isSurveySubmitted && <CafeReport icon={false} size={"large"} content={"제보하기"} setSurvey={changeSubmittedState}/>}
               </Grid.Row>
             </Grid>
           </Grid.Column>
           <Grid.Column only="mobile" mobile={3}>
-            <CafeReport icon={"write square"} size={"mini"} content={null} />
+            { !isSurveySubmitted && <CafeReport icon={"write square"} size={"mini"} content={null} setSurvey={changeSubmittedState}/>}
           </Grid.Column>
         </Grid.Row>
 
@@ -147,11 +180,12 @@ const CafeInfo = () => {
                     </p>
                   </Grid.Column>
                   <Grid.Column only="computer" computer={5}>
-                    <CafeReport
+                    { !isSurveySubmitted && <CafeReport
                       icon={false}
                       size={"large"}
                       content={"제보하기"}
-                    />
+                      setSurvey={changeSubmittedState}
+                    />}
                   </Grid.Column>
                 </Grid.Row>
                 <Grid.Row columns={1}>
