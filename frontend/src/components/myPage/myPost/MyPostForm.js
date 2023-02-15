@@ -10,7 +10,6 @@ import {
 } from "semantic-ui-react";
 import { BsPencil, BsPencilFill } from "react-icons/bs";
 import { useDispatch, useSelector } from "react-redux";
-import useFetch from "../../../hooks/useFetch.js";
 
 import ImageUploadBox from "../../mainPage/ImageUploadBox";
 import { Editor } from "primereact/editor";
@@ -94,7 +93,7 @@ const submitHandler = async () => {
 
       dispatch(
         postsActions.editPost({
-          id: props.postToEdit.id,
+          id: props.postToEdit.postId,
           content: postContent,
           type: postType,
           images: postImages,
@@ -152,7 +151,7 @@ const submitHandler = async () => {
     setPostContent(props.isEditing ? props.postToEdit.content : "");
     setPostType(
       props.isEditing
-        ? props.postToEdit.type
+        ? props.postToEdit.postType
         : isAuthenticated
         ? "free"
         : "qna"
@@ -161,7 +160,10 @@ const submitHandler = async () => {
       setCurrentCafe(JSON.parse(sessionStorage.getItem("myCafe")).cafeName)
     }
     if (props.isEditing) {
-      dispatch(imageActions.uploadImage(...props.postToEdit.imgUrlPath));
+      if (props.postToEdit.imgUrlPath.length>0){
+
+        dispatch(imageActions.uploadImage(...props.postToEdit.imgUrlPath));
+      }
     } 
     setIsLoading(false)
   }
@@ -236,7 +238,7 @@ const submitHandler = async () => {
             <Dropdown
               id="post-type"
               fluid
-              placeholder= {props.isEditing ? "type" : "글 타입을 선택해주세요!"}
+              placeholder= {props.isEditing ? `${postTypes.find((post)=>post.key===props.postToEdit.postType).text}` : "글 타입을 선택해주세요!"}
               selection
               floating
               required

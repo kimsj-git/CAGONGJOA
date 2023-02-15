@@ -39,7 +39,7 @@ const BRAND_LOGOS = {
   달콤커피:"dalkomm",
   나우커피:"nowcoffee",
   공차:'gongcha',
-  개인카페:"selfcafe",
+  개인카페:"selfcafedojang",
   바나프레소:"banapresso",
 }
 const HistoryCalendar = () => {

@@ -44,6 +44,13 @@ const Profile = () => {
   const nickname = sessionStorage.getItem("nickname")
   const nowCafe = JSON.parse(sessionStorage.getItem("myCafe"))
   const todayCafe = JSON.parse(sessionStorage.getItem("todayCafe"))
+  const tierColor = todayCafe && 
+    parseInt(todayCafe.exp / 1000) < 4
+      ? ["#8B6331", "#C0C0C0", "#FF9614", "#3DFF92"][
+          parseInt(todayCafe.exp / 1000)
+        ]
+      : "#65B1EF"
+
   return (
     <Grid.Row columns={2}>
       <Grid.Column width={3} verticalAlign="middle">
@@ -51,6 +58,8 @@ const Profile = () => {
         <Item.Image
           size="tiny"
           src={require(`../../assets/cafe_logos/${BRAND_LOGOS[todayCafe.brandType]}.png`)}
+          style={{ border: `0.5rem solid ${tierColor}`, borderRadius: "70%", marginBottom:"1rem"}}
+
         /> : 
         <BsFillPatchQuestionFill
               style={{ marginInline: "0.5rem 0.8rem" }}

@@ -6,10 +6,8 @@ import { useSelector } from "react-redux"
 
 import { getPosts } from "../../store/posts"
 import { BsFillPatchQuestionFill } from "react-icons/bs"
-import { AiOutlineBell } from "react-icons/ai"
 import { IoIosSearch } from "react-icons/io"
 import { RiArrowDropDownLine } from "react-icons/ri"
-import PostTypeCarousel from "./PostTypeCarousel"
 import TypeSelector from "./TypeSelector"
 import { cafeActions } from "../../store/cafe"
 
@@ -43,16 +41,18 @@ const MainPageTopBar = (props) => {
   }
   const feedAddress = sessionStorage.getItem("address")
   const findFeedMyLocation = () => {
+    const location = {
+      lat: JSON.parse(sessionStorage.getItem("myCafe")).lat,
+      lng: JSON.parse(sessionStorage.getItem("myCafe")).lng,
+    }
     dispatch(
       getPosts({
-        location: {
-          lat: JSON.parse(sessionStorage.getItem("myCafe")).lat,
-          lng: JSON.parse(sessionStorage.getItem("myCafe")).lng,
-        },
+        location,
         postId: -1,
         filters: filters,
       })
     )
+    sessionStorage.setItem('location', JSON.stringify(location))
     dispatch(cafeActions.findFeedMyLocation())
   }
   return (
@@ -100,8 +100,8 @@ const MainPageTopBar = (props) => {
           />
         </div>
         <div style={{display:"flex"}}>
-          <Button icon="location arrow" circular onClick={findFeedMyLocation} loading={isLoading ? true:false}></Button>
-          <NavLink to="/search" style={{ marginInline: "0.5rem 0.3rem" }}>
+          {props.isCafeAuth === "1" && <Button icon="location arrow" color="red" circular onClick={findFeedMyLocation} loading={isLoading ? true:false}/>}
+          <NavLink to="/search" style={{ marginInliButtonne: "0.5rem 0.3rem" }}>
             <IoIosSearch size="30" color="black" />
           </NavLink>
         </div>
