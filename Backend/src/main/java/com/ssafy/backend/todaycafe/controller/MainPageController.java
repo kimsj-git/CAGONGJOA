@@ -90,8 +90,8 @@ public class MainPageController {
     @CafeAuth
     @GetMapping("/survey/check")
     public ResponseEntity<ResponseDTO> checkSubmitSurvey(@RequestParam int todayDate) {
-        Boolean isVisit = todayCafeService.checkSubmitSurvey(todayDate);
-        CheckSurveyRespDto checkSurveyRespDto = new CheckSurveyRespDto(isVisit);
+        Boolean isSubmit = todayCafeService.checkSubmitSurvey(todayDate);
+        CheckSurveyRespDto checkSurveyRespDto = new CheckSurveyRespDto(isSubmit);
         ResponseDTO responseDTO
                 = new ResponseDTO("만족도 설문 조사 제출 여부 확인!", "", HttpStatus.OK, checkSurveyRespDto);
         return new ResponseEntity<>(responseDTO, HttpStatus.OK);

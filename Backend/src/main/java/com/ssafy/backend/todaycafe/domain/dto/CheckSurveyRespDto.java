@@ -8,5 +8,5 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class CheckSurveyRespDto {
-    private Boolean isVisited;
+    private Boolean isSurveySubmitted;
 }
