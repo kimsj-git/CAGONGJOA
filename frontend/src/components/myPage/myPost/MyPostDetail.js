@@ -11,6 +11,7 @@ import {
   Form,
   Divider,
   Label,
+  Icon,
 } from "semantic-ui-react"
 import { ScrollPanel } from "primereact/scrollpanel"
 import MyComments from "./MyComments"
@@ -57,11 +58,15 @@ const BRAND_LOGOS = {
 }
 
 const MyPostDetail = (props) => {
+  console.log(props)
   const dispatch = useDispatch()
   const [open, setOpen] = useState(false)
   const [postDetail, setPostDetail] = useState({})
+  const [isLoading, setIsLoading] = useState(false)
+  const [firstMounted, setFirstMounted] = useState(false)
   const createdAt = props.post.createdAt.split("T")
   const clickHandler = async () => {
+    setIsLoading(true)
     const response = await fetch(
       `${REST_DEFAULT_URL}/main/post/detail?postId=${props.post.postId}`,
       {
@@ -72,130 +77,148 @@ const MyPostDetail = (props) => {
       }
     )
     const responseData = await response.json()
-    if (responseData.httpStatus === "OK"){
+    if (responseData.httpStatus === "OK") {
       setPostDetail(responseData.data)
-    } else if (responseData.httpStatus === "BAD_REQUEST" && responseData.data.sign==="JWT"){
-      const response = await fetch(`${REST_DEFAULT_URL}/member/refresh`,{
+    } else if (
+      responseData.httpStatus === "BAD_REQUEST" &&
+      responseData.data.sign === "JWT"
+    ) {
+      const response = await fetch(`${REST_DEFAULT_URL}/member/refresh`, {
         method: "GET",
         headers: {
-          "Authorization-RefreshToken" : `Bearer ${sessionStorage.getItem('refreshToken')}`
-        }
+          "Authorization-RefreshToken": `Bearer ${sessionStorage.getItem(
+            "refreshToken"
+          )}`,
+        },
       })
       const responseData = await response.json()
-      if (responseData.httpStatus!=="OK"){
+      if (responseData.httpStatus !== "OK") {
         sessionStorage.clear()
-        alert('세션 만료 되었습니다.')
+        alert("세션 만료 되었습니다.")
         window.location.href = "/login"
-      }else if(responseData.httpStatus === "OK"){
-        sessionStorage.setItem('accessToken', responseData.data.accessToken)
+      } else if (responseData.httpStatus === "OK") {
+        sessionStorage.setItem("accessToken", responseData.data.accessToken)
         alert("다시 시도해주세요")
       }
-    } else{
+    } else {
       alert("오류가 발생했습니다.")
     }
+    console.log(responseData)
+    setIsLoading(false)
+    setFirstMounted(true)
   }
+
+  console.log(postDetail.nickname && sessionStorage.getItem("nickname") === postDetail.nickname.trim("\""))
   return (
-    <Modal
-      onClose={() => setOpen(false)}
-      onOpen={() => setOpen(true)}
-      open={open}
-      size="large"
-      trigger={
-        <Button
-          onClick={clickHandler}
-          size="mini"
-          color="green"
-          style={{ margin: 0 }}
+    <>
+      {isLoading && <Icon name="spinner" loading />}
+      {!isLoading && (
+        <Modal
+          onClose={() => setOpen(false)}
+          onOpen={() => setOpen(true)}
+          open={open}
+          size="large"
+          trigger={
+            <Button
+              onClick={clickHandler}
+              size="mini"
+              color="green"
+              style={{ margin: 0 }}
+            >
+              자세히
+            </Button>
+          }
         >
-          자세히
-        </Button>
-      }
-    >
-      <Label
-        color="orange"
-        floating
-        icon={{ name: "comment", size: "large", style: { margin: "0px" } }}
-      />
-      <Modal.Content>
-        <div>
-          <Grid>
-            <Grid.Column mobile={16} tablet={8} computer={8}>
-              <ScrollPanel style={{ width: "100%", height: "77.5vh" }}>
-                <Card fluid style={{ boxShadow: "none" }}>
-                  <Card.Content>
-                    {props.post.imgUrlPath.length > 0 && (
-                      <Image
-                        avatar
-                        floated="left"
-                        size="huge"
-                        src={
-                          props.post.brandType
-                            ? require(`../../../assets/cafe_logos/${
-                                BRAND_LOGOS[props.post.brandType]
-                              }.png`)
-                            : ""
-                        }
-                      />
-                    )}
-                    <Card.Header>{props.post.writerNickname}</Card.Header>
-                    <Card.Meta>
-                      {props.post.cafeName ? props.post.cafeName : ""}
-                    </Card.Meta>
-                    <Card.Meta textAlign="right">
-                      {createdAt[0]} {createdAt[1]}
-                    </Card.Meta>
-                    {props.post.imgUrlPath.length > 0 &&
-                      props.post.imgUrlPath.map((img, index) => {
-                        return (
+          <Label
+            color="orange"
+            floating
+            icon={{ name: "comment", size: "large", style: { margin: "0px" } }}
+          />
+          <Modal.Content>
+            <div>
+              <Grid>
+                <Grid.Column mobile={16} tablet={8} computer={8}>
+                  <ScrollPanel style={{ width: "100%", height: "77.5vh" }}>
+                    <Card fluid style={{ boxShadow: "none" }}>
+                      <Card.Content>
+                        {postDetail.imgPathList && postDetail.imgPathList.length > 0 && (
                           <Image
-                            key={index}
-                            src={img}
-                            wrapped
-                            ui={true}
-                            style={{ marginBlock: "0.5rem" }}
+                            avatar
+                            floated="left"
+                            size="huge"
+                            src={
+                              props.post.brandType
+                                ? require(`../../../assets/cafe_logos/${
+                                    BRAND_LOGOS[postDetail.verifiedCafeBrand]
+                                  }.png`)
+                                : ""
+                            }
                           />
-                        )
-                      })}
-                    <Card.Description
-                      style={{ fontSize: "1.2rem", lineHeight: "1.8" }}
-                      dangerouslySetInnerHTML={{ __html: props.post.content }}
-                    ></Card.Description>
-                  </Card.Content>
-                </Card>
-              </ScrollPanel>
-              <div style={{ display: "flex", marginTop: "1rem" }}>
-                {sessionStorage.getItem("nickname") ===
-                  props.post.writerNickname && (
-                  <MyPostForm isEditing postToEdit={props.post} />
-                )}
-                {sessionStorage.getItem("nickname") === props.writer && (
-                  <Button
-                    fluid
-                    toggle
-                    // inverted
-                    color="grey"
-                    icon="delete"
-                    content="삭제"
-                    onClick={() => {
-                      dispatch(postsActions.deletePost(props.post.id))
-                      setOpen(false)
-                    }}
-                  ></Button>
-                )}
-                <ToggleButton
-                  btnType="like"
-                  fluid
-                  inverted
-                  content={props.post.postLikeCount}
-                  likeHandler={props.likeHandler}
-                />
-              </div>
-            </Grid.Column>
-            <MyComments post={postDetail} />
-          </Grid>
-        </div>
-      </Modal.Content>
-    </Modal>
+                        )}
+                        <Card.Header>{postDetail.nickname}</Card.Header>
+                        <Card.Meta>
+                          {postDetail.verifiedCafeName ? postDetail.verifiedCafeName : ""}
+                        </Card.Meta>
+                        <Card.Meta textAlign="right">
+                          {/* {createdAt[0]} {createdAt[1]} */}
+                        </Card.Meta>
+                        {postDetail.imgPathList && postDetail.imgPathList.length > 0 &&
+                          postDetail.imgPathList.map((img, index) => {
+                            return (
+                              <Image
+                                key={index}
+                                src={img}
+                                wrapped
+                                ui={true}
+                                style={{ marginBlock: "0.5rem" }}
+                              />
+                            )
+                          })}
+                        <Card.Description
+                          style={{ fontSize: "1.2rem", lineHeight: "1.8" }}
+                          dangerouslySetInnerHTML={{
+                            __html: postDetail.postContent,
+                          }}
+                        ></Card.Description>
+                      </Card.Content>
+                    </Card>
+                  </ScrollPanel>
+                  <div style={{ display: "flex", marginTop: "1rem" }}>
+                    {postDetail.nickname && sessionStorage.getItem("nickname") ===
+                      postDetail.nickname.substr(1,postDetail.nickname.length-2) && (
+                      <MyPostForm isEditing postToEdit={props.post} />
+                    )}
+                    {postDetail.nickname && sessionStorage.getItem("nickname") === postDetail.nickname.substr(1,postDetail.nickname.length-2) && (
+                      <Button
+                        fluid
+                        toggle
+                        // inverted
+                        color="grey"
+                        icon="delete"
+                        content="삭제"
+                        onClick={() => {
+                          dispatch(postsActions.deletePost(postDetail.postId))
+                          setOpen(false)
+                        }}
+                      ></Button>
+                    )}
+                    <ToggleButton
+                      btnType="like"
+                      fluid
+                      inverted
+                      content={postDetail.likeCounts}
+                      likeHandler={props.likeHandler}
+                      isLiked={postDetail.isLiked}
+                    />
+                  </div>
+                </Grid.Column>
+                {/* <MyComments post={postDetail} /> */}
+              </Grid>
+            </div>
+          </Modal.Content>
+        </Modal>
+      )}
+    </>
   )
 }
 

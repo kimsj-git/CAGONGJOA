@@ -1,8 +1,12 @@
-import CafeReport from "./CafeReport"
-import { Grid, Container } from "semantic-ui-react"
+import { useState, useEffect } from "react"
+import { useDispatch } from "react-redux"
+import { Grid, Container, Button } from "semantic-ui-react"
 import { BsFillPatchQuestionFill } from "react-icons/bs"
-
+import { modalActions } from "../../store/modal"
+import CafeReport from "./CafeReport"
 import CafeTimer from "./CafeTimer"
+import useFetch from "../../hooks/useFetch"
+const DEFAULT_REST_URL = process.env.REACT_APP_REST_DEFAULT_URL
 
 const BRAND_LOGOS = {
   할리스: "hollys",
@@ -39,8 +43,15 @@ const BRAND_LOGOS = {
   개인카페: "selfcafe",
   바나프레소: "banapresso",
 }
+const fullDate = (date) => {
+  const yyyy = date.getFullYear()
+  const mm = date.getMonth() + 1
+  const dd = date.getDate()
+  return yyyy * 10000 + mm * 100 + dd
+}
 
 const CafeInfo = () => {
+  const dispatch = useDispatch()
   const cafeAuth = sessionStorage.getItem("cafeAuth")
   const nowCafe = JSON.parse(sessionStorage.getItem("myCafe"))
   const todayCafe = JSON.parse(sessionStorage.getItem("todayCafe"))
@@ -61,6 +72,30 @@ const CafeInfo = () => {
           ]
         : "#65B1EF"
   }
+
+  const [isSurveySubmitted, setIsSurveySubmitted] = useState(false)
+  const { data: fetchedData, sendRequest: getIsSurveySubmitted } = useFetch()
+  useEffect(() => {
+    if (cafeAuth === "1") {
+      getIsSurveySubmitted({
+        url: `${DEFAULT_REST_URL}/todaycafe/main/survey/check?todayDate=${fullDate(
+          new Date()
+        )}`,
+        headers: {
+          Authorization: `Bearer ${sessionStorage.getItem("accessToken")}`,
+        },
+      })
+    }
+  }, [])
+
+  useEffect(() => {
+    setIsSurveySubmitted(fetchedData.isSurveySubmitted)
+  }, [fetchedData])
+
+  const changeSubmittedState = () => {
+    setIsSurveySubmitted(true)
+  }
+
   return (
     <Container style={{ backgroundColor: "#f9f9f9" }}>
       <Grid>
@@ -68,7 +103,7 @@ const CafeInfo = () => {
         <Grid.Row only="mobile tablet">
           <Grid.Column mobile={3} tablet={5} computer={1} />
           <Grid.Column mobile={10} tablet={6} computer={5}>
-            {cafeAuth === '0' && (
+            {(cafeAuth === "0" || cafeAuth === null) && (
               <BsFillPatchQuestionFill
                 style={{ marginInline: "0.5rem 0.8rem" }}
                 size="100%"
@@ -78,20 +113,55 @@ const CafeInfo = () => {
             {cafeAuth === "1" && (
               <img
                 src={require(`../../assets/cafe_logos/${logo_url}`)}
-                style={{ border: `3vw solid ${tierColor}`, borderRadius: "70%" }}
+                style={{
+                  border: `3vw solid ${tierColor}`,
+                  borderRadius: "70%",
+                }}
                 alt="#"
               />
             )}
           </Grid.Column>
           <Grid.Column only="tablet computer" tablet={5} computer={10}>
             <Grid style={{ textAlign: "center" }}>
-              <Grid.Row style={{ display: "flex", justifyContent: "right" }}>
-                <CafeReport icon={false} size={"large"} content={"제보하기"} />
+              <Grid.Row style={{ display: "flex", justifyContent: "center" }}>
+                {cafeAuth === "1" && !isSurveySubmitted && (
+                  <CafeReport
+                    icon={false}
+                    size={"large"}
+                    content={"제보하기"}
+                    setSurvey={changeSubmittedState}
+                  />
+                )}
+                {(cafeAuth === "0" || cafeAuth === null) && (
+                  <Button
+                    onClick={() => {
+                      dispatch(modalActions.openCafeAuthModal())
+                    }}
+                  >
+                    위치 인증
+                  </Button>
+                )}
               </Grid.Row>
             </Grid>
           </Grid.Column>
           <Grid.Column only="mobile" mobile={3}>
-            <CafeReport icon={"write square"} size={"mini"} content={null} />
+            {cafeAuth === "1" && !isSurveySubmitted && (
+              <CafeReport
+                icon={"write square"}
+                size={"mini"}
+                content={null}
+                setSurvey={changeSubmittedState}
+              />
+            )}
+            {(cafeAuth === "0" || cafeAuth === null) && (
+              <Button
+                onClick={() => {
+                  dispatch(modalActions.openCafeAuthModal())
+                }}
+              >
+                위치 인증
+              </Button>
+            )}
           </Grid.Column>
         </Grid.Row>
 
@@ -99,7 +169,7 @@ const CafeInfo = () => {
         <Grid.Row style={{ width: "100%" }} centered>
           <Grid columns={2}>
             <Grid.Column only="computer" computer={5}>
-              {cafeAuth === '0' && (
+              {cafeAuth === "0" && (
                 <BsFillPatchQuestionFill
                   style={{ marginInline: "0.5rem 0.8rem" }}
                   size="100%"
@@ -147,11 +217,23 @@ const CafeInfo = () => {
                     </p>
                   </Grid.Column>
                   <Grid.Column only="computer" computer={5}>
-                    <CafeReport
-                      icon={false}
-                      size={"large"}
-                      content={"제보하기"}
-                    />
+                    {cafeAuth === "1" && !isSurveySubmitted && (
+                      <CafeReport
+                        icon={false}
+                        size={"large"}
+                        content={"제보하기"}
+                        setSurvey={changeSubmittedState}
+                      />
+                    )}
+                    {(cafeAuth === "0" || cafeAuth === null) && (
+                      <Button
+                        onClick={() => {
+                          dispatch(modalActions.openCafeAuthModal())
+                        }}
+                      >
+                        위치 인증
+                      </Button>
+                    )}
                   </Grid.Column>
                 </Grid.Row>
                 <Grid.Row columns={1}>
