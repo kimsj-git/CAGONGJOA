@@ -48,7 +48,7 @@ const MapCafeMarker = (props) => {
             props.crowdLevel !== null
               ? require(`../../assets/icons/${JAMLIST[props.crowdLevel]}.png`)
               : require(`../../assets/icons/coffee_location_grey.png`),
-          size: { width: 25, height: 30 },
+          size: { width: 35, height: 40 },
           options: {
             offset: {
               x: 12,

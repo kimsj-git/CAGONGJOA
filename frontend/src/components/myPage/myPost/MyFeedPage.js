@@ -3,7 +3,6 @@ import { Menu } from "semantic-ui-react"
 
 import MyPosts from "./MyPosts"
 import MyComments from "./MyComments"
-import MyLikes from "./MyLikes"
 
 const MyFeedPage = () => {
   const [activeItem, setActiveItem] = useState('myposts')
@@ -27,12 +26,6 @@ const MyFeedPage = () => {
           active={activeItem === "mycomments"}
           onClick={handleItemClick}
         />
-        {/* <Menu.Item
-          name="좋아요"
-          dir="mylikes"
-          active={activeItem === "mylikes"}
-          onClick={handleItemClick}
-        /> */}
       </Menu>
 
       {activeItem === "myposts" && <MyPosts />}

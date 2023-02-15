@@ -13,10 +13,12 @@ import {
   Label,
 } from "semantic-ui-react"
 import { ScrollPanel } from "primereact/scrollpanel"
-import CommentItem from "../../mainPage/CommentItem"
+import MyComments from "./MyComments"
 import ToggleButton from "../../common/ToggleButton"
 import { postsActions } from "../../../store/posts"
 import MyPostForm from "./MyPostForm"
+
+const REST_DEFAULT_URL = process.env.REACT_APP_REST_DEFAULT_URL
 
 const BRAND_LOGOS = {
   할리스: "hollys",
@@ -57,14 +59,57 @@ const BRAND_LOGOS = {
 const MyPostDetail = (props) => {
   const dispatch = useDispatch()
   const [open, setOpen] = useState(false)
-  const createdAt = props.post.createdAt.split('T')
+  const [postDetail, setPostDetail] = useState({})
+  const createdAt = props.post.createdAt.split("T")
+  const clickHandler = async () => {
+    const response = await fetch(
+      `${REST_DEFAULT_URL}/main/post/detail?postId=${props.post.postId}`,
+      {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${sessionStorage.getItem("accessToken")}`,
+        },
+      }
+    )
+    const responseData = await response.json()
+    if (responseData.httpStatus === "OK"){
+      setPostDetail(responseData.data)
+    } else if (responseData.httpStatus === "BAD_REQUEST" && responseData.data.sign==="JWT"){
+      const response = await fetch(`${REST_DEFAULT_URL}/member/refresh`,{
+        method: "GET",
+        headers: {
+          "Authorization-RefreshToken" : `Bearer ${sessionStorage.getItem('refreshToken')}`
+        }
+      })
+      const responseData = await response.json()
+      if (responseData.httpStatus!=="OK"){
+        sessionStorage.clear()
+        alert('세션 만료 되었습니다.')
+        window.location.href = "/login"
+      }else if(responseData.httpStatus === "OK"){
+        sessionStorage.setItem('accessToken', responseData.data.accessToken)
+        alert("다시 시도해주세요")
+      }
+    } else{
+      alert("오류가 발생했습니다.")
+    }
+  }
   return (
     <Modal
       onClose={() => setOpen(false)}
       onOpen={() => setOpen(true)}
       open={open}
       size="large"
-      trigger={<Button size="mini" color="green" style={{margin:0}}>자세히</Button>}
+      trigger={
+        <Button
+          onClick={clickHandler}
+          size="mini"
+          color="green"
+          style={{ margin: 0 }}
+        >
+          자세히
+        </Button>
+      }
     >
       <Label
         color="orange"
@@ -78,39 +123,49 @@ const MyPostDetail = (props) => {
               <ScrollPanel style={{ width: "100%", height: "77.5vh" }}>
                 <Card fluid style={{ boxShadow: "none" }}>
                   <Card.Content>
-                    {props.post.imgUrlPath.length >0 && 
-                    <Image
-                    avatar
-                    floated="left"
-                    size="huge"
-                    src={props.post.brandType ? require(`../../../assets/cafe_logos/${BRAND_LOGOS[props.post.brandType]}.png`) : ""}
-                    />
-                  }
+                    {props.post.imgUrlPath.length > 0 && (
+                      <Image
+                        avatar
+                        floated="left"
+                        size="huge"
+                        src={
+                          props.post.brandType
+                            ? require(`../../../assets/cafe_logos/${
+                                BRAND_LOGOS[props.post.brandType]
+                              }.png`)
+                            : ""
+                        }
+                      />
+                    )}
                     <Card.Header>{props.post.writerNickname}</Card.Header>
-                    <Card.Meta>{props.post.cafeName? props.post.cafeName : ''}</Card.Meta>
+                    <Card.Meta>
+                      {props.post.cafeName ? props.post.cafeName : ""}
+                    </Card.Meta>
                     <Card.Meta textAlign="right">
                       {createdAt[0]} {createdAt[1]}
                     </Card.Meta>
-                    {props.post.imgUrlPath.length > 0 && props.post.imgUrlPath.map((img,index)=>{
-                      return <Image
-                      key={index}
-                      src={img}
-                      wrapped
-                      ui={true}
-                      style={{ marginBlock: "0.5rem" }}
-                    />
-                    })}
+                    {props.post.imgUrlPath.length > 0 &&
+                      props.post.imgUrlPath.map((img, index) => {
+                        return (
+                          <Image
+                            key={index}
+                            src={img}
+                            wrapped
+                            ui={true}
+                            style={{ marginBlock: "0.5rem" }}
+                          />
+                        )
+                      })}
                     <Card.Description
                       style={{ fontSize: "1.2rem", lineHeight: "1.8" }}
                       dangerouslySetInnerHTML={{ __html: props.post.content }}
-                    >
-
-                    </Card.Description>
+                    ></Card.Description>
                   </Card.Content>
                 </Card>
               </ScrollPanel>
               <div style={{ display: "flex", marginTop: "1rem" }}>
-              {sessionStorage.getItem("nickname") === props.post.writerNickname && (
+                {sessionStorage.getItem("nickname") ===
+                  props.post.writerNickname && (
                   <MyPostForm isEditing postToEdit={props.post} />
                 )}
                 {sessionStorage.getItem("nickname") === props.writer && (
@@ -136,26 +191,7 @@ const MyPostDetail = (props) => {
                 />
               </div>
             </Grid.Column>
-            <Grid.Column mobile={16} tablet={8} computer={8}>
-              <Header>{`댓글 ${props.post.commentCount}`}</Header>
-              <Divider />
-              <ScrollPanel style={{ width: "100%", height: "70vh" }}>
-                <Comment.Group>
-                </Comment.Group>
-              </ScrollPanel>
-              <Divider />
-              <Form reply>
-                <Form.Input
-                  fluid
-                  placeholder="댓글을 입력하세요."
-                  action={{
-                    color: "brown",
-                    icon: "paper plane",
-                  }}
-                  size="tiny"
-                />
-              </Form>
-            </Grid.Column>
+            <MyComments post={postDetail} />
           </Grid>
         </div>
       </Modal.Content>
