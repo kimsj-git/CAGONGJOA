@@ -1,5 +1,4 @@
 import MapDiv from "../components/map/MapDiv"
-import MainPageTopBar from "../components/mainPage/MainPageTopBar"
 
 const MapPage = (props) => {
   return (

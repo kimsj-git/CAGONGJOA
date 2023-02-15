@@ -8,9 +8,9 @@ import { searchActions } from "../store/search.js"
 import { useInView } from "react-intersection-observer"
 import "./SearchPage.css"
 import useFetch from "../hooks/useFetch.js"
-const DEFAULT_REST_URL = process.env.REACT_APP_REST_DEFAULT_URL
 
 const SearchPage = () => {
+  const DEFAULT_REST_URL = process.env.REACT_APP_REST_DEFAULT_URL
   const [searchValue, setSearchValue] = useState("")
   const [activeDomain, setActiveDomain] = useState(1)
   const hasSearched = useSelector((state) => state.search.hasSearched)
@@ -27,8 +27,8 @@ const SearchPage = () => {
     await search(`${DEFAULT_REST_URL}/main/post/search`, {
       method: "POST",
       headers: {
-        "Authorization-RefreshToken": `Bearer ${sessionStorage.getItem(
-          "refreshToken"
+        Authorization: `Bearer ${sessionStorage.getItem(
+          "accessToken"
         )}`,
         "Content-Type": "application/json",
       },
@@ -46,13 +46,14 @@ const SearchPage = () => {
     })
   }
   const searchSth = async (keyword, type) => {
-    await search(`${DEFAULT_REST_URL}/main/post/search`, {
+    console.log("searchSth")
+    await search({
+      url: `${DEFAULT_REST_URL}/main/post/search`,
       method: "POST",
       headers: {
-        "Authorization-RefreshToken": `Bearer ${sessionStorage.getItem(
-          "refreshToken"
-        )}`,
-        "Content-Type": "application/json",
+        Authorization: `Bearer ${sessionStorage.getItem(
+          "accessToken")}`,
+          "Content-Type": "application/json",
       },
       body: {
         postId: -1,
@@ -62,6 +63,7 @@ const SearchPage = () => {
         longitude: JSON.parse(sessionStorage.getItem("location")).lng,
         dist: 0.5,
       },
+
     })
   }
 

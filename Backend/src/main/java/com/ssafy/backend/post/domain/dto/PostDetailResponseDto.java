@@ -27,6 +27,7 @@ public class PostDetailResponseDto {
     //comment
     private int likeCounts;
     private int commentCounts;
+    private Boolean isLikeChecked;
     private List<CommentPagingResponseDto> commentSlice;
 
     public void updateDto(String verifiedCafeName, String verifiedCafeBrand, Long exp) {
@@ -37,6 +38,10 @@ public class PostDetailResponseDto {
 
     public void updateComment(List<CommentPagingResponseDto> dtoList) {
         this.commentSlice = dtoList;
+    }
+
+    public void updateIsLiked(Boolean isLikeChecked) {
+        this.isLikeChecked = isLikeChecked;
     }
 
 }

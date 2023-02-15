@@ -6,12 +6,9 @@ import com.amazonaws.services.s3.model.*;
 import com.ssafy.backend.cafe.domain.dto.ClientPosInfoDto;
 import com.ssafy.backend.cafe.domain.dto.NearByCafeResultDto;
 import com.ssafy.backend.cafe.service.CafeServiceImpl;
-import com.ssafy.backend.common.exception.jwt.JwtException;
 import com.ssafy.backend.common.exception.post.PostException;
 import com.ssafy.backend.common.exception.post.PostExceptionType;
-import com.ssafy.backend.member.domain.dto.MemberIdAndNicknameDto;
 import com.ssafy.backend.member.service.MemberServiceImpl;
-import com.ssafy.backend.post.domain.dto.CheckedResponseDto;
 import com.ssafy.backend.post.domain.entity.Post;
 import com.ssafy.backend.post.domain.entity.PostImage;
 import com.ssafy.backend.post.repository.PostImageRepository;
@@ -23,8 +20,6 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.transaction.Transactional;
 import java.io.IOException;
 import java.util.*;
-
-import static com.ssafy.backend.common.exception.jwt.JwtExceptionType.JWT_VERIFICATION_EXCEPTION;
 
 @RequiredArgsConstructor // 얘도 커스텀?
 @Transactional
@@ -91,9 +86,9 @@ public class PostUtil {
         return postImageList;
     }
 
-    public void imageDelete(Post post, List<Long> imageIdList) {
+    public void imageDelete(Post post, List<String> imgUrlList) {
 
-        List<PostImage> postImages = imageRepository.findAllByPostIdAndIdNotIn(post.getId(), imageIdList);
+        List<PostImage> postImages = imageRepository.findAllByPostIdAndImgUrlNotIn(post.getId(), imgUrlList);
         // null 이면 이미지를 삭제하지 않고 바로 리턴하여 돌아간다.
         if (postImages.isEmpty() || postImages == null) {
             System.out.println("img empty!");

@@ -7,6 +7,7 @@ import { BsFillPatchQuestionFill } from "react-icons/bs"
 import { postsActions } from "../../store/posts"
 import { useSelector, useDispatch } from "react-redux"
 import "./Post.css"
+import { Carousel } from "primereact/carousel"
 
 const DEFAULT_REST_URL = process.env.REACT_APP_REST_DEFAULT_URL
 
@@ -73,6 +74,19 @@ const PostItem = (props) => {
       },
     })
   }
+
+  const carouselTemplate = (img) => {
+    return(
+      <div style={{height:"100%", width:"100%",display:"flex", justifyContent:"center", alignItems:"center"}}>
+        <Image
+          src={img}
+          ui={true}
+          style={{ borderRadius: "0.8rem" }}
+          />
+      </div>
+    )
+  }
+
   return props.isLoading ? (
     <LoadingPost />
   ) : (
@@ -83,13 +97,19 @@ const PostItem = (props) => {
         size="large"
       />
       <Card.Content>
-        {props.images.length ? (
-          <Image
-            src={props.images.length ? props.images[0] : null}
-            ui={true}
-            style={{ borderRadius: "0.8rem" }}
-          />
-        ) : null}
+      {props.images.length>1 ? (
+          <Carousel
+          value={props.images}
+          numVisible={1}
+          numScroll={1}
+          itemTemplate={carouselTemplate}
+          style={{ position: "inherit" }}
+        />
+        ) : props.images.length === 1 ? <Image
+        src={props.images[0]}
+        ui={true}
+        style={{ borderRadius: "0.8rem" }}
+        /> : null }
         <div
           style={{
             display: "flex",
@@ -154,6 +174,7 @@ const PostItem = (props) => {
             btnType="like"
             likeHandler={likePost}
             isLiked={props.isLiked}
+            iconSize={24}
           />
 
           <PostDetail post={props} likeHandler={likePost} />

@@ -32,137 +32,116 @@ const LoginPage = () => {
   }, [])
 
   return (
-    <Grid id="login-wrapper" stackable columns={2} textAlign="center">
-      <Grid.Column 
-      // width={6}
-      >
-        <div className="map-box">
-          {/* <div className="circular-border" style={{ top: "-15%", left: "-20%" }} />
-          <div
-            className="circular-border"
-            style={{ top: "25%", left: "-15%" }}
-          />
-          <div
-            className="circular-border"
-            style={{ top: "10%", left: "50%" }}
-          />
-          <div
-            className="circular-border"
-            style={{ top: "20%", left: "25%" }}
-          /> */}
-          <Image className="map" src={require("../../assets/map5.jpg")} />
-          <Image
-            className="map-marker"
-            src={require("../../assets/icons/coffee_location_red.png")}
-            style={{
-              top: "15%",
-              left: "65%",
-              animation: "float 4s ease-in-out infinite",
-              animationDelay: "1s",
-            }}
-          />
-          <Image
-            className="map-marker"
-            src={require("../../assets/icons/coffee_location_yellow.png")}
-            style={{
-              top: "70%",
-              left: "50%",
-              animation: "float 4s ease-in-out infinite",
-              animationDelay: "2s",
-            }}
-          />
-          <Image
-            className="map-marker"
-            src={require("../../assets/icons/coffee_location_green.png")}
-            style={{
-              top: "25%",
-              left: "12%",
-              animation: "float 4s ease-in-out infinite",
-              animationDelay: "3s",
-            }}
-          />
-          <Image
-            className="map-marker"
-            src={require("../../assets/icons/kagongjoa_logo.png")}
-            style={{
-              top: "35%",
-              left: "35%",
-              width: "30%",
-              height: "30%",
-            }}
-          />
-          <div class="circle"></div>
-          <div class="circle" style={{ animationDelay: "0s" }}></div>
-          <div class="circle" style={{ animationDelay: "1s" }}></div>
-          <div class="circle" style={{ animationDelay: "2s" }}></div>
-          <div class="circle" style={{ animationDelay: "3s" }}></div>
-        </div>
-      </Grid.Column>
-      <Grid.Column
-        // width={6}
-        textAlign="left"
-        mobile={0}
-        style={{
-          display: "flex",
-          flexDirection: "column",
-          height: "60%",
-          // padding: "2rem 0 2rem 10rem ",
-          justifyContent: "space-between",
-        }}
-      >
-        <div style={{ display: "flex" }}>
-          <p class="title">카공조아</p>
+    <Grid id="login-wrapper" centered>
+      <Grid.Column mobile={16} tablet={14} computer={14}>
+        <Grid columns={2} stackable>
+
+          <Grid.Column mobile={10} tablet={7} computer={8} textAlign="center">
+          <div className="map-box">
+
+           <Image className="map" src={require("../../assets/map5.jpg")} />
+           <Image
+             className="map-marker"
+             src={require("../../assets/icons/coffee_location_red.png")}
+             style={{
+               top: "15%",
+               left: "65%",
+               animation: "float 4s ease-in-out infinite",
+               animationDelay: "1s",
+             }}
+           />
+           <Image
+             className="map-marker"
+             src={require("../../assets/icons/coffee_location_yellow.png")}
+             style={{
+               top: "70%",
+               left: "50%",
+               animation: "float 4s ease-in-out infinite",
+               animationDelay: "2s",
+             }}
+           />
+           <Image
+             className="map-marker"
+             src={require("../../assets/icons/coffee_location_green.png")}
+             style={{
+               top: "25%",
+               left: "12%",
+               animation: "float 4s ease-in-out infinite",
+               animationDelay: "3s",
+             }}
+           />
+           <Image
+             className="map-marker"
+             src={require("../../assets/icons/kagongjoa_logo.png")}
+             style={{
+               top: "35%",
+               left: "35%",
+               width: "30%",
+               height: "30%",
+             }}
+           />
+           <div className="circle"></div>
+          <div className="circle" style={{ animationDelay: "0s" }}></div>
+
+          <div className="circle" style={{ animationDelay: "1s" }}></div>
+
+          <div className="circle" style={{ animationDelay: "2s" }}></div>
+          <div className="circle" style={{ animationDelay: "3s" }}></div>
+
+         </div>
+          </Grid.Column>
+          <Grid.Column id="mobile-only" only="mobile" mobile={8} verticalAlign="middle" textAlign="center">
+            <Grid verticalAlign="middle">
+
+            <Grid.Row>
+              <div style={{ display: "flex" }}>
+                <p className="title">카공조아</p>
+                <Image
+                  className="chat-bubble"
+                  src={require("../../assets/icons/chat_bubble_right.png")}
+                  style={{
+                    width: "6rem",
+                    height: "5rem",
+                    display: "inline-block",
+                  }}
+                />
+              </div>
+            </Grid.Row>
+            <Grid.Row><p className="subtitle">내 주변 카페 이용객들과 소통해보세요!</p></Grid.Row>
+            <Grid.Row><KakaoLogin style={{ fontSize: "10rem" }} /></Grid.Row>
+            </Grid>
           
-            <Image
-            className="chat-bubble"
-              src={require("../../assets/icons/chat_bubble_right.png")}
-              style={{
-                width: "6rem",
-                height: "5rem",
-                // marginBottom
-                // top: "-80%",
-                // right: "-40%",
-                display: "inline-block",
-                // position: "absolute",
-                // animation: "float 6s ease-in-out infinite",
-              }}
-            />
-        </div>
-        <p className="subtitle">내 주변 카페 이용객들과 소통해보세요!</p>
-        <KakaoLogin style={{ fontSize: "10rem" }} />
-      </Grid.Column>
-      <Grid.Column
-        // width={6}
-        only="mobile"
-        textAlign="center"
-        style={{
-          display: "flex",
-          flexDirection: "column",
-          height: "60%",
-          // padding: "2rem 0 2rem 10rem ",
-          // justifyContent: "space-between",
-        }}
-      >
-        <div style={{ display: "flex" }}>
-          <p class="title">카공조아</p>
+        
+        
+          </Grid.Column>
+
+          <Grid.Column id="computer-only" only="computer tablet" tablet={8} computer={8} verticalAlign="middle" textAlign="left">
+            <Grid verticalAlign="middle">
+
+            <Grid.Row>
+              <div style={{ display: "flex" }}>
+                <p className="title">카공조아</p>
+                <Image
+                  className="chat-bubble"
+                  src={require("../../assets/icons/chat_bubble_right.png")}
+                  style={{
+                    width: "6rem",
+                    height: "5rem",
+                    display: "inline-block",
+                  }}
+                />
+              </div>
+            </Grid.Row>
+            <Grid.Row><p className="subtitle">내 주변 카페 이용객들과 소통해보세요!</p></Grid.Row>
+            <Grid.Row><KakaoLogin style={{ fontSize: "10rem" }} /></Grid.Row>
+            </Grid>
           
-            <Image
-            className="chat-bubble"
-              src={require("../../assets/icons/chat_bubble_right.png")}
-              style={{
-                width: "6rem",
-                height: "5rem",
-                // marginBottom
-                // top: "-80%",
-                // right: "-40%",
-                display: "inline-block",
-                // position: "absolute",
-                // animation: "float 6s ease-in-out infinite",
-              }}
-            />
-        </div>
-        <p className="subtitle">내 주변 카페 이용객들과 소통해보세요!</p>
-        <KakaoLogin style={{ fontSize: "10rem" }} />
+        
+        
+          </Grid.Column>
+        </Grid>
+
+
       </Grid.Column>
     </Grid>
   )

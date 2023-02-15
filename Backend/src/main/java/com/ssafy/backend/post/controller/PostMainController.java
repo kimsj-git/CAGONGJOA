@@ -53,7 +53,6 @@ public class PostMainController {
      * 1-2. 게시글 좋아요 누르기  [테스트완료]
      **/
     @Auth
-    @CafeAuth  // 카페인증 되어야 누를수있음
     @PostMapping("/like")
     public ResponseEntity<ResponseDTO> postLike(
             @RequestBody PostLikeRequestDto likeRequestDto) {
@@ -69,7 +68,7 @@ public class PostMainController {
      **/
 
     @Auth
-    @PostMapping("/detail")
+    @GetMapping("/detail")
     public ResponseEntity<ResponseDTO> postDetail(@RequestParam Long postId) {
         PostDetailResponseDto detailResponseDto = postService.findOnePost(postId);
         responseDTO = new ResponseDTO("조회 완료!", "", HttpStatus.OK, detailResponseDto);
@@ -98,7 +97,6 @@ public class PostMainController {
      * 1-5. 업데이트 하러가기
      **/
     @Auth
-//    @CafeAuth
     @PutMapping("/update")
     public ResponseEntity<ResponseDTO> updatePost(@RequestParam Long postId) {
 
