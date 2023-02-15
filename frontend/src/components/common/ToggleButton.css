@@ -18,7 +18,7 @@
   box-shadow: 0 0 0 2px var(--point-color-red) inset !important;
   border-radius: 40px ;
   color: var(--point-color-red);
-  font-size: 1.1rem;
+  /* font-size: 1.1rem; */
   transition: all 0.4s ease;
 }
 #cancle-like:hover {
@@ -26,7 +26,7 @@
   box-shadow: none !important;
   border-radius: 40px;
   color: #fff;
-  font-size: 1.1rem;
+  /* font-size: 1.1rem; */
   transition: all 0.4s ease;
   
 }

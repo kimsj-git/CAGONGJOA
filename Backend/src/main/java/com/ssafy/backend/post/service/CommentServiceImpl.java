@@ -1,13 +1,9 @@
 package com.ssafy.backend.post.service;
 
 
-import com.ssafy.backend.cafe.domain.entity.Cafe;
-import com.ssafy.backend.cafe.repository.CafeRepository;
 import com.ssafy.backend.common.exception.post.PostException;
 import com.ssafy.backend.common.exception.post.PostExceptionType;
 import com.ssafy.backend.member.domain.entity.Member;
-import com.ssafy.backend.member.domain.entity.MemberCafeTier;
-import com.ssafy.backend.member.repository.MemberCafeTierRepository;
 import com.ssafy.backend.member.repository.MemberRepository;
 import com.ssafy.backend.member.util.MemberUtil;
 import com.ssafy.backend.post.domain.dto.*;
@@ -17,9 +13,6 @@ import com.ssafy.backend.post.domain.entity.Post;
 import com.ssafy.backend.post.repository.*;
 import com.ssafy.backend.post.util.DtoMakingUtil;
 import com.ssafy.backend.post.util.PagingUtil;
-import com.ssafy.backend.post.util.PostUtil;
-import com.ssafy.backend.redis.CafeAuth;
-import com.ssafy.backend.redis.CafeAuthRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
@@ -83,7 +76,7 @@ public class CommentServiceImpl implements CommentService {
             return commentResponseList;
         }
         CommentPagingResponseDto commentPagingResponseDto;
-        for(List<Comment> comments : commentGroupListList){
+        for (List<Comment> comments : commentGroupListList) {
             commentPagingResponseDto = dtoMakingUtil.getCommentList(comments);
             commentResponseList.add(commentPagingResponseDto);
         }
@@ -248,10 +241,16 @@ public class CommentServiceImpl implements CommentService {
             throw new PostException(PostExceptionType.BAD_COMMENT_ID);
         }
         Comment comment = commentOptional.get();
+        Long postId = comment.getPost().getId();
+        Long groupNo = comment.getGroupNo();
         long commentMemberId = comment.getMember().getId();
 
         if (memberId == commentMemberId) { // 글쓴이와 유저가 일치한다면 삭제, 대댓글도 다 삭제
-            commentRepository.deleteAllByGroupNo(comment.getGroupNo());
+            if (comment.getStepNo() == 0) {
+                commentRepository.deleteAllByPostIdAndGroupNo(postId, groupNo);
+            } else {
+                commentRepository.deleteById(comment.getId());
+            }
         } else { // 유저가 일치하지 않는다면 badgateway
             throw new PostException(PostExceptionType.USER_IS_NOT_WRITER);
         }

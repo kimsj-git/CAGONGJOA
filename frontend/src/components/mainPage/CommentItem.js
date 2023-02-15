@@ -16,9 +16,9 @@ const CommentItem = (props) => {
   const [confirmOpen, setConfirmOpen] = useState(false)
   const isWriterVerified = comment.writerType
 
-  const likeComment = (isLiked) => {
+  const likeComment = async (isLiked) => {
     dispatch(commentsActions.likeComment({commentID: comment.commentId, num: isLiked ? -1 : 1}))
-    fetchLike({
+    await fetchLike({
       url: `${DEFAULT_REST_URL}/main/postDetail/comment/like`,
       method: "PUT",
       headers: {
@@ -58,94 +58,110 @@ const CommentItem = (props) => {
         <Comment.Actions>
           <Comment.Action>
             <ToggleButton
+
               btnType="like"
               content={comment.commentLikeCnt}
               likeHandler={likeComment}
               compact
               size="mini"
+              iconSize={12}
               isLiked={comment.likeChecked}
-            />
+              />
+          </Comment.Action>
+
+          <Comment.Action>
             <Button
+              id="reply-btn"
               size="mini"
               compact
+              circular
               color="teal"
               icon="reply"
               content="대댓글"
               onClick={() => {
                 setReplyMode(!replyMode)
               }}
+              style={{}}
             ></Button>
-
+          </Comment.Action>
+          <Comment.Action>
             {comment.writerNickname === sessionStorage.getItem("nickname") && (
               <Button
+                id="delete-btn"
                 size="mini"
                 compact
                 toggle
+                circular
                 color="grey"
                 icon="delete"
                 content="삭제"
                 onClick={() => {
                   setConfirmOpen(true)
                 }}
+                style={{}}
               ></Button>
-            )}
-            {comment.replies.length &&
-            
-            <Comment.Group>
-              {comment.replies.map((reply) => {
-                return <ReplyItem reply={reply} addNewComment={props.addNewComment}/>
-              })}
-            </Comment.Group>
-            }
-
-            <Confirm
-              open={confirmOpen}
-              content="정말 삭제할까요?"
-              cancelButton="취소"
-              confirmButton="삭제"
-              onCancel={() => {
-                setConfirmOpen(false)
-              }}
-              onConfirm={() => {
-                setConfirmOpen(false)
-                dispatch(commentsActions.deleteComment(props.comment.commentId))
-                fetch(
-                  `${DEFAULT_REST_URL}/main/postDetail/comment/delete?commentId=${props.comment.commentId}`,
-                  {
-                    method: "DELETE",
-                    headers: {
-                      Authorization: `Bearer ${sessionStorage.getItem("accessToken")}`,
-                    },
-                  }
-                )
-              }}
-            />
+              )}
           </Comment.Action>
         </Comment.Actions>
-        {replyMode && (
-          <Form
-            reply
-            onSubmit={(e) => {
-              props.addNewComment(newReply, comment.commentId)
-              // setNewReply("")
-              // e.target[0].value = ""
-              console.log(e.target)
 
-            }}
-          >
-            <Form.Input
-              fluid
-              placeholder="대댓글을 입력하세요."
-              action={{
-                icon: "paper plane",
-                color: "teal",
-              }}
-              size="mini"
-              // content={newReply}
-              onChange={(e) => setNewReply(e.target.value)}
-            />
-          </Form>
-        )}
+        {/* 대댓글 입력창 */}
+              {replyMode && (
+                <Form
+                  reply
+                  onSubmit={(e) => {
+                    props.addNewComment(newReply, comment.commentId)
+                    // setNewReply("")
+                    // e.target[0].value = ""
+                    console.log(e.target)
+              
+                  }}
+                >
+                  <Form.Input
+                    fluid
+                    placeholder="대댓글을 입력하세요."
+                    action={{
+                      icon: "paper plane",
+                      color: "teal",
+                    }}
+                    size="mini"
+                    // content={newReply}
+                    onChange={(e) => setNewReply(e.target.value)}
+                  />
+                </Form>
+              )}
+        {/* 대댓글 창 */}
+        {comment.replies.length &&
+        
+        <Comment.Group>
+          {comment.replies.map((reply) => {
+            return <ReplyItem reply={reply} addNewComment={props.addNewComment}/>
+          })}
+        </Comment.Group>
+        }
+
+        {/* 삭제 확인 모달 */}
+        <Confirm
+          open={confirmOpen}
+          content="정말 삭제할까요?"
+          cancelButton="취소"
+          confirmButton="삭제"
+          onCancel={() => {
+            setConfirmOpen(false)
+          }}
+          onConfirm={() => {
+            setConfirmOpen(false)
+            dispatch(commentsActions.deleteComment(props.comment.commentId))
+            fetch(
+              `${DEFAULT_REST_URL}/main/postDetail/comment/delete?commentId=${props.comment.commentId}`,
+              {
+                method: "DELETE",
+                headers: {
+                  Authorization: `Bearer ${sessionStorage.getItem("accessToken")}`,
+                },
+              }
+            )
+          }}
+        />
       </Comment.Content>
     </Comment>
     // </Comment.Group>

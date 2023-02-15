@@ -83,7 +83,8 @@ const ReplyItem = (props) => {
               }}
               onConfirm={() => {
                 setConfirmOpen(false)
-                dispatch(commentsActions.deleteReply({parentId: reply.parentID, deletedReplyId: reply.commentId}))
+                console.log("이건 있겠지?", reply.parentId, reply.commentId)
+                dispatch(commentsActions.deleteReply({parentId: reply.parentId, deletedReplyId: reply.commentId}))
                 fetch(
                   `${DEFAULT_REST_URL}/main/postDetail/comment/delete?commentId=${reply.commentId}`,
                   {

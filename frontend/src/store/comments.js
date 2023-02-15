@@ -96,6 +96,7 @@ const commentsSlice = createSlice({
     deleteReply(state, action) {
       const {parentId, deletedReplyId} = action.payload
       const parentIdx = state.comments.findIndex((comment) => comment.commentId === parentId)
+      console.log('이게 없다고?', state.comments[parentIdx])
       state.comments[parentIdx].replies = state.comments[parentIdx].replies.filter((reply) => reply.commentId !== deletedReplyId)
       
     },

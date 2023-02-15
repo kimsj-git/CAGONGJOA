@@ -70,7 +70,6 @@ public class PostDetailController {
      * 2-3. 댓글 좋아요 누르기 (완료)
      **/
     @Auth
-    @CafeAuth
     @PutMapping("/comment/like")
     public ResponseEntity<ResponseDTO> commentLike(@RequestBody CommentLikeRequestDto requestDto) {
 

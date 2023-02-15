@@ -46,7 +46,7 @@ const ToggleButton = (props) => {
         color={props.color}
         style={{display: "flex", alignItems: "center", justifyContent: "center"}}
       >
-        {props.btnType === "like" && <IoHeart size={24} style={{marginRight: "0.5rem"}}/>}
+        {props.btnType === "like" && <IoHeart size={props.iconSize} style={{marginRight: "0.5rem"}}/>}
         {props.content}
       </Button>
     </Transition>

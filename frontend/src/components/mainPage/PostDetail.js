@@ -127,6 +127,7 @@ const PostDetail = (props) => {
                   content={props.post.likeCnt}
                   likeHandler={props.likeHandler}
                   isLiked={props.post.isLiked}
+                  iconSize={30}
                 />
               </div>
               <Confirm

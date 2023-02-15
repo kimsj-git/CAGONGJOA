@@ -138,7 +138,7 @@ public class PostServiceImpl implements PostService {
     }
 
     /**
-     * 3. 글 삭제 [ Cascade 테스트 필요 ]
+     * 2. 글 삭제 [ Cascade 테스트 필요 ]
      **/
 
     // 3-1 게시글 하나 삭제
@@ -161,7 +161,7 @@ public class PostServiceImpl implements PostService {
     // 3-2 회원탈퇴 시 게시글 모두 삭제
 
     /**
-     * 4. 글 전체 조회 (10개) [확인완료]
+     * 3. 글 전체 조회 (10개) [확인완료]
      **/
     @Override
     public Map<String, Object> feedPosts(PostPagingRequestDto requestDto, Pageable pageable) {
