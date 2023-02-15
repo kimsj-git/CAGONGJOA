@@ -62,8 +62,6 @@ public class PostDetailController {
             responseDTO = new ResponseDTO("대댓글 생성 완료!", "", HttpStatus.OK, responseDto);
         }
 
-
-
         return new ResponseEntity<>(responseDTO, HttpStatus.OK);
     }
 

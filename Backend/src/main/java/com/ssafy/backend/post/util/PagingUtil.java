@@ -7,13 +7,19 @@ import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.ssafy.backend.cafe.domain.dto.ClientPosInfoDto;
 import com.ssafy.backend.cafe.domain.dto.NearByCafeResultDto;
+import com.ssafy.backend.cafe.domain.entity.Cafe;
+import com.ssafy.backend.cafe.repository.CafeRepository;
 import com.ssafy.backend.cafe.service.CafeServiceImpl;
 import com.ssafy.backend.common.exception.jwt.JwtException;
 import com.ssafy.backend.common.exception.post.PostException;
 import com.ssafy.backend.common.exception.post.PostExceptionType;
 import com.ssafy.backend.member.domain.dto.MemberIdAndNicknameDto;
+import com.ssafy.backend.member.domain.entity.MemberCafeTier;
+import com.ssafy.backend.member.repository.MemberCafeTierRepository;
 import com.ssafy.backend.member.service.MemberServiceImpl;
 import com.ssafy.backend.post.domain.dto.CheckedResponseDto;
+import com.ssafy.backend.post.domain.dto.CommentPagingResponseDto;
+import com.ssafy.backend.post.domain.dto.RepliesPagingResponseDto;
 import com.ssafy.backend.post.domain.entity.Comment;
 import com.ssafy.backend.post.domain.entity.Post;
 import com.ssafy.backend.post.domain.entity.PostImage;
@@ -21,6 +27,8 @@ import com.ssafy.backend.post.domain.enums.PostType;
 import com.ssafy.backend.post.repository.CommentRepository;
 import com.ssafy.backend.post.repository.PostImageRepository;
 import com.ssafy.backend.post.repository.PostRepository;
+import com.ssafy.backend.redis.CafeAuth;
+import com.ssafy.backend.redis.CafeAuthRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Pageable;
@@ -40,6 +48,9 @@ import static com.ssafy.backend.common.exception.jwt.JwtExceptionType.JWT_VERIFI
 public class PagingUtil {
     private final PostRepository postRepository;
     private final CommentRepository commentRepository;
+    private final CafeAuthRepository cafeAuthRepository;
+    private final CafeRepository cafeRepository;
+    private final MemberCafeTierRepository memberCafeTierRepository;
 
 
     /**
@@ -174,6 +185,74 @@ public class PagingUtil {
             stepNo = commentRepository.findTopByPostIdAndGroupNoOrderByIdDesc(postId, groupNo).get().getStepNo() + 1;
         }
         return new AbstractMap.SimpleEntry<>(groupNo,stepNo);
+    }
+
+    public CommentPagingResponseDto getCommentList(List<Comment> commentGroupList) {
+        CommentPagingResponseDto commentPagingResponseDto = CommentPagingResponseDto.CommentResponseBuilder()
+                .commentId(commentGroupList.get(0).getId())
+                .writerId(commentGroupList.get(0).getMember().getId())
+                .writerNickname(commentGroupList.get(0).getMember().getNickname())
+                .content(commentGroupList.get(0).getContent())
+                .createdAt(commentGroupList.get(0).getCreatedAt())
+                .commentLikeCnt(commentGroupList.get(0).getCommentLikeList().size())
+                .groupNo(commentGroupList.get(0).getGroupNo())
+                .writerType(false)
+                .build();
+        System.out.println(commentPagingResponseDto.toString());
+        Optional<CafeAuth> cafeAuthOptional = cafeAuthRepository.findById(commentGroupList.get(0).getMember().getNickname());
+        if (cafeAuthOptional.isPresent()) {
+            System.out.println("1차점검");
+            Long cafeId = cafeAuthOptional.get().getCafeId();
+            Cafe cafe = cafeRepository.findById(cafeId).get();
+            MemberCafeTier memberCafeTier = memberCafeTierRepository.findByMemberIdAndCafeId(commentGroupList.get(0).getMember().getId(), cafeId).get();
+            commentPagingResponseDto.updateCommentVerifiedUser(cafeId, cafe.getName(), memberCafeTier.getExp(), cafe.getBrandType());
+        }
+        System.out.println("2차점검");
+        System.out.println(commentPagingResponseDto.getVerifiedCafeName());
+
+
+        // cafeAuth 를 통해 find 를 해야함.. (nickname)
+        // like check commentLike 에서 findByIdandCommentId 하기
+        // exp
+
+        List<RepliesPagingResponseDto> repliesList = new ArrayList<>();
+
+        Long parentId = commentGroupList.get(0).getId();
+        for (Comment commentSlice : commentGroupList) {
+            if (commentSlice.getStepNo() == 0) {
+
+            } else {
+                RepliesPagingResponseDto repliesPagingResponseDto = RepliesPagingResponseDto.RepliesResponseBuilder()
+                        .commentId(commentSlice.getId())
+                        .writerId(commentSlice.getMember().getId())
+                        .writerNickname(commentSlice.getMember().getNickname())
+                        .content(commentSlice.getContent())
+                        .createdAt(commentSlice.getCreatedAt())
+                        .commentLikeCnt(commentSlice.getCommentLikeList().size())
+                        .parentId(parentId)
+                        .writerType(false)
+                        .build();
+                System.out.println("빌드는됨!");
+
+                Optional<CafeAuth> cafeOptional = cafeAuthRepository.findById(commentSlice.getMember().getNickname());
+                if (cafeAuthOptional.isPresent()) {
+                    Long cafeId = cafeOptional.get().getCafeId();
+                    Cafe cafe = cafeRepository.findById(cafeId).get();
+                    MemberCafeTier memberCafeTier = memberCafeTierRepository.findByMemberIdAndCafeId(commentSlice.getMember().getId(), cafeId).get();
+                    repliesPagingResponseDto.updateCommentVerifiedUser(cafeId, cafe.getName(), memberCafeTier.getExp(), cafe.getBrandType());
+                }
+                System.out.println("업데이트도됨!");
+                if (repliesPagingResponseDto != null) {
+                    repliesList.add(repliesPagingResponseDto);
+                }
+            }
+
+        }
+        System.out.println("for 문의 끝!! ");
+        if (!repliesList.isEmpty()) {
+            commentPagingResponseDto.updateReplies(repliesList);
+        }
+        return commentPagingResponseDto;
     }
 
 

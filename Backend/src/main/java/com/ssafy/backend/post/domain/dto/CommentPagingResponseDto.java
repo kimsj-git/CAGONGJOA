@@ -23,7 +23,6 @@ public class CommentPagingResponseDto {
     private LocalDateTime createdAt;
     private int commentLikeCnt;
     private Long groupNo;
-    private Long stepNo;
     private Boolean likeChecked;
     private List<RepliesPagingResponseDto> replies;
 
