@@ -161,8 +161,7 @@ const submitHandler = async () => {
     }
     if (props.isEditing) {
       if (props.postToEdit.imgUrlPath.length>0){
-
-        dispatch(imageActions.uploadImage(...props.postToEdit.imgUrlPath));
+        dispatch(imageActions.uploadImage(props.postToEdit.imgUrlPath));
       }
     } 
     setIsLoading(false)

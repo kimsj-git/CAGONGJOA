@@ -1,9 +1,10 @@
 import { useEffect, useState } from "react"
 import { useInView } from "react-intersection-observer"
-import { Button, Item } from "semantic-ui-react"
+import { Item } from "semantic-ui-react"
 import { ScrollTop } from "primereact/scrolltop"
 import Logout from "../../member/logout/Logout"
 import MyPostsItem from "./MyPostsItem"
+
 
 const REST_DEFAULT_URL = process.env.REACT_APP_REST_DEFAULT_URL
 
@@ -12,6 +13,13 @@ const MyPosts = () => {
   const [myPosts, setMyPosts] = useState([])
   const [requestPost, setRequestPost] = useState([])
   const [noPost, setNoPost] = useState(false)
+  const likePlus = (postId) => {
+    console.log(myPosts.find((post)=>post.postId === postId))
+    myPosts.find((post)=> post.postId === postId).postLikeCount += 1
+  }
+  const likeCancel = (postId) => {
+    myPosts.find((post)=> post.postId === postId).postLikeCount -= 1
+  }
 
   const getMyPosts = async () => {
     const response = await fetch(
@@ -22,6 +30,8 @@ const MyPosts = () => {
         },
       }
     )
+  
+
     const responseData = await response.json()
     console.log(responseData)
     if (responseData.httpStatus === "OK") {
@@ -42,7 +52,9 @@ const MyPosts = () => {
       })
       const responseData = await response.json()
       if (responseData.httpStatus !== "OK") {
-        Logout()
+        alert("세션이 만료되었습니다.")
+        sessionStorage.clear()
+        window.location.href = '/login'
       } else if (responseData.httpStatus === "OK") {
         sessionStorage.setItem("accessToken", responseData.data.accessToken)
         getMyPosts()
@@ -87,7 +99,7 @@ const MyPosts = () => {
         }}
       >
         {myPosts.map((post) => {
-          return <MyPostsItem post={post} key={post.postId} />
+          return <MyPostsItem post={post} key={post.postId} likePlus={likePlus} likeCancel={likeCancel}/>
         })}
         <ScrollTop threshold={500}/>
       {noPost &&<p>더 이상 게시물이 없습니다..</p>}
