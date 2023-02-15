@@ -3,6 +3,8 @@ import { Button, Transition } from "semantic-ui-react"
 import "./ToggleButton.css"
 import useFetch from "../../hooks/useFetch.js"
 import { IoHeart } from "react-icons/io5"
+import {FaReply} from "react-icons/fa"
+import {CgClose} from "react-icons/cg"
 
 const DEFAULT_REST_URL = process.env.REACT_APP_REST_DEFAULT_URL
 const ToggleButton = (props) => {
@@ -13,6 +15,8 @@ const ToggleButton = (props) => {
   const handleClick = () => {
     props.btnType === "like" && props.likeHandler(btnState)
     props.btnType === "hot" && props.onHotSelect()
+    props.btnType === "reply" && props.openReplyInput()
+    props.btnType === "delete" && props.onDelete()
     setBtnState(!btnState)
     setVisibility((prev) => !prev)
   }
@@ -46,7 +50,9 @@ const ToggleButton = (props) => {
         color={props.color}
         style={{display: "flex", alignItems: "center", justifyContent: "center"}}
       >
-        {props.btnType === "like" && <IoHeart size={24} style={{marginRight: "0.5rem"}}/>}
+        {props.btnType === "like" && <IoHeart size={props.iconSize} style={{marginRight: "0.5rem"}}/>}
+        {props.btnType === "reply" && <FaReply size={props.iconSize} style={{marginRight: "0.5rem"}}/>}
+        {props.btnType === "delete" && <CgClose size={props.iconSize} style={{marginRight: "0.5rem"}}/>}
         {props.content}
       </Button>
     </Transition>

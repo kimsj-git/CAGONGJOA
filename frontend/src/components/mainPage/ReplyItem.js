@@ -30,7 +30,7 @@ const ReplyItem = (props) => {
   return (
         <Comment>
       <Comment.Avatar
-        style={{ width: "3.5rem" }}
+        // style={{ width: "3.5rem" }}
         as="a"
         src={require("../../assets/cafe_logos/compose.png")}
       />
@@ -51,28 +51,35 @@ const ReplyItem = (props) => {
         <Comment.Actions>
           <Comment.Action>
             <ToggleButton
+
               btnType="like"
               content={reply.commentLikeCnt}
               likeHandler={likeReply}
               compact
               size="mini"
+              iconSize={12}
               isLiked={reply.likeChecked}
-            />
+              />
+          </Comment.Action>
 
-            {/* comment.nickname 변수명 추후 확인 필요!!! */}
+          <Comment.Action>
             {reply.writerNickname === sessionStorage.getItem("nickname") && (
-              <Button
-                size="mini"
-                compact
-                toggle
-                color="grey"
-                icon="delete"
+              <ToggleButton
+  
+                btnType="delete"
                 content="삭제"
-                onClick={() => {
+                compact
+                size="mini"
+                iconSize={12}
+                onDelete={() => {
                   setConfirmOpen(true)
                 }}
-              ></Button>
-            )}
+                />
+              )}
+          </Comment.Action>
+          
+
+        </Comment.Actions>
             <Confirm
               open={confirmOpen}
               content="정말 삭제할까요?"
@@ -83,7 +90,8 @@ const ReplyItem = (props) => {
               }}
               onConfirm={() => {
                 setConfirmOpen(false)
-                dispatch(commentsActions.deleteReply({parentId: reply.parentID, deletedReplyId: reply.commentId}))
+                console.log("이건 있겠지?", reply.parentId, reply.commentId)
+                dispatch(commentsActions.deleteReply({parentId: reply.parentId, deletedReplyId: reply.commentId}))
                 fetch(
                   `${DEFAULT_REST_URL}/main/postDetail/comment/delete?commentId=${reply.commentId}`,
                   {
@@ -95,8 +103,6 @@ const ReplyItem = (props) => {
                 )
               }}
             />
-          </Comment.Action>
-        </Comment.Actions>
       </Comment.Content>
     </Comment>
 

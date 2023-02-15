@@ -41,7 +41,7 @@ const CommentList = (props) => {
 
   const addNewComment = async (text, id=-1) => {
     if (id === -1) {
-      await fetch(`${DEFAULT_REST_URL}/main/postDetail/comment/write`, {
+      const v = await fetch(`${DEFAULT_REST_URL}/main/postDetail/comment/write`, {
         method: "POST",
         headers: {
           Authorization: `Bearer ${sessionStorage.getItem("accessToken")}`,

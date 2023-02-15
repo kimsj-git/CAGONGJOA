@@ -16,7 +16,7 @@ public interface CommentRepository extends JpaRepository<Comment, Long> {
 
     Slice<Comment> findAllByGroupNoInAndPostId(Set<Long> groupSet, Long postId);
 
-    void deleteAllByGroupNo(Long groupNo);
+    void deleteAllByPostIdAndGroupNo(Long postId, Long groupNo);
 
     List<Comment> findAllByPostId(Long postId);
 

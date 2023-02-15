@@ -9,7 +9,7 @@
   box-shadow: none !important;
   border-radius: 40px;
   color: #fff;
-  font-size: 1.1rem;
+  /* font-size: 1.1rem; */
   transition: all 0.4s ease;
 }
 
@@ -18,7 +18,7 @@
   box-shadow: 0 0 0 2px var(--point-color-red) inset !important;
   border-radius: 40px ;
   color: var(--point-color-red);
-  font-size: 1.1rem;
+  /* font-size: 1.1rem; */
   transition: all 0.4s ease;
 }
 #cancle-like:hover {
@@ -26,7 +26,7 @@
   box-shadow: none !important;
   border-radius: 40px;
   color: #fff;
-  font-size: 1.1rem;
+  /* font-size: 1.1rem; */
   transition: all 0.4s ease;
   
 }
@@ -112,6 +112,69 @@
   font-weight: bold;
   color: #fff !important;
   background-color: var(--custom-pink) !important;
+  border-radius: 2rem;
+  transition: all 0.4s ease;
+}
+
+
+#reply {
+  color: white !important;
+  background-color: var(--custom-mint) !important;
+  border-radius: 2rem;
+  border: none !important;
+  box-shadow: 0 0 0 1px rgb(251, 189, 189) inset !important;
+  font-weight: bold;
+  transition: all 0.4s ease;
+}
+
+
+#cancle-reply {
+  box-shadow: 0 0 0 1.8px var(--custom-mint) inset !important;
+  font-weight: bold;
+  color: var(--custom-mint) !important;
+  background: transparent none !important;
+  border-radius: 2rem;
+  transition: all 0.4s ease;
+}
+
+
+#cancle-reply:hover {
+  box-shadow: 0 0 0 1.8px #5fd3b2 inset !important;
+  font-weight: bold;
+  /* color: rgb(99, 215, 172) */
+  color: #fff !important;
+  background-color: var(--custom-mint) !important;
+  border-radius: 2rem;
+  transition: all 0.4s ease;
+}
+
+#delete {
+  color: white !important;
+  background-color: #717171 !important;
+  border-radius: 2rem;
+  border: none !important;
+  box-shadow: 0 0 0 1px #717171 inset !important;
+  font-weight: bold;
+  transition: all 0.4s ease;
+}
+
+
+#cancle-delete {
+  box-shadow: 0 0 0 1.8px #717171 inset !important;
+  font-weight: bold;
+  color: #717171 !important;
+  background: transparent none !important;
+  border-radius: 2rem;
+  transition: all 0.4s ease;
+}
+
+
+#cancle-delete:hover {
+  box-shadow: 0 0 0 1.8px #717171 inset !important;
+  font-weight: bold;
+  /* color: rgb(99, 215, 172) */
+  color: #fff !important;
+  background-color: #717171 !important;
   border-radius: 2rem;
   transition: all 0.4s ease;
 }

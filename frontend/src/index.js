@@ -14,6 +14,7 @@ import "primeicons/primeicons.css" // icons
 // import "primeflex/primeflex.css" // css utility
 
 const root = ReactDOM.createRoot(document.getElementById("root"))
+
 root.render(
   <BrowserRouter>
     <Provider store={store}>

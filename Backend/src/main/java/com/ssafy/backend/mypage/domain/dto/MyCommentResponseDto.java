@@ -10,7 +10,9 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Builder
 public class MyCommentResponseDto {
+
     private Long commentId;
+    private Long postId;
     private String cafeName;
     private String commentContent;
     private String postContent;

@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from "react"
-import { useHistory } from "react-router-dom"
+import { useHistory, useLocation } from "react-router-dom"
 import { Route, Switch } from "react-router-dom"
 import { Grid } from "semantic-ui-react"
 
@@ -40,6 +40,16 @@ function App() {
       ? JSON.parse(sessionStorage.getItem("todayCafe")).isCrowdSubmitted
       : false
   )
+  const location = useLocation();
+
+  useEffect(() => {
+    if (location.pathname === '/login' || location.pathname === '/signup') {
+      document.body.style.setProperty('background-color', 'rgb(255 107 107 / 54%)', 'important');
+      console.log(document.body.style.backgroundColor)
+    } else {
+      document.body.style.backgroundColor = 'var(--background-color)';
+    }
+  }, [location]);
 
   useEffect(() => {
     if (!Authenticated || Authenticated === undefined) {
