@@ -89,11 +89,14 @@ const CommentItem = (props) => {
                 }}
               ></Button>
             )}
+            {comment.replies.length &&
+            
             <Comment.Group>
               {comment.replies.map((reply) => {
                 return <ReplyItem reply={reply} addNewComment={props.addNewComment}/>
               })}
             </Comment.Group>
+            }
 
             <Confirm
               open={confirmOpen}

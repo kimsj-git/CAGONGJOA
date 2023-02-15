@@ -38,4 +38,12 @@ public class CommentPagingResponseDto {
     public void updateReplies(List<RepliesPagingResponseDto> replies) {
         this.replies = replies;
     }
+
+    public void updateCommentLike(int commentLikeCnt) {
+        this.commentLikeCnt = commentLikeCnt;
+    }
+
+    public void updateLikeChecked(Boolean likeChecked) {
+        this.likeChecked = true;
+    }
 }

@@ -6,6 +6,8 @@ import { useSelector } from "react-redux"
 
 import { getPosts } from "../../store/posts"
 import { BsFillPatchQuestionFill } from "react-icons/bs"
+import { MdOutlineMyLocation } from "react-icons/md"
+import { AiOutlineBell } from "react-icons/ai"
 import { IoIosSearch } from "react-icons/io"
 import { RiArrowDropDownLine } from "react-icons/ri"
 import TypeSelector from "./TypeSelector"
@@ -100,8 +102,8 @@ const MainPageTopBar = (props) => {
           />
         </div>
         <div style={{display:"flex"}}>
-          {props.isCafeAuth === "1" && <Button icon="location arrow" color="red" circular onClick={findFeedMyLocation} loading={isLoading ? true:false}/>}
-          <NavLink to="/search" style={{ marginInliButtonne: "0.5rem 0.3rem" }}>
+        {props.isCafeAuth === "1" && <MdOutlineMyLocation size="30" circular onClick={findFeedMyLocation} loading={isLoading ? true:false}/>}
+          <NavLink to="/search" style={{ marginInline: "0.5rem 0.3rem" }}>
             <IoIosSearch size="30" color="black" />
           </NavLink>
         </div>

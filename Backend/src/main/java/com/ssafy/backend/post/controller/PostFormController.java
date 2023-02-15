@@ -47,7 +47,7 @@ public class PostFormController {
 
     public ResponseEntity<ResponseDTO> postUpdate(
             @RequestPart(value = "imgFiles", required = false) MultipartFile[] files,
-            @RequestPart(value = "updateForm", required = false) PostUpdateFormRequestDto updateDto) throws Exception {
+            @RequestPart(value = "updateForm", required = false) PostUpdateFormRequestDto updateDto) {
 
         boolean isUpdated = postService.updatePostForm(files, updateDto);
         if (isUpdated) {

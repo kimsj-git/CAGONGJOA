@@ -1,11 +1,12 @@
 .btn {
-  display: flex;
   position: absolute;
   left: 30%;
-  bottom: 2rem;
-  height: 2em;
-  width: 15rem;
+  top: 2rem;
+  background-color: var(--point-color-red) !important;
+  color: white !important;
+  white-space: nowrap;
   z-index: 2;
+  border: 4px solid var(--custom-beige) !important;
 }
 
 @media screen and (max-width: 767px) {

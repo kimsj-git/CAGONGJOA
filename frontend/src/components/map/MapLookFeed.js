@@ -34,10 +34,10 @@ const MapLookFeed = (props) => {
     <Button
       className={classes.btn}
       onClick={lookFeedHandler}
-      color="yellow"
       circular
+      size="huge"
+      content="이 위치에서 주변 소식 보기"
     >
-      이 위치에서 주변 소식 보기
     </Button>
   )
 }

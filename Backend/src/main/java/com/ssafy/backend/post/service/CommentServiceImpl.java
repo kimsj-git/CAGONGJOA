@@ -15,6 +15,7 @@ import com.ssafy.backend.post.domain.entity.Comment;
 import com.ssafy.backend.post.domain.entity.CommentLike;
 import com.ssafy.backend.post.domain.entity.Post;
 import com.ssafy.backend.post.repository.*;
+import com.ssafy.backend.post.util.DtoMakingUtil;
 import com.ssafy.backend.post.util.PagingUtil;
 import com.ssafy.backend.post.util.PostUtil;
 import com.ssafy.backend.redis.CafeAuth;
@@ -30,17 +31,13 @@ import java.util.*;
 @Service
 @Transactional
 public class CommentServiceImpl implements CommentService {
-
     private final PostRepository postRepository;
-    private final CafeRepository cafeRepository;
     private final CommentRepository commentRepository;
     private final CommentLikeRepository commentLikeRepository;
     private final MemberRepository memberRepository;
-    private final PostUtil postUtil;
     private final PagingUtil pagingUtil;
     private final MemberUtil memberUtil;
-    private final CafeAuthRepository cafeAuthRepository;
-    private final MemberCafeTierRepository memberCafeTierRepository;
+    private final DtoMakingUtil dtoMakingUtil;
 
     /**
      * 2-1. 댓글 불러오기
@@ -64,8 +61,7 @@ public class CommentServiceImpl implements CommentService {
         Set<Long> groupSet = new HashSet<>();
         List<Comment> commentList = commentRepository.findAllByPostId(postId);
         if (commentList == null || commentList.isEmpty()) {
-//            throw new PostException(PostExceptionType.NO_COMMENT_FEED);
-            return null;
+            return commentResponseList;
         }
         for (Comment comment : commentList) {
             if (comment.getGroupNo() > groupNo) groupSet.add(comment.getGroupNo());
@@ -74,45 +70,24 @@ public class CommentServiceImpl implements CommentService {
         System.out.println(groupSet);
         if (groupSet.isEmpty() || groupSet == null) { // 불러올 그게 없다.
 //            throw new PostException(PostExceptionType.NO_COMMENT_FEED);
-            return null;
+            return commentResponseList;
+        }
+        List<List<Comment>> commentGroupListList = new ArrayList<>();
+        for (Long groupId : groupSet) {
+            List<Comment> commentGroupList = commentRepository.findAllByPostIdAndGroupNoOrderById(postId, groupId);
+            commentGroupListList.add(commentGroupList);
         }
         Slice<Comment> commentSlice = commentRepository.findAllByGroupNoInAndPostId(groupSet, postId);
         if (commentSlice == null || commentSlice.isEmpty()) {
 //            throw new PostException(PostExceptionType.NO_COMMENT_FEED);
-            return null;
+            return commentResponseList;
         }
-        Map<Long, String> commentNicknameMap = new TreeMap<>();
-
-
-        for (Comment comment : commentSlice) {
-            commentNicknameMap.put(comment.getId(), comment.getMember().getNickname());
-        }
-        Boolean commentLikeChecked;
-        for (Comment comment : commentSlice) {
-            Optional<CommentLike> commentOptional = commentLikeRepository.findByCommentIdAndMemberId(comment.getId(), comment.getMember().getId());
-            if (commentOptional.isPresent()) commentLikeChecked = true;
-            else commentLikeChecked = false;
-            CommentPagingResponseDto commentPagingResponseDto = CommentPagingResponseDto.CommentResponseBuilder()
-                    .commentId(comment.getId())
-                    .writerId(comment.getMember().getId())
-                    .writerNickname(comment.getMember().getNickname())
-                    .content(comment.getContent())
-                    .createdAt(comment.getCreatedAt())
-                    .commentLikeCnt(comment.getCommentLikeList().size())
-                    .groupNo(comment.getGroupNo())
-                    .writerType(false)
-                    .likeChecked(commentLikeChecked)
-                    .build();
-            System.out.println("미인증 유저 댓글쓰기 불러오기 완료");
-            Optional<CafeAuth> cafeAuth = cafeAuthRepository.findById(comment.getMember().getNickname());
-            if (cafeAuth.isPresent()) {
-                Cafe cafe = cafeRepository.findById(cafeAuth.get().getCafeId()).get();
-                MemberCafeTier memberCafeTier = memberCafeTierRepository.findByMemberIdAndCafeId(comment.getMember().getId(), cafe.getId()).get();
-                commentPagingResponseDto.updateCommentVerifiedUser(cafe.getId(), cafe.getName(), memberCafeTier.getExp(), cafe.getBrandType());
-                System.out.println("인증유저 댓글 업데이트 완료");
-            }
+        CommentPagingResponseDto commentPagingResponseDto;
+        for(List<Comment> comments : commentGroupListList){
+            commentPagingResponseDto = dtoMakingUtil.getCommentList(comments);
             commentResponseList.add(commentPagingResponseDto);
         }
+
         return commentResponseList;
     }
 
@@ -136,7 +111,6 @@ public class CommentServiceImpl implements CommentService {
             throw new PostException(PostExceptionType.BAD_POST_ID);
         }
         Post post = postOptional.get();
-        CommentPagingResponseDto pagingResponseDto;
         // 3. 댓글 대댓글 구분
 
         Map.Entry<Long, Long> groupNoResult = pagingUtil.findGroupNo(postId, commentId);
@@ -167,7 +141,7 @@ public class CommentServiceImpl implements CommentService {
             throw new PostException(PostExceptionType.NO_COMMENT_FEED);
         }
 
-        return pagingUtil.getCommentList(commentGroupList);
+        return dtoMakingUtil.getCommentList(commentGroupList);
     }
 
     /**
