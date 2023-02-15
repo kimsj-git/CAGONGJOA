@@ -100,7 +100,6 @@ public class CommentServiceImpl implements CommentService {
                     .createdAt(comment.getCreatedAt())
                     .commentLikeCnt(comment.getCommentLikeList().size())
                     .groupNo(comment.getGroupNo())
-                    .stepNo(comment.getStepNo())
                     .writerType(false)
                     .likeChecked(commentLikeChecked)
                     .build();
@@ -144,13 +143,6 @@ public class CommentServiceImpl implements CommentService {
         Long groupNo = groupNoResult.getKey();
         Long stepNo = groupNoResult.getValue();
 
-        if (stepNo != 0) { // 대댓글일 때
-            System.out.println("대댓글!");
-        } else { // 그렇지 않을때 -> Redirect
-            System.out.println("댓글!");
-            return null;
-        }
-
         // 4. 글 저장하기
         Comment comment = Comment.builder()
                 .member(member)
@@ -161,70 +153,21 @@ public class CommentServiceImpl implements CommentService {
                 .build();
 
         // 인증 여부에 따라 글을 쓸수있다 - GeoAuth - 따로 필요없음
-        comment = commentRepository.save(comment);
+        Comment savedComment = commentRepository.save(comment);
+
+        if (stepNo != 0) { // 대댓글일 때
+            System.out.println("대댓글!");
+        } else { // 그렇지 않을때 -> Redirect
+            System.out.println("댓글!");
+            return null;
+        }
         // 댓글을 썼을 때 어떻게 해야하징...
-        List<Comment> commentGroupList = commentRepository.findAllByGroupNoOrderById(groupNo);
-
-        List<RepliesPagingResponseDto> repliesPagingResponseDtos = new ArrayList<>();
-        CommentPagingResponseDto commentPagingResponseDto;
-
-
-        // cafeAuth 를 통해 find 를 해야함.. (nickname)
-        // like check commentLike 에서 findByIdandCommentId 하기
-        // exp
-
-        List<RepliesPagingResponseDto> repliesList = new ArrayList<>();
-        for (Comment commentSlice : commentGroupList) {
-            commentSlice.getMember().getNickname();
-        }
-        Long parentId = commentGroupList.get(0).getId();
-        for (Comment commentSlice : commentGroupList) {
-            if (commentSlice.getStepNo() == 0) {
-                commentPagingResponseDto = CommentPagingResponseDto.CommentResponseBuilder()
-                        .commentId(commentSlice.getId())
-                        .writerId(commentSlice.getMember().getId())
-                        .writerNickname(commentSlice.getMember().getNickname())
-                        .content(commentSlice.getContent())
-                        .createdAt(commentSlice.getCreatedAt())
-                        .commentLikeCnt(commentSlice.getCommentLikeList().size())
-                        .groupNo(commentSlice.getGroupNo())
-                        .writerType(false)
-                        .build();
-
-                Optional<CafeAuth> cafeAuthOptional = cafeAuthRepository.findById(commentSlice.getMember().getNickname());
-                if(cafeAuthOptional.isPresent()) {
-                    Long cafeId = cafeAuthOptional.get().getCafeId();
-                    Cafe cafe = cafeRepository.findById(cafeId).get();
-                    MemberCafeTier memberCafeTier = memberCafeTierRepository.findByMemberIdAndCafeId(memberId,cafeId).get();
-                    commentPagingResponseDto.updateCommentVerifiedUser(cafeId,cafe.getName(),memberCafeTier.getExp(),cafe.getBrandType());
-
-                }
-            } else {
-                RepliesPagingResponseDto repliesPagingResponseDto = RepliesPagingResponseDto.RepliesResponseBuilder()
-                        .commentId(commentSlice.getId())
-                        .writerId(commentSlice.getMember().getId())
-                        .writerNickname(commentSlice.getMember().getNickname())
-                        .content(commentSlice.getContent())
-                        .createdAt(commentSlice.getCreatedAt())
-                        .commentLikeCnt(commentSlice.getCommentLikeList().size())
-                        .parentId(parentId)
-                        .writerType(false)
-                        .build();
-
-                Optional<CafeAuth> cafeAuthOptional = cafeAuthRepository.findById(commentSlice.getMember().getNickname());
-                if(cafeAuthOptional.isPresent()) {
-                    Long cafeId = cafeAuthOptional.get().getCafeId();
-                    Cafe cafe = cafeRepository.findById(cafeId).get();
-                    MemberCafeTier memberCafeTier = memberCafeTierRepository.findByMemberIdAndCafeId(memberId, cafeId).get();
-                    repliesPagingResponseDto.updateCommentVerifiedUser(cafeId, cafe.getName(), memberCafeTier.getExp(), cafe.getBrandType());
-                }
-                repliesList.add(repliesPagingResponseDto);
-            }
-//            commentPagingResponseDto.updateReplies(repliesList);
+        List<Comment> commentGroupList = commentRepository.findAllByPostIdAndGroupNoOrderById(postId, groupNo);
+        if (commentGroupList.isEmpty() || commentGroupList == null) {
+            throw new PostException(PostExceptionType.NO_COMMENT_FEED);
         }
 
-
-        return null;
+        return pagingUtil.getCommentList(commentGroupList);
     }
 
     /**

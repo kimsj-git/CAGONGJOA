@@ -33,9 +33,11 @@ const LoginPage = () => {
 
   return (
     <Grid id="login-wrapper" stackable columns={2} textAlign="center">
-      <Grid.Column width={6}>
+      <Grid.Column 
+      // width={6}
+      >
         <div className="map-box">
-          <div className="circular-border" style={{ top: "-15%", left: "-20%" }} />
+          {/* <div className="circular-border" style={{ top: "-15%", left: "-20%" }} />
           <div
             className="circular-border"
             style={{ top: "25%", left: "-15%" }}
@@ -47,7 +49,7 @@ const LoginPage = () => {
           <div
             className="circular-border"
             style={{ top: "20%", left: "25%" }}
-          />
+          /> */}
           <Image className="map" src={require("../../assets/map5.jpg")} />
           <Image
             className="map-marker"
@@ -97,14 +99,48 @@ const LoginPage = () => {
         </div>
       </Grid.Column>
       <Grid.Column
-        width={6}
+        // width={6}
         textAlign="left"
+        mobile={0}
         style={{
           display: "flex",
           flexDirection: "column",
           height: "60%",
           // padding: "2rem 0 2rem 10rem ",
           justifyContent: "space-between",
+        }}
+      >
+        <div style={{ display: "flex" }}>
+          <p class="title">카공조아</p>
+          
+            <Image
+            className="chat-bubble"
+              src={require("../../assets/icons/chat_bubble_right.png")}
+              style={{
+                width: "6rem",
+                height: "5rem",
+                // marginBottom
+                // top: "-80%",
+                // right: "-40%",
+                display: "inline-block",
+                // position: "absolute",
+                // animation: "float 6s ease-in-out infinite",
+              }}
+            />
+        </div>
+        <p className="subtitle">내 주변 카페 이용객들과 소통해보세요!</p>
+        <KakaoLogin style={{ fontSize: "10rem" }} />
+      </Grid.Column>
+      <Grid.Column
+        // width={6}
+        only="mobile"
+        textAlign="center"
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          height: "60%",
+          // padding: "2rem 0 2rem 10rem ",
+          // justifyContent: "space-between",
         }}
       >
         <div style={{ display: "flex" }}>
