@@ -1,3 +1,7 @@
+#post-types::-webkit-scrollbar {
+  display: none;
+}
+
 .card.post {
   border-radius: 40px !important;
 }

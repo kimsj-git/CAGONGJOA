@@ -17,7 +17,7 @@ const CommentItem = (props) => {
   const isWriterVerified = comment.writerType
 
   const likeComment = async (isLiked) => {
-    dispatch(commentsActions.likeComment({commentID: comment.commentId, num: isLiked ? -1 : 1}))
+    dispatch(commentsActions.likeComment({commentId: comment.commentId, num: isLiked ? -1 : 1}))
     await fetchLike({
       url: `${DEFAULT_REST_URL}/main/postDetail/comment/like`,
       method: "PUT",
@@ -70,36 +70,36 @@ const CommentItem = (props) => {
           </Comment.Action>
 
           <Comment.Action>
-            <Button
-              id="reply-btn"
-              size="mini"
-              compact
-              circular
-              color="teal"
-              icon="reply"
+            <ToggleButton
+
+              btnType="reply"
               content="대댓글"
-              onClick={() => {
+              openReplyInput={() => {
                 setReplyMode(!replyMode)
               }}
-              style={{}}
-            ></Button>
+              compact
+              size="mini"
+              iconSize={12}
+              isLiked={comment.likeChecked}
+              />
+            
           </Comment.Action>
           <Comment.Action>
             {comment.writerNickname === sessionStorage.getItem("nickname") && (
-              <Button
-                id="delete-btn"
-                size="mini"
-                compact
-                toggle
-                circular
-                color="grey"
-                icon="delete"
+              <ToggleButton
+  
+                btnType="delete"
                 content="삭제"
-                onClick={() => {
+                openReplyInput={() => {
+                  setReplyMode(!replyMode)
+                }}
+                compact
+                size="mini"
+                iconSize={12}
+                onDelete={() => {
                   setConfirmOpen(true)
                 }}
-                style={{}}
-              ></Button>
+                />
               )}
           </Comment.Action>
         </Comment.Actions>

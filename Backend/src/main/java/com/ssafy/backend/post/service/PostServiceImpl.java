@@ -13,7 +13,6 @@ import com.ssafy.backend.member.domain.entity.Member;
 import com.ssafy.backend.member.domain.entity.MemberCafeTier;
 import com.ssafy.backend.member.repository.MemberCafeTierRepository;
 import com.ssafy.backend.member.repository.MemberRepository;
-import com.ssafy.backend.member.service.MemberServiceImpl;
 import com.ssafy.backend.member.util.MemberUtil;
 import com.ssafy.backend.post.domain.dto.*;
 import com.ssafy.backend.post.domain.entity.*;
@@ -266,7 +265,12 @@ public class PostServiceImpl implements PostService {
                 .imgPathList(imgUrlPaths)
                 .likeCounts(post.getPostLikeList().size())
                 .commentCounts(post.getCommentList().size())
+                .isLikeChecked(false)
                 .build();
+
+        if(postLikeRepository.findByPostIdAndMemberId(postId, checked.getMemberId()).isPresent()) {
+            detailResponseDto.updateIsLiked(true);
+        }
 
         if (detailResponseDto.isCafeAuthorized()) {
             PostCafe postCafe = postCafeRepository.findByPostId(postId).get();
@@ -403,11 +407,11 @@ public class PostServiceImpl implements PostService {
                     .postId(slice.getId())
                     .imgUrlPath(imgUrlPath)
                     .createdAt(post.getCreatedAt())
-                    .searchType(requestDto.getSearchType())
                     .content(post.getContent())
                     .commentCount(commentCount)
                     .writerNickname(post.getMember().getNickname())
                     .postLikeCount(postLikeCount)
+                    .postType(post.getPostType())
                     .build();
 
             if (post.getIsCafeAuthorized()) {
@@ -438,11 +442,9 @@ public class PostServiceImpl implements PostService {
         // 1. 글 업데이트
         Long postId = updateDto.getPostId();
         String content = updateDto.getContent();
-        List<Long> imageIdList = updateDto.getImageIdList();
+        List<String> imgUrlList = updateDto.getImageUrlList();
 
-        if (imageIdList != null || imageIdList.isEmpty() || content != null || files != null) {
-
-        } else {
+        if (content == null) {
             throw new PostException(NO_CONTENT_POST_FORM);
         }
 
@@ -451,14 +453,13 @@ public class PostServiceImpl implements PostService {
             throw new PostException(PostExceptionType.BAD_POST_ID);
         }
         Post post = postOptional.get();
-        if (content != null || !content.isEmpty()) {
             post.updateContent(content);
 
-        }
+
         System.out.println(files);
 
         // 2. 이미지 업데이트
-        postUtil.imageDelete(post, imageIdList);
+        postUtil.imageDelete(post, imgUrlList);
         if (files != null) {
             List<PostImage> postImages = postUtil.imageUpload(post, files);
             post.updatePostImage(postImages);

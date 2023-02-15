@@ -12,6 +12,6 @@ public interface PostImageRepository extends JpaRepository<PostImage, Long> {
 
     void deleteAllByIdIn(List<Long> deleteIdList);
 
-    List<PostImage> findAllByPostIdAndIdNotIn(Long postId, List<Long> idList);
+    List<PostImage> findAllByPostIdAndImgUrlNotIn(Long postId, List<String> urlList);
 
 }

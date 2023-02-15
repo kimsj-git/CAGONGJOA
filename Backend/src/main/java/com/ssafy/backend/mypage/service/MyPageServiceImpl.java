@@ -247,11 +247,11 @@ public class MyPageServiceImpl implements MyPageService {
         for (int i = 0; i < postList.size(); i++) {
             Comment comment = commentSlice.getContent().get(i);
             commentResponseDto = MyCommentResponseDto.builder()
+                    .postId(comment.getPost().getId())
                     .commentId(comment.getId())
                     .commentContent(comment.getContent())
                     .commentLikeCnt(comment.getCommentLikeList().size())
                     .postContent(comment.getPost().getContent())
-//                    .cafeName(post.getPostCafeList())
                     .createdAt(comment.getCreatedAt())
                     .build();
             if(comment.getPost().getIsCafeAuthorized()) {
