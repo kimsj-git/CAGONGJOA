@@ -1,4 +1,4 @@
-.detail {
+/* .detail {
   display: flex;
   flex-direction: column;
   justify-content: start;
@@ -6,8 +6,15 @@
   width: 20rem;
   height: 20rem;
   padding: 1rem 2rem 0 2rem;
-}
+} */
 .detail-wrapper {
+  display: flex;
+  flex-direction: column;
+  justify-content: start;
+  align-items: center;
+  width: 20rem;
+  height: 20rem;
+  padding: 1rem 2rem 0 2rem;
   background-color: bisque;
   border: 3px dashed black;
   border-radius: 25px;
