@@ -41,6 +41,7 @@ const CafeReport = (props) => {
           replyTime : timeRestrict,
         },
       })
+      props.setSurvey()
       alert('설문이 제출되었습니다!\uD83D\uDE0D')
       setOpen(false)
     } else {

@@ -71,12 +71,12 @@ const CafeInfo = () => {
         : "#65B1EF"
   }
 
-  const [isVisited, setIsVisited] = useState(false)
-  const { data: isVisitedData, sendRequest: getIsVisited } = useFetch()
+  const [isSurveySubmitted, setIsSurveySubmitted] = useState(false)
+  const { data: isSurverySubmittedData, sendRequest: getIsSurveySubmitted } = useFetch()
   useEffect(() => {
     if (cafeAuth === "1") {
-      getIsVisited({
-        url: `${DEFAULT_REST_URL}/todaycafe/main/survey/check?todayTime=${fullDate(
+      getIsSurveySubmitted({
+        url: `${DEFAULT_REST_URL}/todaycafe/main/survey/check?todayDate=${fullDate(
           new Date()
         )}`,
         headers: {
@@ -84,11 +84,16 @@ const CafeInfo = () => {
         },
       })
     }
+    console.log('isSurveySubmitted', isSurveySubmitted)
   }, [])
   
   useEffect(() => {
-    setIsVisited(isVisitedData)
-  }, [isVisitedData])
+    setIsSurveySubmitted(isSurverySubmittedData)
+  }, [isSurverySubmittedData])
+
+  const changeSubmittedState = () => {
+    setIsSurveySubmitted(true)
+  }
 
   return (
     <Container style={{ backgroundColor: "#f9f9f9" }}>
@@ -115,12 +120,12 @@ const CafeInfo = () => {
           <Grid.Column only="tablet computer" tablet={5} computer={10}>
             <Grid style={{ textAlign: "center" }}>
               <Grid.Row style={{ display: "flex", justifyContent: "right" }}>
-                { isVisited && <CafeReport icon={false} size={"large"} content={"제보하기"} />}
+                { isSurveySubmitted && <CafeReport icon={false} size={"large"} content={"제보하기"} setSurvey={changeSubmittedState}/>}
               </Grid.Row>
             </Grid>
           </Grid.Column>
           <Grid.Column only="mobile" mobile={3}>
-            { isVisited && <CafeReport icon={"write square"} size={"mini"} content={null} />}
+            { isSurveySubmitted && <CafeReport icon={"write square"} size={"mini"} content={null} setSurvey={changeSubmittedState}/>}
           </Grid.Column>
         </Grid.Row>
 
@@ -176,10 +181,11 @@ const CafeInfo = () => {
                     </p>
                   </Grid.Column>
                   <Grid.Column only="computer" computer={5}>
-                    { isVisited && <CafeReport
+                    { isSurveySubmitted && <CafeReport
                       icon={false}
                       size={"large"}
                       content={"제보하기"}
+                      setSurvey={changeSubmittedState}
                     />}
                   </Grid.Column>
                 </Grid.Row>
