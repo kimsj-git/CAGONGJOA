@@ -44,6 +44,31 @@ class CafeServiceImplTest {
 
 
     @Test
+    void 한글닉네임_위치인증_레디스조회() {
+        // 인증된 상태라면 레디스 데이터 삭제 후 재생성 (time out 시간 초기화)
+        String nickname = "양준모";
+        long cafeId = 100;
+
+        CafeAuth cafeAuth = CafeAuth.builder()
+                .cafeId(cafeId)
+                .nickname(nickname)
+                .expiration(600) // 600초
+                .build();
+
+        cafeAuthRepository.save(cafeAuth); // 인증된 상태 세팅
+
+        Optional<CafeAuth> cafeAuthOptional = cafeAuthRepository.findById(nickname); // key = nickname
+        System.out.println("cafeAuthOptional.get() = " + cafeAuthOptional.get());
+        assertThat(cafeAuthOptional.isEmpty()).isFalse();
+
+        String getNickname = cafeAuthOptional.get().getNickname();
+        System.out.println("getNickname = " + getNickname);
+        long getCafeId = cafeAuthOptional.get().getCafeId();
+        System.out.println("getCafeId = " + getCafeId);
+    }
+
+
+    @Test
     void 만족도설문_결과제공() {
 
         long cafeId = 1;
