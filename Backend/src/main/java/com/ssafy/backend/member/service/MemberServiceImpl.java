@@ -151,7 +151,8 @@ public class MemberServiceImpl implements MemberService {
         DecodedJWT payload = jwtUtil.getDecodedJWT(accessToken);
         long memberId = Long.parseLong(payload.getAudience().get(0));
         String nickname = String.valueOf(payload.getClaim("nickname"));
-        return new MemberIdAndNicknameDto(memberId, nickname);
+        String trimmedNickname = nickname.replaceAll("\"", "");
+        return new MemberIdAndNicknameDto(memberId, trimmedNickname);
     }
 
     @Override
