@@ -8,13 +8,13 @@ const CafeReport = (props) => {
   const cafeAuth = sessionStorage.getItem("cafeAuth")
   const [open, setOpen] = useState(false)
 
-  const { data, isLoading, sendRequest: newReply } = useFetch()
+  const { sendRequest: newReply } = useFetch()
   
   const initialValues ={
-    power: '',
-    wifi: '',
-    toilet: '',
-    timeRestrict: '',
+    power: false,
+    wifi: false,
+    toilet: false,
+    timeRestrict: null,
   }
 
   const [inputValues, setInputValues] = useState(initialValues)
@@ -26,21 +26,27 @@ const CafeReport = (props) => {
   }
 
   const submitHandler = async () => {
-    await newReply({
-      url: `${DEFAULT_REST_URL}/todaycafe/main/survey`,
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${sessionStorage.getItem("accessToken")}`,
-        'Content-Type': 'application/json'
-      },
-      body: {
-        replyWifi : power,
-        replyPower : wifi,
-        replyToilet : toilet,
-        replyTime : timeRestrict,
-      },
-    })
-    setOpen(false)
+    if (power && wifi && toilet && timeRestrict !== null) {
+      await newReply({
+        url: `${DEFAULT_REST_URL}/todaycafe/main/survey`,
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${sessionStorage.getItem("accessToken")}`,
+          'Content-Type': 'application/json'
+        },
+        body: {
+          replyWifi : power,
+          replyPower : wifi,
+          replyToilet : toilet,
+          replyTime : timeRestrict,
+        },
+      })
+      alert('설문이 제출되었습니다!\uD83D\uDE0D')
+      setOpen(false)
+    } else {
+      alert('모든 문항을 체크해주세요.\uD83D\uDE4F')
+      console.log(power, wifi, toilet, timeRestrict)
+    }
   }
 
   return (
@@ -50,7 +56,7 @@ const CafeReport = (props) => {
       onOpen={() => setOpen(true)}
       open={open}
       size="mini"
-      trigger={<Button icon={props.icon} size={props.size} disabled={!cafeAuth} style={{float: 'right'}}>{props.content? props.content : null}</Button>}
+      trigger={<Button icon={props.icon} size={props.size} disabled={cafeAuth !== '1'} style={{float: 'right'}}>{props.content? props.content : null}</Button>}
     >
       <Modal.Header style={{display: 'flex', justifyContent: 'center'}}>카페 정보 제공하기</Modal.Header>
       <Modal.Content>
