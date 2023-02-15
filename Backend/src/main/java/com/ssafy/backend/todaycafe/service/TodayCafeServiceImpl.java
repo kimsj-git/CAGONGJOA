@@ -482,4 +482,20 @@ public class TodayCafeServiceImpl implements TodayCafeService {
 
         return cafeVisitLog.getAccTime();
     }
+
+    @Override
+    public Boolean checkSubmitSurvey(int todayDate) {
+        // 멤버 id와 cafe 가져오기
+        long memberId = memberService.getMemberIdAndNicknameByJwtToken().getId();
+        String nickname = memberService.getMemberIdAndNicknameByJwtToken().getNickname();
+        Optional<CafeAuth> cafeAuthOptional = cafeAuthRepository.findById(nickname);
+        CafeAuth cafeAuth = cafeAuthOptional.orElseThrow(() -> new CafeException(CafeExceptionType.CAFE_AUTH_EXPIRED));
+        Optional<CafeVisitLog> cafeVisitLogOptional
+                = cafeVisitLogRepository.findByVisitedAtAndMemberIdAndCafeId(todayDate, memberId, cafeAuth.getCafeId());
+
+        CafeVisitLog cafeVisitLog = cafeVisitLogOptional.
+                orElseThrow(() -> new TodayCafeException(TodayCafeExceptionType.NO_VISIT_LOG));
+
+        return cafeVisitLog.isSurvey();
+    }
 }
