@@ -78,8 +78,8 @@ const MapDiv = () => {
         lat: location.lat,
         lng: location.lng,
       })
-    }else if (response === "SESSION FINISH"){
-      history.push('/login')
+    } else if (response === "SESSION FINISH") {
+      history.push("/login")
     }
     setIsMoved(false)
     setIsFinded(false)
@@ -104,15 +104,16 @@ const MapDiv = () => {
           image={{
             src: require("../../assets/icons/mylocation.png"),
             size: { width: 40, height: 50 },
-            options:{
-              offset:{
-                x:10,
-                y:40,
-              }
-            }
+            options: {
+              offset: {
+                x: 10,
+                y: 40,
+              },
+            },
           }}
         />
-        {isFiltered && cafeFilterList &&
+        {isFiltered &&
+          cafeFilterList &&
           cafeFilterList.length > 0 &&
           cafeFilterList.map((cafe, index) => {
             return (
@@ -126,7 +127,8 @@ const MapDiv = () => {
               />
             )
           })}
-        {!isFiltered && cafeList &&
+        {!isFiltered &&
+          cafeList &&
           cafeList.length > 0 &&
           cafeList.map((cafe, index) => {
             return (
@@ -149,16 +151,35 @@ const MapDiv = () => {
         >
           <Image src={require("../../assets/icons/kagongjoa_logo.png")} />
         </Button>
-        {!isFinded && (
+
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-evenly",
+            position: "absolute",
+            bottom: "0%",
+            left: "0%",
+            width: "100%",
+            // backgroundColor: "var(--custom-beige)",
+            zIndex: "2",
+            padding: "5%",
+            borderRadius: "10px",
+          }}
+        >
           <Button
             className={classes.findCafeBtn}
-            circular
+            // circular
             onClick={findCafeList}
-            size="huge"
-            content="현재 위치에서 카페 찾기"
+            // size="huge"
+            fluid
+            content="이 근처 카페 찾기"
+            disabled={isFinded}
           />
-        )}
-        <MapLookFeed lat={center.lat} lng={center.lng} />
+
+          <MapLookFeed lat={center.lat} lng={center.lng} />
+        </div>
+
         <MapCafeFilterCarousel className={classes.filterCorousel} />
         <MapSpinner />
       </Map>

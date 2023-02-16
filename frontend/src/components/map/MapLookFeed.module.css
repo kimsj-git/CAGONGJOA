@@ -1,22 +1,24 @@
 .btn {
-  position: absolute;
+  /* position: absolute;
   left: 30%;
-  top: 2rem;
+  top: 2rem; */
   background-color: var(--point-color-red) !important;
   color: white !important;
   white-space: nowrap;
   z-index: 2;
   border: 4px solid var(--custom-beige) !important;
+  border-radius: 15px !important;
+  padding-block: 1.2rem !important;
 }
 
 @media screen and (max-width: 767px) {
   .btn {
-    display: flex;
+    /* display: flex;
     position: absolute;
     left: 25%;
     bottom: 2rem;
     height: 2em;
-    width: 15rem;
+    width: 15rem; */
     z-index: 2;
   }
 }
