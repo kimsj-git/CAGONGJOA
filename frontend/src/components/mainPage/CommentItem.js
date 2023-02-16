@@ -45,9 +45,9 @@ const CommentItem = (props) => {
       <Comment.Avatar
         style={{ width: "3.5rem" }}
         as="a"
-        src={require(`../../assets/cafe_logos/${
-          brandLogo[props.comment.cafeBrandType]
-        }.png`)}
+        src={comment.cafeBrandType ? require(`../../assets/cafe_logos/${
+          brandLogo[comment.cafeBrandType]
+        }.png`) : require("../../assets/icons/question.png")}
       />
       <Comment.Content>
         <Comment.Author
