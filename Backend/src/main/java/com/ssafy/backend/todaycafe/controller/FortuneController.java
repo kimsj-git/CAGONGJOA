@@ -20,7 +20,7 @@ public class FortuneController {
 
     @Auth
     @CafeAuth
-    @GetMapping("/{fortuneType}")
+    @GetMapping
     public ResponseEntity<ResponseDTO> getFortune() {
         FortuneResponseDto fortuneResponseDto = todayCafeService.getFortune();
         ResponseDTO responseDTO = new ResponseDTO("운세 뽑기 완료!", "", HttpStatus.OK, fortuneResponseDto);
