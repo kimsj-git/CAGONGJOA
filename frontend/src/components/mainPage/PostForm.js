@@ -1,4 +1,6 @@
 import React, { useState } from "react";
+import { useHistory } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
 import {
   Button,
   Icon,
@@ -9,9 +11,6 @@ import {
   Label,
 } from "semantic-ui-react";
 import { BsPencil, BsPencilFill } from "react-icons/bs";
-import { useDispatch, useSelector } from "react-redux";
-import useFetch from "../../hooks/useFetch.js";
-
 import ImageUploadBox from "./ImageUploadBox";
 import { Editor } from "primereact/editor";
 import { imageActions } from "../../store/image";
@@ -20,6 +19,7 @@ import { getPosts } from "../../store/posts.js";
 
 const DEFAULT_REST_URL = process.env.REACT_APP_REST_DEFAULT_URL;
 const PostForm = (props) => {
+  const history = useHistory()
   const dispatch = useDispatch();
   // 현재 카페 정보 관리
   const [currentCafe, setCurrentCafe] = useState(null);
@@ -320,6 +320,7 @@ const PostForm = (props) => {
                 dispatch(imageActions.closeModal());
                 setFirstOpen(false);
                 setSecondOpen(false);
+                history.push('/')
               }}
             />
           </Modal.Actions>

@@ -6,6 +6,7 @@ import { useDispatch, useSelector } from "react-redux"
 import { commentsActions } from "../../store/comments.js"
 import { useEffect, useRef, useState } from "react"
 import useFetch from "../../hooks/useFetch.js"
+import { postsActions } from "../../store/posts"
 const DEFAULT_REST_URL = process.env.REACT_APP_REST_DEFAULT_URL
 
 const CommentList = (props) => {
@@ -68,38 +69,25 @@ const CommentList = (props) => {
         }),
       })
       const parentComment = await response.json()
-      console.log(parentComment)
       dispatch(commentsActions.updateReplies(parentComment.data))
     }
   }
 
   useEffect(
     () => {
-      console.log("인뷰 이펙트 실행")
-      console.log(inView)
       if (isMounted && inView) {
-        console.log("인뷰 이펙트, 마운티드 통과")
-        console.log("인뷰 이펙트, 인뷰 통과")
-        console.log(lastCommentId)
         refreshComments(lastCommentId)
       }
     },
     [inView]
   )
   useEffect(() => {
-    console.log("댓글 이펙트 실행")
-    // if (isMounted.current) {
-      console.log("댓글 이펙트, 마운티드 통과")
       dispatch(
         commentsActions.updateComments({
           fetchedComments: fetchedComments,
           lastCommentId: lastCommentId,
         })
       )
-    // } else {
-    //   console.log("댓글 이펙트, 마운티드 통과 못함")
-    //   isMounted.current = true
-    // }
   }, [fetchedComments])
 
   return (
@@ -111,8 +99,9 @@ const CommentList = (props) => {
           {comments.map((comment, index) => {
             return (
               <CommentItem
-                key={comment.commentId}
+                key={`${props.post.id}-${comment.commentId}`}
                 comment={comment}
+                postId = {props.post.id}
                 addNewComment={addNewComment}
                 refreshComments={refreshComments}
               />
@@ -126,8 +115,7 @@ const CommentList = (props) => {
         reply
         onSubmit={(e) => {
           addNewComment(newComment, -1)
-          console.log(e.target)
-          
+          dispatch(postsActions.createComment(props.post.id))
         }}
       >
         <Form.Input
@@ -137,7 +125,6 @@ const CommentList = (props) => {
             color: "teal",
             icon: "paper plane",
           }}
-          size="tiny"
           // content={newComment}
           onChange={(e) => {
             setNewComment(e.target.value)

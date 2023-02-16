@@ -12,6 +12,12 @@ const CafeAuth = (props) => {
   const open = useSelector((state) => state.modal.openCafeAuthModal)
 
   const nextPageHander = () => {
+    findNearCafe()
+    dispatch(modalActions.toggleNearCafeListModal())
+    dispatch(modalActions.closeCafeAuthModal())
+  }
+
+  const findNearCafe = () => {
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition((position) => {
         const location = {
@@ -21,9 +27,8 @@ const CafeAuth = (props) => {
         dispatch(findNearCafeData(location))
       })
     }
-    dispatch(modalActions.toggleNearCafeListModal())
-    dispatch(modalActions.closeCafeAuthModal())
   }
+
   const closeHandler = () => {
     props.closeModal()
     dispatch(modalActions.closeCafeAuthModal())
@@ -32,7 +37,7 @@ const CafeAuth = (props) => {
   const closeNearCafeList = () => {
     props.closeModal()
   }
-  
+
   return (
     <>
       <Modal
@@ -76,7 +81,9 @@ const CafeAuth = (props) => {
               </GridColumn>
               <GridColumn width={1}></GridColumn>
               <GridColumn
-              onClick={()=>{alert("업데이트 중..")}}
+                onClick={() => {
+                  alert("업데이트 중..")
+                }}
                 width={6}
                 textAlign="center"
                 verticalAlign="middle"
@@ -92,7 +99,12 @@ const CafeAuth = (props) => {
           </Grid>
         </Modal.Content>
       </Modal>
-      <NearCafeList closeNearCafeList={closeNearCafeList} setIsCafeAuth={props.setIsCafeAuth} setIsJamSurvey={props.setIsJamSurvey}/>
+      <NearCafeList
+        closeNearCafeList={closeNearCafeList}
+        setIsCafeAuth={props.setIsCafeAuth}
+        setIsJamSurvey={props.setIsJamSurvey}
+        findNearCafe={findNearCafe}
+      />
     </>
   )
 }
