@@ -20,12 +20,12 @@ const MainPageTopBar = (props) => {
   const isFindFeed = useSelector((state) => state.cafe.isFindFeed)
   const [cafeName, setCafeName] = useState("")
   const filterState = useSelector((state) => state.posts.filterState)
-  const isLoading = useSelector((state)=>state.posts.isLoading)
-  
+  const isLoading = useSelector((state) => state.posts.isLoading)
+
   const filters = Object.entries(filterState)
-      .filter(([key, value]) => value === true)
-      .map(([key, value]) => key)
-  let cafeAuth = sessionStorage.getItem('cafeAuth')
+    .filter(([key, value]) => value === true)
+    .map(([key, value]) => key)
+  let cafeAuth = sessionStorage.getItem("cafeAuth")
   useEffect(() => {
     if (JSON.parse(sessionStorage.getItem("myCafe")) !== null) {
       setCafeName(JSON.parse(sessionStorage.getItem("myCafe")).cafeName)
@@ -54,7 +54,7 @@ const MainPageTopBar = (props) => {
         filters: filters,
       })
     )
-    sessionStorage.setItem('location', JSON.stringify(location))
+    sessionStorage.setItem("location", JSON.stringify(location))
     dispatch(cafeActions.findFeedMyLocation())
   }
   return (
@@ -75,7 +75,7 @@ const MainPageTopBar = (props) => {
         >
           {!(props.isCafeAuth === null || props.isCafeAuth === "0") ? (
             <Image
-              src={require("../../assets/icons/iced_coffee_30.png")}
+              src={require("../../assets/icons/iced_coffee.png")}
               size="mini"
               style={{ marginInline: "0.5rem 0.8rem" }}
             />
@@ -93,7 +93,11 @@ const MainPageTopBar = (props) => {
               fontWeight: "bold",
             }}
           >
-            {isFindFeed ? feedAddress : props.isCafeAuth==="1" ? cafeName : feedAddress}
+            {isFindFeed
+              ? feedAddress
+              : props.isCafeAuth === "1"
+              ? cafeName
+              : feedAddress}
           </span>
           <RiArrowDropDownLine
             size="40"
@@ -101,8 +105,15 @@ const MainPageTopBar = (props) => {
             onClick={openMapHandler}
           />
         </div>
-        <div style={{display:"flex"}}>
-        {props.isCafeAuth === "1" && <MdOutlineMyLocation size="30" circular onClick={findFeedMyLocation} loading={isLoading ? true:false}/>}
+        <div style={{ display: "flex" }}>
+          {props.isCafeAuth === "1" && (
+            <MdOutlineMyLocation
+              size="30"
+              circular
+              onClick={findFeedMyLocation}
+              loading={isLoading ? true : false}
+            />
+          )}
           <NavLink to="/search" style={{ marginInline: "0.5rem 0.3rem" }}>
             <IoIosSearch size="30" color="black" />
           </NavLink>

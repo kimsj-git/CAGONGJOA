@@ -2,6 +2,7 @@ import { useState, useRef, useEffect } from "react"
 import { useHistory, useLocation } from "react-router-dom"
 import { Route, Switch } from "react-router-dom"
 import { Grid } from "semantic-ui-react"
+import { AnimatePresence } from "framer-motion"
 
 import AuthRoute from "./AuthRoute"
 import MapPage from "./pages/MapPage"
@@ -40,16 +41,20 @@ function App() {
       ? JSON.parse(sessionStorage.getItem("todayCafe")).isCrowdSubmitted
       : false
   )
-  const location = useLocation();
+  const location = useLocation()
 
   useEffect(() => {
-    if (location.pathname === '/login' || location.pathname === '/signup') {
-      document.body.style.setProperty('background-color', 'rgb(255 107 107 / 54%)', 'important');
+    if (location.pathname === "/login" || location.pathname === "/signup") {
+      document.body.style.setProperty(
+        "background-color",
+        "rgb(255 107 107 / 54%)",
+        "important"
+      )
       console.log(document.body.style.backgroundColor)
     } else {
-      document.body.style.backgroundColor = 'var(--background-color)';
+      document.body.style.backgroundColor = "var(--background-color)"
     }
-  }, [location]);
+  }, [location])
 
   useEffect(() => {
     if (!Authenticated || Authenticated === undefined) {
@@ -71,15 +76,15 @@ function App() {
               "Content-Type": "application/json",
             },
           }
-          )
-          const responseData = await response.json()
-          time.current = responseData.data
-          // console.log(time.current)
+        )
+        const responseData = await response.json()
+        time.current = responseData.data
+        // console.log(time.current)
       }, 60000) // 1 minute
       return () => clearInterval(intervalId)
     }
   })
-  
+
   // 8분마다 서버에 현재 유저의 인증 상태 여부를 확인 요청
   useEffect(() => {
     const intervalId = setInterval(async () => {
@@ -96,67 +101,72 @@ function App() {
       setIsCafeAuth={setIsCafeAuth}
       setIsJamSurvey={setIsJamSurvey}
     >
-      <Switch>
-        {/* Navigation 관련 ROUTE*/}
-        <AuthRoute component={ChatPage} path="/chat" exact />
-        <AuthRoute component={TodayCafe} path="/today-cafe" exact />
-        <Route path="/today-cafe" exact >
-          <TodayCafe/>
-        </Route>
-        <Route path="/mypage" component={MyPage} exact>
-          <MyPage
-            setIsAuthenticated={setIsAuthenticated}
-            setIsCafeAuth={setIsCafeAuth}
-            isCafeAuth={isCafeAuth}
+      <AnimatePresence>
+        <Switch>
+          {/* Navigation 관련 ROUTE*/}
+          <AuthRoute component={ChatPage} path="/chat" exact />
+          <AuthRoute component={TodayCafe} path="/today-cafe" exact />
+          <Route path="/today-cafe" exact>
+            <TodayCafe />
+          </Route>
+          <Route path="/mypage" component={MyPage} exact>
+            <MyPage
+              setIsAuthenticated={setIsAuthenticated}
+              setIsCafeAuth={setIsCafeAuth}
+              isCafeAuth={isCafeAuth}
+            />
+          </Route>
+          <AuthRoute path="/search" component={SearchPage} exact />
+
+          {/* Login 관련 ROUTE */}
+          <Route path="/login" component={LoginPage} exact />
+          <Route path="/oauth/kakao">
+            <KakaoLoginGetCode
+              setIsAuthenticated={setIsAuthenticated}
+              setIsCafeAuth={setIsCafeAuth}
+            />
+          </Route>
+          <Route path="/signup" exact>
+            <SignupPage setIsAuthenticated={setIsAuthenticated} />
+          </Route>
+
+          {/* TodayCafe 관련 ROUTE */}
+          <AuthRoute
+            path="/today-cafe/make-coffee"
+            component={MakeCoffee}
+            exact
           />
-        </Route>
-        <AuthRoute path="/search" component={SearchPage} exact />
+          <AuthRoute path="/today-cafe/fortune" component={Fortune} exact />
 
-        {/* Login 관련 ROUTE */}
-        <Route path="/login" component={LoginPage} exact />
-        <Route path="/oauth/kakao">
-          <KakaoLoginGetCode setIsAuthenticated={setIsAuthenticated} setIsCafeAuth={setIsCafeAuth} />
-        </Route>
-        <Route path="/signup" exact>
-          <SignupPage setIsAuthenticated={setIsAuthenticated} />
-        </Route>
+          {/* MyPage 관련 ROUTE */}
+          <AuthRoute path="/mypage/study" component={StudyHistory} exact />
+          <AuthRoute path="/mypage/cafebadge" component={MyCafeBadge} exact />
+          <AuthRoute path="/mypage/feed" component={MyFeedPage} exact />
+          <AuthRoute path="/mypage/setting" exact>
+            <Grid divided="vertically" textAlign="center">
+              <Settings />
+            </Grid>
+          </AuthRoute>
 
-        {/* TodayCafe 관련 ROUTE */}
-        <AuthRoute
-          path="/today-cafe/make-coffee"
-          component={MakeCoffee}
-          exact
-        />
-        <AuthRoute path="/today-cafe/fortune" component={Fortune} exact />
+          {/* Error 페이지 */}
+          <AuthRoute path="/error" component={ErrorPage} exact />
 
-        {/* MyPage 관련 ROUTE */}
-        <AuthRoute path="/mypage/study" component={StudyHistory} exact />
-        <AuthRoute path="/mypage/cafebadge" component={MyCafeBadge} exact />
-        <AuthRoute path="/mypage/feed" component={MyFeedPage} exact />
-        <AuthRoute path="/mypage/setting" exact>
-          <Grid divided="vertically" textAlign="center">
-            <Settings />
-          </Grid>
-        </AuthRoute>
+          {/* MainPage Route */}
+          <Route path="/" exact>
+            <MainPage
+              isAuthenticated={isAuthenticated}
+              isCafeAuth={isCafeAuth}
+              isJamSurvey={isJamSurvey}
+              setIsJamSurvey={setIsJamSurvey}
+              setIsCafeAuth={setIsCafeAuth}
+            />
+          </Route>
+          <AuthRoute path="/map" component={MapPage} exact />
 
-        {/* Error 페이지 */}
-        <AuthRoute path="/error" component={ErrorPage} exact />
-
-        {/* MainPage Route */}
-        <Route path="/" exact>
-          <MainPage
-            isAuthenticated={isAuthenticated}
-            isCafeAuth={isCafeAuth}
-            isJamSurvey={isJamSurvey}
-            setIsJamSurvey={setIsJamSurvey}
-            setIsCafeAuth={setIsCafeAuth}
-          />
-        </Route>
-        <AuthRoute path="/map" component={MapPage} exact/>
-
-        {/* NotFound 페이지*/}
-        <Route path="*" component={NotFound} />
-      </Switch>
+          {/* NotFound 페이지*/}
+          <Route path="*" component={NotFound} />
+        </Switch>
+      </AnimatePresence>
     </Layout>
   )
 }

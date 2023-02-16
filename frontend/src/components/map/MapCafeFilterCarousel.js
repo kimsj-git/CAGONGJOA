@@ -18,16 +18,15 @@ const MapCafeFilterCarousel = () => {
     return (
       <Button
         onClick={filterHandler}
+        className="cafe-type-btn"
         circular
-        color="blue"
         style={{
           fontSize: "10px",
           width: "auto",
           minWidth: "90%",
           height: "3em",
           margin: "4px 3px",
-          whiteSpace: "nowrap"
-          
+          whiteSpace: "nowrap",
         }}
       >
         {type}
@@ -48,15 +47,15 @@ const MapCafeFilterCarousel = () => {
   ]
   return (
     <>
-    {cafeBrandList.length>1 && 
-      <Carousel
-      value={cafeBrandList}
-      responsiveOptions={responsiveOptions}
-      // numVisible={4}
-      // numScroll={1}
-      itemTemplate={carouselTemplate}
-      />
-    }
+      {cafeBrandList.length > 1 && (
+        <Carousel
+          value={cafeBrandList}
+          responsiveOptions={responsiveOptions}
+          // numVisible={4}
+          // numScroll={1}
+          itemTemplate={carouselTemplate}
+        />
+      )}
     </>
   )
 }
