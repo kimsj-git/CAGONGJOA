@@ -30,9 +30,19 @@ const NearCafeList = (props) => {
           onClick={props.findNearCafe}
         />
       </Modal.Header>
-      <Modal.Content>
+      <Modal.Content
+        scrolling
+        style={{ backgroundColor: "var(--background-color)" }}
+      >
         {isLoading && (
-          <div style={{ textAlign: "center" }}>
+          <div
+            style={{
+              textAlign: "center",
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+            }}
+          >
             {" "}
             <Icon loading name="spinner" size="big" />
           </div>
@@ -40,13 +50,30 @@ const NearCafeList = (props) => {
         {!isLoading && (
           <>
             {cafeData.length > 0 && (
-              <div style={{ textAlign: "center" }}>
-                <p style={{ fontWeight: "bold" }}>
+              <div
+                style={{
+                  textAlign: "center",
+                  display: "flex",
+                  flexDirection: "column",
+                  alignItems: "center",
+                }}
+              >
+                <p style={{ fontWeight: "bold", fontSize: "1.5rem" }}>
                   현재 계신 카페를 선택해주세요!
                 </p>
-                {cafeData.map((cafe) => {
-                  return <NearCafeListItem key={cafe.id} cafeData={cafe} />
-                })}
+                <div
+                  style={{
+                    display: "flex",
+                    flexGrow: 1,
+                    flexWrap: "wrap",
+                    flex: 1,
+                    justifyContent: "center",
+                  }}
+                >
+                  {cafeData.map((cafe) => {
+                    return <NearCafeListItem key={cafe.id} cafeData={cafe} />
+                  })}
+                </div>
               </div>
             )}
             {cafeData.length === 0 && (
@@ -72,7 +99,17 @@ const NearCafeList = (props) => {
 
                 <Popup
                   trigger={
-                    <Button size="large" fluid onClick={() => {}}>
+                    <Button
+                      size="large"
+                      style={{
+                        backgroundColor: "var(--custom-brown)",
+                        color: "var(--custom-beige)",
+                        borderRadius: "15px",
+                      }}
+                      // inverted
+                      fluid
+                      onClick={() => {}}
+                    >
                       영수증으로 인증하기
                     </Button>
                   }

@@ -25,7 +25,9 @@ const typeIcon = {
 const PostItem = (props) => {
   const dispatch = useDispatch()
   const brandLogo = useSelector((state) => state.cafe.brandLogo)
-  const longContent = props.content.split("</p>").map((content)=>content.substr(3,content.length))
+  const longContent = props.content
+    .split("</p>")
+    .map((content) => content.substr(3, content.length))
   const [lookMore, setLookMore] = useState(false)
   const { data, isLoading, sendRequest: fetchLike } = useFetch()
   const elapsedTime = ElapsedText(props.createdAt)
@@ -33,7 +35,7 @@ const PostItem = (props) => {
   const tierColor = ["#8B6331", "#C0C0C0", "#FF9614", "#3DFF92"][
     parseInt(props.tier / 1000)
   ]
-  
+
   const likePost = async (isLiked) => {
     isLiked
       ? dispatch(postsActions.cancleLikePost(props.id))
@@ -52,8 +54,7 @@ const PostItem = (props) => {
     })
   }
   const commentHandler = (status) => {
-    if (status === "write"){
-      
+    if (status === "write") {
     }
   }
   const carouselTemplate = (img) => {
@@ -150,14 +151,12 @@ const PostItem = (props) => {
             <Card.Meta>{props.userType ? props.cafeName : null}</Card.Meta>
           </div>
 
-          <Card.Meta textAlign="right">
-            {elapsedTime}
-          </Card.Meta>
+          <Card.Meta textAlign="right">{elapsedTime}</Card.Meta>
         </div>
 
         {!lookMore && longContent.length > 5 && (
           <Card.Description style={{ fontSize: "1.2rem", lineHeight: "1.8" }}>
-            {longContent.slice(0, 4).map((content,index) => {
+            {longContent.slice(0, 4).map((content, index) => {
               return <p key={index}>{content}</p>
             })}
             ...

@@ -4,7 +4,7 @@ import { Button, Popup } from "semantic-ui-react"
 import { useDispatch, useSelector } from "react-redux"
 import { useHistory } from "react-router-dom"
 
-import classes from "./MapDiv.module.css"
+import "./MapDiv.css"
 import MapCafeMarker from "./MapCafeMarker"
 import MapCircle from "./MapCircle"
 import { cafeActions, findMapCafeList } from "../../store/cafe"
@@ -98,7 +98,7 @@ const MapDiv = (props) => {
           })
         }
         onDragEnd={dragHandler}
-        className={classes.map}
+        className="map"
       >
         <MapMarker
           position={{ lat: center.lat, lng: center.lng }}
@@ -151,7 +151,7 @@ const MapDiv = (props) => {
               circular
               color="red"
               onClick={goToMyPosition}
-              className={classes.myLocationBtn}
+              className="myLocationBtn"
             />
           }
           content="내 위치로 이동하기"
@@ -159,23 +159,9 @@ const MapDiv = (props) => {
           inverted
         />
 
-        <div
-          style={{
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "space-evenly",
-            position: "absolute",
-            bottom: "0%",
-            left: "0%",
-            width: "100%",
-            // backgroundColor: "var(--custom-beige)",
-            zIndex: "2",
-            padding: "5%",
-            borderRadius: "10px",
-          }}
-        >
+        <div id="map-btns-box">
           <Button
-            className={classes.findCafeBtn}
+            className="findCafeBtn"
             // circular
             onClick={findCafeList}
             // size="huge"
@@ -187,7 +173,7 @@ const MapDiv = (props) => {
           <MapLookFeed lat={center.lat} lng={center.lng} />
         </div>
 
-        <MapCafeFilterCarousel className={classes.filterCorousel} />
+        <MapCafeFilterCarousel className="filterCorousel" />
         <MapSpinner />
       </Map>
     </div>

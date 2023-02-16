@@ -15,8 +15,8 @@ body {
   --custom-beige: rgb(255 247 216 / 50%);
   --custom-mint: #58d9b4;
   --custom-pink: rgb(255, 168, 168);
+  --custom-brown: #763d3d;
   background: var(--background-color);
-
 }
 
 * {
