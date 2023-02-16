@@ -65,18 +65,22 @@ const CafeTimer = () => {
   }, [accTime])
 
   return (
-    <Fragment>
+    <Fragment >
+      <div style={{backgroundColor: 'lightgrey', borderRadius: '4px'}}>
       <Progress
         total={120}
-        color="green"
+        inverted
+        color="red"
         progress="value"
         value={accTime}
         disabled={cafeAuth === "0" || cafeAuth === null}
       >
-        <p style={{ color: "#00754A" }}>
+        <p style={{ color: "#ff695e", fontSize: "125%", fontFamily: 'GangwonEdu_OTFBoldA'}}>
           {hours}시간 {minutes}분 경과! {isComplete ? "[완료]" : ""}
         </p>
       </Progress>
+
+      </div>
     </Fragment>
   )
 }

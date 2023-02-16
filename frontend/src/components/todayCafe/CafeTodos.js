@@ -3,6 +3,7 @@ import { Grid } from "semantic-ui-react"
 import { Calendar } from "primereact/calendar"
 
 import CafeTodoList from "./CafeTodoList"
+import './CustomCalendar.css'
 
 const CafeTodos = () => {
   const [date, setDate] = useState(new Date())
@@ -18,17 +19,18 @@ const CafeTodos = () => {
   return (
     <Grid>
       <Grid.Row columns={2}>
-        <Grid.Column>
-          <p>
-            {date.getMonth() + 1}월 {date.getDate()}일 Todo
+        <Grid.Column style={{display: 'flex', justifyContent: 'center', alignItems: 'center'}}>
+          <p style={{fontSize: '135%', fontFamily: 'GangwonEdu_OTFBoldA'}}>
+            {date.getMonth() + 1}월 {date.getDate()}일 할일 목록
           </p>
         </Grid.Column>
-        <Grid.Column textAlign="right">
+        <Grid.Column textAlign="center">
           <Calendar
             id="icon"
             value={date}
             onChange={(e) => changeDate(e.value)}
             showIcon
+            className="custom-icon"
           />
         </Grid.Column>
       </Grid.Row>
