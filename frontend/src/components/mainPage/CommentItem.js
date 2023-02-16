@@ -19,8 +19,6 @@ const CommentItem = (props) => {
   const isWriterVerified = comment.writerType
   const elapsedTime = ElapsedText(props.comment.createdAt)
   const brandLogo = useSelector((state) => state.cafe.brandLogo)
-  const isCafeAuth = sessionStorage.getItem('cafeAuth')
-
   const likeComment = async (isLiked) => {
     dispatch(
       commentsActions.likeComment({
@@ -117,25 +115,24 @@ const CommentItem = (props) => {
           <Form
             reply
             onSubmit={(e) => {
-              e.preventDefault()
               props.addNewComment(newReply, comment.commentId)
               if (props.myPage) {
               } else {
                 dispatch(postsActions.createComment(props.postId))
               }
-              setNewReply("")
+              // setNewReply("")
+              // e.target[0].value = ""
             }}
           >
             <Form.Input
               fluid
-              placeholder= {isCafeAuth === "1" ? "대댓글을 입력하세요." : "위치 인증이 필요합니다."}
-              disabled = {isCafeAuth === "1" ? false : true}
+              placeholder="대댓글을 입력하세요."
               action={{
                 icon: "paper plane",
                 color: "teal",
               }}
               size="mini"
-              value={newReply}
+              // content={newReply}
               onChange={(e) => setNewReply(e.target.value)}
             />
           </Form>
@@ -143,9 +140,9 @@ const CommentItem = (props) => {
         {/* 대댓글 창 */}
         {comment.replies.length > 0 && (
           <Comment.Group>
-            {comment.replies.map((reply,index) => {
+            {comment.replies.map((reply) => {
               return (
-                <ReplyItem key={`${index}-${props.comment.commentId}-${props.comment.writerId}`}reply={reply} addNewComment={props.addNewComment} />
+                <ReplyItem reply={reply} addNewComment={props.addNewComment} />
               )
             })}
           </Comment.Group>

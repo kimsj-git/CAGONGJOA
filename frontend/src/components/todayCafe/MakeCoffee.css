@@ -1,0 +1,4 @@
+.ui.steps .active.step,
+.ui.steps .active.step::after {
+  background-color: var(--custom-pink) !important;
+}

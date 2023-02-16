@@ -36,7 +36,7 @@ const Profile = () => {
         ]
       : "#65B1EF"
 
-  fetch(`${DEFAULT_REST_URL}/api/memeber/coin`, {
+  fetch(`${DEFAULT_REST_URL}/memeber/coin`, {
     method: "GET",
     headers: {
       Authorization: `Bearer ${sessionStorage.getItem("accessToken")}`,
@@ -67,62 +67,112 @@ const Profile = () => {
           </Item.Image>
         )}
 
-        <Item.Content>
-          <Item.Header>
-            <h2>{nickname}</h2>
-          </Item.Header>
-          <Item.Description style={{ display: "flex" }}>
-            <div
-              style={{
-                display: "flex",
-                alignItems: "center",
-                marginRight: "1rem",
-                fontSize: "1.5rem",
-              }}
-            >
-              <Image
-                src={require("../../assets/icons/coffee_beans.png")}
-                size="mini"
-                style={{ marginRight: "0.5rem" }}
-              />
-              {coffeeBeanCnt}개
-            </div>
-            <div
-              style={{
-                display: "flex",
-                alignItems: "center",
-                marginRight: "1rem",
-                fontSize: "1.5rem",
-              }}
-            >
-              <Image
-                src={require("../../assets/icons/coffee_cup.png")}
-                size="mini"
-                style={{ marginRight: "0.5rem" }}
-              />
-              {coffeeCnt}개
-            </div>
-          </Item.Description>
-
+        <Item.Content
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            justifyContent: "space-evenly",
+          }}
+        >
           {nowCafe ? (
-            <Item.Extra style={{ opacity: "50%", fontSize: "8px" }}>
-              {nowCafe.cafeName}
-            </Item.Extra>
+            <>
+              <div>
+                <Item.Header>
+                  <h2>{nickname}</h2>
+                </Item.Header>
+                <Item.Description
+                  style={{
+                    marginTop: "1vh",
+                    fontSize: "1.3rem",
+                    color: "grey",
+                    fontWeight: "bold",
+                  }}
+                >
+                  <p>{nowCafe.cafeName}</p>
+                </Item.Description>
+              </div>
+              <Item.Description style={{ display: "flex" }}>
+                <div
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    marginRight: "1rem",
+                    fontSize: "1.5rem",
+                  }}
+                >
+                  <Image
+                    src={require("../../assets/icons/coffee_beans.png")}
+                    size="mini"
+                    style={{ marginRight: "0.5rem" }}
+                  />
+                  {coffeeBeanCnt}개
+                </div>
+                <div
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    marginRight: "1rem",
+                    fontSize: "1.5rem",
+                  }}
+                >
+                  <Image
+                    src={require("../../assets/icons/coffee_cup.png")}
+                    size="mini"
+                    style={{ marginRight: "0.5rem" }}
+                  />
+                  {coffeeCnt}잔
+                </div>
+              </Item.Description>
+            </>
           ) : (
-            <Button
-              floated="right"
-              onClick={() => {
-                dispatch(modalActions.openCafeAuthModal())
-              }}
-              style={{
-                backgroundColor: "var(--custom-pink)",
-                color: "white",
-                borderRadius: "20px",
-                marginTop: "2vh",
-              }}
-            >
-              카페 방문 인증 하러가기
-            </Button>
+            <>
+              <Item.Description style={{ display: "flex" }}>
+                <div
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    marginRight: "1rem",
+                    fontSize: "1.5rem",
+                  }}
+                >
+                  <Image
+                    src={require("../../assets/icons/coffee_beans.png")}
+                    size="mini"
+                    style={{ marginRight: "0.5rem" }}
+                  />
+                  {coffeeBeanCnt}개
+                </div>
+                <div
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    marginRight: "1rem",
+                    fontSize: "1.5rem",
+                  }}
+                >
+                  <Image
+                    src={require("../../assets/icons/coffee_cup.png")}
+                    size="mini"
+                    style={{ marginRight: "0.5rem" }}
+                  />
+                  {coffeeCnt}개
+                </div>
+              </Item.Description>
+              <Button
+                floated="right"
+                onClick={() => {
+                  dispatch(modalActions.openCafeAuthModal())
+                }}
+                style={{
+                  backgroundColor: "var(--custom-pink)",
+                  color: "white",
+                  borderRadius: "20px",
+                  marginTop: "2vh",
+                }}
+              >
+                카페 방문 인증 하러가기
+              </Button>
+            </>
           )}
         </Item.Content>
       </Item>

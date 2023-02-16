@@ -16,6 +16,7 @@ import { Editor } from "primereact/editor"
 import { imageActions } from "../../store/image"
 import { postsActions } from "../../store/posts.js"
 import { getPosts } from "../../store/posts.js"
+import exceptionHandler from "../common/exceptionHandler.js"
 
 const DEFAULT_REST_URL = process.env.REACT_APP_REST_DEFAULT_URL
 const PostForm = (props) => {
@@ -64,14 +65,14 @@ const PostForm = (props) => {
     return new File([u8arr], fileName, { type: mime })
   }
 
-  const submitHandler = async () => {
+  const submitHandler = async (e) => {
+    e.preventDefault()
     // post 내용이 없을 경우
     if (!postContent) {
       alert("글 내용을 입력해주세요!")
       return
     }
 
-    setSecondOpen(true)
     const formData = new FormData()
 
     // 글 수정 요청
@@ -106,6 +107,8 @@ const PostForm = (props) => {
         },
         body: formData,
       })
+      const responseData = await response.json()
+      exceptionHandler(responseData)
     }
     // 글 생성 요청
     else {
@@ -134,7 +137,18 @@ const PostForm = (props) => {
         },
         body: formData,
       })
+      const responseData = await response.json()
+      if (responseData.httpStatus === "BAD_GATEWAY") {
+        alert("미인증 유저는 하루에 1개의 글만 작성할 수 있어요!")
+        setFirstOpen(false)
+        dispatch(imageActions.closeModal())
+        setPostContent("")
+        setPostType("")
+        return
+      }
+      exceptionHandler(responseData)
     }
+    setSecondOpen(true)
 
     dispatch(
       getPosts({
@@ -176,6 +190,7 @@ const PostForm = (props) => {
       setPostContent("")
       setPostType(currentCafe ? "free" : "qna")
     }
+    console.log("PostForm Opened")
   }
 
   return (
@@ -211,7 +226,11 @@ const PostForm = (props) => {
             <Button
               fluid
               circular
-              color="orange"
+              // color="orange"
+              style={{
+                backgroundColor: "var(--custom-pink)",
+                color: "black",
+              }}
               icon="edit"
               content="수정"
             ></Button>
@@ -277,6 +296,7 @@ const PostForm = (props) => {
               onChange={(event, data) => {
                 setPostType(data.value)
               }}
+              value={postType}
               style={{ marginBottom: "20px" }}
               defaultValue={
                 props.isEditing ? postType : currentCafe ? "free" : "qna"
