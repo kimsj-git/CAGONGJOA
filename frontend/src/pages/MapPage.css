@@ -3,9 +3,10 @@
   /* border-top: 5px solid var(--custom-beige); */
   border: 5px solid var(--custom-beige);
   /* border-top-right: 5px solid var(--custom-beige); */
+  box-shadow: 0px -1em 30px 1em rgba(0, 0, 0, 0.1);
 }
 
-.MapDiv_map__lr2Wc{
+.MapDiv_map__lr2Wc {
   height: 86% !important;
   bottom: 0;
   left: 0;
