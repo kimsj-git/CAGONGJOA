@@ -21,7 +21,7 @@ const MyCommentsItem = ({ comment }) => {
         <Item.Meta>
           <span dangerouslySetInnerHTML={{ __html: content }}></span>
         </Item.Meta>
-        {longContent.length > 5 && (
+        {longContent.length > 2 && (
         <Item.Extra>
             {longContent.slice(0, 2).map((content,index) => {
               return <p key={index}>{content}</p>
