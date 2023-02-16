@@ -81,6 +81,9 @@ public class TodayCafeServiceImpl implements TodayCafeService {
         return coffeeResponseDto;
     }
 
+    /**
+     * 2. 오늘의운세 주기
+     **/
     @Override
     public FortuneResponseDto getFortune() {
         /**
@@ -200,71 +203,68 @@ public class TodayCafeServiceImpl implements TodayCafeService {
         }
     }
 
-    /**
-     * 2. 오늘의운세 주기
-     **/
 
-    @Override
-    public FortuneResponseDto randomFortune(int type) {
-
-        CoffeeMakeResponseDto coffeeResponseDto = getCoffees();
-        Long memberId = memberUtil.checkMember().getMemberId();
-        int coffeeCnt = coffeeResponseDto.getCoffeeCnt();
-        String nickname = memberUtil.checkMember().getNickname();
-        CafeAuth cafeAuth = cafeAuthRepository.findById(nickname).get();
-        Long cafeId = cafeAuth.getCafeId(); // CafeAuth 를 거쳐왔기 때문에 null일 수 없음
-        int visitedAtValue = Integer.parseInt(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd")));
-
-        Optional<MemberCoin> memberCoinOptional = memberCoinRepository.findByMemberId(memberId);
-
-        if (memberCoinOptional == null || memberCoinOptional.isEmpty()) {
-            throw new TodayCafeException(TodayCafeExceptionType.BAD_MEMBER_ID);
-        }
-        MemberCoin memberCoin = memberCoinOptional.get();
-
-        Optional<CafeVisitLog> optionalCafeVisitLog = cafeVisitLogRepository.findByVisitedAtAndMemberIdAndCafeId(visitedAtValue, memberId, cafeId);
-        if (optionalCafeVisitLog.isEmpty() || optionalCafeVisitLog == null) {
-            throw new TodayCafeException(TodayCafeExceptionType.NO_VISIT_LOG);
-        }
-        Map.Entry<Long, String> fortune;
-        CafeVisitLog cafeVisitLog = optionalCafeVisitLog.get();
-        FortuneResponseDto fortuneResponseDto;
-        if (type == 1) { // 1뽑 - 재화없이 뽑기
-            fortune = getRandomFortune();
-            fortuneResponseDto = FortuneResponseDto.builder()
-                    .content(fortune.getValue())
-                    .coffeeCnt(coffeeCnt)
-                    .build();
-
-            cafeVisitLog.updateFortune(fortune.getKey());
-            return fortuneResponseDto;
-
-        } else if (type == 2) { // 커피 하나로 뽑기
-            if (coffeeCnt >= 1) { // coffee 가 있으면
-
-                fortune = getRandomFortune();
-
-                while (fortune.getKey() == cafeVisitLog.getFortuneId()) {
-                    fortune = getRandomFortune();
-                    System.out.println("todayserviceImpl : " + fortune.getKey());
-                }
-                fortuneResponseDto = FortuneResponseDto.builder()
-                        .content(getRandomFortune().getValue())
-                        .build();
-
-                memberCoin.useOneCoffee();
-                cafeVisitLog.updateFortune(fortune.getKey());
-
-                return fortuneResponseDto;
-
-            } else { // coffee 가 없으면
-                throw new TodayCafeException(TodayCafeExceptionType.NO_COFFEE);
-            }
-
-        } else {
-            throw new TodayCafeException(TodayCafeExceptionType.BAD_TYPE_REQUEST);
-        }
-    }
+//    @Override
+//    public FortuneResponseDto randomFortune(int type) {
+//
+//        CoffeeMakeResponseDto coffeeResponseDto = getCoffees();
+//        Long memberId = memberUtil.checkMember().getMemberId();
+//        int coffeeCnt = coffeeResponseDto.getCoffeeCnt();
+//        String nickname = memberUtil.checkMember().getNickname();
+//        CafeAuth cafeAuth = cafeAuthRepository.findById(nickname).get();
+//        Long cafeId = cafeAuth.getCafeId(); // CafeAuth 를 거쳐왔기 때문에 null일 수 없음
+//        int visitedAtValue = Integer.parseInt(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd")));
+//
+//        Optional<MemberCoin> memberCoinOptional = memberCoinRepository.findByMemberId(memberId);
+//
+//        if (memberCoinOptional == null || memberCoinOptional.isEmpty()) {
+//            throw new TodayCafeException(TodayCafeExceptionType.BAD_MEMBER_ID);
+//        }
+//        MemberCoin memberCoin = memberCoinOptional.get();
+//
+//        Optional<CafeVisitLog> optionalCafeVisitLog = cafeVisitLogRepository.findByVisitedAtAndMemberIdAndCafeId(visitedAtValue, memberId, cafeId);
+//        if (optionalCafeVisitLog.isEmpty() || optionalCafeVisitLog == null) {
+//            throw new TodayCafeException(TodayCafeExceptionType.NO_VISIT_LOG);
+//        }
+//        Map.Entry<Long, String> fortune;
+//        CafeVisitLog cafeVisitLog = optionalCafeVisitLog.get();
+//        FortuneResponseDto fortuneResponseDto;
+//        if (type == 1) { // 1뽑 - 재화없이 뽑기
+//            fortune = getRandomFortune();
+//            fortuneResponseDto = FortuneResponseDto.builder()
+//                    .content(fortune.getValue())
+//                    .coffeeCnt(coffeeCnt)
+//                    .build();
+//
+//            cafeVisitLog.updateFortune(fortune.getKey());
+//            return fortuneResponseDto;
+//
+//        } else if (type == 2) { // 커피 하나로 뽑기
+//            if (coffeeCnt >= 1) { // coffee 가 있으면
+//
+//                fortune = getRandomFortune();
+//
+//                while (fortune.getKey() == cafeVisitLog.getFortuneId()) {
+//                    fortune = getRandomFortune();
+//                    System.out.println("todayserviceImpl : " + fortune.getKey());
+//                }
+//                fortuneResponseDto = FortuneResponseDto.builder()
+//                        .content(getRandomFortune().getValue())
+//                        .build();
+//
+//                memberCoin.useOneCoffee();
+//                cafeVisitLog.updateFortune(fortune.getKey());
+//
+//                return fortuneResponseDto;
+//
+//            } else { // coffee 가 없으면
+//                throw new TodayCafeException(TodayCafeExceptionType.NO_COFFEE);
+//            }
+//
+//        } else {
+//            throw new TodayCafeException(TodayCafeExceptionType.BAD_TYPE_REQUEST);
+//        }
+//    }
 
     /**
      * 3. 카페를 방문할 시 visitLog 생성
