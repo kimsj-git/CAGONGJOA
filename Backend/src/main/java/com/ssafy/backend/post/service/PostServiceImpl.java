@@ -66,7 +66,7 @@ public class PostServiceImpl implements PostService {
 //        Double dist = requestDto.getDist();
         Double dist = 1.0;
         String content = requestDto.getContent();
-        System.out.println("여까진 와?");
+
         if (content != null || files == null) {
 
         } else {
@@ -78,6 +78,22 @@ public class PostServiceImpl implements PostService {
         if (optionalMember.isEmpty() || optionalMember == null)
             throw new MemberException(MemberExceptionType.NOT_FOUND_MEMBER);
         Member member = optionalMember.get();
+
+        // 1-3. 인증여부 확인
+
+        Optional<CafeAuth> cafeAuth = cafeAuthRepository.findById(checked.getNickname());
+        Boolean cafeAuthorized;
+        if (cafeAuth.isEmpty() || cafeAuth == null) {
+            cafeAuthorized = false;
+
+            Optional<Post> postOptional = postRepository.findUserUnAuthorizedPostedToday(memberId);
+            if(postOptional.isPresent()) {
+                System.out.println("응 오늘 글 이미 썼어~");
+                throw new PostException(PostExceptionType.UNAUTHORIZED_USER_WRITE_TWICE);
+            }
+        }else {
+            cafeAuthorized = true;
+        }
 
         // 1-3. 이미지 업로드 Build
         Post post = Post.postWriteBuilder()
@@ -99,8 +115,9 @@ public class PostServiceImpl implements PostService {
         }
 
         // 1-4. 유저 인증여부 확인
-        Optional<CafeAuth> cafeAuth = cafeAuthRepository.findById(checked.getNickname());
         if (cafeAuth.isEmpty() || cafeAuth == null) { // 카페 이름이 없으면 - 인증되지 않은 유저
+            // 1-3. 미인증 유저일 경우, 하루 회수제한 있음
+
             if (requestDto.getType() == PostType.qna || requestDto.getType() == PostType.lost) { // 카테고리가 둘중 하나면 넘어가기
                 ClientPosInfoDto clientPosInfoDto = new ClientPosInfoDto(latitude, longitude, dist);
                 List<NearByCafeResultDto> resultDtoList = cafeService.getNearByCafeLocations(clientPosInfoDto);

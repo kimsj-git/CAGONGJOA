@@ -10,6 +10,7 @@ import com.ssafy.backend.cafe.repository.CafeCrowdRepository;
 import com.ssafy.backend.cafe.repository.CafeLocationRepository;
 import com.ssafy.backend.cafe.repository.CafeRepository;
 import com.ssafy.backend.cafe.util.GeometryUtil;
+import com.ssafy.backend.common.enums.ExeType;
 import com.ssafy.backend.common.exception.cafe.CafeException;
 import com.ssafy.backend.common.exception.cafe.CafeExceptionType;
 import com.ssafy.backend.member.domain.dto.MemberIdAndNicknameDto;
@@ -18,7 +19,6 @@ import com.ssafy.backend.member.repository.MemberCafeTierRepository;
 import com.ssafy.backend.member.repository.MemberRepository;
 import com.ssafy.backend.member.service.MemberService;
 import com.ssafy.backend.member.util.MemberUtil;
-import com.ssafy.backend.post.util.PostUtil;
 import com.ssafy.backend.redis.CafeAuth;
 import com.ssafy.backend.redis.CafeAuthRepository;
 import com.ssafy.backend.todaycafe.domain.entity.CafeVisitLog;
@@ -330,7 +330,7 @@ public class CafeServiceImpl implements CafeService {
     }
 
     /**
-     *  시간마다 가중치 다르게
+     *  시간마다 가중치 다르게 -> 시연용이랑 실제 서비스용이랑 달라야함
      *  ~ 10분 - * 2
      *  ~ 30분 - * 1
      *  ~ 2시간 - * 0.7
@@ -338,6 +338,27 @@ public class CafeServiceImpl implements CafeService {
      */
     private Map<Long, CrowdLevel> calcCrowdLevel(Map<Long, ArrayList<TimeCrowdDto>> cafeCrowdMap,
                                                  LocalDateTime todayTime) {
+
+        // 수행시 데모인지 실제 서비스인지 설정
+        // 현재로썬 여기에서만 실행 타입을 구분하므로 이렇게 코딩함. 추후 파라미터가 더 많이 필요해지면 yml에 작성
+        final ExeType EXE_TYPE = ExeType.DEMO;
+
+        int MINUTE_LEVEL1;
+        int MINUTE_LEVEL2;
+        int MINUTE_LEVEL3;
+        int MINUTE_LEVEL4;
+
+        if (EXE_TYPE == ExeType.DEMO) {
+            MINUTE_LEVEL1 = 1440;
+            MINUTE_LEVEL2 = 2880;
+            MINUTE_LEVEL3 = 10080;
+            MINUTE_LEVEL4 = 14400;
+        } else {
+            MINUTE_LEVEL1 = 10;
+            MINUTE_LEVEL2 = 30;
+            MINUTE_LEVEL3 = 120;
+            MINUTE_LEVEL4 = 180;
+        }
 
         // {cafeId : "L"}, {cafeId2 : "M"}, {cafeId3 : "H"} ...
         Map<Long, CrowdLevel> results = new HashMap<>();
@@ -354,11 +375,11 @@ public class CafeServiceImpl implements CafeService {
                 Duration duration = Duration.between(timeCrowdDto.getTime(), todayTime);
                 int minutes = (int) duration.toMinutes();
 
-                if (minutes <= 10) {
+                if (minutes <= MINUTE_LEVEL1) {
                     sumCrowdVal += crowdValue * 2; // ~ 10분 2배
-                } else if (minutes <= 30) {
+                } else if (minutes <= MINUTE_LEVEL2) {
                     sumCrowdVal += crowdValue; // ~ 30분 1배
-                } else if (minutes <= 120) {
+                } else if (minutes <= MINUTE_LEVEL3) {
                     sumCrowdVal += crowdValue * 0.6; // ~ 120분 0.7배
                 } else {
                     sumCrowdVal += crowdValue * 0.3; // ~ 180분 0.5배
@@ -427,7 +448,7 @@ public class CafeServiceImpl implements CafeService {
         CafeAuth cafeAuth = CafeAuth.builder()
                                 .cafeId(selectCafeRequestDto.getCafeId())
                                 .nickname(nickname)
-                                .expiration(600) // 600초
+                                .expiration(600) // 초
                                 .build();
 
         cafeAuthRepository.save(cafeAuth);

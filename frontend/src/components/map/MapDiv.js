@@ -12,8 +12,9 @@ import MapSpinner from "./MapSpinner"
 import MapGoToPosition from "./MapGoToPosition"
 import MapCafeFilterCarousel from "./MapCafeFilterCarousel"
 import MapLookFeed from "./MapLookFeed"
+import { MdOutlineMyLocation } from "react-icons/md"
 
-const MapDiv = () => {
+const MapDiv = (props) => {
   const history = useHistory()
   const dispatch = useDispatch()
   const [center, setCenter] = useState({
@@ -78,15 +79,15 @@ const MapDiv = () => {
         lat: location.lat,
         lng: location.lng,
       })
-    }else if (response === "SESSION FINISH"){
-      history.push('/login')
+    } else if (response === "SESSION FINISH") {
+      history.push("/login")
     }
     setIsMoved(false)
     setIsFinded(false)
   }
 
   return (
-    <>
+    <div>
       <Map
         center={{ lat: center.lat, lng: center.lng }}
         level={3}
@@ -104,15 +105,16 @@ const MapDiv = () => {
           image={{
             src: require("../../assets/icons/mylocation.png"),
             size: { width: 40, height: 50 },
-            options:{
-              offset:{
-                x:10,
-                y:40,
-              }
-            }
+            options: {
+              offset: {
+                x: 10,
+                y: 40,
+              },
+            },
           }}
         />
-        {isFiltered && cafeFilterList &&
+        {isFiltered &&
+          cafeFilterList &&
           cafeFilterList.length > 0 &&
           cafeFilterList.map((cafe, index) => {
             return (
@@ -126,7 +128,8 @@ const MapDiv = () => {
               />
             )
           })}
-        {!isFiltered && cafeList &&
+        {!isFiltered &&
+          cafeList &&
           cafeList.length > 0 &&
           cafeList.map((cafe, index) => {
             return (
@@ -141,28 +144,47 @@ const MapDiv = () => {
             )
           })}
         <MapCircle lat={center.lat} lng={center.lng} />
-        <Button
-          className={classes.myLocationBtn}
-          icon
+
+        <MdOutlineMyLocation
+          size="40"
           circular
+          color="red"
           onClick={goToMyPosition}
+          className={classes.myLocationBtn}
+        />
+
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-evenly",
+            position: "absolute",
+            bottom: "0%",
+            left: "0%",
+            width: "100%",
+            // backgroundColor: "var(--custom-beige)",
+            zIndex: "2",
+            padding: "5%",
+            borderRadius: "10px",
+          }}
         >
-          <Image src={require("../../assets/icons/kagongjoa_logo.png")} />
-        </Button>
-        {!isFinded && (
           <Button
             className={classes.findCafeBtn}
-            circular
+            // circular
             onClick={findCafeList}
-            size="huge"
-            content="현재 위치에서 카페 찾기"
+            // size="huge"
+            fluid
+            content="이 근처 카페 찾기"
+            disabled={isFinded}
           />
-        )}
-        <MapLookFeed lat={center.lat} lng={center.lng} />
+
+          <MapLookFeed lat={center.lat} lng={center.lng} />
+        </div>
+
         <MapCafeFilterCarousel className={classes.filterCorousel} />
         <MapSpinner />
       </Map>
-    </>
+    </div>
   )
 }
 

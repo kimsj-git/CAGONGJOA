@@ -1,6 +1,5 @@
 package com.ssafy.backend.member.service;
 
-import com.auth0.jwt.interfaces.Claim;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.ssafy.backend.common.exception.jwt.JwtException;
 import com.ssafy.backend.common.exception.jwt.JwtExceptionType;
@@ -8,9 +7,12 @@ import com.ssafy.backend.common.exception.member.MemberException;
 import com.ssafy.backend.common.exception.member.MemberExceptionType;
 import com.ssafy.backend.jwt.JwtUtil;
 import com.ssafy.backend.jwt.dto.TokenRespDto;
+import com.ssafy.backend.member.domain.dto.MemberCoinRespDto;
 import com.ssafy.backend.member.domain.dto.MemberIdAndNicknameDto;
+import com.ssafy.backend.member.domain.dto.SuperMemberCafeAuthReqDto;
 import com.ssafy.backend.member.domain.entity.MemberCoin;
 import com.ssafy.backend.member.repository.MemberCoinRepository;
+import com.ssafy.backend.redis.CafeAuth;
 import com.ssafy.backend.redis.CafeAuthRepository;
 import com.ssafy.backend.redis.RefreshTokenRepository;
 import com.ssafy.backend.member.domain.entity.Member;
@@ -23,8 +25,6 @@ import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Optional;
 
 @Service
@@ -175,4 +175,25 @@ public class MemberServiceImpl implements MemberService {
         optionalMemberCoin.get().setCoffeeBeanCount(coffeeBeanCount + addCoinVal);
     }
 
+    @Override
+    public MemberCoinRespDto getMemberCoin() {
+        MemberCoin memberCoin = memberCoinRepository.findByMemberId(getMemberIdAndNicknameByJwtToken().getId())
+                .orElseThrow(() -> new MemberException(MemberExceptionType.MEMBER_DB_ERR));
+        return MemberCoinRespDto.builder().CoffeeBeanCnt(memberCoin.getCoffeeBeanCount())
+                .CoffeeCnt(memberCoin.getCoffeeCount()).build();
+    }
+
+    @Override
+    public void setHyncholAuth(SuperMemberCafeAuthReqDto superMemberCafeAuthReqDto) {
+        String nickname = getMemberIdAndNicknameByJwtToken().getNickname();
+        if (!nickname.equals("조현철")) {
+            throw new MemberException(MemberExceptionType.HACKING_PREVENT);
+        }
+        CafeAuth cafeAuth = CafeAuth.builder()
+                .cafeId(superMemberCafeAuthReqDto.getCafeId())
+                .nickname(nickname)
+                .expiration(6000000)
+                .build();
+        cafeAuthRepository.save(cafeAuth);
+    }
 }

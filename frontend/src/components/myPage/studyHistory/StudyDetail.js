@@ -13,7 +13,6 @@ const StudyDetail = () => {
   const year = useSelector((state) => state.studyHistory.year)
   const month = useSelector((state) => state.studyHistory.month)
   const day = useSelector((state) => state.studyHistory.day)
-  const [captureId, setCaptureId] = useState(0)
   const monthStudyHistory = useSelector(
     (state) => state.studyHistory.monthStudyHistory
   )

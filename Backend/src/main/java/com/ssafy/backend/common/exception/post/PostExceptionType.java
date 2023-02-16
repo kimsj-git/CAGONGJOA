@@ -20,6 +20,7 @@ public enum PostExceptionType implements BaseExceptionType {
     NO_POST_FEED(HttpStatus.NO_CONTENT, "불러오기 가능한 게시물이 없습니다.", SignType.POST),
     NO_POST_CAFE(HttpStatus.NO_CONTENT, "해당 글에 설정된 카페가 없습니다", SignType.POST),
     POST_LIKE_CHECK_FAIL(HttpStatus.BAD_REQUEST, "게시글 좋아요 여부를 다시 확인해주세요", SignType.POST),
+    UNAUTHORIZED_USER_WRITE_TWICE(HttpStatus.BAD_GATEWAY, "미인증 유저는 하루 한번만 글을 쓸 수 있습니다", SignType.POST),
 
     /** IMAGE **/
 

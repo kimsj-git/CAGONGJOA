@@ -6,6 +6,7 @@ import { useDispatch, useSelector } from "react-redux"
 import { commentsActions } from "../../store/comments.js"
 import { useEffect, useRef, useState } from "react"
 import useFetch from "../../hooks/useFetch.js"
+import { postsActions } from "../../store/posts"
 const DEFAULT_REST_URL = process.env.REACT_APP_REST_DEFAULT_URL
 
 const CommentList = (props) => {
@@ -24,7 +25,7 @@ const CommentList = (props) => {
   })
   const [newComment, setNewComment] = useState("")
 
-  const refreshComments = async (id=-1) => {
+  const refreshComments = async (id = -1) => {
     await getComments({
       url: `${DEFAULT_REST_URL}/main/postDetail/comment/feed`,
       method: "POST",
@@ -39,67 +40,57 @@ const CommentList = (props) => {
     })
   }
 
-  const addNewComment = async (text, id=-1) => {
+  const addNewComment = async (text, id = -1) => {
     if (id === -1) {
-      const v = await fetch(`${DEFAULT_REST_URL}/main/postDetail/comment/write`, {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${sessionStorage.getItem("accessToken")}`,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          postId: props.post.id,
-          content: text,
-          commentId: id,
-        }),
-      })
+      const v = await fetch(
+        `${DEFAULT_REST_URL}/main/postDetail/comment/write`,
+        {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${sessionStorage.getItem("accessToken")}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            postId: props.post.id,
+            content: text,
+            commentId: id,
+          }),
+        }
+      )
       refreshComments(lastCommentId)
     } else {
-      const response = await fetch(`${DEFAULT_REST_URL}/main/postDetail/comment/write`, {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${sessionStorage.getItem("accessToken")}`,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          postId: props.post.id,
-          content: text,
-          commentId: id,
-        }),
-      })
+      const response = await fetch(
+        `${DEFAULT_REST_URL}/main/postDetail/comment/write`,
+        {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${sessionStorage.getItem("accessToken")}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            postId: props.post.id,
+            content: text,
+            commentId: id,
+          }),
+        }
+      )
       const parentComment = await response.json()
-      console.log(parentComment)
       dispatch(commentsActions.updateReplies(parentComment.data))
     }
   }
 
-  useEffect(
-    () => {
-      console.log("인뷰 이펙트 실행")
-      console.log(inView)
-      if (isMounted && inView) {
-        console.log("인뷰 이펙트, 마운티드 통과")
-        console.log("인뷰 이펙트, 인뷰 통과")
-        console.log(lastCommentId)
-        refreshComments(lastCommentId)
-      }
-    },
-    [inView]
-  )
   useEffect(() => {
-    console.log("댓글 이펙트 실행")
-    // if (isMounted.current) {
-      console.log("댓글 이펙트, 마운티드 통과")
-      dispatch(
-        commentsActions.updateComments({
-          fetchedComments: fetchedComments,
-          lastCommentId: lastCommentId,
-        })
-      )
-    // } else {
-    //   console.log("댓글 이펙트, 마운티드 통과 못함")
-    //   isMounted.current = true
-    // }
+    if (isMounted && inView) {
+      refreshComments(lastCommentId)
+    }
+  }, [inView])
+  useEffect(() => {
+    dispatch(
+      commentsActions.updateComments({
+        fetchedComments: fetchedComments,
+        lastCommentId: lastCommentId,
+      })
+    )
   }, [fetchedComments])
 
   return (
@@ -111,10 +102,12 @@ const CommentList = (props) => {
           {comments.map((comment, index) => {
             return (
               <CommentItem
-                key={comment.commentId}
+                key={`${props.post.id}-${comment.commentId}`}
                 comment={comment}
+                postId={props.post.id}
                 addNewComment={addNewComment}
                 refreshComments={refreshComments}
+                myPage={props.myPage}
               />
             )
           })}
@@ -126,8 +119,10 @@ const CommentList = (props) => {
         reply
         onSubmit={(e) => {
           addNewComment(newComment, -1)
-          console.log(e.target)
-          
+          if (props.myPage) {
+          } else {
+            dispatch(postsActions.createComment(props.post.id))
+          }
         }}
       >
         <Form.Input
@@ -137,7 +132,6 @@ const CommentList = (props) => {
             color: "teal",
             icon: "paper plane",
           }}
-          size="tiny"
           // content={newComment}
           onChange={(e) => {
             setNewComment(e.target.value)

@@ -1,23 +1,37 @@
-import { NavLink, useLocation } from "react-router-dom"
+import { NavLink, useLocation, useHistory } from "react-router-dom"
 import { useState } from "react"
+
 import { Menu, Segment, Image } from "semantic-ui-react"
 import PostForm from "../components/mainPage/PostForm"
 import {
   AiOutlineHome,
   AiFillHome,
-  AiFillBell,
-  AiOutlineBell,
+  AiFillStar,
+  AiOutlineStar,
 } from "react-icons/ai"
-import { BsChatDots, BsChatDotsFill } from "react-icons/bs"
-import { MdOutlineLocalCafe, MdLocalCafe } from "react-icons/md"
-import { HiOutlineUser, HiUser } from "react-icons/hi"
+import {
+  MdOutlineLocalCafe,
+  MdLocalCafe,
+  MdBeenhere,
+  MdOutlineBeenhere,
+} from "react-icons/md"
+import { HiOutlineUser, HiUser, HiOutlineLogout } from "react-icons/hi"
 import { IoIosSearch } from "react-icons/io"
 import { IoSearch } from "react-icons/io5"
 import CafeAuth from "../components/certificate/cafeAuth/CafeAuth"
 import "./SideNavigation.css"
 
-const SideNavigation = ({ isCafeAuth, setIsCafeAuth, setIsJamSurvey }) => {
+const DEFAULT_REST_URL = process.env.REACT_APP_REST_DEFAULT_URL
+
+const SideNavigation = ({
+  isCafeAuth,
+  setIsCafeAuth,
+  setIsJamSurvey,
+  setIsAuthenticated,
+}) => {
   const location = useLocation()
+  const history = useHistory()
+
   const path = location.pathname
   const directory = {
     "/": "home",
@@ -26,7 +40,15 @@ const SideNavigation = ({ isCafeAuth, setIsCafeAuth, setIsJamSurvey }) => {
     "/mypage": "mypage",
     "/search": "search",
   }
-  console.log(isCafeAuth)
+  const navigationPath = {
+    "home": "/",
+    "today-cafe": "/today-cafe",
+    "make-coffee": "/today-cafe/make-coffee",
+    "fortune": "/today-cafe/fortune",
+    "mypage": "/mypage",
+    "search": "/search",
+  }
+  // console.log(isCafeAuth)
   const [activeItem, setActiveItem] = useState(directory[location.pathname])
   const [prevItem, setPrevItem] = useState("")
   const menuClickHandler = (e, { name }) => {
@@ -34,9 +56,59 @@ const SideNavigation = ({ isCafeAuth, setIsCafeAuth, setIsJamSurvey }) => {
     if (activeItem !== name) {
       setPrevItem(activeItem)
     }
+    if (name === "location") {
+      // 위치인증 모달.. 
+    } else if (name === "post") {
+      // 글쓰기 모달..
+    } else {
+      history.push(navigationPath[name])
+    }
   }
   const closeModal = () => {
     setActiveItem(prevItem)
+  }
+
+  const logout = async () => {
+    const response = await fetch(`${DEFAULT_REST_URL}/member/logout`, {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${sessionStorage.getItem("accessToken")}`,
+        "Authorization-RefreshToken": `Bearer ${sessionStorage.getItem(
+          "refreshToken"
+        )}`,
+      },
+    })
+    const responseData = await response.json()
+    console.log(responseData)
+    if (
+      responseData.httpStatus === "UNAUTHORIZED" &&
+      responseData.data.sign === "JWT"
+    ) {
+      const response = await fetch(`${DEFAULT_REST_URL}/member/refresh`, {
+        method: "GET",
+        headers: {
+          "Authorization-RefreshToken": `Bearer ${sessionStorage.getItem(
+            "refreshToken"
+          )}`,
+        },
+      })
+      const responseData = await response.json()
+      if (responseData.httpStatus !== "OK") {
+        sessionStorage.clear()
+        alert("세션이 만료되었습니다.")
+        history("/login")
+      } else if (responseData.httpStatus === "OK") {
+        sessionStorage.setItem("accessToken", responseData.data.accessToken)
+        alert("다시 시도해주세요")
+      }
+    } else if (responseData.httpStatus === "OK") {
+      setIsAuthenticated(undefined)
+      setIsCafeAuth("0")
+      sessionStorage.clear()
+      history.push("/login")
+    } else {
+      alert("오류가 발생했습니다.")
+    }
   }
 
   return (
@@ -50,7 +122,7 @@ const SideNavigation = ({ isCafeAuth, setIsCafeAuth, setIsJamSurvey }) => {
         paddingInline: "1.5rem 0.5rem",
         borderRight: "1px solid lightgray",
         height: "100vh",
-        display: path === "/login" || path=== "/oauth/kakao" ? "none": ""
+        display: path === "/login" || path === "/oauth/kakao" ? "none" : "",
       }}
     >
       <div style={{ margin: "0.5rem 0rem 1.5rem" }}>
@@ -77,6 +149,7 @@ const SideNavigation = ({ isCafeAuth, setIsCafeAuth, setIsJamSurvey }) => {
           </p>
         </NavLink>
       </div>
+
       <Menu secondary vertical fluid style={{ fontSize: "1.2rem" }}>
         <Menu.Item
           name="home"
@@ -101,21 +174,23 @@ const SideNavigation = ({ isCafeAuth, setIsCafeAuth, setIsJamSurvey }) => {
             </div>
           </NavLink>
         </Menu.Item>
-        
-        {(isCafeAuth === null || isCafeAuth === '0') && <Menu.Item
-          name="location"
-          link
-          onClick={menuClickHandler}
-          active={activeItem === "location"}
-        >
-          {/* 위치인증 모달 창 */}
-          <CafeAuth
-            activeItem={activeItem}
-            closeModal={closeModal}
-            setIsCafeAuth={setIsCafeAuth}
-            setIsJamSurvey={setIsJamSurvey}
-          />
-        </Menu.Item>}
+
+        {(isCafeAuth === null || isCafeAuth === "0") && (
+          <Menu.Item
+            name="location"
+            link
+            onClick={menuClickHandler}
+            active={activeItem === "location"}
+          >
+            {/* 위치인증 모달 창 */}
+            <CafeAuth
+              activeItem={activeItem}
+              closeModal={closeModal}
+              setIsCafeAuth={setIsCafeAuth}
+              setIsJamSurvey={setIsJamSurvey}
+            />
+          </Menu.Item>
+        )}
         <Menu.Item
           name="post"
           link
@@ -123,7 +198,11 @@ const SideNavigation = ({ isCafeAuth, setIsCafeAuth, setIsJamSurvey }) => {
           active={activeItem === "post"}
         >
           {/* 글 쓰기 네비 Item */}
-          <PostForm isEditing={false} activeItem={activeItem} closeModal={closeModal} />
+          <PostForm
+            isEditing={false}
+            activeItem={activeItem}
+            closeModal={closeModal}
+          />
         </Menu.Item>
         <Menu.Item
           name="today-cafe"
@@ -140,21 +219,21 @@ const SideNavigation = ({ isCafeAuth, setIsCafeAuth, setIsJamSurvey }) => {
               }}
             >
               {activeItem === "today-cafe" ? (
-                <MdLocalCafe size="30" color="black" />
+                <MdBeenhere size="30" color="black" />
               ) : (
-                <MdOutlineLocalCafe size="30" color="black" />
+                <MdOutlineBeenhere size="30" color="black" />
               )}
               <p>오늘의 카페</p>
             </div>
           </NavLink>
         </Menu.Item>
         <Menu.Item
-          name="chat"
+          name="make-coffee"
           link
           onClick={menuClickHandler}
-          active={activeItem === "chat"}
+          active={activeItem === "make-coffee"}
         >
-          <NavLink to="/chat">
+          <NavLink to="/today-cafe/make-coffee">
             <div
               style={{
                 display: "flex",
@@ -162,35 +241,37 @@ const SideNavigation = ({ isCafeAuth, setIsCafeAuth, setIsJamSurvey }) => {
                 alignItems: "center",
               }}
             >
-              {activeItem === "chat" ? (
-                <BsChatDotsFill size="30" color="black" />
+              {activeItem === "make-coffee" ? (
+                <MdLocalCafe size="30" color="black" />
               ) : (
-                <BsChatDots size="30" color="black" />
+                <MdOutlineLocalCafe size="30" color="black" />
               )}
-              <p>채팅</p>
+              <p>커피 내리기</p>
             </div>
           </NavLink>
         </Menu.Item>
         <Menu.Item
-          name="notice"
+          name="fortune"
           link
           onClick={menuClickHandler}
-          active={activeItem === "notice"}
+          active={activeItem === "fortune"}
         >
-          <div
-            style={{
-              display: "flex",
-              flexDirection: "row",
-              alignItems: "center",
-            }}
-          >
-            {activeItem === "notice" ? (
-              <AiFillBell size="30" color="black" />
-            ) : (
-              <AiOutlineBell size="30" color="black" />
-            )}
-            <p>알림</p>
-          </div>
+          <NavLink to="/fortune">
+            <div
+              style={{
+                display: "flex",
+                flexDirection: "row",
+                alignItems: "center",
+              }}
+            >
+              {activeItem === "fortune" ? (
+                <AiFillStar size="30" color="black" />
+              ) : (
+                <AiOutlineStar size="30" color="black" />
+              )}
+              <p>운세 뽑기</p>
+            </div>
+          </NavLink>
         </Menu.Item>
         <Menu.Item
           name="mypage"
@@ -237,6 +318,22 @@ const SideNavigation = ({ isCafeAuth, setIsCafeAuth, setIsJamSurvey }) => {
               <p>검색</p>
             </div>
           </NavLink>
+        </Menu.Item>
+        <Menu.Item
+          name="logout"
+          link
+          onClick={logout}
+        >
+          <div
+            style={{
+              display: "flex",
+              flexDirection: "row",
+              alignItems: "center",
+            }}
+          >
+            <HiOutlineLogout size="30" color="black" />
+            <p>로그아웃</p>
+          </div>
         </Menu.Item>
       </Menu>
     </Segment>

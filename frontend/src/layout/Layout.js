@@ -1,5 +1,5 @@
 import { Fragment } from "react"
-import { Container, Segment, Grid } from "semantic-ui-react"
+import { Container, Grid } from "semantic-ui-react"
 import { useLocation } from "react-router-dom"
 
 import MainNavigation from "./MainNavigation"
@@ -20,6 +20,7 @@ const Layout = (props) => {
             widescreen={path === "/login" ? 2 : 3}
           >
             <SideNavigation
+              setIsAuthenticated={props.setIsAuthenticated}
               setIsCafeAuth={props.setIsCafeAuth}
               setIsJamSurvey={props.setIsJamSurvey}
               isCafeAuth={props.isCafeAuth}

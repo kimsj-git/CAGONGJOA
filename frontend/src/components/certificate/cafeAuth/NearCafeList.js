@@ -18,7 +18,15 @@ const NearCafeList = (props) => {
 
   return (
     <Modal closeIcon onClose={closeHandler} open={open} size="tiny">
-      <Modal.Header>카페 방문 인증</Modal.Header>
+      <Modal.Header>
+        <span>카페 방문 인증</span>
+        <Button
+          circular
+          icon="refresh"
+          style={{ backgroundColor: "rgb(255, 168, 168)" }}
+          onClick={props.findNearCafe}
+        />
+      </Modal.Header>
       <Modal.Content>
         {isLoading && (
           <div style={{ textAlign: "center" }}>

@@ -16,6 +16,7 @@ const initialPostsState = {
     lost: false,
   },
   isLoading: false,
+  isLoadingMore:false
 }
 
 const postsSlice = createSlice({
@@ -62,6 +63,17 @@ const postsSlice = createSlice({
         (post) => post.postId === action.payload
       ).postLikeCount -= 1
     },
+    // 댓글 개수 수정
+    createComment(state, action) {
+      state.posts.find(
+        (post) => post.postId === action.payload
+      ).commentCount += 1
+    },
+    deleteComment(state, action) {
+      state.posts.find(
+        (post) => post.postId === action.payload
+      ).commentCount -= 1
+    },
     // filter 변경
     changeFilter(state, action) {
       const filterToChange = action.payload
@@ -84,13 +96,21 @@ const postsSlice = createSlice({
     isLoading(state) {
       state.isLoading = !state.isLoading
     },
+    isLoadingMore(state){
+      state.isLoadingMore = !state.isLoadingMore
+    }
   },
 })
 const DEFAULT_REST_URL = process.env.REACT_APP_REST_DEFAULT_URL
 
 export const getPosts = (dataSet) => {
   return async (dispatch) => {
-    dispatch(postsActions.isLoading())
+    if (dataSet.postId === -1){
+      dispatch(postsActions.isLoading())
+    } else{
+      dispatch(postsActions.isLoadingMore())
+    }
+    
     const sendRequest = async () => {
       const response = await fetch(`${DEFAULT_REST_URL}/main/post/feed`, {
         method: "POST",
@@ -109,7 +129,6 @@ export const getPosts = (dataSet) => {
         }),
       })
       const responseData = await response.json()
-      console.log(responseData)
       if (
         responseData.httpStatus === "BAD_REQUEST" &&
         responseData.data.sign === "JWT"
@@ -149,7 +168,11 @@ export const getPosts = (dataSet) => {
     } catch (error) {
       console.error(error)
     }
-    dispatch(postsActions.isLoading())
+    if (dataSet.postId === -1){
+      dispatch(postsActions.isLoading())
+    } else{
+      dispatch(postsActions.isLoadingMore())
+    }
   }
 }
 export const postsActions = postsSlice.actions

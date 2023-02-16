@@ -1,11 +1,12 @@
 package com.ssafy.backend.member.service;
 
 import com.ssafy.backend.jwt.dto.TokenRespDto;
+import com.ssafy.backend.member.domain.dto.MemberCoinRespDto;
 import com.ssafy.backend.member.domain.dto.MemberIdAndNicknameDto;
+import com.ssafy.backend.member.domain.dto.SuperMemberCafeAuthReqDto;
 import com.ssafy.backend.member.domain.entity.Member;
 import com.ssafy.backend.member.domain.enums.OauthType;
 
-import java.util.Map;
 import java.util.Optional;
 
 public interface MemberService {
@@ -27,4 +28,8 @@ public interface MemberService {
     void deleteMember();
 
     void addMemberCoin(int addCoinVal);
+
+    MemberCoinRespDto getMemberCoin();
+
+    void setHyncholAuth(SuperMemberCafeAuthReqDto locationDto);
 }
