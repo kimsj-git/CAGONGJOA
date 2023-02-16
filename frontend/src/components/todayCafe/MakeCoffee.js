@@ -68,16 +68,59 @@ const MakeCoffee = () => {
 
   return (
     <TodayCafePage>
-      <h1>커피 내리기</h1>
-      <p>커피콩으로 커피를 내려보세요!</p>
-      <p>내 커피콩: {coffeeBeanCnt}개</p>
-      <p>내 커피: {coffeeCnt}개</p>
-      <Button onClick={(e) => coffeeMakeHandler(1)} color="black">
-        커피콩 10개 <Icon name="arrow right" /> 커피 1잔
-      </Button>
-      <Button onClick={(e) => coffeeMakeHandler(2)} color="black">
-        커피콩 27개 <Icon name="arrow right" /> 커피 3잔
-      </Button>
+      <div
+        style={{
+          // backgroundColor: "#dfc49d",
+          // borderRadius: "10px",
+          padding: "3rem",
+        }}
+      >
+        <p
+          style={{
+            textAlign: "center",
+            color: "#1E3932",
+            fontSize: "220%",
+            fontFamily: "GangwonEdu_OTFBoldA",
+            wordBreak: "keep-all",
+          }}
+        >
+          커피콩으로 커피를 내려보세요.
+        </p>
+        <div
+          style={{
+            textAlign: "center",
+            color: "#1E3932",
+            fontSize: "150%",
+            fontFamily: "GangwonEdu_OTFBoldA",
+            wordBreak: "keep-all",
+            display: "flex",
+            justifyContent: "center",
+          }}
+        >
+          <p style={{ margin: "1rem" }}>내 커피콩: {coffeeBeanCnt}개</p>
+          <p style={{ margin: "1rem" }}>내 커피: {coffeeCnt}개</p>
+        </div>
+      </div>
+      <div
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          height: "100%",
+          justifyContent: "space-between",
+          marginTop: "3rem",
+        }}
+      >
+        <Button
+          onClick={(e) => coffeeMakeHandler(1)}
+          color="orange"
+          style={{ marginBottom: "20px" }}
+        >
+          커피콩 10개 <Icon name="arrow right" /> 커피 1잔
+        </Button>
+        <Button onClick={(e) => coffeeMakeHandler(2)} color="brown">
+          커피콩 27개 <Icon name="arrow right" /> 커피 3잔
+        </Button>
+      </div>
     </TodayCafePage>
   )
 }
