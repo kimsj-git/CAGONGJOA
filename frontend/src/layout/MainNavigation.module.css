@@ -13,13 +13,13 @@
   color:black;
   text-decoration: none;
 } */
-.navbar{
+.navbar {
   position: fixed;
   bottom: 0;
   width: 100%;
   background-color: var(--background-color);
   /* background-color: rgb(255, 168, 168); */
-  height: 6rem;
+  height: 12%;
   display: flex;
   justify-content: space-around;
   align-items: center;

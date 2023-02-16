@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react"
 import { Map, MapMarker } from "react-kakao-maps-sdk"
-import { Button, Image } from "semantic-ui-react"
+import { Button, Popup } from "semantic-ui-react"
 import { useDispatch, useSelector } from "react-redux"
 import { useHistory } from "react-router-dom"
 
-import classes from "./MapDiv.module.css"
+import "./MapDiv.css"
 import MapCafeMarker from "./MapCafeMarker"
 import MapCircle from "./MapCircle"
 import { cafeActions, findMapCafeList } from "../../store/cafe"
@@ -98,7 +98,7 @@ const MapDiv = (props) => {
           })
         }
         onDragEnd={dragHandler}
-        className={classes.map}
+        className="map"
       >
         <MapMarker
           position={{ lat: center.lat, lng: center.lng }}
@@ -144,32 +144,24 @@ const MapDiv = (props) => {
             )
           })}
         <MapCircle lat={center.lat} lng={center.lng} />
-
-        <MdOutlineMyLocation
-          size="40"
-          circular
-          color="red"
-          onClick={goToMyPosition}
-          className={classes.myLocationBtn}
+        <Popup
+          trigger={
+            <MdOutlineMyLocation
+              size="40"
+              circular
+              color="red"
+              onClick={goToMyPosition}
+              className="myLocationBtn"
+            />
+          }
+          content="내 위치로 이동하기"
+          position="bottom right"
+          inverted
         />
 
-        <div
-          style={{
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "space-evenly",
-            position: "absolute",
-            bottom: "0%",
-            left: "0%",
-            width: "100%",
-            // backgroundColor: "var(--custom-beige)",
-            zIndex: "2",
-            padding: "5%",
-            borderRadius: "10px",
-          }}
-        >
+        <div id="map-btns-box">
           <Button
-            className={classes.findCafeBtn}
+            className="findCafeBtn"
             // circular
             onClick={findCafeList}
             // size="huge"
@@ -181,7 +173,7 @@ const MapDiv = (props) => {
           <MapLookFeed lat={center.lat} lng={center.lng} />
         </div>
 
-        <MapCafeFilterCarousel className={classes.filterCorousel} />
+        <MapCafeFilterCarousel className="filterCorousel" />
         <MapSpinner />
       </Map>
     </div>
