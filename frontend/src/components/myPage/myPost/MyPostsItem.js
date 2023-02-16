@@ -4,7 +4,8 @@ import MyPostDetail from './MyPostDetail'
 import classes from "./MyPostsItem.module.css"
 
 const MyPostsItem = ({ post }) => {
-  const content = post.content.length>50 ? `${post.content.substr(0, 50)}...` : post.content
+  const content = post.content
+  const longContent = post.content.split("</p>").map((content)=>content.substr(3,content.length))
 
   return (
     <Item className={classes.items}>
@@ -21,7 +22,26 @@ const MyPostsItem = ({ post }) => {
       <Item.Content className={classes.content}>
         <Item.Header>[{post.cafeName ? post.cafeName : "질문글"}]</Item.Header>
         <Item.Meta>
-          <span dangerouslySetInnerHTML={{ __html: content }}></span>
+        {longContent.length > 2 && (
+        <Item.Extra>
+            {longContent.slice(0, 2).map((content,index) => {
+              return <p key={index}>{content}</p>
+            })}
+            ...
+            </Item.Extra>
+        )}
+        {longContent.length <= 2 && content.length > 50 && (
+          <>300
+            <Item.Extra
+              dangerouslySetInnerHTML={{ __html: content.substr(0, 50)+'...' }}
+            ></Item.Extra>
+          </>
+        )}
+        {longContent.length <= 2 && content.length < 50 && (
+          <Item.Extra
+            dangerouslySetInnerHTML={{ __html: content }}
+          />
+        )}
         </Item.Meta>
         <Item.Extra className={classes.detailBtn} >
         <MyPostDetail post={post}/>
