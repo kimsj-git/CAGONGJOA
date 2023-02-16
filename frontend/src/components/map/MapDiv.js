@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react"
 import { Map, MapMarker } from "react-kakao-maps-sdk"
-import { Button, Image } from "semantic-ui-react"
+import { Button, Popup } from "semantic-ui-react"
 import { useDispatch, useSelector } from "react-redux"
 import { useHistory } from "react-router-dom"
 
@@ -144,13 +144,19 @@ const MapDiv = (props) => {
             )
           })}
         <MapCircle lat={center.lat} lng={center.lng} />
-
-        <MdOutlineMyLocation
-          size="40"
-          circular
-          color="red"
-          onClick={goToMyPosition}
-          className={classes.myLocationBtn}
+        <Popup
+          trigger={
+            <MdOutlineMyLocation
+              size="40"
+              circular
+              color="red"
+              onClick={goToMyPosition}
+              className={classes.myLocationBtn}
+            />
+          }
+          content="내 위치로 이동하기"
+          position="bottom right"
+          inverted
         />
 
         <div
