@@ -4,7 +4,7 @@ import "./LoadingPost.css"
 
 const LoadingPost = () => {
   return (
-    <Card fluid raised>
+    <Card fluid raised className="loading-post">
       <div className="custom-skeleton">
         <div className="skeleton-header">
           <div className="user-info">

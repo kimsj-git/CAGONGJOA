@@ -119,13 +119,16 @@ const CommentItem = (props) => {
           <Form
             reply
             onSubmit={(e) => {
+              e.preventDefault()
+              if (!newReply.trim()) {
+                alert("댓글을 입력해주세요.")
+              }
               props.addNewComment(newReply, comment.commentId)
               if (props.myPage) {
               } else {
                 dispatch(postsActions.createComment(props.postId))
               }
-              // setNewReply("")
-              // e.target[0].value = ""
+              setNewReply("")
             }}
           >
             <Form.Input
@@ -136,7 +139,7 @@ const CommentItem = (props) => {
                 color: "teal",
               }}
               size="mini"
-              // content={newReply}
+              value={newReply}
               onChange={(e) => setNewReply(e.target.value)}
             />
           </Form>

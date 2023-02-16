@@ -119,6 +119,9 @@ const CommentList = (props) => {
         reply
         onSubmit={(e) => {
           e.preventDefault()
+          if (!newComment.trim()) {
+            alert("댓글을 입력해주세요.")
+          }
           addNewComment(newComment, -1)
           if (props.myPage) {
           } else {

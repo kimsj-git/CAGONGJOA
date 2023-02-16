@@ -116,7 +116,7 @@ const MakeCoffee = () => {
           }}
         >
           <p style={{ margin: "1rem" }}>내 커피콩: {coffeeBeanCnt}개</p>
-          <p style={{ margin: "1rem" }}>내 커피: {coffeeCnt}개</p>
+          <p style={{ margin: "1rem" }}>내 커피: {coffeeCnt}잔</p>
         </div>
       </div>
       {stepOpen && (
@@ -161,6 +161,14 @@ const MakeCoffee = () => {
       </Step> */}
         </Step.Group>
       )}
+      {!stepOpen && (
+        <Image
+          src={require("../../assets/icons/coffee_cup.png")}
+          size="small"
+          style={{ margin: "auto" }}
+          className="animate__animated animate__tada"
+        />
+      )}
       <div
         style={{
           display: "flex",
@@ -177,10 +185,12 @@ const MakeCoffee = () => {
           color="orange"
           style={{ marginBottom: "20px" }}
         >
-          커피콩 10개 <Icon name="arrow right" /> 커피 1잔
+          커피콩 10개{" "}
+          <Icon name="arrow right" style={{ marginRight: "0.8vw" }} /> 커피 1잔
         </Button>
         <Button onClick={(e) => coffeeMakeHandler(2)} color="brown">
-          커피콩 27개 <Icon name="arrow right" /> 커피 3잔
+          커피콩 27개{" "}
+          <Icon name="arrow right" style={{ marginRight: "0.8vw" }} /> 커피 3잔
         </Button>
       </div>
     </TodayCafePage>

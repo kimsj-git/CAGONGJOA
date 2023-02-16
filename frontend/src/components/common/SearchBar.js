@@ -4,7 +4,7 @@ import { IoSearch } from "react-icons/io5"
 import "./SearchBar.css"
 
 const SearchBar = (props) => {
-  const currentLocation = sessionStorage.getItem("cafeAuth")
+  const currentLocation = Number(sessionStorage.getItem("cafeAuth"))
     ? JSON.parse(sessionStorage.getItem("myCafe"))?.cafeName
     : sessionStorage.getItem("address")?.split(" ").at(-1)
 
