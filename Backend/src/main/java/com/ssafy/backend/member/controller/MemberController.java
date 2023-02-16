@@ -1,9 +1,11 @@
 package com.ssafy.backend.member.controller;
 
+import com.ssafy.backend.cafe.domain.dto.LocationDto;
 import com.ssafy.backend.common.annotation.Auth;
 import com.ssafy.backend.common.dto.ResponseDTO;
 import com.ssafy.backend.jwt.dto.TokenRespDto;
 import com.ssafy.backend.member.domain.dto.MemberCoinRespDto;
+import com.ssafy.backend.member.domain.dto.SuperMemberCafeAuthReqDto;
 import com.ssafy.backend.member.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -63,4 +65,16 @@ public class MemberController {
         return new ResponseEntity<>(responseDTO, HttpStatus.OK);
     }
 
+
+    /**
+     * 시연을 위한 위치인증 슈퍼 계정
+     * @return
+     */
+    @Auth
+    @PostMapping("/super/hynchol")
+    public ResponseEntity<ResponseDTO> setHyncholAuth(@RequestBody SuperMemberCafeAuthReqDto superMemberCafeAuthReqDto) {
+        memberService.setHyncholAuth(superMemberCafeAuthReqDto);
+        ResponseDTO responseDTO = new ResponseDTO("조현철 치트키 적용 완료!", "", HttpStatus.OK, null);
+        return new ResponseEntity<>(responseDTO, HttpStatus.OK);
+    }
 }
