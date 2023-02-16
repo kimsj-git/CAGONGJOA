@@ -70,7 +70,7 @@ const CafeAuth = (props) => {
             ) : (
               <HiOutlineMapPin size="30" color="black" />
             )}
-            <p>위치인증</p>
+            {props.isMainNavigation ? "" : <p>위치인증</p>}
           </div>
         }
       >
