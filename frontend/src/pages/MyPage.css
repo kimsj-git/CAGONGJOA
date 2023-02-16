@@ -1,0 +1,27 @@
+.mypage-wrapper {
+  /* display: flex; */
+  /* justify-content: center;
+  align-items: center; */
+  /* flex-direction: column; */
+  width: 100%;
+  margin-block: 10%;
+}
+
+.mypage-wrapper .navItem {
+  cursor: default;
+  color: black;
+  font-size: 1.3rem;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+}
+
+.mypage-wrapper .navItem:hover {
+  cursor: default;
+  text-decoration: none;
+  color: black;
+}
+
+.mypage-wrapper .navItem svg {
+  margin-right: 3%;
+}
