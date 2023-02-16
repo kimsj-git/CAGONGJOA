@@ -75,7 +75,7 @@ const CafeTimer = () => {
         value={accTime}
         disabled={cafeAuth === "0" || cafeAuth === null}
       >
-        <p style={{ color: "#ff695e" }}>
+        <p style={{ color: "#ff695e", fontSize: "125%", fontFamily: 'GangwonEdu_OTFBoldA'}}>
           {hours}시간 {minutes}분 경과! {isComplete ? "[완료]" : ""}
         </p>
       </Progress>

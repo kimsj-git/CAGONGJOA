@@ -24,11 +24,12 @@ const CafeTodoItem = (props) => {
   return (
     <Card fluid>
       <Card.Content>
-        <Card.Description>
+        <Card.Description style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
           <Checkbox
             label={{ children: content }}
             checked={props.isCompleted}
             onChange={(e) => onCheckHandler(props.id)}
+            style={{fontSize: "135%", fontFamily: 'GangwonEdu_OTFBoldA'}}
           />
         <Button floated="right" icon="trash alternate" onClick={(e) => deleteTodoHandler(props.id)}/>
         </Card.Description>

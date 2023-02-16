@@ -211,6 +211,9 @@ const CafeInfo = () => {
                         fontSize: "large",
                         textAlign: "center",
                         color: "#1E3932",
+                        fontSize: "220%",
+                        fontFamily: "GangwonEdu_OTFBoldA",
+                        wordBreak: "keep-all",
                       }}
                     >
                       {cafeName}

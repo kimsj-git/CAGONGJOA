@@ -20,7 +20,7 @@ const CafeTodos = () => {
     <Grid>
       <Grid.Row columns={2}>
         <Grid.Column style={{display: 'flex', justifyContent: 'center', alignItems: 'center'}}>
-          <p style={{fontSize: '24px', fontFamily: 'GangwonEdu_OTFBoldA'}}>
+          <p style={{fontSize: '135%', fontFamily: 'GangwonEdu_OTFBoldA'}}>
             {date.getMonth() + 1}월 {date.getDate()}일 할일 목록
           </p>
         </Grid.Column>
