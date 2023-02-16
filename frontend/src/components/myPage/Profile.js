@@ -1,10 +1,29 @@
 import { useDispatch, useSelector } from "react-redux"
 import { Item, Image, Button } from "semantic-ui-react"
 import { modalActions } from "../../store/modal"
-
 import { BsFillPatchQuestionFill } from "react-icons/bs"
+import { useState, useEffect } from "react"
+import useFetch from "../../hooks/useFetch"
+const DEFAULT_REST_URL = process.env.REACT_APP_REST_DEFAULT_URL
 
 const Profile = () => {
+  const { data: fetchedCoffee, sendRequest: fetchCoffee } = useFetch()
+  const [coffeeBeanCnt, setCoffeeBeanCnt] = useState(0)
+  const [coffeeCnt, setCoffeeCnt] = useState(0)
+
+  useEffect(() => {
+    fetchCoffee({
+      url: `${DEFAULT_REST_URL}/member/coin`,
+      headers: {
+        Authorization: `Bearer ${sessionStorage.getItem("accessToken")}`,
+      },
+    })
+  }, [])
+
+  useEffect(() => {
+    setCoffeeBeanCnt(fetchedCoffee.coffeeBeanCnt)
+    setCoffeeCnt(fetchedCoffee.coffeeCnt)
+  }, [fetchedCoffee])
   const dispatch = useDispatch()
   const brandLogo = useSelector((state) => state.cafe.brandLogo)
   const nickname = sessionStorage.getItem("nickname")
@@ -17,8 +36,14 @@ const Profile = () => {
         ]
       : "#65B1EF"
 
+  fetch(`${DEFAULT_REST_URL}/api/memeber/coin`, {
+    method: "GET",
+    headers: {
+      Authorization: `Bearer ${sessionStorage.getItem("accessToken")}`,
+    },
+  })
   return (
-    <Item.Group>
+    <Item.Group unstackable>
       <Item>
         {todayCafe ? (
           <Item.Image
@@ -35,8 +60,8 @@ const Profile = () => {
         ) : (
           <Item.Image size="tiny">
             <BsFillPatchQuestionFill
-              style={{ marginInline: "0.5rem 0.8rem" }}
-              size="70"
+              style={{ width: "auto !important" }}
+              size="80"
               color="grey"
             />
           </Item.Image>
@@ -46,21 +71,38 @@ const Profile = () => {
           <Item.Header>
             <h2>{nickname}</h2>
           </Item.Header>
-          <Item.Description>
-            <Image
-              src={require("../../assets/icons/coffee_bean.png")}
-              size="mini"
-              style={{ display: "inline" }}
-            />
-            3개
-            <Image
-              src={require("../../assets/icons/expresso.png")}
-              size="mini"
-              style={{ display: "inline" }}
-            />{" "}
-            2잔
+          <Item.Description style={{ display: "flex" }}>
+            <div
+              style={{
+                display: "flex",
+                alignItems: "center",
+                marginRight: "1rem",
+                fontSize: "1.5rem",
+              }}
+            >
+              <Image
+                src={require("../../assets/icons/coffee_beans.png")}
+                size="mini"
+                style={{ marginRight: "0.5rem" }}
+              />
+              {coffeeBeanCnt}개
+            </div>
+            <div
+              style={{
+                display: "flex",
+                alignItems: "center",
+                marginRight: "1rem",
+                fontSize: "1.5rem",
+              }}
+            >
+              <Image
+                src={require("../../assets/icons/coffee_cup.png")}
+                size="mini"
+                style={{ marginRight: "0.5rem" }}
+              />
+              {coffeeCnt}개
+            </div>
           </Item.Description>
-          {/* <Item.Description>라얼아ㅓ라어라</Item.Description> */}
 
           {nowCafe ? (
             <Item.Extra style={{ opacity: "50%", fontSize: "8px" }}>
@@ -68,6 +110,7 @@ const Profile = () => {
             </Item.Extra>
           ) : (
             <Button
+              floated="right"
               onClick={() => {
                 dispatch(modalActions.openCafeAuthModal())
               }}
@@ -75,9 +118,10 @@ const Profile = () => {
                 backgroundColor: "var(--custom-pink)",
                 color: "white",
                 borderRadius: "20px",
+                marginTop: "2vh",
               }}
             >
-              위치 인증
+              카페 방문 인증 하러가기
             </Button>
           )}
         </Item.Content>

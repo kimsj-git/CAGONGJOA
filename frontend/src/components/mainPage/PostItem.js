@@ -1,9 +1,9 @@
-import { Card, Image, Label } from "semantic-ui-react"
+import { Card, Image, Label, Button } from "semantic-ui-react"
 import PostDetail from "./PostDetail"
 import LoadingPost from "./LoadingPost"
 import ToggleButton from "../common/ToggleButton"
 import useFetch from "../../hooks/useFetch.js"
-import { BsFillPatchQuestionFill } from "react-icons/bs"
+import { BsFillPatchQuestionFill, BsChatDotsFill } from "react-icons/bs"
 import { postsActions } from "../../store/posts"
 import { useSelector, useDispatch } from "react-redux"
 import "./Post.css"
@@ -29,6 +29,7 @@ const PostItem = (props) => {
     .split("</p>")
     .map((content) => content.substr(3, content.length))
   const [lookMore, setLookMore] = useState(false)
+  const [detailOpen, setDetailOpen] = useState(false)
   const { data, isLoading, sendRequest: fetchLike } = useFetch()
   const elapsedTime = ElapsedText(props.createdAt)
 
@@ -82,7 +83,11 @@ const PostItem = (props) => {
         icon={{ name: typeIcon[props.type] }}
         size="large"
       />
-      <Card.Content>
+      <Card.Content
+        onClick={() => {
+          setDetailOpen(true)
+        }}
+      >
         {props.images.length > 1 ? (
           <Carousel
             value={props.images}
@@ -206,8 +211,24 @@ const PostItem = (props) => {
             isLiked={props.isLiked}
             iconSize={24}
           />
-
-          <PostDetail post={props} likeHandler={likePost} />
+          <Button
+            id="post-detail-btn"
+            fluid
+            inverted
+            color="green"
+            onClick={() => {
+              setDetailOpen(true)
+            }}
+          >
+            <BsChatDotsFill size={24} style={{ marginRight: "0.5rem" }} />
+            {props.commentCnt}
+          </Button>
+          <PostDetail
+            post={props}
+            likeHandler={likePost}
+            detailOpen={detailOpen}
+            setDetailOpen={setDetailOpen}
+          />
         </div>
       </Card.Content>
     </Card>

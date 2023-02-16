@@ -1,4 +1,4 @@
-import { Grid } from "semantic-ui-react"
+import { Divider, Grid } from "semantic-ui-react"
 
 import MyPageItems from "../components/myPage/MyPageItems"
 import Profile from "../components/myPage/Profile"
@@ -11,6 +11,7 @@ const MyPage = ({ setIsAuthenticated, setIsCafeAuth }) => {
       <>
         {/* <Grid divided="vertically" textAlign="center"> */}
         <Profile />
+        <Divider />
         <MyPageItems
           setIsAuthenticated={setIsAuthenticated}
           setIsCafeAuth={setIsCafeAuth}
