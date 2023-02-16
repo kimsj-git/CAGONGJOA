@@ -7,7 +7,7 @@ import { Container, Grid } from "semantic-ui-react"
 const TodayCafe = () => {
   return (
     <TodayCafePage>
-      <Container style={{backgroundColor: "#f9f9f9"}}>
+      <Container style={{backgroundColor: "#faf6ee"}}>
         <Grid>
           <Grid.Row columns={1}>
             <Grid.Column>

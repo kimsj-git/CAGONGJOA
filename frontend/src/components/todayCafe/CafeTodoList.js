@@ -38,7 +38,7 @@ const CafeTodoList = (props) => {
 
   useEffect(() => {
     if (todosList !== null) {
-      setTodos(todosList)
+      setTodos(todosList.reverse())
     } else if ( todosList === null) {
       setTodos([])
     }
@@ -136,16 +136,6 @@ const CafeTodoList = (props) => {
       <Grid.Row columns={1}>
         <Grid.Column>
           <Card.Group>
-            {todos && todos.map((todo) => (
-              <CafeTodoItem
-                key={todo.id}
-                id={todo.id}
-                content={todo.content}
-                isCompleted={todo.complete}
-                toggleHandler={toggleHandler}
-                deleteHandler={deleteHandler}
-              />
-            ))}
             {fullDate(todayDate) === fullDate(selectedDate) && (
               <Card fluid>
                 <Card.Content extra>
@@ -158,14 +148,25 @@ const CafeTodoList = (props) => {
                   />
                   <Button
                     icon="add"
-                    positive
+                    // positive
                     floated="right"
                     onClick={submitHandler}
                     disabled={(cafeAuth === '0' || cafeAuth === null)}
+                    color="brown"
                   />
                 </Card.Content>
               </Card>
             )}
+            {todos && todos.map((todo) => (
+              <CafeTodoItem
+                key={todo.id}
+                id={todo.id}
+                content={todo.content}
+                isCompleted={todo.complete}
+                toggleHandler={toggleHandler}
+                deleteHandler={deleteHandler}
+              />
+            ))}
           </Card.Group>
         </Grid.Column>
       </Grid.Row>

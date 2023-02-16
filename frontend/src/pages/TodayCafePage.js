@@ -12,10 +12,13 @@ const TodayCafe = (props) => {
   return (
     <Container
       style={{
-        backgroundColor: "#f9f9f9",
-        borderRadius: "30px 30px 0px 0px",
-        padding: "5px",
+        backgroundColor: "#faf6ee",
+        borderRadius: "40px 0px 40px 40px",
+        padding: "10px",
+        paddingBottom: "60%",
         margin: "5px",
+        // height: "100%",
+        boxShadow: '0 0px 30px 2px #e9c4bf',
       }}
     >
       <Grid>

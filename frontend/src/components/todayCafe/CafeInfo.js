@@ -97,7 +97,7 @@ const CafeInfo = () => {
   }
 
   return (
-    <Container style={{ backgroundColor: "#f9f9f9" }}>
+    <Container style={{ backgroundColor: "#faf6ee" }}>
       <Grid>
         {/* 모바일 태블릿 화면 카페 정보 */}
         <Grid.Row only="mobile tablet">
