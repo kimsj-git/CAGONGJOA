@@ -74,6 +74,7 @@ const GetBeanModal = (props) => {
       sessionStorage.setItem("todayCafe", JSON.stringify(todayCafe))
       setTimeout(() => {
         props.setIsJamSurvey(true)
+        window.location.reload()
       }, 1500)
     }
   }
