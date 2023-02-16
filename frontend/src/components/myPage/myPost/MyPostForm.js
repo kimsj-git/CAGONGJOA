@@ -107,7 +107,6 @@ const submitHandler = async () => {
         },
         body: formData,
       });
-      console.log(response);
     }
     // 글 생성 요청
     else {
@@ -136,7 +135,6 @@ const submitHandler = async () => {
         },
         body: formData,
       });
-      console.log(response);
     }
 
     setSecondOpen(true);
@@ -237,7 +235,7 @@ const submitHandler = async () => {
             <Dropdown
               id="post-type"
               fluid
-              placeholder= {props.isEditing ? `${postTypes.find((post)=>post.key===props.postToEdit.postType).text}` : "글 타입을 선택해주세요!"}
+              placeholder= {props.isEditing ? `${postTypes.find((post)=>post.key===props.postToEdit.type).text}` : "글 타입을 선택해주세요!"}
               selection
               floating
               required

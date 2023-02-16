@@ -31,7 +31,7 @@ const MyPostDetail = (props) => {
   const [isLoading, setIsLoading] = useState(false)
   const createdAt = postDetail.createdAt && postDetail.createdAt.split("T")
   const brandLogo = useSelector((state) => state.cafe.brandLogo)
-  const {sendRequest: fetchLike } = useFetch()
+  const { sendRequest: fetchLike } = useFetch()
 
   const likePlus = () => {
     postDetail.likeCounts += 1
@@ -56,7 +56,6 @@ const MyPostDetail = (props) => {
     })
   }
 
-  console.log(postDetail)
   const clickHandler = async () => {
     setIsLoading(true)
     const response = await fetch(
@@ -101,132 +100,133 @@ const MyPostDetail = (props) => {
     clickHandler()
   }, [props.likeCheck])
 
-
   return (
     <>
-    {isLoading ? <LoadingPost/> :
-    <>
-    <Modal
-    onClose={() => {
-      dispatch(commentsActions.closeModal())
-      setOpen(false)
-    }}
-    onOpen={() => setOpen(true)}
-    open={open}
-    size="large"
-    trigger={
-      <Button
-      onClick={clickHandler}
-      size="mini"
-      color="green"
-      style={{ margin: 0 }}
-      >
-          자세히
+      <Modal
+        onClose={() => {
+          dispatch(commentsActions.closeModal())
+          setOpen(false)
+        }}
+        onOpen={() => setOpen(true)}
+        open={open}
+        size="large"
+        trigger={
+          <Button
+            onClick={clickHandler}
+            size="mini"
+            color="green"
+            style={{ margin: 0 }}
+          >
+            자세히
           </Button>
         }
-        >
+      >
         <Label
-        color="orange"
-        floating
-        icon={{ name: "comment", size: "large", style: { margin: "0px" } }}
+          color="orange"
+          floating
+          icon={{ name: "comment", size: "large", style: { margin: "0px" } }}
         />
-        <Modal.Content>
-          <div>
-            <Grid>
-              <Grid.Column mobile={16} tablet={8} computer={8}>
-                <ScrollPanel style={{ width: "100%", height: "77.5vh" }}>
-                  <Card fluid style={{ boxShadow: "none" }}>
-                    <Card.Content>
-                      <Image
-                        avatar
-                        floated="left"
-                        size="huge"
-                        src={
-                          postDetail.verifiedCafeBrand
-                          ? require(`../../../assets/cafe_logos/${
-                            brandLogo[postDetail.verifiedCafeBrand]
-                          }.png`)
-                          : require(`../../../assets/icons/question.png`)
-                        }
+
+        {isLoading ? (
+          <LoadingPost />
+        ) : (
+          <Modal.Content>
+            <div>
+              <Grid>
+                <Grid.Column mobile={16} tablet={8} computer={8}>
+                  <ScrollPanel style={{ width: "100%", height: "77.5vh" }}>
+                    <Card fluid style={{ boxShadow: "none" }}>
+                      <Card.Content>
+                        <Image
+                          avatar
+                          floated="left"
+                          size="huge"
+                          src={
+                            postDetail.verifiedCafeBrand
+                              ? require(`../../../assets/cafe_logos/${
+                                  brandLogo[postDetail.verifiedCafeBrand]
+                                }.png`)
+                              : require(`../../../assets/icons/question.png`)
+                          }
                         />
-                      <Card.Header>{postDetail.nickname}</Card.Header>
-                      <Card.Meta>
-                        {postDetail.verifiedCafeName
-                          ? postDetail.verifiedCafeName
-                          : ""}
-                      </Card.Meta>
-                      <Card.Meta textAlign="right">
-                        {createdAt &&
-                          `${createdAt[0]} ${createdAt[1].substr(0, 5)}`}
-                      </Card.Meta>
-                      {postDetail.imgPathList &&
-                        postDetail.imgPathList.length > 0 &&
-                        postDetail.imgPathList.map((img, index) => {
-                          return (
-                            <Image
-                            key={index}
-                            src={img}
-                            wrapped
-                            ui={true}
-                            style={{ marginBlock: "0.5rem" }}
-                            />
+                        <Card.Header>{postDetail.nickname}</Card.Header>
+                        <Card.Meta>
+                          {postDetail.verifiedCafeName
+                            ? postDetail.verifiedCafeName
+                            : ""}
+                        </Card.Meta>
+                        <Card.Meta textAlign="right">
+                          {createdAt &&
+                            `${createdAt[0]} ${createdAt[1].substr(0, 5)}`}
+                        </Card.Meta>
+                        {postDetail.imgPathList &&
+                          postDetail.imgPathList.length > 0 &&
+                          postDetail.imgPathList.map((img, index) => {
+                            return (
+                              <Image
+                                key={index}
+                                src={img}
+                                wrapped
+                                ui={true}
+                                style={{ marginBlock: "0.5rem" }}
+                              />
                             )
                           })}
-                      <Card.Description
-                        style={{ fontSize: "1.2rem", lineHeight: "1.8" }}
-                        dangerouslySetInnerHTML={{
-                          __html: postDetail.postContent,
-                        }}
+                        <Card.Description
+                          style={{ fontSize: "1.2rem", lineHeight: "1.8" }}
+                          dangerouslySetInnerHTML={{
+                            __html: postDetail.postContent,
+                          }}
                         ></Card.Description>
-                    </Card.Content>
-                  </Card>
-                </ScrollPanel>
-                <div style={{ display: "flex", marginTop: "1rem" }}>
-                  {postDetail.nickname &&
-                    sessionStorage.getItem("nickname") ===
-                    postDetail.nickname && (
-                      <MyPostForm isEditing postToEdit={props.post} />
-                        )}
-                  {postDetail.nickname &&
-                    sessionStorage.getItem("nickname") ===
-                    postDetail.nickname && (
-                      <Button
-                      fluid
-                      toggle
-                      // inverted
-                      color="grey"
-                      icon="delete"
-                      content="삭제"
-                      onClick={() => {
-                        dispatch(postsActions.deletePost(postDetail.postId))
-                        setOpen(false)
-                      }}
-                      ></Button>
+                      </Card.Content>
+                    </Card>
+                  </ScrollPanel>
+                  <div style={{ display: "flex", marginTop: "1rem" }}>
+                    {postDetail.nickname &&
+                      sessionStorage.getItem("nickname") ===
+                        postDetail.nickname && (
+                        <MyPostForm isEditing postToEdit={postDetail} />
                       )}
-                    {postDetail &&
-                  <ToggleButton
-                  btnType="like"
-                  fluid
-                  inverted
-                  content={postDetail.likeCounts}
-                  likeHandler={likePost}
-                  isLiked={postDetail.isLikeChecked}
-                  />
-                }
-                </div>
-              </Grid.Column>
-              <CommentList
-                post={{
-                  id: postDetail.postId,
-                  commentCnt: postDetail.commentCounts,
-                }}
+                    {postDetail.nickname &&
+                      sessionStorage.getItem("nickname") ===
+                        postDetail.nickname && (
+                        <Button
+                          fluid
+                          toggle
+                          // inverted
+                          color="grey"
+                          icon="delete"
+                          content="삭제"
+                          onClick={() => {
+                            dispatch(postsActions.deletePost(postDetail.postId))
+                            setOpen(false)
+                          }}
+                        ></Button>
+                      )}
+                    {postDetail && (
+                      <ToggleButton
+                        btnType="like"
+                        fluid
+                        inverted
+                        content={postDetail.likeCounts}
+                        likeHandler={likePost}
+                        isLiked={postDetail.isLikeChecked}
+                      />
+                    )}
+                  </div>
+                </Grid.Column>
+                <CommentList
+                  post={{
+                    id: postDetail.postId,
+                    commentCnt: postDetail.commentCounts,
+                  }}
+                  myPage={true}
                 />
-            </Grid>
-          </div>
-        </Modal.Content>
+              </Grid>
+            </div>
+          </Modal.Content>
+        )}
       </Modal>
-      </>
-    }
     </>
   )
 }
