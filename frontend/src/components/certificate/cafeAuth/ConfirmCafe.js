@@ -125,7 +125,7 @@ const ConfirmCafe = ({ setIsCafeAuth, setIsJamSurvey }) => {
       <Modal
         onClose={() => dispatch(modalActions.closeConfirmCafeModal())}
         open={open}
-        size="mini"
+        // size="mini"
       >
         {isLoading ? (
           <Modal.Content style={{ textAlign: "center" }}>
@@ -135,7 +135,7 @@ const ConfirmCafe = ({ setIsCafeAuth, setIsJamSurvey }) => {
           <>
             <Modal.Content style={{ textAlign: "center" }}>
               <p>
-                <b>{cafeData.name}</b> 맞습니까?
+                <b>{cafeData.name}</b> 가 맞나요?
               </p>
             </Modal.Content>
             <ModalActions>
@@ -144,7 +144,7 @@ const ConfirmCafe = ({ setIsCafeAuth, setIsJamSurvey }) => {
               </Button>
               <Button
                 size="mini"
-                color="red"
+                color="green"
                 onClick={() => dispatch(modalActions.toggleConfirmCafeModal())}
               >
                 취소

@@ -1,11 +1,20 @@
-import { Grid, GridColumn, Modal } from "semantic-ui-react"
+import {
+  Grid,
+  GridColumn,
+  Modal,
+  Button,
+  Segment,
+  Header,
+} from "semantic-ui-react"
+import "./CafeAuth.css"
 import { useSelector, useDispatch } from "react-redux"
 import { HiMapPin, HiOutlineMapPin } from "react-icons/hi2"
 
 import { modalActions } from "../../../store/modal"
 import { findNearCafeData } from "../../../store/cafe"
 import NearCafeList from "./NearCafeList"
-import classes from "./CafeAuth.module.css"
+import { GrMapLocation } from "react-icons/gr"
+import { TbReceipt2 } from "react-icons/tb"
 
 const CafeAuth = (props) => {
   const dispatch = useDispatch()
@@ -41,11 +50,13 @@ const CafeAuth = (props) => {
   return (
     <>
       <Modal
+        className="cafe-auth-modal"
+        basic
         closeIcon
         onClose={closeHandler}
         onOpen={() => dispatch(modalActions.openCafeAuthModal())}
         open={open}
-        size="tiny"
+        // size="small"
         trigger={
           <div
             style={{
@@ -63,40 +74,24 @@ const CafeAuth = (props) => {
           </div>
         }
       >
-        <Modal.Header>카페 방문 인증</Modal.Header>
+        <Modal.Header>카페에 방문하셨나요?</Modal.Header>
         <Modal.Content>
-          <Grid divided centered verticalAlign="middle">
-            <Grid.Row>
-              <GridColumn
-                onClick={nextPageHander}
-                width={6}
-                textAlign="center"
-                className={classes.modalContent}
-              >
-                <p style={{ fontWeight: "bolder" }}>현재 위치로 인증하기</p>
-                <hr />
-                <p style={{ opacity: "0.5" }}>
-                  카페에 머루르는 동안 글을 쓸 수 있어요.
-                </p>
-              </GridColumn>
-              <GridColumn width={1}></GridColumn>
-              <GridColumn
-                onClick={() => {
-                  alert("업데이트 중..")
-                }}
-                width={6}
-                textAlign="center"
-                verticalAlign="middle"
-                className={classes.modalContent}
-              >
-                <p style={{ fontWeight: "bolder" }}>영수증으로 인증하기</p>
-                <hr />
-                <p style={{ opacity: "0.5" }}>
-                  내일 오전 6시까지 글을 쓸 수 있어요.
-                </p>
-              </GridColumn>
-            </Grid.Row>
-          </Grid>
+          <Button.Group size="huge">
+            <Button
+              onClick={nextPageHander}
+              style={{ backgroundColor: "var(--custom-pink)" }}
+            >
+              <GrMapLocation size={50} />
+              <Header>현재 위치로 인증하기</Header>
+              <p>카페에 머무르는 동안 글을 쓸 수 있어요.</p>
+            </Button>
+            <Button.Or />
+            <Button>
+              <TbReceipt2 size={50} />
+              <Header>영수증으로 인증하기</Header>
+              <p>COMING SOON!</p>
+            </Button>
+          </Button.Group>
         </Modal.Content>
       </Modal>
       <NearCafeList
