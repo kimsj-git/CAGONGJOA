@@ -26,7 +26,7 @@ const CafeTimer = () => {
         },
       })
     }
-  }, [])
+  }, [cafeAuth])
 
   useEffect(() => {
     setAccTime(timeData)
