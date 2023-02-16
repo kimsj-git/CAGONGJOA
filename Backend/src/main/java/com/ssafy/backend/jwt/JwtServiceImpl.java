@@ -32,15 +32,6 @@ public class JwtServiceImpl implements JwtService{
         // 리프레쉬 토큰을 redis에 저장
         RefreshToken savedRefreshToken = refreshTokenRepository.save(new RefreshToken(refreshToken, member.getId()));
 
-        // 테스트 코드로..
-//        System.out.println("savedRefreshToken.getRefreshToken() ="+savedRefreshToken.getRefreshToken()); // 제대로 나옴
-//        System.out.println("savedRefreshToken.getMemberId() ="+savedRefreshToken.getMemberId()); // 제대로 나옴
-//        // 옵셔널로 나옴
-//        System.out.println("리프레쉬 토큰으로 객체 찾기 (옵셔널)" + refreshTokenRepository.findById(savedRefreshToken.getRefreshToken()));
-//        System.out.println("리프레쉬 토큰으로 객체 찾기 (옵셔널 깨기)" + refreshTokenRepository.findById(savedRefreshToken.getRefreshToken()).get());
-//        System.out.println("리프레쉬 토큰으로 객체 찾기 (옵셔널 깬 객체로 토큰 찍어보기)" + refreshTokenRepository.findById(savedRefreshToken.getRefreshToken()).get().getRefreshToken());
-
-
         if (refreshTokenRepository.findById(savedRefreshToken.getRefreshToken()).isEmpty()) {
             throw new JwtException(JwtExceptionType.TOKEN_SAVE_FAIL);
         }
