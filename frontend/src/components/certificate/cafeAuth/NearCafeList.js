@@ -1,15 +1,18 @@
 import { useSelector, useDispatch } from "react-redux"
-import { Modal, Button, Icon } from "semantic-ui-react"
+import { Modal, Button, Icon, Popup } from "semantic-ui-react"
+import { useState } from "react"
 
 import { modalActions } from "../../../store/modal"
 import ConfirmCafe from "./ConfirmCafe"
 import NearCafeListItem from "./NearCafeListItem"
+import { TbMoodCry } from "react-icons/tb"
 
 const NearCafeList = (props) => {
   const dispatch = useDispatch()
   const open = useSelector((state) => state.modal.openNearCafeList)
   const cafeData = useSelector((state) => state.cafe.nearCafe)
   const isLoading = useSelector((state) => state.cafe.isCafeListLoading)
+  const [confirmOpen, setConfirmOpen] = useState(false)
 
   const closeHandler = () => {
     props.closeNearCafeList()
@@ -19,7 +22,7 @@ const NearCafeList = (props) => {
   return (
     <Modal closeIcon onClose={closeHandler} open={open} size="tiny">
       <Modal.Header>
-        <span>카페 방문 인증</span>
+        <span style={{ marginRight: "1rem" }}>카페 방문 인증</span>
         <Button
           circular
           icon="refresh"
@@ -47,15 +50,38 @@ const NearCafeList = (props) => {
               </div>
             )}
             {cafeData.length === 0 && (
-              <div>
-                <p>주변에 카페가 없어요...</p>
-                <Button
-                  onClick={() => {
-                    alert("업데이트 중..")
+              <div
+                style={{
+                  display: "flex",
+                  flexDirection: "column",
+                  alignItems: "center",
+                }}
+              >
+                <div
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    marginBlock: "1rem 2.5rem",
                   }}
                 >
-                  영수증으로 인증하기
-                </Button>
+                  <span style={{ fontSize: "1.5rem", marginRight: "0.5rem" }}>
+                    주변에 카페가 없어요...
+                  </span>
+                  <TbMoodCry size={30} />
+                </div>
+
+                <Popup
+                  trigger={
+                    <Button size="large" fluid onClick={() => {}}>
+                      영수증으로 인증하기
+                    </Button>
+                  }
+                  content="COMMING SOON !"
+                  inverted
+                  position="top center"
+                  offset={[0, 10]}
+                  size="huge"
+                />
               </div>
             )}
           </>
