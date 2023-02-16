@@ -25,7 +25,7 @@ const CommentList = (props) => {
   })
   const [newComment, setNewComment] = useState("")
 
-  const refreshComments = async (id=-1) => {
+  const refreshComments = async (id = -1) => {
     await getComments({
       url: `${DEFAULT_REST_URL}/main/postDetail/comment/feed`,
       method: "POST",
@@ -40,54 +40,57 @@ const CommentList = (props) => {
     })
   }
 
-  const addNewComment = async (text, id=-1) => {
+  const addNewComment = async (text, id = -1) => {
     if (id === -1) {
-      const v = await fetch(`${DEFAULT_REST_URL}/main/postDetail/comment/write`, {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${sessionStorage.getItem("accessToken")}`,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          postId: props.post.id,
-          content: text,
-          commentId: id,
-        }),
-      })
+      const v = await fetch(
+        `${DEFAULT_REST_URL}/main/postDetail/comment/write`,
+        {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${sessionStorage.getItem("accessToken")}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            postId: props.post.id,
+            content: text,
+            commentId: id,
+          }),
+        }
+      )
       refreshComments(lastCommentId)
     } else {
-      const response = await fetch(`${DEFAULT_REST_URL}/main/postDetail/comment/write`, {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${sessionStorage.getItem("accessToken")}`,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          postId: props.post.id,
-          content: text,
-          commentId: id,
-        }),
-      })
+      const response = await fetch(
+        `${DEFAULT_REST_URL}/main/postDetail/comment/write`,
+        {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${sessionStorage.getItem("accessToken")}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            postId: props.post.id,
+            content: text,
+            commentId: id,
+          }),
+        }
+      )
       const parentComment = await response.json()
       dispatch(commentsActions.updateReplies(parentComment.data))
     }
   }
 
-  useEffect(
-    () => {
-      if (isMounted && inView) {
-        refreshComments(lastCommentId)
-      }
-    },
-    [inView]
-  )
   useEffect(() => {
-      dispatch(
-        commentsActions.updateComments({
-          fetchedComments: fetchedComments,
-          lastCommentId: lastCommentId,
-        })
-      )
+    if (isMounted && inView) {
+      refreshComments(lastCommentId)
+    }
+  }, [inView])
+  useEffect(() => {
+    dispatch(
+      commentsActions.updateComments({
+        fetchedComments: fetchedComments,
+        lastCommentId: lastCommentId,
+      })
+    )
   }, [fetchedComments])
 
   return (
@@ -101,9 +104,10 @@ const CommentList = (props) => {
               <CommentItem
                 key={`${props.post.id}-${comment.commentId}`}
                 comment={comment}
-                postId = {props.post.id}
+                postId={props.post.id}
                 addNewComment={addNewComment}
                 refreshComments={refreshComments}
+                myPage={props.myPage}
               />
             )
           })}
@@ -115,7 +119,10 @@ const CommentList = (props) => {
         reply
         onSubmit={(e) => {
           addNewComment(newComment, -1)
-          dispatch(postsActions.createComment(props.post.id))
+          if (props.myPage) {
+          } else {
+            dispatch(postsActions.createComment(props.post.id))
+          }
         }}
       >
         <Form.Input

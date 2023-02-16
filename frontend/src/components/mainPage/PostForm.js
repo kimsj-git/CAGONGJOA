@@ -176,6 +176,7 @@ const PostForm = (props) => {
   return (
     <>
       <Modal
+        closeIcon
         open={firstOpen}
         onClose={() => {
           setFirstOpen(false);

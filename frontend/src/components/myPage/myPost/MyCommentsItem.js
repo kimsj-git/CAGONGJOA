@@ -9,6 +9,9 @@ const MyCommentsItem = ({ comment }) => {
     comment.commentContent.length > 50
       ? `${comment.commentContent.substr(0, 50)}...`
       : comment.commentContent
+  const postContent = comment.postContent
+  const longContent = postContent.split("</p>").map((content)=>content.substr(3,content.length))
+
   return (
     <Item className={classes.items}>
       <Item.Content className={classes.content}>
@@ -18,14 +21,29 @@ const MyCommentsItem = ({ comment }) => {
         <Item.Meta>
           <span dangerouslySetInnerHTML={{ __html: content }}></span>
         </Item.Meta>
+        {longContent.length > 5 && (
         <Item.Extra>
-          <span
-            dangerouslySetInnerHTML={{ __html: comment.postContent }}
-          ></span>
+            {longContent.slice(0, 2).map((content,index) => {
+              return <p key={index}>{content}</p>
+            })}
+            ...
+            </Item.Extra>
+        )}
+        {longContent.length <= 2 && postContent.length > 50 && (
+          <>300
+            <Item.Extra
+              dangerouslySetInnerHTML={{ __html: postContent.substr(0, 50)+'...' }}
+            ></Item.Extra>
+          </>
+        )}
+        {longContent.length <= 2 && postContent.length < 50 && (
+          <Item.Extra
+            dangerouslySetInnerHTML={{ __html: postContent }}
+          />
+        )}
           <div className={classes.detailBtn}>
             <MyPostDetail post={comment} />
           </div>
-        </Item.Extra>
       </Item.Content>
     </Item>
   )

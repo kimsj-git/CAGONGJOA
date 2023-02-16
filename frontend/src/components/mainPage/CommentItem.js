@@ -45,7 +45,9 @@ const CommentItem = (props) => {
       <Comment.Avatar
         style={{ width: "3.5rem" }}
         as="a"
-        src= {require(`../../assets/cafe_logos/${brandLogo[props.comment.cafeBrandType]}.png`)}
+        src={require(`../../assets/cafe_logos/${
+          brandLogo[props.comment.cafeBrandType]
+        }.png`)}
       />
       <Comment.Content>
         <Comment.Author
@@ -114,7 +116,10 @@ const CommentItem = (props) => {
             reply
             onSubmit={(e) => {
               props.addNewComment(newReply, comment.commentId)
-              dispatch(postsActions.createComment(props.postId))
+              if (props.myPage) {
+              } else {
+                dispatch(postsActions.createComment(props.postId))
+              }
               // setNewReply("")
               // e.target[0].value = ""
             }}
@@ -155,7 +160,10 @@ const CommentItem = (props) => {
           onConfirm={() => {
             setConfirmOpen(false)
             dispatch(commentsActions.deleteComment(props.comment.commentId))
-            dispatch(postsActions.deleteComment(props.postId))
+            if (props.myPage) {
+            } else {
+              dispatch(postsActions.deleteComment(props.postId))
+            }
             fetch(
               `${DEFAULT_REST_URL}/main/postDetail/comment/delete?commentId=${props.comment.commentId}`,
               {
