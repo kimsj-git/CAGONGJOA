@@ -8,6 +8,5 @@ import lombok.*;
 @Builder
 public class FortuneResponseDto {
     private String content;
-    private int coffeeBeanCnt;
     private int coffeeCnt;
 }
