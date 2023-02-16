@@ -448,7 +448,7 @@ public class CafeServiceImpl implements CafeService {
         CafeAuth cafeAuth = CafeAuth.builder()
                                 .cafeId(selectCafeRequestDto.getCafeId())
                                 .nickname(nickname)
-                                .expiration(600) // 600초
+                                .expiration(600) // 초
                                 .build();
 
         cafeAuthRepository.save(cafeAuth);

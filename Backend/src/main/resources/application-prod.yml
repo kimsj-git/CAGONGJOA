@@ -55,10 +55,10 @@ jwt:
   secretKey: ${A308_JWT_KEY}
 
   access:
-    expiration: 100
+    expiration: 100 # 100분
 
   refresh:
-    expiration: 600
+    expiration: 14400 # 10일
 
 cloud:
   aws:
