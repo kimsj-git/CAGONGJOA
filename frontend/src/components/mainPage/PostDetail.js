@@ -22,7 +22,7 @@ const DEFAULT_REST_URL = process.env.REACT_APP_REST_DEFAULT_URL
 
 const PostDetail = (props) => {
   const dispatch = useDispatch()
-  const [open, setOpen] = useState(false)
+  // const [open, setOpen] = useState(false)
   const [confirmOpen, setConfirmOpen] = useState(false)
   const createdAt = props.post.createdAt.split("T")
   const brandLogo = useSelector((state) => state.cafe.brandLogo)
@@ -46,19 +46,19 @@ const PostDetail = (props) => {
     <Modal
       onClose={() => {
         dispatch(commentsActions.closeModal())
-        setOpen(false)
+        props.setDetailOpen(false)
       }}
       onOpen={() => {
-        setOpen(true)
+        props.setDetailOpen(true)
       }}
-      open={open}
+      open={props.detailOpen}
       size="large"
-      trigger={
-        <Button id="post-detail-btn" fluid inverted color="green">
-          <BsChatDotsFill size={24} style={{ marginRight: "0.5rem" }} />
-          {props.post.commentCnt}
-        </Button>
-      }
+      // trigger={
+      //   <Button id="post-detail-btn" fluid inverted color="green">
+      //     <BsChatDotsFill size={24} style={{ marginRight: "0.5rem" }} />
+      //     {props.post.commentCnt}
+      //   </Button>
+      // }
     >
       <Label
         color="orange"
@@ -131,6 +131,7 @@ const PostDetail = (props) => {
                 {sessionStorage.getItem("nickname") === props.post.writer && (
                   <Button
                     fluid
+                    circular
                     toggle
                     color="grey"
                     icon="delete"
@@ -172,13 +173,11 @@ const PostDetail = (props) => {
                       },
                     }
                   )
-                  setOpen(false)
+                  props.setDetailOpen(false)
                 }}
               />
             </Grid.Column>
-            <CommentList
-              post={props.post}
-            />
+            <CommentList post={props.post} />
           </Grid>
         </div>
       </Modal.Content>

@@ -1,0 +1,29 @@
+.mypage-wrapper {
+  padding: 5vh 5vw;
+}
+
+.mypage-wrapper .navItem {
+  cursor: default;
+  color: black;
+  font-size: 1.3rem;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+}
+
+.mypage-wrapper .navItem:hover {
+  cursor: default;
+  text-decoration: none;
+  color: black;
+}
+
+.mypage-wrapper .navItem svg {
+  margin-right: 3%;
+}
+
+@media only screen and (max-width: 767px) {
+  .ui.unstackable.items > .item > .image,
+  .ui.unstackable.items > .item > .image > img {
+    width: 80px !important;
+  }
+}
