@@ -395,7 +395,7 @@ public class CafeServiceImpl implements CafeService {
 
             if (roundedMeanVal <= 2) {
                 results.put(cafeId, CrowdLevel.L);
-            } else if (roundedMeanVal <= 3) {
+            } else if (roundedMeanVal <= 4) {
                 results.put(cafeId, CrowdLevel.M);
             } else {
                 results.put(cafeId, CrowdLevel.H);
