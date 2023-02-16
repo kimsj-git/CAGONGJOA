@@ -11,7 +11,8 @@ public enum MemberExceptionType implements BaseExceptionType {
     NOT_FOUND_MEMBER(HttpStatus.BAD_REQUEST, "회원 정보가 없습니다.", SignType.MEMBER),
     SAME_NICKNAME(HttpStatus.BAD_REQUEST, "수정 전 닉네임과 동일합니다.", SignType.MEMBER),
     NOT_DELETE_REFRESH_TOKEN(HttpStatus.INTERNAL_SERVER_ERROR, "리프레쉬 토큰 삭제 실패", SignType.MEMBER),
-    NOT_DELETE_MEMBER(HttpStatus.INTERNAL_SERVER_ERROR, "멤버 삭제 실패", SignType.MEMBER);
+    NOT_DELETE_MEMBER(HttpStatus.INTERNAL_SERVER_ERROR, "멤버 삭제 실패", SignType.MEMBER),
+    MEMBER_DB_ERR(HttpStatus.INTERNAL_SERVER_ERROR, "서버 에러", SignType.MEMBER);
 
     private final HttpStatus httpStatus;
     private final String errorMessage;

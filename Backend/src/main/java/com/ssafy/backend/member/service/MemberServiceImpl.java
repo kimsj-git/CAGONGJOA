@@ -8,6 +8,7 @@ import com.ssafy.backend.common.exception.member.MemberException;
 import com.ssafy.backend.common.exception.member.MemberExceptionType;
 import com.ssafy.backend.jwt.JwtUtil;
 import com.ssafy.backend.jwt.dto.TokenRespDto;
+import com.ssafy.backend.member.domain.dto.MemberCoinRespDto;
 import com.ssafy.backend.member.domain.dto.MemberIdAndNicknameDto;
 import com.ssafy.backend.member.domain.entity.MemberCoin;
 import com.ssafy.backend.member.repository.MemberCoinRepository;
@@ -175,4 +176,11 @@ public class MemberServiceImpl implements MemberService {
         optionalMemberCoin.get().setCoffeeBeanCount(coffeeBeanCount + addCoinVal);
     }
 
+    @Override
+    public MemberCoinRespDto getMemberCoin() {
+        MemberCoin memberCoin = memberCoinRepository.findByMemberId(getMemberIdAndNicknameByJwtToken().getId())
+                .orElseThrow(() -> new MemberException(MemberExceptionType.MEMBER_DB_ERR));
+        return MemberCoinRespDto.builder().CoffeeBeanCnt(memberCoin.getCoffeeBeanCount())
+                .CoffeeCnt(memberCoin.getCoffeeCount()).build();
+    }
 }
