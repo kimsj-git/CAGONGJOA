@@ -100,6 +100,7 @@ function App() {
       isCafeAuth={isCafeAuth}
       setIsCafeAuth={setIsCafeAuth}
       setIsJamSurvey={setIsJamSurvey}
+      setIsAuthenticated={setIsAuthenticated}
     >
       <AnimatePresence>
         <Switch>
