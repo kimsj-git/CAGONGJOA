@@ -2,17 +2,12 @@ package com.ssafy.backend.todaycafe.domain.dto;
 
 import lombok.*;
 
-@ToString
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@Getter
 public class FortuneResponseDto {
     private String content;
-    private Integer responseType;
+    private int coffeeBeanCnt;
     private int coffeeCnt;
-    public void updateCoffeeCnt(int coffeeCnt) {
-        this.coffeeCnt = coffeeCnt;
-    }
 }

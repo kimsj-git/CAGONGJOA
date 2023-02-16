@@ -7,6 +7,8 @@ import com.ssafy.backend.cafe.repository.CafeCrowdRepository;
 import com.ssafy.backend.cafe.repository.CafeRepository;
 import com.ssafy.backend.common.exception.cafe.CafeException;
 import com.ssafy.backend.common.exception.cafe.CafeExceptionType;
+import com.ssafy.backend.common.exception.member.MemberException;
+import com.ssafy.backend.common.exception.member.MemberExceptionType;
 import com.ssafy.backend.common.exception.todaycafe.TodayCafeException;
 import com.ssafy.backend.common.exception.todaycafe.TodayCafeExceptionType;
 import com.ssafy.backend.member.domain.dto.MemberIdAndNicknameDto;
@@ -79,16 +81,71 @@ public class TodayCafeServiceImpl implements TodayCafeService {
         return coffeeResponseDto;
     }
 
-    // 2. 운세 랜덤으로 뽑기
-    public Map.Entry<Long, String> getFortune() {
+    @Override
+    public FortuneResponseDto getFortune() {
+        /**
+         * 오늘의 카페에 등록된 운세 메세지가 있는지 확인한다
+         * -> 등록된 운세 메세지가 없다면 처음뽑기니까 return 200 ok
+         *
+         * -> 등록된 운세 메세지가 있다면, 다시 뽑기니까 커피 갯수 확인
+         * 만약 커피 갯수가 한개 이상이라면 -> 커피갯수 차감하고 운세 제공 -> 200 ok
+         * 만약 커피 갯수가 한개 미만이라면 -> 커피 갯수 부족 리턴 (406)
+         */
 
+        // 오늘의 카페에 등록된 운세 메세지가 있는지 확인
+        int visitedAtValue = Integer.parseInt(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd")));
+        long memberId = memberService.getMemberIdAndNicknameByJwtToken().getId();
+        String nickname = memberService.getMemberIdAndNicknameByJwtToken().getNickname();
+        Long cafeId = cafeAuthRepository.findById(nickname).get().getCafeId(); // @CafeAuth 를 거쳐왔기 때문에 null일 수 없음
+
+        CafeVisitLog cafeVisitLog = cafeVisitLogRepository
+                .findByVisitedAtAndMemberIdAndCafeId(visitedAtValue, memberId, cafeId)
+                .orElseThrow(() -> new TodayCafeException(TodayCafeExceptionType.NO_VISIT_LOG)); // 204 -> 잘못된 요청
+
+        MemberCoin memberCoin = memberCoinRepository
+                .findByMemberId(memberId).orElseThrow(() -> new MemberException(MemberExceptionType.MEMBER_DB_ERR));
+        int coffeeCount = memberCoin.getCoffeeCount();
+
+        // 운세를 뽑은적이 없다면 무료로 운세 뽑고 리턴
+        if (cafeVisitLog.getFortuneId() == 0) {
+            Map.Entry<Long, String> randomFortune = getRandomFortune();
+            FortuneResponseDto fortuneResponseDto = FortuneResponseDto.builder()
+                    .content(randomFortune.getValue())
+                    .coffeeCnt(coffeeCount)
+                    .build();
+            cafeVisitLog.updateFortune(randomFortune.getKey());
+            return fortuneResponseDto;
+        }
+
+        // 운세 뽑은적이 있다면, 코인 차감하고 리턴
+        //// 근데 만약 재화가 부족하다면 에러 리턴
+        if (coffeeCount < 1) {
+            throw new TodayCafeException(TodayCafeExceptionType.NO_COFFEE); // 406
+        }
+
+        //// 재화가 부족하지 않다면 재화를 차감하고 운세 리턴
+        Map.Entry<Long, String> randomFortune = getRandomFortune();
+        while (randomFortune.getKey() == cafeVisitLog.getFortuneId()) {
+            randomFortune = getRandomFortune();
+        }
+
+        FortuneResponseDto fortuneResponseDto = FortuneResponseDto.builder()
+                .content(getRandomFortune().getValue())
+                .build();
+
+        memberCoin.useOneCoffee();
+        cafeVisitLog.updateFortune(randomFortune.getKey());
+
+        return fortuneResponseDto;
+    }
+
+    // 2. 운세 랜덤으로 뽑기
+    public Map.Entry<Long, String> getRandomFortune() {
         int fortuneSize = fortuneRepository.findAll().size();
         double randomInt = fortuneSize * Math.random();
         Long fortuneId = (long) (Math.ceil(randomInt)); // 0이 나오지 않게하기 위해 올림 처리
-        System.out.println("fortuneSize : " + fortuneSize + ", fortuneId : " + fortuneId);
         Optional<Fortune> optionalFortune = fortuneRepository.findById(fortuneId);
         Fortune fortune = optionalFortune.get();
-        System.out.println("운세 만들어졌어요");
         return new AbstractMap.SimpleEntry<>(fortuneId, fortune.getContent());
     }
 
@@ -173,10 +230,9 @@ public class TodayCafeServiceImpl implements TodayCafeService {
         CafeVisitLog cafeVisitLog = optionalCafeVisitLog.get();
         FortuneResponseDto fortuneResponseDto;
         if (type == 1) { // 1뽑 - 재화없이 뽑기
-            fortune = getFortune();
+            fortune = getRandomFortune();
             fortuneResponseDto = FortuneResponseDto.builder()
                     .content(fortune.getValue())
-                    .responseType(1)
                     .coffeeCnt(coffeeCnt)
                     .build();
 
@@ -186,19 +242,17 @@ public class TodayCafeServiceImpl implements TodayCafeService {
         } else if (type == 2) { // 커피 하나로 뽑기
             if (coffeeCnt >= 1) { // coffee 가 있으면
 
-                fortune = getFortune();
+                fortune = getRandomFortune();
 
                 while (fortune.getKey() == cafeVisitLog.getFortuneId()) {
-                    fortune = getFortune();
+                    fortune = getRandomFortune();
                     System.out.println("todayserviceImpl : " + fortune.getKey());
                 }
                 fortuneResponseDto = FortuneResponseDto.builder()
-                        .content(getFortune().getValue())
-                        .responseType(2)
+                        .content(getRandomFortune().getValue())
                         .build();
 
                 memberCoin.useOneCoffee();
-                fortuneResponseDto.updateCoffeeCnt(coffeeCnt - 1);
                 cafeVisitLog.updateFortune(fortune.getKey());
 
                 return fortuneResponseDto;
