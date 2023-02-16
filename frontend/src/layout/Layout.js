@@ -10,7 +10,7 @@ const Layout = (props) => {
   const path = location.pathname
   return (
     <Fragment>
-      <Container>
+      <Container style={{paddingBottom: '8rem'}}>
         <Grid>
           <Grid.Column
             id="side-col"
@@ -46,7 +46,7 @@ const Layout = (props) => {
           </Grid.Column>
         </Grid>
       </Container>
-      <MainNavigation />
+      <MainNavigation isCafeAuth={props.isCafeAuth}/>
     </Fragment>
   )
 }
