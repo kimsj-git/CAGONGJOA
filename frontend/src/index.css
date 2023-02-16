@@ -73,6 +73,13 @@ body {
   font-style: normal;
 }
 
+.ui.icon {
+  font-family: "Lato" !important;
+}
 .side-bar * {
   font-family: "IM_Hyemin-Bold" !important;
+}
+
+* {
+  font-family: "GangwonEdu_OTFBoldA";
 }
