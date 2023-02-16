@@ -20,7 +20,7 @@ const MainNavigation = (props) => {
     <div
       className={classes.navbar}
       style={{
-        display: path === "/login" || path === "/oauth/kakao" ? "none" : "",
+        display: path === "/login" || path === "/oauth/kakao" || path === "/signup" ?  "none" : "",
         zIndex: "10",
       }}
     >

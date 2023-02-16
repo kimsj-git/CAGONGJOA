@@ -85,7 +85,7 @@ const SideNavigation = ({
       responseData.httpStatus === "UNAUTHORIZED" &&
       responseData.data.sign === "JWT"
     ) {
-      getAccessToken()
+      getAccessToken({func:logout})
     } else if (responseData.httpStatus === "OK") {
       setIsAuthenticated(undefined)
       setIsCafeAuth("0")
@@ -107,7 +107,7 @@ const SideNavigation = ({
         paddingInline: "1.5rem 0.5rem",
         borderRight: "1px solid lightgray",
         height: "100vh",
-        display: path === "/login" || path === "/oauth/kakao" ? "none" : "",
+        display: path === "/login" || path === "/oauth/kakao" || path === "/signup" ? "none" : "",
       }}
     >
       <div style={{ margin: "0.5rem 0rem 1.5rem" }}>
