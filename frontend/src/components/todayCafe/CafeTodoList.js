@@ -77,7 +77,12 @@ const CafeTodoList = (props) => {
         Authorization: `Bearer ${sessionStorage.getItem("accessToken")}`,
       },
     })
-    // dispatch(todoActions.addTodo(todoData))
+  }
+
+  const handleKeyPress = (event) => {
+    if (event.key === "Enter") {
+      submitHandler(event)
+    }
   }
 
   // 할일 체크 토글
@@ -145,10 +150,10 @@ const CafeTodoList = (props) => {
                     onChange={inputChangeHandler}
                     style={{ width: "calc(100% - 50px)" }}
                     disabled={(cafeAuth === '0' || cafeAuth === null)}
+                    onKeyPress={handleKeyPress}
                   />
                   <Button
                     icon="add"
-                    // positive
                     floated="right"
                     onClick={submitHandler}
                     disabled={(cafeAuth === '0' || cafeAuth === null)}
