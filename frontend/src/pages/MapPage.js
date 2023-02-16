@@ -1,16 +1,20 @@
 import MapDiv from "../components/map/MapDiv"
+import "animate.css"
 import { Segment, Image } from "semantic-ui-react"
 import { useHistory } from "react-router-dom"
 import { useSelector } from "react-redux"
 import { BsFillPatchQuestionFill } from "react-icons/bs"
 import { RiArrowDropUpLine } from "react-icons/ri"
+import { useState } from "react"
 
 const MapPage = () => {
   const history = useHistory()
   const isCafeAuth = sessionStorage.getItem("cafeAuth")
   const isFindFeed = useSelector((state) => state.cafe.isFindFeed)
+  const [mapOpened, setMapOpened] = useState(true)
 
   const closeMapHandler = () => {
+    setMapOpened(false)
     history.push("/")
   }
 
@@ -69,7 +73,7 @@ const MapPage = () => {
           />
         </div>
       </Segment>
-      <MapDiv />
+      <MapDiv upDown={mapOpened} />
     </div>
   )
 }

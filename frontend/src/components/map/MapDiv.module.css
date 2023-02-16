@@ -5,15 +5,28 @@
   position: absolute;
   bottom: 0;
   left: 0;
+  animation: mapSlideUp 0.5s ease-in-out;
+}
+
+.mapSideUp {
+  animation: mapSlideUp;
+  transition: animation 0.5s ease-in-out;
+}
+
+.mapSlideDown {
+  animation: mapSlideDown;
+  transition: animation 0.5s ease-in-out;
 }
 
 .myLocationBtn {
   display: flex;
   position: absolute;
-  right: 3%;
-  bottom: 2rem;
-  height: 3em;
-  width: 3em;
+  right: 3em;
+  top: 2em;
+  background-color: var(--custom-beige);
+  border-radius: 100%;
+  padding: 5px;
+
   z-index: 2;
 }
 
@@ -38,5 +51,23 @@
     left: 25%;
     top: 5rem;
     z-index: 2; */
+  }
+}
+
+@keyframes mapSlideUp {
+  0% {
+    transform: translateY(100%);
+  }
+  100% {
+    transform: translateY(0%);
+  }
+}
+
+@keyframes mapSlideDown {
+  0% {
+    transform: translateY(0%);
+  }
+  100% {
+    transform: translateY(100%);
   }
 }

@@ -12,8 +12,9 @@ import MapSpinner from "./MapSpinner"
 import MapGoToPosition from "./MapGoToPosition"
 import MapCafeFilterCarousel from "./MapCafeFilterCarousel"
 import MapLookFeed from "./MapLookFeed"
+import { MdOutlineMyLocation } from "react-icons/md"
 
-const MapDiv = () => {
+const MapDiv = (props) => {
   const history = useHistory()
   const dispatch = useDispatch()
   const [center, setCenter] = useState({
@@ -86,7 +87,7 @@ const MapDiv = () => {
   }
 
   return (
-    <>
+    <div>
       <Map
         center={{ lat: center.lat, lng: center.lng }}
         level={3}
@@ -143,14 +144,14 @@ const MapDiv = () => {
             )
           })}
         <MapCircle lat={center.lat} lng={center.lng} />
-        <Button
-          className={classes.myLocationBtn}
-          icon
+
+        <MdOutlineMyLocation
+          size="40"
           circular
+          color="red"
           onClick={goToMyPosition}
-        >
-          <Image src={require("../../assets/icons/kagongjoa_logo.png")} />
-        </Button>
+          className={classes.myLocationBtn}
+        />
 
         <div
           style={{
@@ -183,7 +184,7 @@ const MapDiv = () => {
         <MapCafeFilterCarousel className={classes.filterCorousel} />
         <MapSpinner />
       </Map>
-    </>
+    </div>
   )
 }
 
