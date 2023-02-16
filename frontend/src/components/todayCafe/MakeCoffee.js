@@ -64,7 +64,7 @@ const MakeCoffee = () => {
       setStepOpen(true)
       const makingCoffee = setInterval(() => {
         rotateSteps(activeStep)
-      }, 500)
+      }, 700)
 
       setTimeout(() => {
         clearInterval(makingCoffee)
@@ -80,7 +80,7 @@ const MakeCoffee = () => {
           coffeeBeanCnt: responseData.data.coffeeBeanCnt,
         }
         sessionStorage.setItem("todayCafe", JSON.stringify(todayCafe))
-      }, 10000)
+      }, 5150)
     }
   }
 
