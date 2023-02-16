@@ -1,37 +1,10 @@
 import { Item } from "semantic-ui-react"
-import { useDispatch } from "react-redux"
 import MyPostDetail from './MyPostDetail'
 
 import classes from "./MyPostsItem.module.css"
-import { postsActions } from "../../../store/posts"
-import useFetch from "../../../hooks/useFetch"
 
-const DEFAULT_REST_URL = process.env.REACT_APP_REST_DEFAULT_URL
-
-const MyPostsItem = ({ post, likePlus, likeCancel }) => {
-  const dispatch = useDispatch()
+const MyPostsItem = ({ post }) => {
   const content = post.content.length>50 ? `${post.content.substr(0, 50)}...` : post.content
-  const { data, isLoading, sendRequest: fetchLike } = useFetch()
-  console.log(post)
-  
-  const likePost = async (isLiked) => {
-    isLiked
-      ? likePlus(post.postId)
-      : likeCancel(post.postId)
-    await fetchLike({
-      url: `${DEFAULT_REST_URL}/main/post/like`,
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${sessionStorage.getItem("accessToken")}`,
-        "Content-Type": "application/json",
-      },
-      body: {
-        postId: post.postId,
-        isChecked: isLiked,
-      },
-    })
-    console.log(data)
-  }
 
   return (
     <Item className={classes.items}>
@@ -51,7 +24,7 @@ const MyPostsItem = ({ post, likePlus, likeCancel }) => {
           <span dangerouslySetInnerHTML={{ __html: content }}></span>
         </Item.Meta>
         <Item.Extra className={classes.detailBtn} >
-        <MyPostDetail post={post} likeHandler={likePost}/>
+        <MyPostDetail post={post}/>
         </Item.Extra>
       </Item.Content>
     </Item>

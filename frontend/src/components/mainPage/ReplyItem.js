@@ -4,12 +4,15 @@ import ToggleButton from "../common/ToggleButton"
 import useFetch from "../../hooks/useFetch"
 import { useDispatch } from "react-redux"
 import { commentsActions } from "../../store/comments"
+import ElapsedText from './ElapsedText'
 const DEFAULT_REST_URL = process.env.REACT_APP_REST_DEFAULT_URL
 const ReplyItem = (props) => {
+  console.log(props)
   const dispatch = useDispatch()
   const reply = props.reply
   const isWriterVerified = reply.writerType
   const [confirmOpen, setConfirmOpen] = useState(false)
+  const elapsedTime = ElapsedText(props.reply.createdAt)
   const { data, isLoading, sendRequest: fetchLike } = useFetch()
 
   const likeReply = (isLiked) => {
@@ -43,7 +46,7 @@ const ReplyItem = (props) => {
             <Icon name="chess queen" color="orange" />
             <Comment.Metadata content={isWriterVerified ? reply.verifiedCafeName : null } />
           </div>
-          <Comment.Metadata content={reply.createdAt} />
+          <Comment.Metadata content={elapsedTime} />
         </Comment.Author>
         <Comment.Text style={{ fontSize: "1.1rem", lineHeight: "1.5" }}>
           {reply.content}

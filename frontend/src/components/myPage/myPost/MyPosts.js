@@ -2,7 +2,6 @@ import { useEffect, useState } from "react"
 import { useInView } from "react-intersection-observer"
 import { Item } from "semantic-ui-react"
 import { ScrollTop } from "primereact/scrolltop"
-import Logout from "../../member/logout/Logout"
 import MyPostsItem from "./MyPostsItem"
 
 
@@ -13,14 +12,7 @@ const MyPosts = () => {
   const [myPosts, setMyPosts] = useState([])
   const [requestPost, setRequestPost] = useState([])
   const [noPost, setNoPost] = useState(false)
-  const likePlus = (postId) => {
-    console.log(myPosts.find((post)=>post.postId === postId))
-    myPosts.find((post)=> post.postId === postId).postLikeCount += 1
-  }
-  const likeCancel = (postId) => {
-    myPosts.find((post)=> post.postId === postId).postLikeCount -= 1
-  }
-
+  
   const getMyPosts = async () => {
     const response = await fetch(
       `${REST_DEFAULT_URL}/myPage/myFeed?postId=${postId}`,
@@ -33,7 +25,6 @@ const MyPosts = () => {
   
 
     const responseData = await response.json()
-    console.log(responseData)
     if (responseData.httpStatus === "OK") {
       return { sign: "OK", data: responseData.data }
     } else if (responseData.httpStatus === "NO_CONTENT") {
@@ -99,7 +90,7 @@ const MyPosts = () => {
         }}
       >
         {myPosts.map((post) => {
-          return <MyPostsItem post={post} key={post.postId} likePlus={likePlus} likeCancel={likeCancel}/>
+          return <MyPostsItem post={post} key={post.postId}/>
         })}
         <ScrollTop threshold={500}/>
       {noPost &&<p>더 이상 게시물이 없습니다..</p>}

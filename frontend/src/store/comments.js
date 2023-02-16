@@ -13,7 +13,6 @@ const commentsSlice = createSlice({
   reducers: {
     // comments 업데이트
     updateComments(state, actions) {
-      console.log('업데이트코멘츠')
       if (actions.payload.lastCommentId === -1) {
         state.comments = []
       }
@@ -26,7 +25,6 @@ const commentsSlice = createSlice({
     },
 
     updateReplies(state, action) {
-      console.log('업데이트리플라이즈')
       const parentComment = action.payload
       const parentIdx = state.comments.findIndex(
         (comment) => comment.commentId === parentComment.commentId
@@ -48,7 +46,6 @@ const commentsSlice = createSlice({
     deleteReply(state, action) {
       const {parentId, deletedReplyId} = action.payload
       const parentIdx = state.comments.findIndex((comment) => comment.commentId === parentId)
-      console.log('이게 없다고?', state.comments[parentIdx])
       state.comments[parentIdx].replies = state.comments[parentIdx].replies.filter((reply) => reply.commentId !== deletedReplyId)
       
     },
@@ -66,7 +63,6 @@ const commentsSlice = createSlice({
     // comment 좋아요/좋아요 취소
     likeComment(state, action) {
       const {commentId, num} = action.payload
-      console.log(commentId, num)
       state.comments.find(
         (comment) => comment.commentId === commentId
       ).commentLikeCnt += num
@@ -77,6 +73,10 @@ const commentsSlice = createSlice({
       const parentComment = state.comments.find(
         (comment) => comment.commentId === parentId)
       parentComment.replies.find((reply) => reply.commentId === replyId).commentLikeCnt += num
+    },
+    closeModal(state){
+      state.lastCommentId = -1
+      state.comments = []
     },
   },
 })
