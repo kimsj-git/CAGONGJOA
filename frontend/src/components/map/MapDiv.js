@@ -33,7 +33,7 @@ const MapDiv = (props) => {
       findMapCafeList({
         lat: JSON.parse(sessionStorage.getItem("location")).lat,
         lng: JSON.parse(sessionStorage.getItem("location")).lng,
-        distance: 0.3,
+        distance: 0.2,
       })
     )
   }, [dispatch])

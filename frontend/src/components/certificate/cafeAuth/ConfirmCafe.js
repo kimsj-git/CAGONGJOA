@@ -4,6 +4,7 @@ import { useSelector, useDispatch } from "react-redux"
 import { Modal, Button, ModalActions, Icon } from "semantic-ui-react"
 
 import { modalActions } from "../../../store/modal"
+import exceptionHandler from "../../common/exceptionHandler"
 
 const REST_DEFAULT_URL = process.env.REACT_APP_REST_DEFAULT_URL
 
@@ -90,7 +91,7 @@ const ConfirmCafe = ({ setIsCafeAuth, setIsJamSurvey }) => {
           dispatch(modalActions.toggleNearCafeListModal())
         }
       } else if (
-        responseData.httpStatus === "BAD_REQUEST" &&
+        responseData.httpStatus === "UNAUTHORIZED" &&
         responseData.data.sign === "JWT"
       ) {
         const response = await fetch(`${REST_DEFAULT_URL}/member/refresh`, {
@@ -105,16 +106,18 @@ const ConfirmCafe = ({ setIsCafeAuth, setIsJamSurvey }) => {
         if (responseData.httpStatus !== "OK") {
           sessionStorage.clear()
           alert("세션 만료되었습니다.")
-          history.push("/login")
+          window.location.href = '/login'
         } else if (responseData.httpStatus === "OK") {
           sessionStorage.setItem("accessToken", responseData.data.accessToken)
-          alert("카페 인증에 실패했습니다.")
+          okBtnHandler(location)
         }
       } else {
-        alert("카페 인증에 실패했습니다.")
+        exceptionHandler(location)
+        window.location.href = '/error'
       }
     } else {
-      alert("카페 인증에 실패했습니다.")
+      exceptionHandler(location)
+      window.location.href = '/error'
     }
     dispatch(modalActions.toggleConfirmCafeModal())
     dispatch(modalActions.toggleNearCafeListModal())

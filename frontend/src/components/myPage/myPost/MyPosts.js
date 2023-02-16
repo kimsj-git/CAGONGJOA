@@ -30,7 +30,7 @@ const MyPosts = () => {
     } else if (responseData.httpStatus === "NO_CONTENT") {
       return "NO"
     } else if (
-      responseData.httpStatus === "BAD_REQUEST" &&
+      responseData.httpStatus === "UNAUTHORIZED" &&
       responseData.data.sign === "JWT"
     ) {
       const response = await fetch(`${REST_DEFAULT_URL}/member/refresh`, {
@@ -43,9 +43,9 @@ const MyPosts = () => {
       })
       const responseData = await response.json()
       if (responseData.httpStatus !== "OK") {
-        alert("세션이 만료되었습니다.")
         sessionStorage.clear()
         window.location.href = '/login'
+        alert("세션이 만료되었습니다.")
       } else if (responseData.httpStatus === "OK") {
         sessionStorage.setItem("accessToken", responseData.data.accessToken)
         getMyPosts()

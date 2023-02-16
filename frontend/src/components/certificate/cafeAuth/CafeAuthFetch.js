@@ -73,9 +73,9 @@ const CafeAuthFetch = async () => {
           accTime: response2Data.data.accTime,
         }
         if (
-          (responseData.httpStatus === "401" &&
+          (responseData.httpStatus === "UNAUTHORIZED" &&
             responseData.data.sign === "JWT") ||
-          (response2Data.httpStatus === "401" &&
+          (response2Data.httpStatus === "UNAUTHORIZED" &&
             response2Data.data.sign === "JWT")
         ) {
           const response = await fetch(`${REST_DEFAULT_URL}/member/refresh`, {
@@ -95,11 +95,12 @@ const CafeAuthFetch = async () => {
             sessionStorage.setItem("accessToken", responseData.data.accessToken)
             CafeAuthFetch()
           }
+        }else{
+          console.log(todayCafe)
+          console.log(myCafe)
+          sessionStorage.setItem("todayCafe", JSON.stringify(todayCafe))
+          sessionStorage.setItem("myCafe", JSON.stringify(myCafe))
         }
-        console.log(todayCafe)
-        console.log(myCafe)
-        sessionStorage.setItem("todayCafe", JSON.stringify(todayCafe))
-        sessionStorage.setItem("myCafe", JSON.stringify(myCafe))
       }
     } else {
       throw new Error("fetch error")
