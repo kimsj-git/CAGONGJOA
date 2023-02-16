@@ -20,12 +20,19 @@ public class FortuneController {
 
     @Auth
     @CafeAuth
-    @GetMapping
-    public ResponseEntity<ResponseDTO> getFortune() {
-        FortuneResponseDto fortuneResponseDto = todayCafeService.getFortune();
+    @PostMapping
+    public ResponseEntity<ResponseDTO> pickFortune() {
+        FortuneResponseDto fortuneResponseDto = todayCafeService.pickFortune();
         ResponseDTO responseDTO = new ResponseDTO("운세 뽑기 완료!", "", HttpStatus.OK, fortuneResponseDto);
         return new ResponseEntity<>(responseDTO, HttpStatus.OK);
     }
 
-
+    @Auth
+    @CafeAuth
+    @GetMapping
+    public ResponseEntity<ResponseDTO> getFortune() {
+        FortuneResponseDto fortuneResponseDto = todayCafeService.getFortune();
+        ResponseDTO responseDTO = new ResponseDTO("운세 가져오기 완료!", "", HttpStatus.OK, fortuneResponseDto);
+        return new ResponseEntity<>(responseDTO, HttpStatus.OK);
+    }
 }
