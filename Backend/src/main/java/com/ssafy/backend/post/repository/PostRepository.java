@@ -10,6 +10,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface PostRepository extends JpaRepository<Post, Long> {
 //    Optional<Post> findByMemberId(Long memberId);
@@ -36,4 +37,7 @@ public interface PostRepository extends JpaRepository<Post, Long> {
 
     @Query("select p from Post p left join p.commentList cl where cl.id in :commentIdList")
     List<Post> findAllByCommentIdIn(@Param("commentIdList") List<Long> commentIdList);
+
+    @Query("select p from Post p WHERE p.member.id = :memberId and DATE_FORMAT(p.createdAt, '%Y-%m-%d') = DATE_FORMAT(CURRENT_DATE, '%Y-%m-%d') and p.isCafeAuthorized = false")
+    Optional<Post> findUserUnAuthorizedPostedToday(@Param("memberId") Long memberId);
 }
