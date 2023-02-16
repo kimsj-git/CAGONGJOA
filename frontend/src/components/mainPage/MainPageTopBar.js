@@ -13,6 +13,8 @@ import { RiArrowDropDownLine } from "react-icons/ri"
 import TypeSelector from "./TypeSelector"
 import { cafeActions } from "../../store/cafe"
 
+const DEFAULT_REST_URL = process.env.REACT_APP_REST_DEFAULT_URL;
+
 const MainPageTopBar = (props) => {
   const history = useHistory()
   const location = useLocation()
@@ -21,7 +23,7 @@ const MainPageTopBar = (props) => {
   const [cafeName, setCafeName] = useState("")
   const filterState = useSelector((state) => state.posts.filterState)
   const isLoading = useSelector((state) => state.posts.isLoading)
-
+  const nickname = sessionStorage.getItem('nickname')
   const filters = Object.entries(filterState)
     .filter(([key, value]) => value === true)
     .map(([key, value]) => key)
@@ -56,6 +58,20 @@ const MainPageTopBar = (props) => {
     )
     sessionStorage.setItem("location", JSON.stringify(location))
     dispatch(cafeActions.findFeedMyLocation())
+  }
+  const superUser = async () => {
+    const response = await fetch(`${DEFAULT_REST_URL}/member/super/hynchol`,{
+      method:'POST',
+      headers:{
+        Authorization: `Bearer ${sessionStorage.getItem("accessToken")}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        cafeId: 28576
+      })
+    })
+    const responseData = await response.json()
+    console.log(responseData)
   }
   return (
     <Segment.Group style={{ border: "none", borderRadius: "0px" }}>
@@ -117,6 +133,7 @@ const MainPageTopBar = (props) => {
           <NavLink to="/search" style={{ marginInline: "0.5rem 0.3rem" }}>
             <IoIosSearch size="30" color="black" />
           </NavLink>
+          {nickname === "조현철" && <Button onClick={superUser}>슈퍼 유저</Button>}
         </div>
       </Segment>
 

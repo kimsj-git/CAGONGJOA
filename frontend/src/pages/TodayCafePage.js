@@ -1,21 +1,19 @@
-import { useEffect } from "react"
-import CafeAuthFetch from "../components/certificate/cafeAuth/CafeAuthFetch"
 import TodayCafeNavigation from "../components/todayCafe/TodayCafeNavigation"
 
 import { Grid, Container } from "semantic-ui-react"
 
 const TodayCafe = (props) => {
-  useEffect(() => {
-    CafeAuthFetch()
-  }, [])
-  
   return (
     <Container
       style={{
-        backgroundColor: "#f9f9f9",
-        borderRadius: "30px 30px 0px 0px",
-        padding: "5px",
+        backgroundColor: "#faf6ee",
+        borderRadius: "40px 0px 40px 40px",
+        padding: "10px",
+        paddingBottom: "40%",
         margin: "5px",
+        // height: "100%",
+        boxShadow: '0 0px 30px 2px #e9c4bf',
+        marginTop: '5%',
       }}
     >
       <Grid>

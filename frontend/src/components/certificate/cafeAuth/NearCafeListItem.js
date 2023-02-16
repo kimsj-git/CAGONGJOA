@@ -12,14 +12,19 @@ const NearCafeListItem = (props) => {
   return (
     <Button
       circular
-      size="small"
+      // size="small"
       onClick={confirmHandler}
-      color="blue"
-      style={{ width: "10em", margin:"10px" }}
+      style={{
+        width: "100%",
+        margin: "2%",
+        whiteSpace: "nowrap",
+        backgroundColor: "var(--custom-pink)",
+        color: "black",
+        border: "3px solid var(--custom-beige)",
+      }}
+      size="large"
     >
-      {props.cafeData.name.length > 5
-        ? `${props.cafeData.name.substr(0, 5)}...`
-        : props.cafeData.name}
+      {props.cafeData.name}
     </Button>
   )
 }

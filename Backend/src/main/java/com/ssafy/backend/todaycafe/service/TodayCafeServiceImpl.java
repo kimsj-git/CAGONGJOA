@@ -84,8 +84,46 @@ public class TodayCafeServiceImpl implements TodayCafeService {
     /**
      * 2. 오늘의운세 주기
      **/
+
     @Override
     public FortuneResponseDto getFortune() {
+        // 오늘의 카페에 등록된 운세 메세지가 있는지 확인
+        int visitedAtValue = Integer.parseInt(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd")));
+        long memberId = memberService.getMemberIdAndNicknameByJwtToken().getId();
+        String nickname = memberService.getMemberIdAndNicknameByJwtToken().getNickname();
+        Long cafeId = cafeAuthRepository.findById(nickname).get().getCafeId(); // @CafeAuth 를 거쳐왔기 때문에 null일 수 없음
+
+        CafeVisitLog cafeVisitLog = cafeVisitLogRepository
+                .findByVisitedAtAndMemberIdAndCafeId(visitedAtValue, memberId, cafeId)
+                .orElseThrow(() -> new TodayCafeException(TodayCafeExceptionType.NO_VISIT_LOG)); // 204 -> 잘못된 요청
+
+        MemberCoin memberCoin = memberCoinRepository
+                .findByMemberId(memberId).orElseThrow(() -> new MemberException(MemberExceptionType.MEMBER_DB_ERR));
+        int coffeeCount = memberCoin.getCoffeeCount();
+
+        // 현재 뽑은 운세 id로 운세 내용 가져오기
+        long todayFortuneId = cafeVisitLog.getFortuneId();
+        String fortuneContent = "";
+
+        // 운세 내용 넣어주기
+        if (todayFortuneId != 0) {
+            fortuneContent = fortuneRepository.findById(todayFortuneId).get().getContent();
+        }
+
+        FortuneResponseDto fortuneResponseDto = FortuneResponseDto.builder()
+                .content(fortuneContent)
+                .coffeeCnt(coffeeCount)
+                .build();
+
+        return fortuneResponseDto;
+    }
+
+    /**
+     * 2.2 운세 뽑기
+     * @return
+     */
+    @Override
+    public FortuneResponseDto pickFortune() {
         /**
          * 오늘의 카페에 등록된 운세 메세지가 있는지 확인한다
          * -> 등록된 운세 메세지가 없다면 처음뽑기니까 return 200 ok
@@ -552,4 +590,6 @@ public class TodayCafeServiceImpl implements TodayCafeService {
 
         return cafeVisitLog.isSurvey();
     }
+
+
 }

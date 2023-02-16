@@ -20,6 +20,8 @@ import { IoIosSearch } from "react-icons/io"
 import { IoSearch } from "react-icons/io5"
 import CafeAuth from "../components/certificate/cafeAuth/CafeAuth"
 import "./SideNavigation.css"
+import getAccessToken from "../hooks/getAccessToken"
+import Logout from "../components/member/logout/Logout"
 
 const DEFAULT_REST_URL = process.env.REACT_APP_REST_DEFAULT_URL
 
@@ -41,12 +43,12 @@ const SideNavigation = ({
     "/search": "search",
   }
   const navigationPath = {
-    "home": "/",
+    home: "/",
     "today-cafe": "/today-cafe",
     "make-coffee": "/today-cafe/make-coffee",
-    "fortune": "/today-cafe/fortune",
-    "mypage": "/mypage",
-    "search": "/search",
+    fortune: "/today-cafe/fortune",
+    mypage: "/mypage",
+    search: "/search",
   }
   // console.log(isCafeAuth)
   const [activeItem, setActiveItem] = useState(directory[location.pathname])
@@ -57,7 +59,7 @@ const SideNavigation = ({
       setPrevItem(activeItem)
     }
     if (name === "location") {
-      // 위치인증 모달.. 
+      // 위치인증 모달..
     } else if (name === "post") {
       // 글쓰기 모달..
     } else {
@@ -79,33 +81,16 @@ const SideNavigation = ({
       },
     })
     const responseData = await response.json()
-    console.log(responseData)
     if (
       responseData.httpStatus === "UNAUTHORIZED" &&
       responseData.data.sign === "JWT"
     ) {
-      const response = await fetch(`${DEFAULT_REST_URL}/member/refresh`, {
-        method: "GET",
-        headers: {
-          "Authorization-RefreshToken": `Bearer ${sessionStorage.getItem(
-            "refreshToken"
-          )}`,
-        },
-      })
-      const responseData = await response.json()
-      if (responseData.httpStatus !== "OK") {
-        sessionStorage.clear()
-        alert("세션이 만료되었습니다.")
-        history("/login")
-      } else if (responseData.httpStatus === "OK") {
-        sessionStorage.setItem("accessToken", responseData.data.accessToken)
-        alert("다시 시도해주세요")
-      }
+      getAccessToken()
     } else if (responseData.httpStatus === "OK") {
       setIsAuthenticated(undefined)
       setIsCafeAuth("0")
       sessionStorage.clear()
-      history.push("/login")
+      window.location.href ='/login'
     } else {
       alert("오류가 발생했습니다.")
     }
@@ -319,11 +304,7 @@ const SideNavigation = ({
             </div>
           </NavLink>
         </Menu.Item>
-        <Menu.Item
-          name="logout"
-          link
-          onClick={logout}
-        >
+        <Menu.Item name="logout" link onClick={logout}>
           <div
             style={{
               display: "flex",

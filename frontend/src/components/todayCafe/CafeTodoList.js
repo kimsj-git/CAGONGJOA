@@ -38,7 +38,7 @@ const CafeTodoList = (props) => {
 
   useEffect(() => {
     if (todosList !== null) {
-      setTodos(todosList)
+      setTodos(todosList.reverse())
     } else if ( todosList === null) {
       setTodos([])
     }
@@ -77,7 +77,12 @@ const CafeTodoList = (props) => {
         Authorization: `Bearer ${sessionStorage.getItem("accessToken")}`,
       },
     })
-    // dispatch(todoActions.addTodo(todoData))
+  }
+
+  const handleKeyPress = (event) => {
+    if (event.key === "Enter") {
+      submitHandler(event)
+    }
   }
 
   // 할일 체크 토글
@@ -136,6 +141,27 @@ const CafeTodoList = (props) => {
       <Grid.Row columns={1}>
         <Grid.Column>
           <Card.Group>
+            {fullDate(todayDate) === fullDate(selectedDate) && (
+              <Card fluid>
+                <Card.Content extra>
+                  <Input
+                    placeholder="할일 추가..."
+                    value={enteredTodo}
+                    onChange={inputChangeHandler}
+                    style={{ width: "calc(100% - 50px)" }}
+                    disabled={(cafeAuth === '0' || cafeAuth === null)}
+                    onKeyPress={handleKeyPress}
+                  />
+                  <Button
+                    icon="add"
+                    floated="right"
+                    onClick={submitHandler}
+                    disabled={(cafeAuth === '0' || cafeAuth === null)}
+                    color="brown"
+                  />
+                </Card.Content>
+              </Card>
+            )}
             {todos && todos.map((todo) => (
               <CafeTodoItem
                 key={todo.id}
@@ -146,26 +172,6 @@ const CafeTodoList = (props) => {
                 deleteHandler={deleteHandler}
               />
             ))}
-            {fullDate(todayDate) === fullDate(selectedDate) && (
-              <Card fluid>
-                <Card.Content extra>
-                  <Input
-                    placeholder="할일 추가..."
-                    value={enteredTodo}
-                    onChange={inputChangeHandler}
-                    style={{ width: "calc(100% - 50px)" }}
-                    disabled={(cafeAuth === '0' || cafeAuth === null)}
-                  />
-                  <Button
-                    icon="add"
-                    positive
-                    floated="right"
-                    onClick={submitHandler}
-                    disabled={(cafeAuth === '0' || cafeAuth === null)}
-                  />
-                </Card.Content>
-              </Card>
-            )}
           </Card.Group>
         </Grid.Column>
       </Grid.Row>

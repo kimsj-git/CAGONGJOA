@@ -1,9 +1,9 @@
-import { Card, Image, Label } from "semantic-ui-react"
+import { Card, Image, Label, Button } from "semantic-ui-react"
 import PostDetail from "./PostDetail"
 import LoadingPost from "./LoadingPost"
 import ToggleButton from "../common/ToggleButton"
 import useFetch from "../../hooks/useFetch.js"
-import { BsFillPatchQuestionFill } from "react-icons/bs"
+import { BsFillPatchQuestionFill, BsChatDotsFill } from "react-icons/bs"
 import { postsActions } from "../../store/posts"
 import { useSelector, useDispatch } from "react-redux"
 import "./Post.css"
@@ -25,15 +25,18 @@ const typeIcon = {
 const PostItem = (props) => {
   const dispatch = useDispatch()
   const brandLogo = useSelector((state) => state.cafe.brandLogo)
-  const longContent = props.content.split("</p>").map((content)=>content.substr(3,content.length))
+  const longContent = props.content
+    .split("</p>")
+    .map((content) => content.substr(3, content.length))
   const [lookMore, setLookMore] = useState(false)
+  const [detailOpen, setDetailOpen] = useState(false)
   const { data, isLoading, sendRequest: fetchLike } = useFetch()
   const elapsedTime = ElapsedText(props.createdAt)
 
   const tierColor = ["#8B6331", "#C0C0C0", "#FF9614", "#3DFF92"][
     parseInt(props.tier / 1000)
   ]
-  
+
   const likePost = async (isLiked) => {
     isLiked
       ? dispatch(postsActions.cancleLikePost(props.id))
@@ -52,8 +55,7 @@ const PostItem = (props) => {
     })
   }
   const commentHandler = (status) => {
-    if (status === "write"){
-      
+    if (status === "write") {
     }
   }
   const carouselTemplate = (img) => {
@@ -81,7 +83,11 @@ const PostItem = (props) => {
         icon={{ name: typeIcon[props.type] }}
         size="large"
       />
-      <Card.Content>
+      <Card.Content
+        onClick={() => {
+          setDetailOpen(true)
+        }}
+      >
         {props.images.length > 1 ? (
           <Carousel
             value={props.images}
@@ -150,14 +156,12 @@ const PostItem = (props) => {
             <Card.Meta>{props.userType ? props.cafeName : null}</Card.Meta>
           </div>
 
-          <Card.Meta textAlign="right">
-            {elapsedTime}
-          </Card.Meta>
+          <Card.Meta textAlign="right">{elapsedTime}</Card.Meta>
         </div>
 
         {!lookMore && longContent.length > 5 && (
           <Card.Description style={{ fontSize: "1.2rem", lineHeight: "1.8" }}>
-            {longContent.slice(0, 4).map((content,index) => {
+            {longContent.slice(0, 4).map((content, index) => {
               return <p key={index}>{content}</p>
             })}
             ...
@@ -207,8 +211,24 @@ const PostItem = (props) => {
             isLiked={props.isLiked}
             iconSize={24}
           />
-
-          <PostDetail post={props} likeHandler={likePost} />
+          <Button
+            id="post-detail-btn"
+            fluid
+            inverted
+            color="green"
+            onClick={() => {
+              setDetailOpen(true)
+            }}
+          >
+            <BsChatDotsFill size={24} style={{ marginRight: "0.5rem" }} />
+            {props.commentCnt}
+          </Button>
+          <PostDetail
+            post={props}
+            likeHandler={likePost}
+            detailOpen={detailOpen}
+            setDetailOpen={setDetailOpen}
+          />
         </div>
       </Card.Content>
     </Card>

@@ -42,7 +42,7 @@ const MapPage = () => {
         >
           {!(isCafeAuth === null || isCafeAuth === "0") ? (
             <Image
-              src={require("../assets/icons/iced_coffee_30.png")}
+              src={require("../assets/icons/iced_coffee.png")}
               size="mini"
               style={{ marginInline: "0.5rem 0.8rem" }}
             />

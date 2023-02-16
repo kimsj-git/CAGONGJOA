@@ -11,7 +11,7 @@ public interface TodayCafeService {
     CoffeeMakeResponseDto makeCoffee(int type);
 
     /** 2. 랜덤 운세   **/
-    FortuneResponseDto getFortune();
+    FortuneResponseDto pickFortune();
 
     /** 3. 카페 방문일지 저장  **/
     AfterCafeAuthResponseDto saveCafeVisit();
@@ -31,4 +31,6 @@ public interface TodayCafeService {
     int getAccTime(int todayDate);
 
     Boolean checkSubmitSurvey(int todayDate);
+
+    FortuneResponseDto getFortune();
 }

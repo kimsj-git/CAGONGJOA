@@ -1,6 +1,7 @@
 // post 관련 상태관리
 
 import { createSlice } from "@reduxjs/toolkit"
+import getAccessToken from "../hooks/getAccessToken"
 const initialPostsState = {
   hasNext: true,
   posts: [
@@ -129,28 +130,15 @@ export const getPosts = (dataSet) => {
         }),
       })
       const responseData = await response.json()
+      console.log(responseData)
       if (
-        responseData.httpStatus === "BAD_REQUEST" &&
+        responseData.httpStatus === "UNAUTHORIZED" &&
         responseData.data.sign === "JWT"
       ) {
-        const response = await fetch(`${DEFAULT_REST_URL}/member/refresh`, {
-          method: "GET",
-          headers: {
-            "Authorization-RefreshToken": `Bearer ${sessionStorage.getItem(
-              "refreshToken"
-            )}`,
-          },
-        })
-        const responseData = await response.json()
-        if (responseData.httpStatus !== "OK") {
-          sessionStorage.clear()
-          window.location.href = "/login"
-        } else {
-          sessionStorage.setItem("accessToken", responseData.data.accessToken)
-          sendRequest(dataSet)
-        }
+        getAccessToken({func:sendRequest, dataSet:dataSet})
       }
       if (responseData.httpStatus === "OK" || responseData.httpStatus === "NO_CONTENT") {
+        console.log(responseData.data)
         return responseData.data
       }
 

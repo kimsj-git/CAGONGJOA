@@ -7,7 +7,8 @@
   z-index: 5;
 }
 
-.p-carousel-container button {
+.p-carousel-container .p-carousel-prev,
+.p-carousel-container .p-carousel-next {
   color: #be4141bd !important;
 }
 .p-carousel-container button span {
@@ -15,11 +16,11 @@
 }
 
 .cafe-type-btn {
-  background-color: var(--custom-pink);
-  color: black;
-  font-weight: bolder;
-  font-size: 1rem;
-  box-shadow: 0px 5px 4px 1px rgb(0 0 0 / 50%);
+  background-color: var(--custom-pink) !important;
+  color: black !important;
+  font-weight: bolder !important;
+  font-size: 0.8rem !important;
+  box-shadow: 0px 2px 5px -1px rgb(0 0 0 / 50%) !important;
 }
 
 .p-carousel-content ul {

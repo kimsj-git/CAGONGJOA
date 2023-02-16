@@ -24,7 +24,7 @@ const DeleteMember = ({ open, setOpen }) => {
       sessionStorage.clear()
       history.push("/login")
     } else if (
-      responseData.httpStatus === "BAD_REQUEST" &&
+      responseData.httpStatus === "UNAUTHORIZED" &&
       responseData.data.sign === "JWT"
     ) {
       //리프레쉬 토큰 보내주기
@@ -39,11 +39,11 @@ const DeleteMember = ({ open, setOpen }) => {
       const responseData = await response.json()
       if (responseData.httpStatus !== "OK") {
         sessionStorage.clear()
-        alert("세션이 만료되었습니다.")
         history.push("/login")
+        alert("세션이 만료되었습니다.")
       } else if (responseData.httpStatus === "OK") {
         sessionStorage.setItem("accessToken", responseData.data.accessToken)
-        alert("다시 시도해 보세요")
+        deleteHandler()
       }
     }
   }

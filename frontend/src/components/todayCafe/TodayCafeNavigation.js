@@ -1,47 +1,70 @@
-import { useState, Fragment } from "react"
-import { NavLink } from "react-router-dom"
-import { Grid, Container, Button } from "semantic-ui-react"
+import { useState } from "react"
+import { NavLink, useLocation, useHistory } from "react-router-dom"
 
 const TodayCafeNavigation = () => {
-  // const [focused, setFocused] = useState({btn1: true, btn2: false, btn2: false})
+  const location = useLocation()
+  const history = useHistory()
+  const directory = {
+    "/today-cafe": "today-cafe",
+    "/today-cafe/make-coffee": "make-coffee",
+    "/today-cafe/fortune": "fortune",
+  }
+  const navigationPath = {
+    "today-cafe": "/today-cafe",
+    "make-coffee": "/today-cafe/make-coffee",
+    "fortune": "/today-cafe/fortune",
+  }
+  const [activeItem, setActiveItem] = useState(directory[location.pathname])
+  const menuClickHandler = (e, { name }) => {
+    setActiveItem(name)
+    if (activeItem !== name) {
+      history.push(navigationPath[name])
+    }
+  }
 
-  // 아직 안됨... useState로 저장해서, 라우터로 다른 페이지 가면 초기화돼서 그런듯.
-  // const navigationHandler = (selectedBtn, e) => {
-  //   // e.preventDefault()
-  //   if (selectedBtn === 0) {
-  //     setFocused({btn1: true, btn2: false, btn2: false})
-  //   }
-  //   else if (selectedBtn === 1) {
-  //     setFocused({btn1: false, btn2: true, btn2: false})
-  //   }
-  //   else if (selectedBtn === 2) {
-  //     setFocused({btn1: false, btn2: false, btn2: true})
-  //   }
-  // }
+  const inactiveStyle = {
+    fontSize: "140%",
+    fontFamily: "GangwonEdu_OTFBoldA",
+    color: "rgba(0, 0, 0, .58)",
+  }
+  const activeStyle = {
+    fontSize: "150%",
+    fontFamily: "GangwonEdu_OTFBoldA",
+    color: "rgba(0, 0, 0, .87)",
+    fontWeight: "900",
+  }
 
   return (
-    <Fragment>
-      <Grid columns={3} divided>
-        <Grid.Column style={{ textAlign: "center" }}>
-          <NavLink to="/today-cafe" >
-            {/* <Button active={focused.btn1} onClick={(e) => navigationHandler(0, e)}>현재 카페</Button> */}
+    <div
+      style={{
+        display: "flex",
+        justifyContent: "space-around",
+        alignItems: "center",
+        padding: "1.5rem",
+      }}
+    >
+      <div name="today-cafe" onClick={menuClickHandler}>
+        <NavLink to="/today-cafe">
+          <p style={activeItem === "today-cafe" ? activeStyle : inactiveStyle}>
             현재 카페
-          </NavLink>
-        </Grid.Column>
-        <Grid.Column style={{ textAlign: "center" }}>
-          <NavLink to="/today-cafe/make-coffee" >
-            {/* <Button active={focused.btn2} onClick={(e) => navigationHandler(1, e)}>커피 내리기</Button> */}
+          </p>
+        </NavLink>
+      </div>
+      <div>
+        <NavLink to="/today-cafe/make-coffee">
+          <p style={activeItem === "make-coffee" ? activeStyle : inactiveStyle}>
             커피 내리기
-          </NavLink>
-        </Grid.Column>
-        <Grid.Column style={{ textAlign: "center" }}>
-          <NavLink to="/today-cafe/fortune" >
-            {/* <Button active={focused.btn3} onClick={(e) => navigationHandler(2, e)}>오늘의 운세</Button> */}
+          </p>
+        </NavLink>
+      </div>
+      <div>
+        <NavLink to="/today-cafe/fortune">
+          <p style={activeItem === "fortune" ? activeStyle : inactiveStyle}>
             오늘의 운세
-          </NavLink>
-        </Grid.Column>
-      </Grid>
-    </Fragment>
+          </p>
+        </NavLink>
+      </div>
+    </div>
   )
 }
 

@@ -74,7 +74,9 @@ const CafeAuth = (props) => {
           </div>
         }
       >
-        <Modal.Header>카페에 방문하셨나요?</Modal.Header>
+        <Modal.Header style={{ textAlign: "center", fontSize: "1.7rem" }}>
+          카페에 방문하셨나요?
+        </Modal.Header>
         <Modal.Content>
           <Button.Group size="huge">
             <Button

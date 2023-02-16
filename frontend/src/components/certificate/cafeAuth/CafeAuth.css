@@ -23,3 +23,48 @@
   border-top-right-radius: 6.285714rem !important;
   border-bottom-right-radius: 6.285714rem !important;
 }
+
+@media (max-width: 768px) {
+  .ui.buttons {
+    display: inline-flex !important;
+    flex-direction: column !important;
+  }
+  .cafe-auth-modal .ui.buttons .button:first-child {
+    padding: 3rem 3rem 4rem !important;
+    border-top-left-radius: 6.285714rem !important;
+    border-top-right-radius: 6.285714rem !important;
+    border-bottom-left-radius: 0rem !important;
+  }
+  .cafe-auth-modal .ui.buttons .button:last-child {
+    padding: 4rem 3rem 3rem !important;
+    border-bottom-left-radius: 6.285714rem !important;
+    border-bottom-right-radius: 6.285714rem !important;
+    border-top-right-radius: 0rem !important;
+  }
+  .cafe-auth-modal .or {
+    height: 0.5em !important;
+    top: -2% !important;
+    left: 45.5% !important;
+    /* top: 50%; */
+    /* left: 2730%; */
+  }
+  .cafe-auth-modal .or::before {
+    /* top: 450% !important;
+    left: -100% !important; */
+    background-color: #763d3d !important;
+    color: rgb(255, 247, 216) !important;
+    width: 2.785714em !important;
+    height: 2.785714em !important;
+    line-height: 2.785714em !important;
+  }
+}
+@media (min-width: 768px) {
+  .cafe-auth-modal .or::before {
+    left: -100% !important;
+    background-color: var(--custom-brown) !important;
+    color: rgb(255, 247, 216) !important;
+    width: 2.785714em !important;
+    height: 2.785714em !important;
+    line-height: 2.785714em !important;
+  }
+}
