@@ -12,7 +12,7 @@ const GetMyCafe = async () => {
     const responseData = await response.json()
     if (responseData.httpStatus === "OK"){
         return responseData.data
-    } else if (responseData.httpStatus === "BAD_REQUEST" && responseData.data.sign==="JWT"){
+    } else if (responseData.httpStatus === "UNAUTHORIZED" && responseData.data.sign==="JWT"){
         const response = await fetch(`${REST_DEFAULT_URL}/member/refresh`, {
             method: "GET",
             headers: {
@@ -24,13 +24,14 @@ const GetMyCafe = async () => {
           const responseData = await response.json()
           if (responseData.httpStatus !== "OK") {
             sessionStorage.clear()
-            Logout()
+            window.location.href = '/login'
+            alert('세션이 만료되었습니다.')
           } else if (responseData.httpStatus === "OK") {
             sessionStorage.setItem("accessToken", responseData.data.accessToken)
             GetMyCafe()
           }
     } else {
-        return "ERROR"
+        window.location.href = '/error'
     }
 }
 

@@ -8,7 +8,6 @@ const MapCafeDetial = (props) => {
   const detailHandler = () => {
     setIsShowMore(!isShowMore)
   }
-  console.log(props)
   return (
     <>
       {props.isLoading ? (

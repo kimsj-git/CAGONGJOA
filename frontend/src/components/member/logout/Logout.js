@@ -30,13 +30,14 @@ const Logout = ({ setIsAuthenticated, setIsCafeAuth }) => {
         },
       })
       const responseData = await response.json()
-      if (responseData.httpStatus !== "OK") {
+      console.log(responseData, 'JWT 확인')
+      if (responseData.httpStatus!=="OK"){
         sessionStorage.clear()
-        alert("세션이 만료되었습니다.")
-        history("/login")
-      } else if (responseData.httpStatus === "OK") {
-        sessionStorage.setItem("accessToken", responseData.data.accessToken)
-        alert("다시 시도해주세요")
+        window.location.href = '/login'
+        alert('세션이 만료되었습니다.')
+      }else if(responseData.httpStatus === "OK"){
+        sessionStorage.setItem('accessToken', responseData.data.accessToken)
+        Logout()
       }
     } else if (responseData.httpStatus === "OK") {
       setIsAuthenticated(undefined)

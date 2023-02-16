@@ -25,12 +25,12 @@ const StudyDetail = () => {
           return b.accTime - a.accTime
         })
     : []
-
+  
   const onCaptureHandler = () => {
     const node = document.getElementsByClassName('p-carousel-item-active')[0].childNodes[0]
     domtoimage
       .toPng(node)
-      .then((dataUrl) => dispatch(imageActions.uploadImage(dataUrl)))
+      .then((dataUrl) => dispatch(imageActions.uploadImage([dataUrl])))
       .catch((error) => console.error(error))
   }
   const logo_url = "coffee_location_red.png"
@@ -118,7 +118,7 @@ const StudyDetail = () => {
   }
   return (
     <>
-      <div style={{display:"flex"}}>
+      <div style={{display:"flex", width:"100%", justifyContent:"center", alignItems:"center"}}>
         {studyDetailList.length > 0 && (
           <Carousel
             value={studyDetailList}

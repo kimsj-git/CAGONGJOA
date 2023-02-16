@@ -6,7 +6,7 @@ const MapCircle = (props) => {
           lat: props.lat,
           lng: props.lng,
         }}
-        radius={200}
+        radius={500}
         strokeWeight={1} // 선의 두께입니다
         strokeColor={"#FF0000"} // 선의 색깔입니다
         strokeOpacity={1} // 선의 불투명도 입니다 1에서 0 사이의 값이며 0에 가까울수록 투명합니다

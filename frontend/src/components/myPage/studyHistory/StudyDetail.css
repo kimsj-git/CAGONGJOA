@@ -19,3 +19,6 @@
   border: 3px dashed black;
   border-radius: 25px;
 }
+.p-carousel{
+  align-items: center;
+}
