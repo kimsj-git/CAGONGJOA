@@ -3,6 +3,7 @@ package com.ssafy.backend.member.controller;
 import com.ssafy.backend.common.annotation.Auth;
 import com.ssafy.backend.common.dto.ResponseDTO;
 import com.ssafy.backend.jwt.dto.TokenRespDto;
+import com.ssafy.backend.member.domain.dto.MemberCoinRespDto;
 import com.ssafy.backend.member.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -50,6 +51,15 @@ public class MemberController {
 //        memberService.logout();
         memberService.deleteMember();
         ResponseDTO responseDTO = new ResponseDTO("회원 삭제 완료!", "", HttpStatus.OK, null);
+        return new ResponseEntity<>(responseDTO, HttpStatus.OK);
+    }
+
+
+    @Auth
+    @GetMapping("/coin")
+    public ResponseEntity<ResponseDTO> getMemberCoin() {
+        MemberCoinRespDto memberCoinRespDto = memberService.getMemberCoin();
+        ResponseDTO responseDTO = new ResponseDTO("회원 재화정보 제공 완료!", "", HttpStatus.OK, memberCoinRespDto);
         return new ResponseEntity<>(responseDTO, HttpStatus.OK);
     }
 
