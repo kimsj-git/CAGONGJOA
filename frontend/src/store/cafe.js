@@ -1,5 +1,6 @@
 // cafe 관련 상태관리
 import { createSlice } from "@reduxjs/toolkit"
+import exceptionHandler from "../components/common/exceptionHandler"
 
 const REST_DEFAULT_URL = process.env.REACT_APP_REST_DEFAULT_URL
 const initialCafeState = {
@@ -111,33 +112,15 @@ export const findNearCafeData = (location) => {
       const responseData = await response.json()
       if (responseData.httpStatus === "OK") {
         return responseData.data
-      } else if (
-        responseData.httpStatus === "BAD_REQUEST" &&
-        responseData.data.sign === "JWT"
-      ) {
-        const response = await fetch(`${REST_DEFAULT_URL}/member/refresh`, {
-          method: "GET",
-          headers: {
-            "Authorization-RefreshToken": `Bearer ${sessionStorage.getItem(
-              "refreshToken"
-            )}`,
-          },
-        })
-        const responseData = await response.json()
-        if (!responseData.httpStatus === "OK") {
-          sessionStorage.clear()
-          sessionStorage.setItem("accessToken", responseData.data.accessToken)
-          sendRequest()
-        } else {
-          sessionStorage.clear()
-        }
+      } else{
+        exceptionHandler(responseData)
       }
     }
     try {
       const cafeData = await sendRequest()
       dispatch(cafeActions.replaceNearCafe(cafeData))
     } catch (error) {
-      console.error(error)
+      window.location.href = '/error'
     }
     dispatch(cafeActions.cafeListLoading())
   }
@@ -162,13 +145,15 @@ export const findCafeList = (dataSet) => {
       const responseData = await response.json()
       if (responseData.httpStatus === "OK") {
         return responseData.data
+      }else{
+        exceptionHandler(responseData)
       }
     }
     try {
       const cafeData = await sendRequest()
       dispatch(cafeActions.replaceNearCafe(cafeData))
     } catch (error) {
-      console.error(error)
+      window.location.href = '/error'
     }
     dispatch(cafeActions.cafeListLoading())
   }
@@ -195,11 +180,11 @@ export const findMapCafeList = (dataSet) => {
           todayTime: sendDate,
         }),
       })
-      console.log(response)
       const responseData = await response.json()
-      console.log(responseData)
       if (responseData.httpStatus === "OK") {
         return responseData.data
+      }else{
+        exceptionHandler(responseData)
       }
     }
     try {
@@ -213,7 +198,7 @@ export const findMapCafeList = (dataSet) => {
       }
       dispatch(cafeActions.replaceCafeBrandList(cafeFilterList))
     } catch (error) {
-      console.error(error)
+      window.location.href = '/error'
     }
     dispatch(cafeActions.cafeListLoading())
   }

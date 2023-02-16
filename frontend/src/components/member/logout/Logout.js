@@ -30,7 +30,6 @@ const Logout = ({ setIsAuthenticated, setIsCafeAuth }) => {
         },
       })
       const responseData = await response.json()
-      console.log(responseData, 'JWT 확인')
       if (responseData.httpStatus!=="OK"){
         sessionStorage.clear()
         window.location.href = '/login'
