@@ -1,0 +1,25 @@
+.cafe-auth-modal button {
+  padding: 2rem 4rem !important;
+  border-radius: 30px;
+}
+.cafe-auth-modal button p {
+  font-size: 1rem;
+  color: rgb(96, 81, 81);
+  margin-top: 2rem !important;
+}
+
+.cafe-auth-modal .content {
+  display: flex !important;
+  justify-content: center;
+}
+
+.cafe-auth-modal .ui.buttons .button:first-child {
+  padding-left: 5rem !important;
+  border-top-left-radius: 6.285714rem !important;
+  border-bottom-left-radius: 6.285714rem !important;
+}
+.cafe-auth-modal .ui.buttons .button:last-child {
+  padding-right: 5rem !important;
+  border-top-right-radius: 6.285714rem !important;
+  border-bottom-right-radius: 6.285714rem !important;
+}

@@ -19,6 +19,7 @@ const CommentList = (props) => {
   const isMounted = useRef(false)
   const comments = useSelector((state) => state.comments.comments)
   const lastCommentId = useSelector((state) => state.comments.lastCommentId)
+  const isCafeAuth = sessionStorage.getItem('cafeAuth')
   const [ref, inView] = useInView({
     threshold: 0.5,
     delay: 500,
@@ -78,7 +79,6 @@ const CommentList = (props) => {
       dispatch(commentsActions.updateReplies(parentComment.data))
     }
   }
-
   useEffect(() => {
     if (isMounted && inView) {
       refreshComments(lastCommentId)
@@ -90,11 +90,11 @@ const CommentList = (props) => {
         fetchedComments: fetchedComments,
         lastCommentId: lastCommentId,
       })
-    )
-  }, [fetchedComments])
-
-  return (
-    <Grid.Column mobile={16} tablet={8} computer={8}>
+      )
+    }, [fetchedComments])
+    
+    return (
+      <Grid.Column mobile={16} tablet={8} computer={8}>
       <Header>{`댓글 ${props.post.commentCnt}`}</Header>
       <Divider />
       <ScrollPanel style={{ width: "100%", height: "70vh" }}>
@@ -127,7 +127,8 @@ const CommentList = (props) => {
       >
         <Form.Input
           fluid
-          placeholder="댓글을 입력하세요."
+          placeholder= {isCafeAuth === "1" ? "댓글을 입력하세요." : "위치 인증이 필요합니다."}
+          disabled = {isCafeAuth === "1" ? false : true}
           action={{
             color: "teal",
             icon: "paper plane",

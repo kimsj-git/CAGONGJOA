@@ -12,23 +12,18 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("todaycafe/fortune")
+@RequestMapping("/fortune")
 @RequiredArgsConstructor
 public class FortuneController {
-    private ResponseDTO responseDTO;
+
     private final TodayCafeService todayCafeService;
 
     @Auth
     @CafeAuth
-    @GetMapping ("/{fortuneType}")
-    public ResponseEntity<ResponseDTO> giveFortune(@PathVariable int fortuneType) throws Exception {
-        FortuneResponseDto fortuneResponseDto = todayCafeService.randomFortune(fortuneType);
-
-        switch (fortuneResponseDto.getResponseType()) {
-            case 1: responseDTO = new ResponseDTO("[responseType 1] 처음뽑기 완료","",HttpStatus.OK,fortuneResponseDto); break;
-            case 2: responseDTO = new ResponseDTO("[responseType 2] 다시뽑기 완료","",HttpStatus.OK,fortuneResponseDto); break;
-        }
-
+    @GetMapping
+    public ResponseEntity<ResponseDTO> getFortune() {
+        FortuneResponseDto fortuneResponseDto = todayCafeService.getFortune();
+        ResponseDTO responseDTO = new ResponseDTO("운세 뽑기 완료!", "", HttpStatus.OK, fortuneResponseDto);
         return new ResponseEntity<>(responseDTO, HttpStatus.OK);
     }
 
