@@ -85,7 +85,6 @@ const PostItem = (props) => {
       />
       <Card.Content
         onClick={(e) => {
-          if (e.target !== e.currentTarget) return
           setDetailOpen(true)
         }}
       >
@@ -96,12 +95,18 @@ const PostItem = (props) => {
             numScroll={1}
             itemTemplate={carouselTemplate}
             style={{ position: "inherit" }}
+            onClick={(e) => {
+              e.stopPropagation()
+            }}
           />
         ) : props.images.length === 1 ? (
           <Image
             src={props.images[0]}
             ui={true}
             style={{ borderRadius: "0.8rem" }}
+            onClick={(e) => {
+              e.stopPropagation()
+            }}
           />
         ) : null}
         <div

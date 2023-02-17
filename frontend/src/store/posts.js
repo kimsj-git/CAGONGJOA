@@ -4,8 +4,7 @@ import { createSlice } from "@reduxjs/toolkit"
 import getAccessToken from "../hooks/getAccessToken"
 const initialPostsState = {
   hasNext: true,
-  posts: [
-  ],
+  posts: [],
   filterState: {
     hot: false,
     free: false,
@@ -17,7 +16,7 @@ const initialPostsState = {
     lost: false,
   },
   isLoading: false,
-  isLoadingMore:false
+  isLoadingMore: false,
 }
 
 const postsSlice = createSlice({
@@ -54,15 +53,19 @@ const postsSlice = createSlice({
     },
     // post 좋아요
     likePost(state, action) {
-      state.posts.find(
+      const postToLike = state.posts.find(
         (post) => post.postId === action.payload
-      ).postLikeCount += 1
+      )
+      postToLike.postLikeCount += 1
+      postToLike.likeChecked = true
     },
     // post 좋아요 취소
     cancleLikePost(state, action) {
-      state.posts.find(
+      const postToUnlike = state.posts.find(
         (post) => post.postId === action.payload
-      ).postLikeCount -= 1
+      )
+      postToUnlike.postLikeCount -= 1
+      postToUnlike.likeChecked -= 1
     },
     // 댓글 개수 수정
     createComment(state, action) {
@@ -97,21 +100,21 @@ const postsSlice = createSlice({
     isLoading(state) {
       state.isLoading = !state.isLoading
     },
-    isLoadingMore(state){
+    isLoadingMore(state) {
       state.isLoadingMore = !state.isLoadingMore
-    }
+    },
   },
 })
 const DEFAULT_REST_URL = process.env.REACT_APP_REST_DEFAULT_URL
 
 export const getPosts = (dataSet) => {
   return async (dispatch) => {
-    if (dataSet.postId === -1){
+    if (dataSet.postId === -1) {
       dispatch(postsActions.isLoading())
-    } else{
+    } else {
       dispatch(postsActions.isLoadingMore())
     }
-    
+
     const sendRequest = async () => {
       const response = await fetch(`${DEFAULT_REST_URL}/main/post/feed`, {
         method: "POST",
@@ -125,7 +128,7 @@ export const getPosts = (dataSet) => {
             ? dataSet.filters
             : ["free", "qna", "together", "tip", "recommend", "help", "lost"],
           latitude: dataSet.location.lat,
-          longitude: dataSet.location.lng,  
+          longitude: dataSet.location.lng,
           dist: 0.5,
         }),
       })
@@ -134,16 +137,18 @@ export const getPosts = (dataSet) => {
         responseData.httpStatus === "UNAUTHORIZED" &&
         responseData.data.sign === "JWT"
       ) {
-        getAccessToken({func:sendRequest, dataSet:dataSet})
+        getAccessToken({ func: sendRequest, dataSet: dataSet })
       }
-      if (responseData.httpStatus === "OK" || responseData.httpStatus === "NO_CONTENT") {
+      if (
+        responseData.httpStatus === "OK" ||
+        responseData.httpStatus === "NO_CONTENT"
+      ) {
         return responseData.data
       }
-
     }
     try {
-      const {hasNext, post}= await sendRequest()
-      
+      const { hasNext, post } = await sendRequest()
+
       dispatch(
         postsActions.updatePosts({
           fetchedPosts: post,
@@ -152,11 +157,11 @@ export const getPosts = (dataSet) => {
         })
       )
     } catch (error) {
-      console.error('에러')
+      console.error("에러")
     }
-    if (dataSet.postId === -1){
+    if (dataSet.postId === -1) {
       dispatch(postsActions.isLoading())
-    } else{
+    } else {
       dispatch(postsActions.isLoadingMore())
     }
   }

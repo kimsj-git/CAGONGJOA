@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react"
-import { Button } from "semantic-ui-react"
+import { Button, Image } from "semantic-ui-react"
 import useFetch from "../../hooks/useFetch"
 import exceptionHandler from "../common/exceptionHandler"
 
@@ -11,6 +11,7 @@ const Fortune = () => {
   const { data: initialFortune, sendRequest: getFortune } = useFetch()
   const [todayFortune, setTodayFortune] = useState("")
   const [coffeeCnt, setCoffeeCnt] = useState(0)
+  const [animation, setAnimation] = useState("")
 
   useEffect(() => {
     getFortune({
@@ -38,16 +39,19 @@ const Fortune = () => {
       console.log(responseData)
       setTodayFortune(responseData.data.content)
       setCoffeeCnt(responseData.data.coffeeCnt)
+      setAnimation("animate__animated animate__swing")
     } else if (responseData.httpStatus === "UNAUTHORIZED") {
       alert("카페 인증 후 운세를 뽑을 수 있어요.\uD83D\uDE4F")
+      return
       // exceptionHandler({
       //   status: responseData.httpStatus,
       //   data: responseData.data,
       // })
-    } 
-    else if (responseData.httpStatus === "NOT_ACCEPTABLE") {
+    } else if (responseData.httpStatus === "NOT_ACCEPTABLE") {
       alert("커피가 부족합니다.\uD83D\uDE22")
+      return
     }
+    setTimeout(() => setAnimation(""), 1000)
   }
 
   return (
@@ -59,17 +63,25 @@ const Fortune = () => {
           padding: "3rem",
         }}
       >
-        {cafeAuth === "1" && todayFortune && <p
-          style={{
-            textAlign: "center",
-            color: "#1E3932",
-            fontSize: "220%",
-            fontFamily: "GangwonEdu_OTFBoldA",
-            wordBreak: "keep-all",
-          }}
-        >
-          {todayFortune}
-        </p>}
+        {cafeAuth === "1" && todayFortune && (
+          <p
+            style={{
+              textAlign: "center",
+              color: "#1E3932",
+              fontSize: "220%",
+              fontFamily: "GangwonEdu_OTFBoldA",
+              wordBreak: "keep-all",
+            }}
+          >
+            {todayFortune}
+          </p>
+        )}
+        <Image
+          src={require("../../assets/icons/fortune_cookie.png")}
+          size="small"
+          style={{ marginInline: "auto", marginBottom: "7vh" }}
+          className={animation}
+        />
         <div
           style={{
             textAlign: "center",
@@ -97,10 +109,14 @@ const Fortune = () => {
         }}
       >
         {!todayFortune && (
-          <Button color="orange" onClick={(e) => pickHandler(1)}>운세 뽑기!</Button>
+          <Button color="orange" onClick={(e) => pickHandler(1)}>
+            운세 뽑기!
+          </Button>
         )}
         {todayFortune && (
-          <Button color="brown" onClick={(e) => pickHandler(2)}>다시 뽑기 (1 커피)</Button>
+          <Button color="brown" onClick={(e) => pickHandler(2)}>
+            다시 뽑기 (1 커피)
+          </Button>
         )}
       </div>
     </TodayCafePage>

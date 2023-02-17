@@ -6,6 +6,9 @@
   left: 5%;
   z-index: 5;
 }
+.p-carousel .p-carousel-content {
+  width: 100% !important;
+}
 
 .p-carousel-container .p-carousel-prev,
 .p-carousel-container .p-carousel-next {
