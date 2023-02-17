@@ -119,6 +119,7 @@ const ConfirmCafe = ({ setIsCafeAuth, setIsJamSurvey }) => {
     }
     dispatch(modalActions.toggleConfirmCafeModal())
     dispatch(modalActions.toggleNearCafeListModal())
+    window.location.href = '/'
   }
 
   if (cafeData) {

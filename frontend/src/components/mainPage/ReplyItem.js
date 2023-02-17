@@ -2,7 +2,7 @@ import {Comment, Icon, Button, Confirm} from 'semantic-ui-react'
 import { useState } from "react"
 import ToggleButton from "../common/ToggleButton"
 import useFetch from "../../hooks/useFetch"
-import { useDispatch } from "react-redux"
+import { useDispatch, useSelector } from "react-redux"
 import { commentsActions } from "../../store/comments"
 import ElapsedText from './ElapsedText'
 const DEFAULT_REST_URL = process.env.REACT_APP_REST_DEFAULT_URL
@@ -13,6 +13,7 @@ const ReplyItem = (props) => {
   const [confirmOpen, setConfirmOpen] = useState(false)
   const elapsedTime = ElapsedText(props.reply.createdAt)
   const { data, isLoading, sendRequest: fetchLike } = useFetch()
+  const brandLogo = useSelector((state)=>state.cafe.brandLogo)
 
   const likeReply = (isLiked) => {
     dispatch(commentsActions.likeReply({parentId: reply.parentId, replyId: reply.commentId, num: isLiked ? -1 : 1}))
@@ -29,12 +30,15 @@ const ReplyItem = (props) => {
       },
     })
   }
+  
   return (
         <Comment>
       <Comment.Avatar
-        // style={{ width: "3.5rem" }}
+        style={{ width: "3.5rem" }}
         as="a"
-        src={require("../../assets/cafe_logos/compose.png")}
+        src={props.reply.cafeBrandType ? require(`../../assets/cafe_logos/${
+          brandLogo[props.reply.cafeBrandType]
+        }.png`) : require("../../assets/icons/question.png")}
       />
       <Comment.Content>
         <Comment.Author
