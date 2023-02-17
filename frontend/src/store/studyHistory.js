@@ -43,7 +43,7 @@ export const getMonthStudyHistory = (dataSet) => {
       )
       const responseData = await response.json()
       if (
-        responseData.httpStatus === "BAD_REQUEST" &&
+        responseData.httpStatus === "UNAUTHORIZED" &&
         responseData.data.sign === "JWT"
       ) {
         const response = await fetch(`${REST_DEFAULT_URL}/member/refresh`, {
