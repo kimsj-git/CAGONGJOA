@@ -169,11 +169,12 @@ public class TodayCafeServiceImpl implements TodayCafeService {
             randomFortune = getRandomFortune();
         }
 
+        memberCoin.useOneCoffee(); // 커피 사용
         FortuneResponseDto fortuneResponseDto = FortuneResponseDto.builder()
                 .content(getRandomFortune().getValue())
+                .coffeeCnt(memberCoin.getCoffeeCount())
                 .build();
-
-        memberCoin.useOneCoffee();
+        
         cafeVisitLog.updateFortune(randomFortune.getKey());
 
         return fortuneResponseDto;
