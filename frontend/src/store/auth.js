@@ -34,10 +34,8 @@ export const checkNickname = (nickname) => {
       )
       const result = await response.json()
       if (result.httpStatus==="OK"){
-        console.log("auth.js, 중복된 닉네임X, 제출하세요")
         return true
       } else if (result.httpStatus==="BAD_REQUEST" && result.data.sign==="MEMBER"){
-        console.log("auth.js, 중복된 닉네임입니다.")
         return false
       }
     }

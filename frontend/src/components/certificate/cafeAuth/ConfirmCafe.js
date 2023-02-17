@@ -46,7 +46,6 @@ const ConfirmCafe = ({ setIsCafeAuth, setIsJamSurvey }) => {
     })
     setIsLoading(false)
     const responseData = await response.json()
-    console.log(responseData)
     const rewardCoin = responseData.data.rewardCoin
     if (responseData.httpStatus === "CREATED") {
       const response = await fetch(`${REST_DEFAULT_URL}/cafe/auth/data`, {
@@ -69,7 +68,6 @@ const ConfirmCafe = ({ setIsCafeAuth, setIsJamSurvey }) => {
         sessionStorage.setItem("myCafe", JSON.stringify(selectedCafeData))
         sessionStorage.setItem("location", JSON.stringify(location))
         sessionStorage.setItem("cafeAuth", 1)
-        console.log(responseData)
         // 오늘의 카페에서 사용할 정보
         const todayCafe = {
           coffeeBeanCnt: responseData.data.coffeeBeanCnt,
@@ -112,11 +110,11 @@ const ConfirmCafe = ({ setIsCafeAuth, setIsJamSurvey }) => {
           okBtnHandler(location)
         }
       } else {
-        exceptionHandler(location)
+        exceptionHandler({status:responseData.httpStatus, data:responseData.data, func:okBtnHandler, dataSet:location})
         window.location.href = '/error'
       }
     } else {
-      exceptionHandler(location)
+      exceptionHandler({status:responseData.httpStatus, data:responseData.data, func:okBtnHandler, dataSet:location})
       window.location.href = '/error'
     }
     dispatch(modalActions.toggleConfirmCafeModal())

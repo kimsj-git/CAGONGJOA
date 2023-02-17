@@ -5,6 +5,7 @@ import { useSelector, useDispatch } from "react-redux"
 
 import { checkNickname } from "../../../store/auth"
 import { authActions } from "../../../store/auth"
+import exceptionHandler from "../../common/exceptionHandler"
 
 const DEFAULT_REST_URL = process.env.REACT_APP_REST_DEFAULT_URL
 
@@ -60,9 +61,7 @@ const Signup = ({ setIsAuthenticated }) => {
         }),
       })
       const responseData = await response.json()
-      console.log(responseData)
       if (responseData.httpStatus === "OK") {
-        console.log("1. 회원가입 완료, 세션 스토리지 확인")
         sessionStorage.setItem(
           "accessToken",
           responseData.data.jwtTokens.accessToken
@@ -75,12 +74,10 @@ const Signup = ({ setIsAuthenticated }) => {
         setIsAuthenticated(true)
         history.push("/")
       } else {
-        console.log("2.회원가입 실패")
-        console.log(responseData)
+        exceptionHandler(responseData)
       }
     } catch (error) {
-      console.log(error)
-      alert("에러 발생")
+        window.location.href='/login'
     }
   }
   useEffect(() => {
@@ -100,8 +97,6 @@ const Signup = ({ setIsAuthenticated }) => {
     isChecked &&
     isNicknameLengthValid &&
     hangelcheck.test(nickname)
-
-  console.log(hangelcheck.test(nickname))
 
   return (
     <form onSubmit={formSubmissionHandler}>

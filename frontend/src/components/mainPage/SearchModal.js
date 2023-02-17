@@ -30,11 +30,8 @@ const SearchModal = () => {
           .includes(searchValue.toLowerCase().replaceAll(" ", ""))
       )
     )
-    console.log(data)
   }
-  useEffect(() => {
-    console.log(filteredData)
-  }, [filteredData])
+
   const panes = [
     {
       menuItem: "게시물",

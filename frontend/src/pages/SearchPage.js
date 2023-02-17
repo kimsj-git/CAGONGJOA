@@ -46,7 +46,6 @@ const SearchPage = () => {
     })
   }
   const searchSth = async (keyword, type) => {
-    console.log("searchSth")
     await search({
       url: `${DEFAULT_REST_URL}/main/post/search`,
       method: "POST",
@@ -69,7 +68,6 @@ const SearchPage = () => {
 
   // 검색어 입력 후 enter 누르면 실행
   useEffect(() => {
-    console.log(searchValue)
     if (isMounted.current) {
       if (!searchValue) {
         alert("검색어를 입력해주세요.")
@@ -82,7 +80,6 @@ const SearchPage = () => {
   // 탭 변경 시 실행
   useEffect(() => {
     if (isMounted.current) {
-      console.log(activeDomain)
       if (!searchValue) {
         alert("검색어를 입력해주세요.")
       } else {

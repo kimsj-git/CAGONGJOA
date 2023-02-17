@@ -39,8 +39,8 @@ const StudyDetail = () => {
   const carouselTemplate = (page) => {
     return (
       <>
-        <div id={`detail`} class="detail-wrapper">
-          <div class="detail">
+        <div id={`detail`} className="detail-wrapper">
+          <div className="detail">
             <p style={{ textAlign: "center" }}>
               <b>
                 {year}년 {month}월 {day}일

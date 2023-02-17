@@ -102,7 +102,7 @@ const CommentList = (props) => {
           {comments.map((comment, index) => {
             return (
               <CommentItem
-                key={`${props.post.id}-${comment.commentId}`}
+                key={`${index}-${props.post.id}-${comment.commentId}`}
                 comment={comment}
                 postId={props.post.id}
                 addNewComment={addNewComment}

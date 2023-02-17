@@ -96,8 +96,6 @@ const CafeAuthFetch = async () => {
             CafeAuthFetch()
           }
         }else{
-          console.log(todayCafe)
-          console.log(myCafe)
           sessionStorage.setItem("todayCafe", JSON.stringify(todayCafe))
           sessionStorage.setItem("myCafe", JSON.stringify(myCafe))
         }
@@ -106,7 +104,7 @@ const CafeAuthFetch = async () => {
       throw new Error("fetch error")
     }
   } catch (err) {
-    console.log(err.message)
+    window.location.href('/error')
   }
 }
 

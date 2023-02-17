@@ -10,7 +10,8 @@ const SetLocation = () => {
     })
     
   } else {
-    console.log("X")
+    alert('위치 인증 실패 새로고침 하세요.')
+    window.location.reload()
   }
 }
 
