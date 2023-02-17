@@ -27,9 +27,7 @@ const SearchPage = () => {
     await search(`${DEFAULT_REST_URL}/main/post/search`, {
       method: "POST",
       headers: {
-        Authorization: `Bearer ${sessionStorage.getItem(
-          "accessToken"
-        )}`,
+        Authorization: `Bearer ${sessionStorage.getItem("accessToken")}`,
         "Content-Type": "application/json",
       },
       body: {
@@ -50,9 +48,8 @@ const SearchPage = () => {
       url: `${DEFAULT_REST_URL}/main/post/search`,
       method: "POST",
       headers: {
-        Authorization: `Bearer ${sessionStorage.getItem(
-          "accessToken")}`,
-          "Content-Type": "application/json",
+        Authorization: `Bearer ${sessionStorage.getItem("accessToken")}`,
+        "Content-Type": "application/json",
       },
       body: {
         postId: -1,
@@ -62,7 +59,6 @@ const SearchPage = () => {
         longitude: JSON.parse(sessionStorage.getItem("location")).lng,
         dist: 0.5,
       },
-
     })
   }
 
@@ -130,7 +126,7 @@ const SearchPage = () => {
       menuItem: {
         key: "posts",
         icon: "newspaper outline",
-        content: "게시물",
+        content: "내용으로 검색",
       },
       render: () => (
         // <Tab.Pane>
@@ -142,7 +138,7 @@ const SearchPage = () => {
       ),
     },
     {
-      menuItem: { key: "users", icon: "users", content: "유저" },
+      menuItem: { key: "users", icon: "users", content: "유저 이름으로 검색" },
       render: () => (
         // <Tab.Pane>
         <>

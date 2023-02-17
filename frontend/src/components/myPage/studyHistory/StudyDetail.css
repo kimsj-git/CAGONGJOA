@@ -19,6 +19,7 @@
   border: 3px dashed black;
   border-radius: 25px;
 }
-.p-carousel{
+.p-carousel {
   align-items: center;
+  margin-inline: auto;
 }

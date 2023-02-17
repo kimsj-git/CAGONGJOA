@@ -66,7 +66,7 @@ const MapDiv = (props) => {
           })
         })
       } else {
-        window.location.href="/error"
+        window.location.href = "/error"
       }
     } else if (response === "AUTHORIZED CAFE") {
       const location = {
@@ -89,7 +89,7 @@ const MapDiv = (props) => {
     <div>
       <Map
         center={{ lat: center.lat, lng: center.lng }}
-        level={3}
+        level={4}
         onCenterChanged={(map) =>
           setCenter({
             lat: map.getCenter().getLat(),

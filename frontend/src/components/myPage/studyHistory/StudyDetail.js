@@ -25,9 +25,10 @@ const StudyDetail = () => {
           return b.accTime - a.accTime
         })
     : []
-  
+
   const onCaptureHandler = () => {
-    const node = document.getElementsByClassName('p-carousel-item-active')[0].childNodes[0]
+    const node = document.getElementsByClassName("p-carousel-item-active")[0]
+      .childNodes[0]
     domtoimage
       .toPng(node)
       .then((dataUrl) => dispatch(imageActions.uploadImage([dataUrl])))
@@ -103,7 +104,11 @@ const StudyDetail = () => {
                       />
                     </Grid.Column>
                     <Grid.Column width={12} verticalAlign="middle">
-                      <span>{page.fortuneMsg}</span>
+                      <span>
+                        {page.fortuneMsg
+                          ? page.fortuneMsg
+                          : "오늘의 운세를 뽑아보세요!"}
+                      </span>
                     </Grid.Column>
                   </Grid.Row>
                 </Grid>
@@ -118,13 +123,20 @@ const StudyDetail = () => {
   }
   return (
     <>
-      <div style={{display:"flex", width:"100%", justifyContent:"center", alignItems:"center"}}>
+      <div
+        style={{
+          display: "flex",
+          width: "100%",
+          justifyContent: "center",
+          alignItems: "center",
+        }}
+      >
         {studyDetailList.length > 0 && (
           <Carousel
             value={studyDetailList}
             numVisible={1}
             numScroll={1}
-            itemTemplate={(page)=>carouselTemplate(page)}
+            itemTemplate={(page) => carouselTemplate(page)}
             style={{ position: "inherit" }}
             orientation="vertical"
           />
