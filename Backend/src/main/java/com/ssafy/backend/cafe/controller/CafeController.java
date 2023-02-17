@@ -71,9 +71,7 @@ public class CafeController {
     @GetMapping("/auth/data")
     public ResponseEntity<ResponseDTO> AuthResponse() {
         cafeService.saveTier();
-        System.out.println("cafeController : 1차 무사통과");
         AfterCafeAuthResponseDto cafeAuthResponseDto = todayCafeService.saveCafeVisit();
-        System.out.println("cafeController : 2차 무사통과");
         int visitedAtValue = Integer.parseInt(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd")));
         List<TodoResponseDto> todoResponseDtoList = todayCafeService.findTodo(visitedAtValue);
         if(!todoResponseDtoList.isEmpty()) cafeAuthResponseDto.updateTodoList(todoResponseDtoList);
@@ -91,7 +89,6 @@ public class CafeController {
      */
     @PostMapping("/auth")
     public ResponseEntity<ResponseDTO> cafeAuth(@RequestBody LocationDto locationDto) {
-        System.out.println("locationDto = " + locationDto);
         final double DIST = 0.2; // 50m 반경에 해당하는 근거리 카페만 가져온다
 //        final double DIST = 0.5; // 50m 반경에 해당하는 근거리 카페만 가져온다
         ClientPosInfoDto clientPosInfoDto
