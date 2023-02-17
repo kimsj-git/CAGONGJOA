@@ -154,7 +154,7 @@ export const getPosts = (dataSet) => {
         })
       )
     } catch (error) {
-      console.error(error)
+      window.location.href='/error'
     }
     if (dataSet.postId === -1){
       dispatch(postsActions.isLoading())

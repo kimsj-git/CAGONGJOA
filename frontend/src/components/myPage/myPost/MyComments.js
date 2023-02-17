@@ -31,7 +31,6 @@ const MyComments = (props) => {
   
 
     const responseData = await response.json()
-    console.log(responseData)
     if (responseData.httpStatus === "OK") {
       return { sign: "OK", data: responseData.data }
     } else if (responseData.httpStatus === "NO_CONTENT") {
