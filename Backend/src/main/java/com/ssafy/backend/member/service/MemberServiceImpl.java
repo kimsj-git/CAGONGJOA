@@ -73,7 +73,6 @@ public class MemberServiceImpl implements MemberService {
                 .oAuthType(oauthType)
                 .build();
         Member savedMember = memberRepository.save(member);
-        System.out.println("MemberServiceImpl : 멤버 저장 완료");
 
         MemberCoin memberCoin = MemberCoin.coinBuilder()
                 .member(savedMember)
@@ -81,7 +80,6 @@ public class MemberServiceImpl implements MemberService {
                 .coffeeCount(0)
                 .build();
         memberCoinRepository.save(memberCoin);
-        System.out.println("MemberServiceImpl : MemberCoin 저장완료");
     }
 
     @Override
@@ -107,7 +105,6 @@ public class MemberServiceImpl implements MemberService {
         TokenRespDto tokenRespDto = new TokenRespDto();
         // 리프레쉬 토큰이 redis에 존재 하는 상황
         refreshTokenRepository.findById(refreshToken).ifPresent(a -> {
-            System.out.println("억세스 발급");
             Optional<Member> dbMemberOpt = memberRepository.findById(memberId);
             if (dbMemberOpt.isEmpty()) {
                 throw new MemberException(MemberExceptionType.NOT_FOUND_MEMBER);

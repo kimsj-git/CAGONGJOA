@@ -40,7 +40,6 @@ public class OAuthController {
      */
     @GetMapping("/kakao")
     public ResponseEntity<ResponseDTO> kakaoCallback(@RequestParam String code) {
-        System.out.println(code);
         Map<String, Object> resultMap = new HashMap<>();
 
         // 클라이언트에게 받은 code로 AccessToken 생성
@@ -87,7 +86,6 @@ public class OAuthController {
         }
 
         // 여까지 왔으면 로그인 할 자격이 있다. 닉네임과 억세스id로 jwt토큰 생성해 클라이언트에 보내주기
-        System.out.println("dbMember = " + dbMember);
 
         TokenRespDto jwtTokens = jwtService.createJwt(dbMember.get());
         LoginRespDto loginRespDto = LoginRespDto.builder()

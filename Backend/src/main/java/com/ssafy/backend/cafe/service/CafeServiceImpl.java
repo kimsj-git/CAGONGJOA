@@ -76,7 +76,6 @@ public class CafeServiceImpl implements CafeService {
         LocalDateTime todayTime = locationAndDateDto.getTodayTime();
         LocalDateTime twoMonthAgo = todayTime.minusMonths(TWO_MONTH_AGO);
         List<Survey> surveys = surveyRepository.findByCafeIdsAndTimeRange(cafeId, twoMonthAgo, todayTime);
-        System.out.println("surveys = " + surveys);
 
         /**
          * 설문조사 빈도 데이터를 map으로 저장
@@ -391,8 +390,6 @@ public class CafeServiceImpl implements CafeService {
             // 첫째자리에서 반올림 코드
             double roundedMeanVal = (double) Math.round(meanVal * 10) / 10;
 
-//            System.out.println("roundedMeanVal = " + roundedMeanVal + "cafeId = " +cafeId);
-
             if (roundedMeanVal <= 2) {
                 results.put(cafeId, CrowdLevel.L);
             } else if (roundedMeanVal <= 4) {
@@ -466,10 +463,6 @@ public class CafeServiceImpl implements CafeService {
         Double latitude = clientPosInfoDto.getLatitude();
         Double longitude = clientPosInfoDto.getLongitude();
         Double distance = clientPosInfoDto.getDist();
-
-        System.out.println("distance = " + distance);
-        System.out.println("longitude = " + longitude);
-        System.out.println("latitude = " + latitude);
 
         LocationDto northEast = GeometryUtil
                 .calculate(latitude, longitude, distance, Direction.NORTHEAST.getBearing());

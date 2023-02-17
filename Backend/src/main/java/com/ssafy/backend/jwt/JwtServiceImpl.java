@@ -27,8 +27,6 @@ public class JwtServiceImpl implements JwtService{
         String accessToken = jwtUtil.getAccessToken(member);
         String refreshToken = jwtUtil.getRefreshToken(member);
 
-        System.out.println("우리의 JWT accessToken = " + accessToken);
-
         // 리프레쉬 토큰을 redis에 저장
         RefreshToken savedRefreshToken = refreshTokenRepository.save(new RefreshToken(refreshToken, member.getId()));
 

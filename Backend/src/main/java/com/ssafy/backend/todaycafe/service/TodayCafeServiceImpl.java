@@ -77,7 +77,6 @@ public class TodayCafeServiceImpl implements TodayCafeService {
                 .coffeeBeanCnt(coffeeBeanCnt)
                 .coffeeCnt(coffeeCnt)
                 .build();
-        System.out.println("커피 가져왔어여");
         return coffeeResponseDto;
     }
 
@@ -315,9 +314,7 @@ public class TodayCafeServiceImpl implements TodayCafeService {
         String nickname = memberUtil.checkMember().getNickname();
         CafeAuth cafeAuth = cafeAuthRepository.findById(nickname).get();
         Long cafeId = cafeAuth.getCafeId();
-        System.out.println("CAFEAuth 가 있나요?" + cafeAuth);
         int visitedAtValue = Integer.parseInt(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd")));
-        System.out.println("TodayCafeServiceImpl : " + visitedAtValue);
         Optional<CafeVisitLog> optionalCafeVisitLog = cafeVisitLogRepository.findByVisitedAtAndMemberIdAndCafeId(visitedAtValue, memberId, cafeId);
         // 2. cafeVisitLog 생성
         // 2-1. 이전 방문이력이 없을 때
@@ -331,15 +328,13 @@ public class TodayCafeServiceImpl implements TodayCafeService {
                     .isSurvey(false)
                     .visitedAt(visitedAtValue)
                     .build();
-            System.out.println(cafeVisitLog);
             savedCafeVisitLog = cafeVisitLogRepository.save(cafeVisitLog);
-            System.out.println("방문이력 없음 - 새로생성");
         } else {// 기존 방문이력이 있음
             savedCafeVisitLog = optionalCafeVisitLog.get();
             // 2-2. 오늘 방문이력이 있을 때
-            if (cafeVisitLogRepository.findByVisitedAtAndMemberIdAndCafeId(visitedAtValue, memberId, cafeId).isPresent())
-                System.out.println("오늘 방문이력 있음 - 미생성");
-                // 2-3. 방문이력이 있지만 오늘은 아닐 때
+            if (cafeVisitLogRepository.findByVisitedAtAndMemberIdAndCafeId(visitedAtValue, memberId, cafeId).isPresent()) {
+            }
+            // 2-3. 방문이력이 있지만 오늘은 아닐 때
             else {
                 cafeVisitLog = CafeVisitLog.builder()
                         .cafe(cafeRepository.findById(cafeId).get())
@@ -351,7 +346,6 @@ public class TodayCafeServiceImpl implements TodayCafeService {
                         .build();
                 savedCafeVisitLog = cafeVisitLogRepository.save(cafeVisitLog);
                 memberCafeTierRepository.findByMemberIdAndCafeId(memberId, cafeId).get().plusExp(100L);
-                System.out.println("오늘은 아니고 방문이력 있음 - 새로생성");
             }
         }
 
@@ -375,7 +369,6 @@ public class TodayCafeServiceImpl implements TodayCafeService {
             cafeAuthResponseDto.updateFortune(fortuneContent);
         }
 
-        System.out.println("카페생성 성공!");
         return cafeAuthResponseDto;
     }
 
@@ -520,17 +513,14 @@ public class TodayCafeServiceImpl implements TodayCafeService {
 
         List<CafeVisitLog> cafeVisitLogList = cafeVisitLogRepository.findAllByVisitedAtAndMemberId(visitedAt, memberId);
         if (cafeVisitLogList.isEmpty() || cafeVisitLogList == null) {
-            System.out.println("todoList 불러오기 - visitLog 없음!");
             return null;
         }
-        System.out.println("cafeVisitLogList : " + cafeVisitLogList);
 
         List<TodoResponseDto> todoResponseDtoList = new ArrayList<>();
 
         for (CafeVisitLog cafeVisitLog : cafeVisitLogList) {
             List<Todo> todoList = todoRepository.findAllByCafeVisitLogId(cafeVisitLog.getId());
             if(todoList == null || todoList.isEmpty()) continue;
-            System.out.println("cafeVisitLogId : " + cafeVisitLog.getId());
             for (Todo todo : todoList) {
                 todoResponseDtoList.add(TodoResponseDto.builder()
                         .id(todo.getId())

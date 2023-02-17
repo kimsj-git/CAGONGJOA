@@ -241,7 +241,6 @@ public class MyPageServiceImpl implements MyPageService {
         List<MyCommentResponseDto> commentResponseDtoList = new ArrayList<>();
         List<Post> postList = postRepository.findAllByCommentIdIn(commentIdList);
         if(postList.size() != commentIdList.size()) {
-            System.out.println("뭐지이거?");
         }
         MyCommentResponseDto commentResponseDto;
         for (int i = 0; i < postList.size(); i++) {
@@ -255,7 +254,6 @@ public class MyPageServiceImpl implements MyPageService {
                     .createdAt(comment.getCreatedAt())
                     .build();
             if(comment.getPost().getIsCafeAuthorized()) {
-                System.out.println("인증된 글");
                 commentResponseDto.updateCafeName(comment.getPost().getPostCafeList().get(0).getCafe().getName());
             }
 
