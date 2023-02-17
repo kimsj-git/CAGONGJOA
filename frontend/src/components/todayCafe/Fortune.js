@@ -1,58 +1,108 @@
 import { useEffect, useState } from "react"
 import { Button } from "semantic-ui-react"
 import useFetch from "../../hooks/useFetch"
+import exceptionHandler from "../common/exceptionHandler"
 
 import TodayCafePage from "../../pages/TodayCafePage"
 const DEFAULT_REST_URL = process.env.REACT_APP_REST_DEFAULT_URL
 
 const Fortune = () => {
-  const cafeAuth = sessionStorage.getItem('cafeAuth')
-  const todayCafe = JSON.parse(sessionStorage.getItem("todayCafe"))
-  let initialFortune = ''
-  let initialCoffeeCnt = 0 
+  const cafeAuth = sessionStorage.getItem("cafeAuth")
+  const { data: initialFortune, sendRequest: getFortune } = useFetch()
+  const [todayFortune, setTodayFortune] = useState("")
+  const [coffeeCnt, setCoffeeCnt] = useState(0)
 
-  if (todayCafe !== null) {
-    initialFortune = todayCafe.fortune
-    initialCoffeeCnt = todayCafe.coffeeCnt
-  }
+  useEffect(() => {
+    getFortune({
+      url: `${DEFAULT_REST_URL}/fortune`,
+      headers: {
+        Authorization: `Bearer ${sessionStorage.getItem("accessToken")}`,
+      },
+    })
+  }, [])
 
-  const [todayFortune, setTodayFortune] = useState(initialFortune)
-  const [coffeeCnt, setCoffeeCnt] = useState(initialCoffeeCnt)
+  useEffect(() => {
+    setTodayFortune(initialFortune.content)
+    setCoffeeCnt(initialFortune.coffeeCnt)
+  }, [initialFortune, cafeAuth])
 
-  const { data: fetchedFortune, isLoading, sendRequest: getFortune } = useFetch()
-  
-  const pickHandler = async (fortuneType) => {
-    const response = await fetch(`${DEFAULT_REST_URL}/todaycafe/fortune/${fortuneType}`, {
+  const pickHandler = async () => {
+    const response = await fetch(`${DEFAULT_REST_URL}/fortune`, {
+      method: "POST",
       headers: {
         Authorization: `Bearer ${sessionStorage.getItem("accessToken")}`,
       },
     })
     const responseData = await response.json()
-    if (responseData.httpStatus === 'OK') {
+    if (responseData.httpStatus === "OK") {
+      console.log(responseData)
       setTodayFortune(responseData.data.content)
       setCoffeeCnt(responseData.data.coffeeCnt)
-      let todayCafe = JSON.parse(sessionStorage.getItem("todayCafe"))
-      todayCafe = {...todayCafe, fortune: responseData.data.content, coffeeCnt: responseData.data.coffeeCnt}
-      sessionStorage.setItem("todayCafe", JSON.stringify(todayCafe))
-    } else {
-      console.log(responseData)
-      alert('커피가 부족합니다.')
+    } else if (responseData.httpStatus === "UNAUTHORIZED") {
+      alert("카페 인증 후 운세를 뽑을 수 있어요.\uD83D\uDE4F")
+      // exceptionHandler({
+      //   status: responseData.httpStatus,
+      //   data: responseData.data,
+      // })
+    } 
+    else if (responseData.httpStatus === "NOT_ACCEPTABLE") {
+      alert("커피가 부족합니다.\uD83D\uDE22")
     }
   }
-  
-  // useEffect(() => {
-  //   sessionStorage.setItem('fortune', fetchedFortune.content)
-  //   setTodayFortune(fetchedFortune.content)
-  // }, [fetchedFortune])
 
   return (
     <TodayCafePage>
-      <h1>오늘의 운세</h1>
-      <p>내 커피: {coffeeCnt}잔</p>
-      {(cafeAuth === '0' || cafeAuth === null) && <p>카페 인증 후 오늘의 운세를 뽑아보세요.</p>}
-      {(cafeAuth === '1') && todayFortune && <p>{todayFortune}</p>}
-      {!todayFortune && <Button onClick={(e) => pickHandler(1)}>운세 뽑기!</Button>}
-      {todayFortune && <Button onClick={(e) => pickHandler(2)}>다시 뽑기 (1 커피)</Button>}
+      <div
+        style={{
+          // backgroundColor: "#dfc49d",
+          // borderRadius: "10px",
+          padding: "3rem",
+        }}
+      >
+        {cafeAuth === "1" && todayFortune && <p
+          style={{
+            textAlign: "center",
+            color: "#1E3932",
+            fontSize: "220%",
+            fontFamily: "GangwonEdu_OTFBoldA",
+            wordBreak: "keep-all",
+          }}
+        >
+          {todayFortune}
+        </p>}
+        <div
+          style={{
+            textAlign: "center",
+            color: "#1E3932",
+            fontSize: "150%",
+            fontFamily: "GangwonEdu_OTFBoldA",
+            wordBreak: "keep-all",
+            display: "flex",
+            justifyContent: "center",
+          }}
+        >
+          {(cafeAuth === "0" || cafeAuth === null) && (
+            <p>카페 인증 후 오늘의 운세를 뽑아보세요.</p>
+          )}
+          {cafeAuth === "1" && <p>내 커피: {coffeeCnt}잔</p>}
+        </div>
+      </div>
+      <div
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          height: "100%",
+          justifyContent: "space-between",
+          marginTop: "3rem",
+        }}
+      >
+        {!todayFortune && (
+          <Button color="orange" onClick={(e) => pickHandler(1)}>운세 뽑기!</Button>
+        )}
+        {todayFortune && (
+          <Button color="brown" onClick={(e) => pickHandler(2)}>다시 뽑기 (1 커피)</Button>
+        )}
+      </div>
     </TodayCafePage>
   )
 }
