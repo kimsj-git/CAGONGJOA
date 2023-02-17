@@ -113,8 +113,7 @@ export const findNearCafeData = (location) => {
       if (responseData.httpStatus === "OK") {
         return responseData.data
       } else{
-        exceptionHandler(responseData)
-      }
+        exceptionHandler({status:responseData.httpStatus, data:responseData.data, func:findNearCafeData, dataSet:location})      }
     }
     try {
       const cafeData = await sendRequest()
@@ -146,8 +145,7 @@ export const findCafeList = (dataSet) => {
       if (responseData.httpStatus === "OK") {
         return responseData.data
       }else{
-        exceptionHandler(responseData)
-      }
+        exceptionHandler({status:responseData.httpStatus, data:responseData.data, func:findCafeList, dataSet:dataSet})      }
     }
     try {
       const cafeData = await sendRequest()
@@ -184,8 +182,7 @@ export const findMapCafeList = (dataSet) => {
       if (responseData.httpStatus === "OK") {
         return responseData.data
       }else{
-        exceptionHandler(responseData)
-      }
+        exceptionHandler({status:responseData.httpStatus, data:responseData.data, func:findMapCafeList, dataSet:dataSet})      }
     }
     try {
       const cafeData = await sendRequest()

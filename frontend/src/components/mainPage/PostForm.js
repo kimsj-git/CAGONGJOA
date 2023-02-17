@@ -134,7 +134,6 @@ const PostForm = (props) => {
         },
         body: formData,
       })
-      console.log(postType)
     }
 
     dispatch(
@@ -177,7 +176,6 @@ const PostForm = (props) => {
       setPostContent("")
       setPostType(currentCafe ? "free" : "qna")
     }
-    console.log("PostForm Opened")
   }
 
   return (

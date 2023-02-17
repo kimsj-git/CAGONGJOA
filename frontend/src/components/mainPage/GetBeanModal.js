@@ -30,7 +30,6 @@ const GetBeanModal = (props) => {
       }),
     })
     const responseData = await response.json()
-    console.log(responseData)
     if (
       responseData.httpStatus === "UNAUTHORIZED" &&
       responseData.data.sign === "CAFE"

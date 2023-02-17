@@ -50,7 +50,6 @@ const SideNavigation = ({
     mypage: "/mypage",
     search: "/search",
   }
-  // console.log(isCafeAuth)
   const [activeItem, setActiveItem] = useState(directory[location.pathname])
   const [prevItem, setPrevItem] = useState("")
   const menuClickHandler = (e, { name }) => {

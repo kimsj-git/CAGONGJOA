@@ -24,7 +24,6 @@ const MapDiv = (props) => {
   const cafeList = useSelector((state) => state.cafe.mapCafeList)
   const cafeFilterList = useSelector((state) => state.cafe.mapCafeFilterList)
   const isFiltered = useSelector((state) => state.cafe.isFiltered)
-  console.log(cafeFilterList)
   const [isMoved, setIsMoved] = useState(false)
   const [isFinded, setIsFinded] = useState(true)
 
@@ -67,7 +66,7 @@ const MapDiv = (props) => {
           })
         })
       } else {
-        console.log("X")
+        window.location.href="/error"
       }
     } else if (response === "AUTHORIZED CAFE") {
       const location = {

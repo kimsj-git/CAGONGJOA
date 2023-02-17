@@ -7,7 +7,6 @@ import { commentsActions } from "../../store/comments"
 import ElapsedText from './ElapsedText'
 const DEFAULT_REST_URL = process.env.REACT_APP_REST_DEFAULT_URL
 const ReplyItem = (props) => {
-  console.log(props)
   const dispatch = useDispatch()
   const reply = props.reply
   const isWriterVerified = reply.writerType
@@ -93,7 +92,6 @@ const ReplyItem = (props) => {
               }}
               onConfirm={() => {
                 setConfirmOpen(false)
-                console.log("이건 있겠지?", reply.parentId, reply.commentId)
                 dispatch(commentsActions.deleteReply({parentId: reply.parentId, deletedReplyId: reply.commentId}))
                 fetch(
                   `${DEFAULT_REST_URL}/main/postDetail/comment/delete?commentId=${reply.commentId}`,
