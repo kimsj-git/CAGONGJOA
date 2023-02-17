@@ -45,9 +45,13 @@ const CommentItem = (props) => {
       <Comment.Avatar
         style={{ width: "3.5rem" }}
         as="a"
-        src={comment.cafeBrandType ? require(`../../assets/cafe_logos/${
-          brandLogo[comment.cafeBrandType]
-        }.png`) : require("../../assets/icons/question.png")}
+        src={
+          comment.cafeBrandType
+            ? require(`../../assets/cafe_logos/${
+                brandLogo[comment.cafeBrandType]
+              }.png`)
+            : require("../../assets/icons/question.png")
+        }
       />
       <Comment.Content>
         <Comment.Author
@@ -140,9 +144,13 @@ const CommentItem = (props) => {
         {/* 대댓글 창 */}
         {comment.replies.length > 0 && (
           <Comment.Group>
-            {comment.replies.map((reply) => {
+            {comment.replies.map((reply, index) => {
               return (
-                <ReplyItem reply={reply} addNewComment={props.addNewComment} />
+                <ReplyItem
+                  key={`${index}-${props.comment.commentId}-${props.comment.writerId}`}
+                  reply={reply}
+                  addNewComment={props.addNewComment}
+                />
               )
             })}
           </Comment.Group>
