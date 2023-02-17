@@ -88,7 +88,6 @@ public class PostServiceImpl implements PostService {
 
             Optional<Post> postOptional = postRepository.findUserUnAuthorizedPostedToday(memberId);
             if(postOptional.isPresent()) {
-                System.out.println("응 오늘 글 이미 썼어~");
                 throw new PostException(PostExceptionType.UNAUTHORIZED_USER_WRITE_TWICE);
             }
         }else {
@@ -108,10 +107,8 @@ public class PostServiceImpl implements PostService {
 
         post = postRepository.save(post);
         if(files != null) {
-        System.out.println("이미지 파일길이 : " + files.length);
         List<PostImage> postImages = postUtil.imageUpload(post, files);
         post.updatePostImage(postImages);
-        System.out.println("이미지도 첨부 완료");
         }
 
         // 1-4. 유저 인증여부 확인
@@ -133,18 +130,14 @@ public class PostServiceImpl implements PostService {
                 throw new PostException(PostExceptionType.NOT_ALLOWED_TYPE);
             }
         } else { // 카페이름이 있으면 - 인증된 유저
-            System.out.println("글생성 : 여기까지 옴");
             Cafe cafe = cafeRepository.findById(cafeAuth.get().getCafeId()).get(); // 카페 닉네임을 확인한다.
-            System.out.println("cafe 이름 : " + cafe.getName());
             post.updateAuthorized(true);
-            System.out.println("여기옴");
             // 1-3. 카페위치 저장하기
             PostCafe postCafe = PostCafe.builder()
                     .post(post)
                     .cafe(cafe)
                     .build();
             postCafe = postCafeRepository.save(postCafe);
-            System.out.println("여긴와?");
             List<PostCafe> postCafeList = new ArrayList<>();
             postCafeList.add(postCafe);
             post.updatePostCafe(postCafeList);
@@ -217,7 +210,6 @@ public class PostServiceImpl implements PostService {
             int postLikeCount = post.getPostLikeList().size();
             int commentCount = post.getCommentList().size();
 
-            System.out.println("인증된카페? " + post.getIsCafeAuthorized());
             PostPagingResponseDto postPagingResponseDto = PostPagingResponseDto.builder()
                     .isCafeAuthorized(post.getIsCafeAuthorized())
                     .postId(post.getId())
@@ -471,9 +463,6 @@ public class PostServiceImpl implements PostService {
         }
         Post post = postOptional.get();
             post.updateContent(content);
-
-
-        System.out.println(files);
 
         // 2. 이미지 업데이트
         postUtil.imageDelete(post, imgUrlList);

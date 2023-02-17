@@ -60,7 +60,7 @@ public class CommentServiceImpl implements CommentService {
             if (comment.getGroupNo() > groupNo) groupSet.add(comment.getGroupNo());
             if (groupSet.size() == 10) break;
         }
-        System.out.println(groupSet);
+
         if (groupSet.isEmpty() || groupSet == null) { // 불러올 그게 없다.
 //            throw new PostException(PostExceptionType.NO_COMMENT_FEED);
             return commentResponseList;
@@ -123,9 +123,7 @@ public class CommentServiceImpl implements CommentService {
         Comment savedComment = commentRepository.save(comment);
 
         if (stepNo != 0) { // 대댓글일 때
-            System.out.println("대댓글!");
         } else { // 그렇지 않을때 -> Redirect
-            System.out.println("댓글!");
             return null;
         }
         // 댓글을 썼을 때 어떻게 해야하징...
@@ -183,8 +181,6 @@ public class CommentServiceImpl implements CommentService {
         Long memberId = checked.getMemberId(); // 멤버 아이디를 확인한다.
         Boolean isChecked = requestDto.getIsChecked();
         Long commentId = requestDto.getCommentId();
-
-        System.out.println("isChecked : " + isChecked + "    memberId : " + memberId);
 
         Optional<Comment> optionalComment = commentRepository.findById(commentId);
         if (optionalComment.isEmpty() || optionalComment == null) {

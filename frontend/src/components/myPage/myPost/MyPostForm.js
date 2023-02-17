@@ -18,7 +18,6 @@ import { postsActions } from "../../../store/posts.js";
 
 const DEFAULT_REST_URL = process.env.REACT_APP_REST_DEFAULT_URL;
 const MyPostForm = (props) => {
-  console.log(props)
   const dispatch = useDispatch();
   // 현재 카페 정보 가져오기
   const isAuthenticated = sessionStorage.getItem("cafeAuth");
@@ -158,8 +157,8 @@ const submitHandler = async () => {
       setCurrentCafe(JSON.parse(sessionStorage.getItem("myCafe")).cafeName)
     }
     if (props.isEditing) {
-      if (props.postToEdit.imgUrlPath.length>0){
-        dispatch(imageActions.uploadImage(props.postToEdit.imgUrlPath));
+      if (props.postToEdit.imgPathList  && props.postToEdit.imgPathList.length>0){
+        dispatch(imageActions.uploadImage(props.postToEdit.imgPathList));
       }
     } 
     setIsLoading(false)

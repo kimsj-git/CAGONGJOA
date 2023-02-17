@@ -37,7 +37,7 @@ const MapGoToPosition = async () => {
       window.location.href ='/error'
     }
   } catch (err) {
-    console.log(err.message)
+    window.location.href="/error"
   }
 }
 

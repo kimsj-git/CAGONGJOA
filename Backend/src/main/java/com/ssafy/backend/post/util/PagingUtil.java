@@ -64,11 +64,9 @@ public class PagingUtil {
 
             if (postId == -1L) {
                 // 처음 요청할때 (refresh)
-                System.out.println("hot 첫번째요청");
                 postSlice = postRepository.findHotPostNext(cafeIdList, Long.MAX_VALUE, pageable);
             } else {
                 // 두번째 이상으로 요청할 때 (마지막 글의 pk 를 기준으로 함)
-                System.out.println("hot 두번째이상 요청");
                 postSlice = postRepository.findHotPostNext(cafeIdList, postId, pageable);
                 // 갖고올 게시물이 없으면
             }
@@ -77,11 +75,9 @@ public class PagingUtil {
 
             if (postId == -1L) {
                 // 처음 요청할때 (refresh)
-                System.out.println("피드 첫번째 요청");
                 postSlice = postRepository.findNextFeed(Long.MAX_VALUE, types, cafeIdList, pageable);
             } else {
                 // 두번째 이상으로 요청할 때 (마지막 글의 pk 를 기준으로 함)
-                System.out.println("두번째이상 요청");
                 postSlice = postRepository.findNextFeed(postId, types, cafeIdList, pageable);
                 // 갖고올 게시물이 없으면
             }
@@ -96,12 +92,10 @@ public class PagingUtil {
 
             if (postId == -1L) {
                 // 처음 요청할때 (refresh)
-                System.out.println("글내용으로 찾기 첫번째 요청");
                 postSlice = postRepository.findBySearchContentFirst(cafeIdList, searchKeyword, pageable);
 
             } else {
                 // 두번째 이상으로 요청할 때 (마지막 글의 pk 를 기준으로 함)
-                System.out.println("글내용으로 찾기 다음 요청");
                 postSlice = postRepository.findBySearchContentNext(cafeIdList, searchKeyword, postId, pageable);
                 // 갖고올 게시물이 없으면
             }
@@ -110,11 +104,9 @@ public class PagingUtil {
 
             if (postId == -1L) {
                 // 처음 요청할때 (refresh)
-                System.out.println("유저 이름으로 찾기 첫번째 요청");
                 postSlice = postRepository.findBySearchNicknameFirst(cafeIdList, searchKeyword, pageable);
             } else {
                 // 두번째 이상으로 요청할 때 (마지막 글의 pk 를 기준으로 함)
-                System.out.println("유저 이름으로 찾기 다음 요청");
                 postSlice = postRepository.findBySearchNicknameNext(cafeIdList, searchKeyword, postId, pageable);
                 // 갖고올 게시물이 없으면
             }
@@ -130,12 +122,10 @@ public class PagingUtil {
         Slice<Post> postSlice;
         if (postId == -1L) {
             // 처음 요청할때 (refresh)
-            System.out.println("글내용으로 찾기 첫번째 요청");
             postSlice = postRepository.findAllMyFeed(Long.MAX_VALUE, memberId, pageable);
 
         } else {
             // 두번째 이상으로 요청할 때 (마지막 글의 pk 를 기준으로 함)
-            System.out.println("글내용으로 찾기 다음 요청");
             postSlice = postRepository.findAllMyFeed(postId, memberId, pageable);
             // 갖고올 게시물이 없으면
         }
@@ -152,12 +142,10 @@ public class PagingUtil {
         Slice<Comment> commentSlice;
         if (commentId == -1L) {
             // 처음 요청할때 (refresh)
-            System.out.println("내글 불러오기 첫번째 요청");
             commentSlice = commentRepository.findAllByIdLessThanAndMemberId(Long.MAX_VALUE, memberId, pageable);
 
         } else {
             // 두번째 이상으로 요청할 때 (마지막 글의 pk 를 기준으로 함)
-            System.out.println("내글 불러오기 다음 요청");
             commentSlice = commentRepository.findAllByIdLessThanAndMemberId(commentId, memberId, pageable);
             // 갖고올 게시물이 없으면
         }

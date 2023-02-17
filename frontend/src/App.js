@@ -50,7 +50,6 @@ function App() {
         "rgb(255 107 107 / 54%)",
         "important"
       )
-      console.log(document.body.style.backgroundColor)
     } else {
       document.body.style.backgroundColor = "var(--background-color)"
     }
@@ -79,7 +78,6 @@ function App() {
         )
         const responseData = await response.json()
         time.current = responseData.data
-        // console.log(time.current)
       }, 60000) // 1 minute
       return () => clearInterval(intervalId)
     }

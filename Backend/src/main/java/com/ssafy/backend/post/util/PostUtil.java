@@ -40,11 +40,9 @@ public class PostUtil {
         if (postImages == null || postImages.isEmpty()) {
             postImages = new ArrayList<>();
         }
-        System.out.println("postImageList : " + postImages);
         for (MultipartFile multipartFile : multipartFiles) {
             if(multipartFile.isEmpty() || multipartFile == null) continue;
             long size = multipartFile.getSize(); // 파일 크기
-            System.out.println("파일 사이즈 : " + size);
             String originalName = multipartFile.getOriginalFilename(); // 파일 원래이름 (xxx.jpg) 갖고오기
             String randomName = UUID.randomUUID().toString().concat("-").concat(originalName);
 
@@ -81,8 +79,6 @@ public class PostUtil {
             postImages.add(postImage);
         }
         List<PostImage> postImageList = imageRepository.saveAll(postImages);
-        System.out.println("이미지 저장완료!");
-        System.out.println("이미지 : " + postImageList);
         return postImageList;
     }
 
@@ -91,7 +87,6 @@ public class PostUtil {
         List<PostImage> postImages = imageRepository.findAllByPostIdAndImgUrlNotIn(post.getId(), imgUrlList);
         // null 이면 이미지를 삭제하지 않고 바로 리턴하여 돌아간다.
         if (postImages.isEmpty() || postImages == null) {
-            System.out.println("img empty!");
             return;
         }
         List<Long> deleteIdList = new ArrayList<>();
@@ -113,14 +108,12 @@ public class PostUtil {
         if (nearByCafeResultDtos.isEmpty() || nearByCafeResultDtos == null) {
             throw new PostException(PostExceptionType.NO_CAFE_AROUND);
         } else {
-            System.out.println(" 글 불러오기 - 주변 카페 개수 : " + nearByCafeResultDtos.size() + "개       " + nearByCafeResultDtos);
         }
         // cafe id 만 전달해줄거임
         List<Long> cafeIdList = new ArrayList<>();
         for (NearByCafeResultDto dto : nearByCafeResultDtos) {
             cafeIdList.add(dto.getId().longValue());
         }
-        System.out.println("주변 카페 Id 리스트 전달완료!");
         return cafeIdList;
     }
 

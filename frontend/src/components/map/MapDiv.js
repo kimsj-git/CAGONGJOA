@@ -24,7 +24,6 @@ const MapDiv = (props) => {
   const cafeList = useSelector((state) => state.cafe.mapCafeList)
   const cafeFilterList = useSelector((state) => state.cafe.mapCafeFilterList)
   const isFiltered = useSelector((state) => state.cafe.isFiltered)
-  console.log(cafeFilterList)
   const [isMoved, setIsMoved] = useState(false)
   const [isFinded, setIsFinded] = useState(true)
 
@@ -33,14 +32,14 @@ const MapDiv = (props) => {
       findMapCafeList({
         lat: JSON.parse(sessionStorage.getItem("location")).lat,
         lng: JSON.parse(sessionStorage.getItem("location")).lng,
-        distance: 0.2,
+        distance: 0.5,
       })
     )
   }, [dispatch])
 
   const findCafeList = async () => {
     dispatch(
-      findMapCafeList({ lat: center.lat, lng: center.lng, distance: 0.3 })
+      findMapCafeList({ lat: center.lat, lng: center.lng, distance: 0.5 })
     )
     dispatch(cafeActions.findCafeList())
     setIsFinded(true)
@@ -67,7 +66,7 @@ const MapDiv = (props) => {
           })
         })
       } else {
-        console.log("X")
+        window.location.href="/error"
       }
     } else if (response === "AUTHORIZED CAFE") {
       const location = {

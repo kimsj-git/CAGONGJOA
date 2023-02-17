@@ -71,7 +71,6 @@ const MainPageTopBar = (props) => {
       })
     })
     const responseData = await response.json()
-    console.log(responseData)
   }
   return (
     <Segment.Group style={{ border: "none", borderRadius: "0px" }}>

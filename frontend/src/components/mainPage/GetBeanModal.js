@@ -74,7 +74,6 @@ const GetBeanModal = (props) => {
       sessionStorage.setItem("todayCafe", JSON.stringify(todayCafe))
       setTimeout(() => {
         props.setIsJamSurvey(true)
-        window.location.reload()
       }, 1500)
     }
   }
@@ -92,7 +91,11 @@ const GetBeanModal = (props) => {
           <Button
             onClick={submitHandler}
             fluid
-            style={{ border: "2px solid black", borderRadius: "20px" }}
+            style={{
+              border: "2px solid black",
+              borderRadius: "20px",
+              fontWeight: "bold !important",
+            }}
           >
             <div
               style={{

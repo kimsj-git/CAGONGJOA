@@ -1,5 +1,6 @@
 import { useCallback, useState } from "react"
 import { useHistory } from "react-router-dom"
+import exceptionHandler from "../components/common/exceptionHandler"
 import getAccessToken from "./getAccessToken"
 const REST_DEFAULT_URL = process.env.REACT_APP_REST_DEFAULT_URL
 
@@ -26,10 +27,9 @@ const useFetch = () => {
         ) {
           getAccessToken({func:{sendRequest}, dataSet:{requestConfig}})
         } else {
-          // history.push('/error')
-        }
+          exceptionHandler({status:responseData.httpStatus, data:responseData.data, func:sendRequest, dataSet:requestConfig})        }
       } catch (err) {
-        console.log(err.message)
+        window.location.href='/error'
       }
       setIsLoading(false)
     },

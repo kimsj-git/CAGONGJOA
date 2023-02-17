@@ -44,6 +44,7 @@ const PostDetail = (props) => {
   }
   return (
     <Modal
+      closeIcon
       onClose={() => {
         dispatch(commentsActions.closeModal())
         props.setDetailOpen(false)
@@ -61,8 +62,8 @@ const PostDetail = (props) => {
       // }
     >
       <Label
+        corner="right"
         color="orange"
-        floating
         icon={{
           name: "comment",
           size: "large",
@@ -117,7 +118,8 @@ const PostDetail = (props) => {
                         __html: props.post.content,
                       }}
                       style={{
-                        fontSize: "1.2rem",
+                        marginTop: "2rem",
+                        fontSize: "1.8rem",
                         lineHeight: "1.8",
                       }}
                     />

@@ -17,7 +17,7 @@ public interface PostRepository extends JpaRepository<Post, Long> {
 
     @Query("SELECT distinct p from Post p left join p.postCafeList pc where p.id < :id and p.postType in :types and pc.cafe.id in :cafeIdList")
     Slice<Post> findNextFeed(@Param("id") Long id, @Param("types")List<PostType> types, @Param("cafeIdList")List<Long> cafeIdList, Pageable pageable);
-    @Query("SELECT distinct p FROM Post p left join p.postLikeList pl left join p.postCafeList pc where p.id < :postId and pl.size >= 10 and pc.cafe.id in :cafeIdList")
+    @Query("SELECT distinct p FROM Post p left join p.postLikeList pl left join p.postCafeList pc where p.id < :postId and pl.size >= 3 and pc.cafe.id in :cafeIdList")
     Slice<Post> findHotPostNext(@Param("cafeIdList") List<Long> cafeIdList, @Param("postId") Long postId, Pageable pageable);
 
     @Query("Select distinct p from Post p left join p.postCafeList pc where p.id < :postId and p.content like %:searchKey% and pc.cafe.id in :cafeIdList")

@@ -1,6 +1,6 @@
 // 로그인 페이지
 import { useEffect } from "react"
-import { Transition, Grid } from "semantic-ui-react"
+import { Grid } from "semantic-ui-react"
 import KakaoLogin from "../../components/member/login/KakaoLogin"
 import { Image } from "semantic-ui-react"
 import "./LoginPage.css"
@@ -27,7 +27,7 @@ const LoginPage = () => {
         geocorder.coord2Address(coord.getLng(), coord.getLat(), callback)
       })
     } else {
-      console.log("X")
+      alert('주소 받아오기 오류!')
     }
   }, [])
 

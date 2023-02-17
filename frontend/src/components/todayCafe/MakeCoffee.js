@@ -1,7 +1,8 @@
 import { useState, useEffect } from "react"
 import TodayCafePage from "../../pages/TodayCafePage"
-import { Button, Icon } from "semantic-ui-react"
+import { Button, Icon, Step, Image } from "semantic-ui-react"
 import useFetch from "../../hooks/useFetch"
+import "./MakeCoffee.css"
 const DEFAULT_REST_URL = process.env.REACT_APP_REST_DEFAULT_URL
 
 const MakeCoffee = () => {
@@ -9,6 +10,7 @@ const MakeCoffee = () => {
   const { data: fetchedCoffee, sendRequest: fetchCoffee } = useFetch()
   const [coffeeBeanCnt, setCoffeeBeanCnt] = useState(0)
   const [coffeeCnt, setCoffeeCnt] = useState(0)
+  const [stepOpen, setStepOpen] = useState(false)
 
   useEffect(() => {
     fetchCoffee({
@@ -35,6 +37,12 @@ const MakeCoffee = () => {
   // const [coffeeCnt, setCoffeeCnt] = useState(initialCoffeeCnt)
   // const [coffeeBeanCnt, setCoffeeBeanCnt] = useState(initialCoffeeBeanCnt)
 
+  const [activeStep, setActiveStep] = useState(0)
+  const rotateSteps = () => {
+    console.log(activeStep)
+    setActiveStep((prev) => (prev + 1) % 7)
+  }
+
   const coffeeMakeHandler = async (coffeeMakeType) => {
     const response = await fetch(
       `${DEFAULT_REST_URL}/todaycafe/coffeemaking/?coffeeMakeType=${coffeeMakeType}`,
@@ -53,16 +61,26 @@ const MakeCoffee = () => {
       // console.log(responseData)
       alert("커피콩이 부족합니다.")
     } else {
-      // console.log(responseData)
-      setCoffeeCnt(responseData.data.coffeeCnt)
-      setCoffeeBeanCnt(responseData.data.coffeeBeanCnt)
-      let todayCafe = JSON.parse(sessionStorage.getItem("todayCafe"))
-      todayCafe = {
-        ...todayCafe,
-        coffeeCnt: responseData.data.coffeeCnt,
-        coffeeBeanCnt: responseData.data.coffeeBeanCnt,
-      }
-      sessionStorage.setItem("todayCafe", JSON.stringify(todayCafe))
+      setStepOpen(true)
+      const makingCoffee = setInterval(() => {
+        rotateSteps(activeStep)
+      }, 500)
+
+      setTimeout(() => {
+        clearInterval(makingCoffee)
+        // console.log(responseData)
+        setStepOpen(false)
+        setActiveStep(0)
+        setCoffeeCnt(responseData.data.coffeeCnt)
+        setCoffeeBeanCnt(responseData.data.coffeeBeanCnt)
+        let todayCafe = JSON.parse(sessionStorage.getItem("todayCafe"))
+        todayCafe = {
+          ...todayCafe,
+          coffeeCnt: responseData.data.coffeeCnt,
+          coffeeBeanCnt: responseData.data.coffeeBeanCnt,
+        }
+        sessionStorage.setItem("todayCafe", JSON.stringify(todayCafe))
+      }, 10000)
     }
   }
 
@@ -101,6 +119,48 @@ const MakeCoffee = () => {
           <p style={{ margin: "1rem" }}>내 커피: {coffeeCnt}개</p>
         </div>
       </div>
+      {stepOpen && (
+        <Step.Group size="mini" fluid>
+          <Step className={activeStep === 1 ? "active" : null}>
+            <Image
+              src={require("../../assets/icons/give_beans.png")}
+              size="mini"
+            />
+          </Step>
+
+          <Step className={activeStep === 2 ? "active" : null}>
+            <Image src={require("../../assets/icons/wash.png")} size="mini" />
+          </Step>
+
+          <Step className={activeStep === 3 ? "active" : null}>
+            <Image src={require("../../assets/icons/drying.png")} size="mini" />
+          </Step>
+          <Step className={activeStep === 4 ? "active" : null}>
+            <Image
+              src={require("../../assets/icons/roasting.png")}
+              size="mini"
+            />
+          </Step>
+          <Step className={activeStep === 5 ? "active" : null}>
+            <Image
+              src={require("../../assets/icons/grinding.png")}
+              size="mini"
+            />
+          </Step>
+          <Step className={activeStep === 6 ? "active" : null}>
+            <Image
+              src={require("../../assets/icons/coffee_pot.png")}
+              size="mini"
+            />
+          </Step>
+          {/* <Step className={activeStep === 7 ? "active" : null}>
+        <Image
+          src={require("../../assets/icons/coffee_cup.png")}
+          size="mini"
+        />
+      </Step> */}
+        </Step.Group>
+      )}
       <div
         style={{
           display: "flex",
@@ -111,7 +171,9 @@ const MakeCoffee = () => {
         }}
       >
         <Button
-          onClick={(e) => coffeeMakeHandler(1)}
+          onClick={(e) => {
+            coffeeMakeHandler(1)
+          }}
           color="orange"
           style={{ marginBottom: "20px" }}
         >

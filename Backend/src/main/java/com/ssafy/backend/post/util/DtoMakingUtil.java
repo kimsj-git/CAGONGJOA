@@ -56,7 +56,6 @@ public class DtoMakingUtil {
         }
 
         Optional<CafeAuth> cafeAuthOptional = cafeAuthRepository.findById(commentGroupList.get(0).getMember().getNickname());
-        System.out.println(cafeAuthOptional);
         if (cafeAuthOptional.isPresent()) {
             Long cafeId = cafeAuthOptional.get().getCafeId();
             Cafe cafe = cafeRepository.findById(cafeId).get();
@@ -67,7 +66,6 @@ public class DtoMakingUtil {
         if(commentLikeRepository.findByCommentIdAndMemberId(commentGroupList.get(0).getId(),commentGroupList.get(0).getMember().getId()).isPresent()) {
             commentPagingResponseDto.updateLikeChecked(true);
         }
-        System.out.println(commentPagingResponseDto.getVerifiedCafeName());
 
         List<RepliesPagingResponseDto> repliesList = new ArrayList<>();
 
@@ -88,7 +86,7 @@ public class DtoMakingUtil {
                         .likeChecked(false)
                         .writerType(false)
                         .build();
-                System.out.println("빌드는됨!");
+
                 if(commentSlice.getCommentLikeList() != null) {
                     repliesPagingResponseDto.updateCommentLike(commentSlice.getCommentLikeList().size());
                 }
@@ -100,7 +98,7 @@ public class DtoMakingUtil {
                     MemberCafeTier memberCafeTier = memberCafeTierRepository.findByMemberIdAndCafeId(commentSlice.getMember().getId(), cafeId).get();
                     repliesPagingResponseDto.updateCommentVerifiedUser(cafeId, cafe.getName(), memberCafeTier.getExp(), cafe.getBrandType());
                 }
-                System.out.println("업데이트도됨!");
+
                 if (repliesPagingResponseDto != null) {
                     repliesList.add(repliesPagingResponseDto);
                 }
@@ -110,7 +108,7 @@ public class DtoMakingUtil {
             }
 
         }
-        System.out.println("for 문의 끝!! ");
+
             commentPagingResponseDto.updateReplies(repliesList);
         return commentPagingResponseDto;
     }

@@ -19,7 +19,7 @@ const CommentList = (props) => {
   const isMounted = useRef(false)
   const comments = useSelector((state) => state.comments.comments)
   const lastCommentId = useSelector((state) => state.comments.lastCommentId)
-  const isCafeAuth = sessionStorage.getItem('cafeAuth')
+  const isCafeAuth = sessionStorage.getItem("cafeAuth")
   const [ref, inView] = useInView({
     threshold: 0.5,
     delay: 500,
@@ -90,11 +90,11 @@ const CommentList = (props) => {
         fetchedComments: fetchedComments,
         lastCommentId: lastCommentId,
       })
-      )
-    }, [fetchedComments])
-    
-    return (
-      <Grid.Column mobile={16} tablet={8} computer={8}>
+    )
+  }, [fetchedComments])
+
+  return (
+    <Grid.Column mobile={16} tablet={8} computer={8}>
       <Header>{`댓글 ${props.post.commentCnt}`}</Header>
       <Divider />
       <ScrollPanel style={{ width: "100%", height: "70vh" }}>
@@ -102,7 +102,7 @@ const CommentList = (props) => {
           {comments.map((comment, index) => {
             return (
               <CommentItem
-                key={`${props.post.id}-${comment.commentId}`}
+                key={`${index}-${props.post.id}-${comment.commentId}`}
                 comment={comment}
                 postId={props.post.id}
                 addNewComment={addNewComment}
@@ -118,17 +118,23 @@ const CommentList = (props) => {
       <Form
         reply
         onSubmit={(e) => {
+          e.preventDefault()
           addNewComment(newComment, -1)
           if (props.myPage) {
           } else {
             dispatch(postsActions.createComment(props.post.id))
           }
+          setNewComment("")
         }}
       >
         <Form.Input
           fluid
-          placeholder= {isCafeAuth === "1" ? "댓글을 입력하세요." : "위치 인증이 필요합니다."}
-          disabled = {isCafeAuth === "1" ? false : true}
+          placeholder={
+            isCafeAuth === "1"
+              ? "댓글을 입력하세요."
+              : "위치 인증이 필요합니다."
+          }
+          disabled={isCafeAuth === "1" ? false : true}
           action={{
             color: "teal",
             icon: "paper plane",
@@ -137,6 +143,7 @@ const CommentList = (props) => {
           onChange={(e) => {
             setNewComment(e.target.value)
           }}
+          value={newComment}
         />
       </Form>
     </Grid.Column>

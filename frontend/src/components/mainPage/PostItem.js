@@ -84,7 +84,8 @@ const PostItem = (props) => {
         size="large"
       />
       <Card.Content
-        onClick={() => {
+        onClick={(e) => {
+          if (e.target !== e.currentTarget) return
           setDetailOpen(true)
         }}
       >

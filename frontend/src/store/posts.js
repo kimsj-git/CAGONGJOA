@@ -130,7 +130,6 @@ export const getPosts = (dataSet) => {
         }),
       })
       const responseData = await response.json()
-      console.log(responseData)
       if (
         responseData.httpStatus === "UNAUTHORIZED" &&
         responseData.data.sign === "JWT"
@@ -138,7 +137,6 @@ export const getPosts = (dataSet) => {
         getAccessToken({func:sendRequest, dataSet:dataSet})
       }
       if (responseData.httpStatus === "OK" || responseData.httpStatus === "NO_CONTENT") {
-        console.log(responseData.data)
         return responseData.data
       }
 
@@ -154,7 +152,7 @@ export const getPosts = (dataSet) => {
         })
       )
     } catch (error) {
-      console.error(error)
+      console.error('에러')
     }
     if (dataSet.postId === -1){
       dispatch(postsActions.isLoading())

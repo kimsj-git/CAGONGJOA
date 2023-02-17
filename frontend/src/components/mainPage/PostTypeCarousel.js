@@ -34,7 +34,6 @@ const PostTypeCarousel = () => {
         basic={true}
         inverted={false}
         selectHandler={(payload) => {
-          console.log(payload)
           dispatch(postsActions.changeFilter(payload))
         }}
       />
