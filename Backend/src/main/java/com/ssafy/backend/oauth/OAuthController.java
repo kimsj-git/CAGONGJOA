@@ -17,6 +17,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.constraints.NotNull;
@@ -102,7 +103,7 @@ public class OAuthController {
 
     // 회원가입 후 DEFAULT 닉네임을 변경
     @PostMapping("/setNickname")
-    public ResponseEntity<ResponseDTO> setMemberNickname(@RequestBody OauthLoginDto oauthLoginDto) throws Exception {
+    public ResponseEntity<ResponseDTO> setMemberNickname(@Validated @RequestBody OauthLoginDto oauthLoginDto) throws Exception {
         Map<String, Object> resultMap = new HashMap<>();
         Optional<Member> defaultNicknameMember = memberService.getMember(oauthLoginDto.getOauthId(),
                 OauthType.valueOf(oauthLoginDto.getOauthType()));
