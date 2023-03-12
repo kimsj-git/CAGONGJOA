@@ -14,6 +14,7 @@ import org.hibernate.validator.constraints.Range;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.constraints.NotEmpty;
@@ -58,7 +59,7 @@ public class CafeController {
         사용자 위치의 카페 + 위경도 정보를 클라이언트로부터 제공받은 후, cafe id와 닉네임으로 redis에 위치 정보 등록
     */
     @PostMapping("/auth/select")
-    public ResponseEntity<ResponseDTO> cafeAuth(@RequestBody SelectCafeRequestDto selectCafeRequestDto) {
+    public ResponseEntity<ResponseDTO> cafeAuth(@Validated @RequestBody SelectCafeRequestDto selectCafeRequestDto) {
         cafeService.saveCafeAuth(selectCafeRequestDto);
         int rewardCoin = cafeService.attendanceReward(selectCafeRequestDto.getTodayDate());
         if (rewardCoin != 0) {
@@ -91,7 +92,7 @@ public class CafeController {
      * @return
      */
     @PostMapping("/auth")
-    public ResponseEntity<ResponseDTO> cafeAuth(@RequestBody LocationDto locationDto) {
+    public ResponseEntity<ResponseDTO> cafeAuth(@Validated @RequestBody LocationDto locationDto) {
         final double DIST = 0.2; // 50m 반경에 해당하는 근거리 카페만 가져온다
 //        final double DIST = 0.5; // 50m 반경에 해당하는 근거리 카페만 가져온다
         ClientPosInfoDto clientPosInfoDto
@@ -107,7 +108,7 @@ public class CafeController {
      * 현위치와 거리를 클라이언트에게 받아 해당 범위의 카페를 제공
      */
     @PostMapping
-    public ResponseEntity<ResponseDTO> getNearByCafes(@RequestBody ClientPosInfoDto clientPosInfo) {
+    public ResponseEntity<ResponseDTO> getNearByCafes(@Validated @RequestBody ClientPosInfoDto clientPosInfo) {
         List<NearByCafeResultDto> nearByCafeLocations = cafeService.getNearByCafeLocations(clientPosInfo);
 
         ResponseDTO responseDTO
@@ -152,7 +153,7 @@ public class CafeController {
      * 클라이언트로부터 혼잡도 레벨과 오늘 날짜 정수형으로 yyyyMMdd 받기 (ex. 20230211)
      */
     @PostMapping("/crowd/save")
-    public ResponseEntity<ResponseDTO> saveCafeCrowd(@RequestBody CrowdCheckReqDto crowdCheckReqDto) {
+    public ResponseEntity<ResponseDTO> saveCafeCrowd(@Validated @RequestBody CrowdCheckReqDto crowdCheckReqDto) {
 
         cafeService.saveCrowdLevel(crowdCheckReqDto);
         memberService.addMemberCoin(1); // 혼잡도 설문 제출시 1 커피콩 적립
@@ -167,7 +168,7 @@ public class CafeController {
      * 현 위치 + 거리 + 현재 시간을 받아 클라이언트에게 해당 범위의 카페 + 혼잡도 정보 제공
      */
     @PostMapping("/crowd")
-    public ResponseEntity<ResponseDTO> getNearByCafesWithCrowd(@RequestBody CafeCrowdRequestDto cafeCrowdRequestDto) {
+    public ResponseEntity<ResponseDTO> getNearByCafesWithCrowd(@Validated @RequestBody CafeCrowdRequestDto cafeCrowdRequestDto) {
 
         ClientPosInfoDto clientPosInfo = ClientPosInfoDto.builder()
                                                         .latitude(cafeCrowdRequestDto.getLatitude())
