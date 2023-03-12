@@ -19,6 +19,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.constraints.NotNull;
 import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
@@ -39,7 +40,7 @@ public class OAuthController {
      * [GET] /oauth/kakao/callback
      */
     @GetMapping("/kakao")
-    public ResponseEntity<ResponseDTO> kakaoCallback(@RequestParam String code) {
+    public ResponseEntity<ResponseDTO> kakaoCallback(@NotNull @RequestParam String code) {
         Map<String, Object> resultMap = new HashMap<>();
 
         // 클라이언트에게 받은 code로 AccessToken 생성

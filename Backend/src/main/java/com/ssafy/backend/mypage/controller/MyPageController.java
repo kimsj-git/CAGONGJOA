@@ -6,6 +6,7 @@ import com.ssafy.backend.mypage.domain.dto.*;
 import com.ssafy.backend.mypage.service.MyPageService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.hibernate.validator.constraints.Range;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
@@ -13,6 +14,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.Positive;
 import java.util.List;
 
 @RestController
@@ -29,7 +32,8 @@ public class MyPageController {
      * @return
      */
     @GetMapping("/cafeLive")
-    public ResponseEntity<ResponseDTO> getCafeLive(@RequestParam int todayDate) {
+    public ResponseEntity<ResponseDTO> getCafeLive(@NotEmpty @Positive @Range(min=10000000, max=30000000)
+                                                       @RequestParam int todayDate) {
 
         List<CafeLiveRespDto> cafeLives = myPageService.getCafeLives(todayDate);
 
@@ -56,7 +60,7 @@ public class MyPageController {
 
     @Auth
     @GetMapping("/myFeed")
-    public ResponseEntity<ResponseDTO> getMyComment(@RequestParam Long postId,
+    public ResponseEntity<ResponseDTO> getMyComment(@NotEmpty @Positive @RequestParam Long postId,
                                                  @PageableDefault(size = 10, sort = "id", direction = Sort.Direction.DESC) Pageable pageable) {
 
         List<MyFeedResponseDto> myFeedList = myPageService.getMyFeed(postId, pageable);

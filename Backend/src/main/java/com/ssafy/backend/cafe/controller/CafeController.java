@@ -10,11 +10,14 @@ import com.ssafy.backend.todaycafe.domain.dto.TodoResponseDto;
 import com.ssafy.backend.todaycafe.service.TodayCafeService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.hibernate.validator.constraints.Range;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.Positive;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
@@ -117,9 +120,9 @@ public class CafeController {
      * 카페 마커를 눌렀을 때 설문조사 내용을 기반으로 사용자에게 제공
      */
     @GetMapping("/survey")
-    public ResponseEntity<ResponseDTO> cafeSurvey(@RequestParam Double latitude,
-                                                  @RequestParam Double longitude,
-                                                  @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss") LocalDateTime todayTime) {
+    public ResponseEntity<ResponseDTO> cafeSurvey(@NotEmpty @Positive @RequestParam Double latitude,
+                                                  @NotEmpty @Positive @RequestParam Double longitude,
+                                                  @NotEmpty @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss") LocalDateTime todayTime) {
         LocationAndDateDto locationAndDateDto = new LocationAndDateDto(latitude, longitude, todayTime);
         CafeSurveyRespDto cafeSurveyRespDto = cafeService.getCafeSurvey(locationAndDateDto);
 
@@ -133,7 +136,8 @@ public class CafeController {
      * 혼잡도 설문 실시 여부 체크
      */
     @GetMapping("/crowd/check")
-    public ResponseEntity<ResponseDTO> checkCrowdSurvey(@RequestParam int todayDate) {
+    public ResponseEntity<ResponseDTO> checkCrowdSurvey(@NotEmpty @Positive @Range(min=10000000, max=30000000)
+                                                            @RequestParam int todayDate) {
         boolean checkVal = cafeService.checkCrowdSurvey(todayDate);
         CrowdCheckRespDto crowdCheckRespDto = new CrowdCheckRespDto(checkVal);
         ResponseDTO responseDTO = new ResponseDTO("혼잡도 설문 여부 체크 완료!", "",

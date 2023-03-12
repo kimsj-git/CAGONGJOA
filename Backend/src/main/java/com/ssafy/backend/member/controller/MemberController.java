@@ -13,6 +13,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
+import javax.validation.constraints.Size;
 import java.util.Map;
 
 @RestController
@@ -25,7 +28,8 @@ public class MemberController {
 
     // 닉네임 중복체크 (회원가입, 유저 정보 수정)
     @GetMapping("/checkDuplicatedNickname")
-    public ResponseEntity<ResponseDTO> checkDupNick(@RequestParam String nickname) {
+    public ResponseEntity<ResponseDTO> checkDupNick(@NotNull @Size(min = 2, max = 10) @Pattern(regexp = "^[a-zA-Z0-9]*$")
+                                                        @RequestParam String nickname) {
         memberService.checkDuplicatedNickname(nickname);
         ResponseDTO responseDTO = new ResponseDTO("닉네임 중복 체크 완료", "", HttpStatus.OK, null);
         return new ResponseEntity<>(responseDTO, HttpStatus.OK);
@@ -65,16 +69,4 @@ public class MemberController {
         return new ResponseEntity<>(responseDTO, HttpStatus.OK);
     }
 
-
-    /**
-     * 시연을 위한 위치인증 슈퍼 계정
-     * @return
-     */
-    @Auth
-    @PostMapping("/super/hynchol")
-    public ResponseEntity<ResponseDTO> setHyncholAuth(@RequestBody SuperMemberCafeAuthReqDto superMemberCafeAuthReqDto) {
-        memberService.setHyncholAuth(superMemberCafeAuthReqDto);
-        ResponseDTO responseDTO = new ResponseDTO("조현철 치트키 적용 완료!", "", HttpStatus.OK, null);
-        return new ResponseEntity<>(responseDTO, HttpStatus.OK);
-    }
 }
